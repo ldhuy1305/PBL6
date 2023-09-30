@@ -1,20 +1,16 @@
-const User = require("../models/user");
-class UserController {
-  // [GET] /user/:id
-  async detail(req, res, next) {
+const Model = require("../models");
+class HandleController {
+  async getOne(req, res, next, Model) {
     const id = await req.params.id;
-    User.findOne({ id })
+    Model.findOne({ id })
       .then()
       .catch((err) => next(err));
   }
-
-  // [GET] /User
-  async show(req, res, next) {
-    User.find()
+  async getAll(req, res, next, Model) {
+    Model.find()
       .then()
       .catch((err) => next(err));
   }
-  // [POST] /User/create
   async create(req, res, next) {
     const body = await req.body;
     User.create(body)
