@@ -1,14 +1,23 @@
 // Import
 const express = require("express");
 const mongoose = require("mongoose");
-
-//Configuring the database
-const dbConfig = "mongodb://localhost:27017";
-const dotenv = require("dotenv");
+const route = require("./routes");
 
 dotenv.config({ path: "./config.env" });
 // Connecting to the database
-const DB = process.env.DATABASE;
+mongoose
+  .connect(process.env.dbConfig, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .then(() => {
+    console.log("connected to MongoDB");
+  })
+  .catch((error) => {
+    console.log("error connecting to MongoDB:", error.message);
+  });
 
 const app = express();
 app.use(
@@ -21,15 +30,7 @@ app.use(express.json());
 // route
 route(app);
 
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
-  .then(() => console.log("DB connection successful!"));
-
-port = process.env.PORT || 3000;
+port = process.env.PORT;
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });
