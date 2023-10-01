@@ -1,36 +1,60 @@
 const Model = require("../models");
+
 class HandleController {
-  async getOne(req, res, next, Model) {
-    const id = await req.params.id;
+  getOne(req, res, next) {
+    const id = req.params.id;
     Model.findOne({ id })
-      .then()
-      .catch((err) => next(err));
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
-  async getAll(req, res, next, Model) {
+
+  getAll(req, res, next) {
     Model.find()
-      .then()
-      .catch((err) => next(err));
+      .then((results) => {
+        res.json(results);
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
-  async create(req, res, next) {
-    const body = await req.body;
-    User.create(body)
-      .then()
-      .catch((err) => next(err));
+
+  postOne(req, res, next) {
+    const body = req.body;
+    Model.create(body)
+      .then((createdModel) => {
+        res.status(201).json(createdModel);
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
-  // [DELETE] /User/:id
-  async delete(req, res, next) {
-    const id = await req.params.id;
-    User.deleteOne({ id })
-      .then()
-      .catch((err) => next(err));
+
+  delOne(req, res, next) {
+    const id = req.params.id;
+    Model.deleteOne({ id })
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
-  // [PUT] /User/:id
-  async update(req, res, next) {
+
+  putOne(req, res, next) {
     const id = req.params.id;
     const body = req.body;
-    User.updateOne({ id }, body)
-      .then()
-      .catch((err) => next(err));
+    Model.updateOne({ id }, body)
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
 }
-module.exports = new UserController();
+
+module.exports = new HandleController();
