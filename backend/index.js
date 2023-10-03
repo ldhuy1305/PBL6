@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const route = require("./routes");
+const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
@@ -27,7 +28,7 @@ app.use(
   })
 );
 app.use(express.json());
-
+app.use(cookieParser());
 // route
 route(app);
 

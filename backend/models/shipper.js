@@ -25,6 +25,10 @@ const shipperSchema = new mongoose.Schema({
   carInfo: {
     type: String,
   },
+  isAccepted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Shipper = User.discriminator("Shipper", shipperSchema);

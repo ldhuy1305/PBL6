@@ -16,6 +16,10 @@ const ownerSchema = new Schema({
       ref: "Store",
     },
   ],
+  status: {
+    type: Boolean,
+    default: false,
+  },
 });
 ownerSchema.add(User.Schema);
 
