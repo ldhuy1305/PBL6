@@ -1,60 +1,59 @@
-const Model = require("../models");
+const { ObjectId } = require("mongodb");
 
-class HandleController {
-  getOne(req, res, next) {
+class handleController {
+  getOne = (Model) => async (req, res, next) => {
     const id = req.params.id;
-    Model.findOne({ id })
+    await Model.findOne({ id })
       .then((result) => {
         res.json(result);
       })
       .catch((err) => {
         next(err);
       });
-  }
+  };
 
-  getAll(req, res, next) {
-    Model.find()
+  getAll = (Model) => async (req, res, next) => {
+    await Model.find({})
       .then((results) => {
         res.json(results);
       })
       .catch((err) => {
         next(err);
       });
-  }
+  };
 
-  postOne(req, res, next) {
-    const body = req.body;
-    Model.create(body)
+  postOne = (Model) => async (req, res, next) => {
+    await Model.create(req.body)
       .then((createdModel) => {
         res.status(201).json(createdModel);
       })
       .catch((err) => {
         next(err);
       });
-  }
+  };
 
-  delOne(req, res, next) {
+  delOne = (Model) => async (req, res, next) => {
     const id = req.params.id;
-    Model.deleteOne({ id })
+    await Model.deleteOne({ id })
       .then((result) => {
         res.json(result);
       })
       .catch((err) => {
         next(err);
       });
-  }
+  };
 
-  putOne(req, res, next) {
+  putOne = (Model) => async (req, res, next) => {
     const id = req.params.id;
     const body = req.body;
-    Model.updateOne({ id }, body)
+    await Model.updateOne({ id }, body)
       .then((result) => {
         res.json(result);
       })
       .catch((err) => {
         next(err);
       });
-  }
+  };
 }
 
-module.exports = new HandleController();
+module.exports = new handleController();

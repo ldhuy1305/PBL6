@@ -1,9 +1,9 @@
-var express = require('express')
+var express = require("express");
 var router = express.Router();
-const shipperController = require('../controllers/shipperController');
-router.post('/', shipperController.create)
-router.get('/:id', shipperController.detail);
-router.get('/', shipperController.show);
-router.put('/:id', shipperController.update);
-router.delete('/:id', shipperController.delete);
+const shipperController = require("../controllers/shipperController");
+router.post("/", shipperController.signUpShipper);
+router.get("/:id", shipperController.getShipperById);
+router.get("/", shipperController.getAllShipper);
+router.put("/:id", shipperController.updateShipper);
+router.delete("/:id", shipperController.deleteShipper);
 module.exports = router;
