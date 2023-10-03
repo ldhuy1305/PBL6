@@ -1,0 +1,103 @@
+[
+    {
+      "role": "User",
+      "email": "user1@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "password": "password1",
+      "phoneNumber": "1234567890",
+      "address": "123 Main St",
+      "image": "profile1.jpg"
+    },
+    {
+      "role": "Admin",
+      "email": "admin@example.com",
+      "firstName": "Admin",
+      "lastName": "Smith",
+      "password": "admin123",
+      "phoneNumber": "9876543210",
+      "address": "456 Elm St",
+      "image": "admin_profile.jpg"
+    },
+    {
+      "role": "Shipper",
+      "email": "shipper1@example.com",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "password": "shipperpass",
+      "phoneNumber": "5555555555",
+      "address": "789 Oak Ave",
+      "image": "shipper_profile.jpg"
+    },
+    {
+      "role": "User",
+      "email": "user2@example.com",
+      "firstName": "Emily",
+      "lastName": "Brown",
+      "password": "userpass123",
+      "phoneNumber": "9871234567",
+      "address": "101 Pine Rd",
+      "image": "profile2.jpg"
+    },
+    {
+      "role": "Owner",
+      "email": "owner@example.com",
+      "firstName": "David",
+      "lastName": "Clark",
+      "password": "ownerpass",
+      "phoneNumber": "4443332222",
+      "address": "303 Cedar Ln",
+      "image": "owner_profile.jpg"
+    },
+    {
+      "role": "User",
+      "email": "user3@example.com",
+      "firstName": "Sarah",
+      "lastName": "Wilson",
+      "password": "sarahpass",
+      "phoneNumber": "1231231234",
+      "address": "567 Maple Rd",
+      "image": "profile3.jpg"
+    },
+    {
+      "role": "Shipper",
+      "email": "shipper2@example.com",
+      "firstName": "James",
+      "lastName": "Miller",
+      "password": "shipperpass456",
+      "phoneNumber": "5551234567",
+      "address": "999 Birch St",
+      "image": "shipper_profile2.jpg"
+    },
+    {
+      "role": "Admin",
+      "email": "admin2@example.com",
+      "firstName": "Emma",
+      "lastName": "Garcia",
+      "password": "adminpass789",
+      "phoneNumber": "9879879876",
+      "address": "222 Willow Rd",
+      "image": "admin_profile2.jpg"
+    },
+    {
+      "role": "User",
+      "email": "user4@example.com",
+      "firstName": "Michael",
+      "lastName": "White",
+      "password": "mikepass",
+      "phoneNumber": "1239876543",
+      "address": "777 Oak St",
+      "image": "profile4.jpg"
+    },
+    {
+      "role": "Owner",
+      "email": "owner2@example.com",
+      "firstName": "Olivia",
+      "lastName": "Taylor",
+      "password": "ownerpass2",
+      "phoneNumber": "4445556666",
+      "address": "888 Pine Ave",
+      "image": "owner_profile2.jpg"
+    }
+  ]
+  

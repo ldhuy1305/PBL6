@@ -25,6 +25,10 @@ const shipperSchema = new Schema({
   carInfo: {
     type: String,
   },
+  isAccepted: {
+    type: Boolean,
+    default: false,
+  },
 });
 shipperSchema.add(User.Schema);
 
