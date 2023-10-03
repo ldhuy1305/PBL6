@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const User = mongoose.User;
-const shipperSchema = new Schema({
+const User = require("./user");
+
+const shipperSchema = new mongoose.Schema({
   ratingAverage: {
     type: Number,
     default: 0,
@@ -30,6 +30,7 @@ const shipperSchema = new Schema({
     default: false,
   },
 });
-shipperSchema.add(User.Schema);
 
-module.exports = mongoose.model("Shipper", shipperSchema);
+const Shipper = User.discriminator("Shipper", shipperSchema);
+
+module.exports = Shipper;

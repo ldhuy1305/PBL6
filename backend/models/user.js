@@ -1,15 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema(
   {
-    id: {
-      type: Schema.Types.ObjectId,
-    },
     role: {
       type: String,
       trim: true,
       enum: ["User", "Admin", "Shipper", "Owner"],
+      default: "User",
     },
     email: {
       type: String,
@@ -51,6 +50,17 @@ const userSchema = new Schema(
       required: [true, "Password is required"],
       minLength: 7,
     },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        // This only works on CREATE and SAVE!!!
+        validator: function(el) {
+          return el === this.password;
+        },
+        message: "Passwords are not the same!",
+      },
+    },
     phoneNumber: {
       type: String,
       trim: true,
@@ -65,11 +75,21 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
-    image: String,
   },
   {
     timestamps: true,
   }
 );
+userSchema.pre("save", async function(next) {
+  // Only run this function if password was actually modified
+  if (!this.isModified("password")) return next();
+
+  // Hash the password with cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete passwordConfirm field
+  this.passwordConfirm = undefined;
+  next();
+});
 
 module.exports = mongoose.model("User", userSchema);

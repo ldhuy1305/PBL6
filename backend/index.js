@@ -3,10 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const route = require("./routes");
 const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
 
+dotenv.config({ path: "./config.env" });
 // Connecting to the database
 mongoose
-  .connect(process.env.dbConfig, {
+  .connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
