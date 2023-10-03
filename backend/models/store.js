@@ -3,9 +3,6 @@ const Schema = mongoose.Schema;
 
 const storeSchema = new Schema(
   {
-    id: {
-      type: Schema.Types.ObjectId,
-    },
     name: {
       type: String,
       trim: true,

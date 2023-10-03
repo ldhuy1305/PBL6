@@ -16,7 +16,11 @@ const ownerSchema = new Schema({
       ref: "Store",
     },
   ],
-  status: {
+  isAccepted: {
+    type: Boolean,
+    default: false,
+  },
+  isLocked: {
     type: Boolean,
     default: false,
   },
