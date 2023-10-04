@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
-
 const userSchema = new Schema(
   {
     role: {
@@ -28,7 +27,9 @@ const userSchema = new Schema(
       required: [true, "Name is required"],
       validate: {
         validator: (value) => {
-          return /^[a-zA-Z]{2,15}$/.test(value);
+          return /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúý\s]{2,15}$/.test(
+            value
+          );
         },
         message: (problem) => `${problem.value} is not a valid first name`,
       },
@@ -39,7 +40,9 @@ const userSchema = new Schema(
       required: [true, "Name is required"],
       validate: {
         validator: (value) => {
-          return /^[a-zA-Z]{2,15}$/.test(value);
+          return /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúý\s]{2,15}$/.test(
+            value
+          );
         },
         message: (problem) => `${problem.value} is not a valid last name`,
       },
@@ -49,6 +52,7 @@ const userSchema = new Schema(
       trim: true,
       required: [true, "Password is required"],
       minLength: 7,
+      select: false,
     },
     passwordConfirm: {
       type: String,
@@ -60,20 +64,29 @@ const userSchema = new Schema(
         },
         message: "Passwords are not the same!",
       },
+      select: false,
     },
-    phoneNumber: {
-      type: String,
-      trim: true,
-      validate: {
-        validator: (value) => {
-          return /^[0-9]{10}$/.test(value);
+    contact: [
+      {
+        phoneNumber: {
+          type: String,
+          trim: true,
+          validate: {
+            validator: (value) => {
+              return /^[0-9]{10}$/.test(value);
+            },
+            message: (problem) => `${problem.value} is not a valid last name`,
+          },
         },
-        message: (problem) => `${problem.value} is not a valid last name`,
+        address: {
+          type: String,
+          trim: true,
+        },
       },
-    },
-    address: {
-      type: String,
-      trim: true,
+    ],
+    defaultContact: {
+      type: Schema.Types,
+      ref: "Contact",
     },
   },
   {

@@ -10,11 +10,12 @@ class handleController {
       if (!doc) {
         return next(new AppError("No document found with that ID", 404));
       }
-
+      req.body.doc = doc;
       res.status(200).json({
         status: "success",
         data: doc,
       });
+      next();
     });
 
   getAll = (Model) =>
@@ -27,19 +28,20 @@ class handleController {
         status: "success",
         data: doc,
       });
+      next();
     });
 
   postOne = (Model) =>
     catchAsync(async (req, res, next) => {
       const body = req.body;
       const newDoc = await Model.create(body);
-
       res.status(201).json({
         status: "success",
         data: {
           data: newDoc,
         },
       });
+      next();
     });
 
   delOne = (Model) =>
@@ -54,6 +56,7 @@ class handleController {
       res.status(204).json({
         status: "success",
       });
+      next();
     });
 
   putOne = (Model) =>
@@ -75,6 +78,7 @@ class handleController {
           data: doc,
         },
       });
+      next();
     });
 }
 

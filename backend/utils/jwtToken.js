@@ -13,7 +13,6 @@ const signToken = (id) => {
     }
   );
 };
-
 exports.generateAndSendJWTToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   res.cookie("jwt", token, {
