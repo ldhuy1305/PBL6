@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const AppError = require("../utils/AppError");
+const catchAsync = require("../utils/catchAsync");
 class authController {
   async login(req, res, next) {
     const { email, password } = req.body;
@@ -63,6 +64,12 @@ class authController {
       );
     }
   }
+  signUp = (Model, role) =>
+    catchAsync(async (req, res, next) => {
+      const data = { ...req.body, role: role, isAccepted: false };
+      const newDoc = await Model.create(data);
+      // this.sendToken(newDoc, res);
+    });
 }
 
-module.exports = authController;
+module.exports = new authController();

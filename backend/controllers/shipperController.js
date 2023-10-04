@@ -1,12 +1,9 @@
 const Shipper = require("../models/shipper");
 const handleController = require("./handleController");
+const authController = require("./authController");
 
-class shipperController {
-  signUpShipper = handleController.postOne(Shipper);
-  getAllShipper = handleController.getAll(Shipper);
-  getShipperById = handleController.getOne(Shipper);
-  updateShipper = handleController.putOne(Shipper);
-  deleteShipper = handleController.delOne(Shipper);
-}
-
-module.exports = new shipperController();
+exports.signUpShipper = authController.signUp(Shipper, "Shipper");
+exports.getAllShipper = handleController.getAll(Shipper);
+exports.getShipperById = handleController.getOne(Shipper);
+exports.updateShipper = handleController.putOne(Shipper);
+exports.deleteShipper = handleController.delOne(Shipper);

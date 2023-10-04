@@ -1,7 +1,7 @@
-const { ObjectId } = require("mongodb");
+const catchAsync = require("../utils/catchAsync");
 
-class handleController {
-  getOne = (Model) => async (req, res, next) => {
+exports.getOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     const id = req.params.id;
     await Model.findOne({ id })
       .then((result) => {
@@ -10,9 +10,10 @@ class handleController {
       .catch((err) => {
         next(err);
       });
-  };
+  });
 
-  getAll = (Model) => async (req, res, next) => {
+exports.getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
     await Model.find({})
       .then((results) => {
         res.json(results);
@@ -20,9 +21,10 @@ class handleController {
       .catch((err) => {
         next(err);
       });
-  };
+  });
 
-  postOne = (Model) => async (req, res, next) => {
+exports.postOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     await Model.create(req.body)
       .then((createdModel) => {
         res.status(201).json(createdModel);
@@ -30,9 +32,10 @@ class handleController {
       .catch((err) => {
         next(err);
       });
-  };
+  });
 
-  delOne = (Model) => async (req, res, next) => {
+exports.delOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     const id = req.params.id;
     await Model.deleteOne({ id })
       .then((result) => {
@@ -41,9 +44,10 @@ class handleController {
       .catch((err) => {
         next(err);
       });
-  };
+  });
 
-  putOne = (Model) => async (req, res, next) => {
+exports.putOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     const id = req.params.id;
     const body = req.body;
     await Model.updateOne({ id }, body)
@@ -53,7 +57,4 @@ class handleController {
       .catch((err) => {
         next(err);
       });
-  };
-}
-
-module.exports = new handleController();
+  });
