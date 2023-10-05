@@ -16,11 +16,16 @@ const ownerSchema = new Schema({
       ref: "Store",
     },
   ],
-  status: {
+  isAccepted: {
+    type: Boolean,
+    default: false,
+  },
+  isLocked: {
     type: Boolean,
     default: false,
   },
 });
-ownerSchema.add(User.Schema);
 
-module.exports = mongoose.model("Owner", ownerSchema);
+const Owner = User.discriminator("Owner", ownerSchema);
+
+module.exports = Owner;

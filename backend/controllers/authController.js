@@ -1,75 +1,107 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const User = require("../models/user");
+const { promisify } = require("util");
+const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
-class authController {
-  async login(req, res, next) {
-    const { email, password } = req.body;
+const jwtToken = require("../utils/jwtToken");
+const sendEmail = require("../utils/email");
+const generateAndSendJWTToken = require("../utils/jwtToken");
+const crypto = require("crypto");
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new AppError("please enter an email and password", 400));
+  }
+  const user = await User.findOne({ email });
+  if (!user || !(await user.isCorrectPassword(password, user.password))) {
+    return next(new AppError("invalid email or password", 401));
+  }
+  jwtToken.generateAndSendJWTToken(user, 200, res);
+});
 
-    //1) Check if email and password exist
-    if (!email || !password) {
-      return next(new AppError("Please provide email and password", 400));
-    }
-    //2) Check if user exist and password is correct
-    const user = await User.findOne({ email });
-    const passHash = await bcrypt.hashSync(password, 12);
-    if (!user || !bcrypt.compareSync(password, passHash)) {
-      return next(new AppError("Incorrect email or password", 401));
-    }
+exports.signUp = (Model, role) =>
+  catchAsync(async (req, res, next) => {
+    const body = { ...req.body, role, isAccepted: false, isVerified: false };
+    const doc = await Model.create(body);
+    const signUpToken = doc.createSignUpToken();
+    await doc.save({ validateBeforeSave: false });
 
-    //3) If everything ok, send token to client
-    sendToken(user, res);
-  }
-  signToken(id) {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
-  }
-  sendToken(user, res) {
-    const token = signToken(user._id);
-    res.cookie("jwt", token, {
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-      ),
-      httpOnly: true,
-      SameSite: strict,
-    });
-  }
-  getToken(req) {
-    let authorization = req.headers.authorization;
-    if (authorization && authorization.split(" ")[0] === "Bearer") {
-      return authorization.split(" ")[1];
-    }
-    return null;
-  }
-  async decodeToken(req, next) {
-    const token = await authController.getToken(req);
+    // 3) Send it to doc's email
+
+    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${signUpToken}.\nIf you didn't forget your password, please ignore this email!`;
+
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findOne({ email: decoded.email });
-      if (!user)
-        next(
-          new AppError(
-            "The user belonging to this token does no longer exist",
-            401
-          )
-        );
-      if (user._id != decoded._id) next(new AppError("Wrong token", 401));
-      req.user = user;
-      next();
-    } catch (error) {
-      next(
-        new AppError("You are not logged in! Please log in to get access", 401)
+      await sendEmail({
+        email: doc.email,
+        subject: "Your password reset token (valid for 10 min)",
+        message,
+      });
+
+      res.status(200).json({
+        token: signUpToken,
+      });
+    } catch (err) {
+      doc.signupToken = undefined;
+      doc.signupResetExpires = undefined;
+      await doc.save({ validateBeforeSave: false });
+
+      return next(
+        new AppError("There was an error sending the email. Try again later!"),
+        500
       );
     }
-  }
-  signUp = (Model, role) =>
-    catchAsync(async (req, res, next) => {
-      const data = { ...req.body, role: role, isAccepted: false };
-      const newDoc = await Model.create(data);
-      // this.sendToken(newDoc, res);
-    });
-}
+  });
+exports.verifiedSignUp = (Model) =>
+  catchAsync(async (req, res, next) => {
+    // 1) Get user based on the token
+    const code = req.body.signUpToken.toString();
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(code)
+      .digest("hex");
+    const doc = await Model.findById(req.params.id);
 
-module.exports = new authController();
+    // 2) If token has not expired, and there is doc, set the new password
+    if (
+      !doc ||
+      doc.signUpToken !== hashedToken ||
+      !doc.signUpExpires > Date.now()
+    ) {
+      return next(new AppError("Token is invalid or has expired", 400));
+    }
+    doc.isVerified = true;
+    doc.passwordResetToken = undefined;
+    doc.passwordResetExpires = undefined;
+    doc.code = undefined;
+    await doc.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      message: "Sign up successfully",
+    });
+  });
+// exports.protect = catchAsync(async (req, res, next) => {
+//   let token;
+//   if (
+//     req.headers.authorization &&
+//     req.headers.authorization.startsWith("Bearer")
+//   ) {
+//     token = req.headers.authorization.split(" ")[1];
+//   }
+//   if (!token) {
+//     return next(new AppError("You are not logged in", 401));
+//   }
+//   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+//   const user = await User.findById(decoded.id);
+//   if (!user) {
+//     return next(new AppError("The user for this token no longer exist", 401));
+//   }
+//   if (user.isPasswordChanged(decoded.iat)) {
+//     return next(
+//       new AppError(
+//         "The user changed password recently relogin to continue",
+//         401
+//       )
+//     );
+//   }
+//   req.user = user;
+//   next();
+// });

@@ -1,40 +1,30 @@
-const User = require("../models/user");
-class UserController {
-  // [GET] /user/:id
-  async detail(req, res, next) {
-    const id = await req.params.id;
-    User.findOne({ id })
-      .then()
-      .catch((err) => next(err));
-  }
+const User = require("../models/User");
+const AppError = require("../utils/AppError");
+const catchAsync = require("../utils/catchAsync");
+const jwtToken = require("../utils/jwtToken");
+const handleController = require("./handleController");
+const authController = require("./authController");
+const bcrypt = require("bcrypt");
 
-  // [GET] /User
-  async show(req, res, next) {
-    User.find()
-      .then()
-      .catch((err) => next(err));
-  }
-  // [POST] /User/create
-  async create(req, res, next) {
-    const body = await req.body;
-    User.create(body)
-      .then()
-      .catch((err) => next(err));
-  }
-  // [DELETE] /User/:id
-  async delete(req, res, next) {
-    const id = await req.params.id;
-    User.deleteOne({ id })
-      .then()
-      .catch((err) => next(err));
-  }
-  // [PUT] /User/:id
-  async update(req, res, next) {
-    const id = req.params.id;
-    const body = req.body;
-    User.updateOne({ id }, body)
-      .then()
-      .catch((err) => next(err));
-  }
+class userController {
+  signUpUser = authController.signUp(User, "User");
+  verifiedUser = authController.verifiedSignUp(User);
+  getAllUser = handleController.getAll(User);
+  getUserById = handleController.getOne(User);
+  updateUser = handleController.putOne(User);
+  deleteUser = handleController.delOne(User);
+  changePass = catchAsync(async (req, res, next) => {
+    const { oldPass, newPass, confirmedPass } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!(await user.isCorrectPassword(oldPass, user.password)))
+      next(new AppError("Invalid password", 404));
+    if (confirmedPass != newPass)
+      next(new AppError("passwordConfirm: Passwords are not the same!", 404));
+    user.password = confirmedPass;
+    user.passwordConfirm = confirmedPass;
+    await user.save();
+    jwtToken.generateAndSendJWTToken(user, 401, res);
+  });
 }
-module.exports = new UserController();
+
+module.exports = new userController();
