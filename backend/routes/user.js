@@ -26,4 +26,8 @@ router.delete(
   contactController.delContact,
   userController.delContact
 );
+router.post(
+  "/set-default-contact/:userId/:contactId",
+  userController.setDefaultContact
+);
 module.exports = router;

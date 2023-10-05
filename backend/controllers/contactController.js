@@ -1,6 +1,5 @@
 const Contact = require("../models/contact");
 const User = require("../models/User");
-const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
 
@@ -17,11 +16,7 @@ class contactController {
   });
   updateContact = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
-    req.body.contact = await Contact.findByIdAndUpdate(
-      user.defaultContact,
-      req.body
-    );
-    console.log(req.body.contact);
+    await Contact.findByIdAndUpdate(user.defaultContact, req.body);
     next();
   });
   addContact = catchAsync(async (req, res, next) => {
@@ -30,6 +25,8 @@ class contactController {
     next();
   });
   delContact = catchAsync(async (req, res, next) => {
+    if (req.params.contactId == delContact.contact)
+      next(new AppError("Default contact isn't deleted", 404));
     const contact = await Contact.findById(req.params.contactId);
     contact.__v = undefined;
     req.body.contact = contact;
