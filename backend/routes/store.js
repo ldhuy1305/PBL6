@@ -16,16 +16,13 @@ router.get("/stat/product-quantity/:id", storeController.productQuantity);
 router.get("/stat/favor-product/:id", storeController.favorProductQuantity);
 router.get("/stat/no-sale-product/:id", storeController.noSaleProductQuantity);
 // Order
-router.get("/:storeId/allOrder", storeController.getAllOrder);
-router.get("/:storeId/:userId", storeController.viewOrder);
-router.delete("/:storeId/:userId", storeController.rejectOrder);
-router.post("/:storeId/:userId", storeController.acceptOrder);
+router.get("/order/:storeId", storeController.getAllOrder);
+router.get("/order/:storeId/:userId", storeController.viewOrder);
+router.delete("/order/:storeId/:userId", storeController.rejectOrder);
+router.post("/order/:storeId/:userId", storeController.acceptOrder);
 //Product
-router.get("/product/:storeId", (req, res) => {
-  res.json(req.params);
-});
 router.get("/product/:storeId", storeController.getAllProduct);
-// router.post("/product/:storeId", storeController.addProduct);
+router.post("/product/:storeId", storeController.addProduct);
 router.get("/product/:storeId/:productId", storeController.viewProduct);
 router.delete("/product/:storeId/:productId", storeController.deleteProduct);
 router.put("/product/:storeId/:productId", storeController.updateProduct);

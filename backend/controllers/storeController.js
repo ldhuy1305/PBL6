@@ -1,17 +1,17 @@
 const Store = require("../models/store");
 const Product = require("../models/product");
-const handleController = require("./handleController");
+const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
-const Store = require("../models/stores");
 const handleController = require("./handleController");
-const authController = require("../models/authController");
+const authController = require("../controllers/authController");
 
 exports.createStore = authController.signUp(Store, "Owner");
 class storeController {
   getStoreById = handleController.getOne(Store);
   getAllStore = catchAsync(async (req, res, next) => {
     let stores;
-    if (req.params.isLocked == true) stores = await Store.find();
+    if (req.params.isLocked == false || req.params.isLocked == undefined)
+      stores = await Store.find();
     else stores = await Store.find({ isLocked: true });
     res.status(200).json({
       status: "success",
@@ -45,8 +45,9 @@ class storeController {
   // Product
   getAllProduct = catchAsync(async (req, res, next) => {});
   addProduct = catchAsync(async (req, res, next) => {
-    console.log(req.params.storeId);
-    req.body.storeId = req.params.storeId;
+    // console.log(req.body);
+    req.body.store_id = req.params.storeId;
+    req.body.category = await Category.findById(req.body.categoryId);
     const product = await Product.create(req.body);
     res.status(201).json({
       status: "success",
