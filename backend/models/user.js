@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 const userSchema = new Schema(
   {
@@ -49,6 +50,7 @@ const userSchema = new Schema(
       trim: true,
       required: [true, "Password is required"],
       minLength: 7,
+      select: false,
     },
     passwordConfirm: {
       type: String,
@@ -75,6 +77,12 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
+    signUpToken: String,
+    signUpExpires: Date,
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -91,5 +99,26 @@ userSchema.pre("save", async function(next) {
   this.passwordConfirm = undefined;
   next();
 });
+userSchema.methods.isCorrectPassword = async function(
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.createSignUpToken = function() {
+  const resetToken = Math.floor(100000 + Math.random() * 900000);
+
+  const resetTokenHex = crypto
+    .createHash("sha256")
+    .update(resetToken.toString())
+    .digest("hex");
+
+  this.signUpToken = resetTokenHex;
+
+  this.signUpExpires = Date.now() + 60 * 60 * 1000;
+
+  return resetToken;
+};
 
 module.exports = mongoose.model("User", userSchema);

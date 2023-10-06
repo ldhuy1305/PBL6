@@ -25,6 +25,7 @@ const ownerSchema = new Schema({
     default: false,
   },
 });
-ownerSchema.add(User.Schema);
 
-module.exports = mongoose.model("Owner", ownerSchema);
+const Owner = User.discriminator("Owner", ownerSchema);
+
+module.exports = Owner;

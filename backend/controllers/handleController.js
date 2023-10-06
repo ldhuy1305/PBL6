@@ -1,59 +1,46 @@
 const { ObjectId } = require("mongodb");
+const AppError = require("./../utils/AppError");
+const catchAsync = require("./../utils/catchAsync");
 
-class handleController {
-  getOne = (Model) => async (req, res, next) => {
+exports.getOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    await Model.findOne({ id })
-      .then((result) => {
-        res.json(result);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  };
+    const doc = await Model.findById(id);
+    if (!doc) {
+      return next(new AppError("Couldn't find this document", 404));
+    }
+    res.status(200).json(doc);
+  });
 
-  getAll = (Model) => async (req, res, next) => {
-    await Model.find({})
-      .then((results) => {
-        res.json(results);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  };
+exports.getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.find({});
+    return res.status(200).json(doc);
+  });
 
-  postOne = (Model) => async (req, res, next) => {
-    await Model.create(req.body)
-      .then((createdModel) => {
-        res.status(201).json(createdModel);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  };
+exports.postOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const created = await Model.create(req.body);
+    res.status(201).json(created);
+  });
 
-  delOne = (Model) => async (req, res, next) => {
+exports.delOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    await Model.deleteOne({ id })
-      .then((result) => {
-        res.json(result);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  };
+    const doc = await Model.findByIdAndDelete({ id });
+    if (!doc) {
+      return next(new AppError("Couldn't find this document", 404));
+    }
+    res.status(201).json("Delete successfully");
+  });
 
-  putOne = (Model) => async (req, res, next) => {
+exports.putOne = (Model) =>
+  catchAsync(async (req, res, next) => {
     const id = req.params.id;
     const body = req.body;
-    await Model.updateOne({ id }, body)
-      .then((result) => {
-        res.json(result);
-      })
-      .catch((err) => {
-        next(err);
-      });
-  };
-}
-
-module.exports = new handleController();
+    const doc = await Model.findByIdAndUpdate({ id }, body);
+    if (!doc) {
+      return next(new AppError("Couldn't find this document", 404));
+    }
+    res.status(200).json(doc);
+  });
