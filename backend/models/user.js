@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+
 const userSchema = new Schema(
   {
     role: {
@@ -27,9 +29,7 @@ const userSchema = new Schema(
       required: [true, "Name is required"],
       validate: {
         validator: (value) => {
-          return /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúý\s]{2,15}$/.test(
-            value
-          );
+          return /^[a-zA-Z]{2,15}$/.test(value);
         },
         message: (problem) => `${problem.value} is not a valid first name`,
       },
@@ -40,9 +40,7 @@ const userSchema = new Schema(
       required: [true, "Name is required"],
       validate: {
         validator: (value) => {
-          return /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúý\s]{2,15}$/.test(
-            value
-          );
+          return /^[a-zA-Z]{2,15}$/.test(value);
         },
         message: (problem) => `${problem.value} is not a valid last name`,
       },
@@ -64,29 +62,26 @@ const userSchema = new Schema(
         },
         message: "Passwords are not the same!",
       },
-      select: false,
     },
-    contact: [
-      {
-        phoneNumber: {
-          type: String,
-          trim: true,
-          validate: {
-            validator: (value) => {
-              return /^[0-9]{10}$/.test(value);
-            },
-            message: (problem) => `${problem.value} is not a valid last name`,
-          },
+    phoneNumber: {
+      type: String,
+      trim: true,
+      validate: {
+        validator: (value) => {
+          return /^[0-9]{10}$/.test(value);
         },
-        address: {
-          type: String,
-          trim: true,
-        },
+        message: (problem) => `${problem.value} is not a valid last name`,
       },
-    ],
-    defaultContact: {
-      type: Schema.Types,
-      ref: "Contact",
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    signUpToken: String,
+    signUpExpires: Date,
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -109,6 +104,21 @@ userSchema.methods.isCorrectPassword = async function(
   candidatePassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.createSignUpToken = function() {
+  const resetToken = Math.floor(100000 + Math.random() * 900000);
+
+  const resetTokenHex = crypto
+    .createHash("sha256")
+    .update(resetToken.toString())
+    .digest("hex");
+
+  this.signUpToken = resetTokenHex;
+
+  this.signUpExpires = Date.now() + 60 * 60 * 1000;
+
+  return resetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);

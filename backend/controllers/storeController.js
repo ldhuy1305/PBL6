@@ -2,6 +2,11 @@ const Store = require("../models/store");
 const Product = require("../models/product");
 const handleController = require("./handleController");
 const catchAsync = require("../utils/catchAsync");
+const Store = require("../models/stores");
+const handleController = require("./handleController");
+const authController = require("../models/authController");
+
+exports.createStore = authController.signUp(Store, "Owner");
 class storeController {
   getStoreById = handleController.getOne(Store);
   getAllStore = catchAsync(async (req, res, next) => {
