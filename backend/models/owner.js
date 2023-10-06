@@ -10,17 +10,7 @@ const ownerSchema = new Schema({
     type: String,
     required: true,
   },
-  storeID: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Store",
-    },
-  ],
   isAccepted: {
-    type: Boolean,
-    default: false,
-  },
-  isLocked: {
     type: Boolean,
     default: false,
   },

@@ -1,7 +1,6 @@
 const Contact = require("../models/contact");
 const User = require("../models/User");
 const catchAsync = require("../utils/catchAsync");
-const handleController = require("./handleController");
 
 class contactController {
   createContact = catchAsync(async (req, res, next) => {

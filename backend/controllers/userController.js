@@ -1,4 +1,3 @@
-const { get } = require("mongoose");
 const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
@@ -9,7 +8,6 @@ class userController {
   signUpUser = catchAsync(async (req, res, next) => {
     const body = req.body;
     const user = await User.create(body);
-    console.log(user);
     jwtToken.generateAndSendJWTToken(user, 201, res);
   });
   getAllUser = handleController.getAll(User);
