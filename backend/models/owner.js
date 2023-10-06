@@ -13,10 +13,6 @@ const ownerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isLocked: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const Owner = User.discriminator("Owner", ownerSchema);

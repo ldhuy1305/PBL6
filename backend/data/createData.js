@@ -1,11 +1,13 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const User = require("../models/user");
+const Store = require("../models/Store");
 
-dotenv.config({ path: "./config.env" });
+dotenv.config();
+// Connecting to the database
+console.log(process.env.DATABASE);
 mongoose
-  .connect(process.env.dbConfig, {
+  .connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -19,11 +21,12 @@ mongoose
   });
 
 // READ JSON FILE
-const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, "utf-8"));
+// const store = JSON.parse(fs.readFileSync(`${__dirname}/store.json`, "utf-8"));
+const store = JSON.parse(fs.readFileSync(`${__dirname}/store.json`, "utf-8"));
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
-    await User.create(users);
+    await Store.create(store);
     console.log("Data successfully loaded!");
   } catch (err) {
     console.log(err);

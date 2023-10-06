@@ -11,10 +11,13 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) {
     return next(new AppError("please enter an email and password", 400));
   }
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
-  if (!user || !(await user.isCorrectPassword(password, user.password))) {
-    return next(new AppError("invalid email or password", 401));
+  if (!user) {
+    return next(new AppError("invalid email", 401));
+  }
+  if (!(await user.isCorrectPassword(user.password, password))) {
+    return next(new AppError("invalid password", 401));
   }
   jwtToken.generateAndSendJWTToken(user, 200, res);
 });
