@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const User = mongoose.User;
-const ownerSchema = new Schema({
+const User = require("./User");
+const ownerSchema = new mongoose.Schema({
   accountNumber: {
     type: String,
     required: true,

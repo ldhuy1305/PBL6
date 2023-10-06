@@ -1,10 +1,18 @@
 var express = require("express");
 var router = express.Router();
 const shipperController = require("../controllers/shipperController");
-router.post("/", shipperController.signUpShipper);
-router.post("/:id", shipperController.verifiedSignUp);
-router.get("/:id", shipperController.getShipperById);
-router.get("/", shipperController.getAllShipper);
-router.put("/:id", shipperController.updateShipper);
-router.delete("/:id", shipperController.deleteShipper);
+
+router.post("/forgot-password", shipperController.forgotPassword);
+router.post("/reset-password/:id", shipperController.resetPassword);
+router
+  .route("/")
+  .post(shipperController.signUpShipper, shipperController.sendEmailVerify)
+  .get(shipperController.getAllShipper);
+router
+  .route("/:id")
+  .post(shipperController.verifiedSignUp)
+  .get(shipperController.getShipperById)
+  .put(shipperController.updateShipper)
+  .delete(shipperController.deleteShipper);
+
 module.exports = router;

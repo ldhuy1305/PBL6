@@ -65,6 +65,8 @@ class userController {
     res.status(200).json(user);
   });
   viewOrder = catchAsync(async (req, res, next) => {});
+  forgotPassword = authController.forgotPassword(User);
+  resetPassword = authController.resetPassword(User);
 }
 
 module.exports = new userController();

@@ -2,7 +2,10 @@
 const shipperRoute = require("./shipper");
 const userRoute = require("./user");
 const authRoute = require("./auth");
+const contactRoute = require("./contact");
 const storeRoute = require("./store");
+
+// const storeRoute = require('./store');
 function route(app) {
   // app.use('/admin',adminRoute);
   app.use("/api/shipper", shipperRoute);
