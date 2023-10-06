@@ -63,19 +63,27 @@ const userSchema = new Schema(
         message: "Passwords are not the same!",
       },
     },
-    phoneNumber: {
-      type: String,
-      trim: true,
-      validate: {
-        validator: (value) => {
-          return /^[0-9]{10}$/.test(value);
+    contact: [
+      {
+        phoneNumber: {
+          type: String,
+          trim: true,
+          validate: {
+            validator: (value) => {
+              return /^[0-9]{10}$/.test(value);
+            },
+            message: (problem) => `${problem.value} is not a valid last name`,
+          },
         },
-        message: (problem) => `${problem.value} is not a valid last name`,
+        address: {
+          type: String,
+          trim: true,
+        },
       },
-    },
-    address: {
-      type: String,
-      trim: true,
+    ],
+    defaultContact: {
+      type: Schema.Types,
+      ref: "Contact",
     },
     signUpToken: String,
     signUpExpires: Date,
