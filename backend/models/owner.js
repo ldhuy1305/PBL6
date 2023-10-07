@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("./User");
+const User = require("./userModel");
 const ownerSchema = new mongoose.Schema({
   accountNumber: {
     type: String,

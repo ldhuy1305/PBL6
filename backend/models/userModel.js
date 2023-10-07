@@ -77,8 +77,12 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
-    signUpToken: String,
-    signUpExpires: Date,
+    signUpToken: {
+      type: String,
+    },
+    signUpExpires: {
+      type: Date,
+    },
     isVerified: {
       type: Boolean,
       default: false,
@@ -99,6 +103,14 @@ userSchema.pre("save", async function(next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// userSchema.pre(/^find/, function(next) {
+//   // this points to the current query
+//   this.find({ isVerified: { $ne: false } });
+//   this.select("-__t -__v -signUpExpires -signUpToken -isVerified");
+//   next();
+// });
+
 userSchema.methods.isCorrectPassword = async function(
   userPassword,
   candidatePassword

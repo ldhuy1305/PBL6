@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
@@ -6,11 +6,7 @@ const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 
 class userController {
-  // signUpUser = catchAsync(async (req, res, next) => {
-  //   const body = req.body;
-  //   const user = await User.create(body);
-  //   jwtToken.generateAndSendJWTToken(user, 201, res);
-  // });
+  sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = handleController.getAll(User);

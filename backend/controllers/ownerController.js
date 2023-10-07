@@ -7,7 +7,7 @@ const Owner = require("../models/owner");
 exports.createOwner = authController.signUp(Owner, "Owner");
 exports.verifiedSignUp = authController.verifiedSignUp(Owner);
 exports.createStore = catchAsync(async (req, res, next) => {
-  const body = { ...req.body, ownerId: req.doc._id };
+  const body = { ...req.body, ownerId: req.doc };
   const storeCreated = await Store.create(body);
   res.store = storeCreated;
   next();
