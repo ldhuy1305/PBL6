@@ -3,25 +3,14 @@ var router = express.Router();
 const storeController = require("../controllers/storeController");
 const authController = require("../controllers/authController");
 
-router.post("/forgot-password", storeController.forgotPassword);
-router.post("/reset-password/:id", storeController.resetPassword);
-router.post(
-  "/",
-  storeController.createOwner,
-  storeController.createStore,
-  authController.sendEmailVerify
-);
-router.post("/:id", storeController.verifiedSignUp);
-
-// router.get('/:id', storeController.detail);
-// router.get('/', storeController.show);
-// router.put('/:id', storeController.update);
-// router.delete('/:id', storeController.delete);
-const productController = require("../controllers/productController");
-router.get("/:id", storeController.getStoreById);
-router.get("/", storeController.getAllStore);
-router.put("/:id", storeController.updateStore);
-router.patch("/lock/:id", storeController.lockStore);
+// router.get("/:id", storeController.detail);
+// router.get("/", storeController.show);
+// router.put("/:id", storeController.update);
+// router.delete("/:id", storeController.delete);
+// router.get("/:id", storeController.getStoreById);
+// router.get("/", storeController.getAllStore);
+// router.put("/:id", storeController.updateStore);
+// router.patch("/lock/:id", storeController.lockStore);
 //Stat
 router.get("/stat/category/:id", storeController.mostCategory);
 router.get("/stat/order/:id", storeController.order);
