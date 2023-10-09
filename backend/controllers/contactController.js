@@ -1,5 +1,5 @@
 const Contact = require("../models/contact");
-const User = require("../models/User");
+const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 
 class contactController {

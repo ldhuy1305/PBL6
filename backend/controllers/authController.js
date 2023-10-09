@@ -1,5 +1,5 @@
 const { promisify } = require("util");
-const User = require("../models/User");
+const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
@@ -12,7 +12,6 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("please enter an email and password", 400));
   }
   const user = await User.findOne({ email }).select("+password");
-
   if (!user) {
     return next(new AppError("invalid email", 401));
   }
@@ -26,6 +25,7 @@ exports.signUp = (Model, role) =>
   catchAsync(async (req, res, next) => {
     const body = { ...req.body, role, isAccepted: false, isVerified: false };
     const doc = await Model.create(body);
+
     const signUpToken = doc.createSignUpToken();
     await doc.save({ validateBeforeSave: false });
 

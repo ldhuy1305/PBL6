@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("./User");
+const User = require("./userModel");
 
 const shipperSchema = new mongoose.Schema({
   ratingAverage: {
@@ -47,6 +47,7 @@ const shipperSchema = new mongoose.Schema({
   isAccepted: {
     type: Boolean,
     default: false,
+    select: false,
   },
 });
 
