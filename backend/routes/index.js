@@ -3,6 +3,9 @@ const shipperRoute = require("./shipper");
 const userRoute = require("./user");
 const authRoute = require("./auth");
 const contactRoute = require("./contact");
+const storeRoute = require("./store");
+const ownerRoute = require("./owner");
+
 // const storeRoute = require('./store');
 function route(app) {
   // app.use('/admin',adminRoute);
@@ -10,6 +13,7 @@ function route(app) {
   app.use("/api", authRoute);
   app.use("/api/user", userRoute);
   app.use("/api/contact", userRoute);
-  // app.use('/store',storeRoute);
+  app.use("/api/store", storeRoute);
+  app.use("/api/owner", ownerRoute);
 }
 module.exports = route;

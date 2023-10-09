@@ -1,5 +1,4 @@
-const { get } = require("mongoose");
-const User = require("../models/User");
+const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
@@ -7,18 +6,19 @@ const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 
 class userController {
+  sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
+  sendEmail = authController.sendEmailVerify;
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = handleController.getAll(User);
   getUserById = handleController.getOne(User);
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
-    console.log(user);
-    for (let i = 0; i < user.contact.length; i++) {
-      if (user.contact[i]._id == user.defaultContact) {
-        user.contact[i].phoneNumber = req.body.phoneNumber;
-        user.contact[i].address = req.body.address;
+    for (let contact of user.contact) {
+      if (contact._id == user.defaultContact) {
+        contact.phoneNumber = req.body.phoneNumber;
+        contact.address = req.body.address;
       }
     }
     user.firstName = req.body.firstName;
@@ -62,6 +62,8 @@ class userController {
     res.status(200).json(user);
   });
   viewOrder = catchAsync(async (req, res, next) => {});
+  forgotPassword = authController.forgotPassword(User);
+  resetPassword = authController.resetPassword(User);
 }
 
 module.exports = new userController();

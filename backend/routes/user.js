@@ -2,19 +2,28 @@ var express = require("express");
 var router = express.Router();
 const userController = require("../controllers/userController");
 const contactController = require("../controllers/contactController");
-router.post("/", contactController.createContact, userController.signUpUser);
-router.get("/:id", contactController.getAllContact, userController.getUserById);
-router.get("/", userController.getAllUser);
-router.patch(
-  "/:id",
-  contactController.updateContact,
-  userController.updateUser
+router.post(
+  "/",
+  contactController.createContact,
+  userController.signUpUser,
+  userController.sendEmail
 );
-router.delete(
-  "/:id",
-  contactController.delAllContact,
-  userController.deleteUser
-);
+router.post("/forgot-password/", userController.forgotPassword);
+router.post("/reset-password/:id", userController.resetPassword);
+router
+  .route("/")
+  .post(
+    contactController.createContact,
+    userController.signUpUser,
+    userController.sendEmail
+  )
+  .get(userController.getAllUser);
+router
+  .route("/:id")
+  .post(userController.verifiedUser, userController.sendEmail)
+  .get(contactController.getAllContact, userController.getUserById)
+  .patch(contactController.updateContact, userController.updateUser)
+  .delete(contactController.delAllContact, userController.deleteUser);
 router.post("/change-pass/:id", userController.changePass);
 router.put(
   "/add-contact/:id",

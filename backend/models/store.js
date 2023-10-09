@@ -24,11 +24,11 @@ const storeSchema = new Schema(
       required: [true, "Store address is required"],
     },
     openAt: {
-      type: Date,
+      type: String,
       required: [true, "Store opening time is required"],
     },
     closeAt: {
-      type: Date,
+      type: String,
       required: [true, "Store closing time is required"],
     },
     description: {
@@ -41,11 +41,19 @@ const storeSchema = new Schema(
     },
     images: {
       type: String,
+      default: "",
+    },
+    ownerID: {
+      type: Schema.Types.ObjectId,
+      ref: "Owner",
+    },
+    isLocked: {
+      type: Boolean,
+      default: false,
     },
   },
   {
     timestamps: true,
   }
 );
-
 module.exports = mongoose.model("Store", storeSchema);

@@ -63,22 +63,34 @@ const userSchema = new Schema(
         message: "Passwords are not the same!",
       },
     },
-    phoneNumber: {
-      type: String,
-      trim: true,
-      validate: {
-        validator: (value) => {
-          return /^[0-9]{10}$/.test(value);
+    contact: [
+      {
+        phoneNumber: {
+          type: String,
+          trim: true,
+          validate: {
+            validator: (value) => {
+              return /^[0-9]{10}$/.test(value);
+            },
+            message: (problem) => `${problem.value} is not a valid last name`,
+          },
         },
-        message: (problem) => `${problem.value} is not a valid last name`,
+        address: {
+          type: String,
+          trim: true,
+        },
       },
+    ],
+    defaultContact: {
+      type: Schema.Types,
+      ref: "Contact",
     },
-    address: {
+    signUpToken: {
       type: String,
-      trim: true,
     },
-    signUpToken: String,
-    signUpExpires: Date,
+    signUpExpires: {
+      type: Date,
+    },
     isVerified: {
       type: Boolean,
       default: false,
@@ -99,9 +111,17 @@ userSchema.pre("save", async function(next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// userSchema.pre(/^find/, function(next) {
+//   // this points to the current query
+//   this.find({ isVerified: { $ne: false } });
+//   this.select("-__t -__v -signUpExpires -signUpToken -isVerified");
+//   next();
+// });
+
 userSchema.methods.isCorrectPassword = async function(
-  candidatePassword,
-  userPassword
+  userPassword,
+  candidatePassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
