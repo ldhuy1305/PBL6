@@ -2,9 +2,14 @@ var express = require("express");
 var router = express.Router();
 const userController = require("../controllers/userController");
 const contactController = require("../controllers/contactController");
-router.post("/forgot-password", userController.forgotPassword);
+router.post(
+  "/",
+  contactController.createContact,
+  userController.signUpUser,
+  userController.sendEmail
+);
+router.post("/forgot-password/", userController.forgotPassword);
 router.post("/reset-password/:id", userController.resetPassword);
-router.post("/", contactController.createContact, userController.signUpUser);
 router.get("/:id", contactController.getAllContact, userController.getUserById);
 router.get("/", userController.getAllUser);
 

@@ -4,18 +4,7 @@ const Owner = require("../models/owner");
 const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
-const authController = require("../controllers/authController");
-exports.createOwner = authController.signUp(Owner, "Owner");
-exports.verifiedSignUp = authController.verifiedSignUp(Owner);
-exports.createStore = catchAsync(async (req, res, next) => {
-  const body = { ...req.body, storeId: req.doc };
-  const storeCreated = await Store.create(body);
-  res.store = storeCreated;
-  next();
-});
-exports.forgotPassword = authController.forgotPassword(Owner);
-exports.resetPassword = authController.resetPassword(Owner);
-exports.createStore = authController.signUp(Store, "Owner");
+
 class storeController {
   getStoreById = handleController.getOne(Store);
   getAllStore = catchAsync(async (req, res, next) => {

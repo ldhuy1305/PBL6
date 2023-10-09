@@ -35,7 +35,7 @@ exports.signUp = (Model, role) =>
     next();
   });
 
-exports.sendEmailVerify = async (req, res, next) => {
+exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
   const message = `Hello,
@@ -72,7 +72,7 @@ exports.sendEmailVerify = async (req, res, next) => {
       500
     );
   }
-};
+});
 exports.verifiedSignUp = (Model) =>
   catchAsync(async (req, res, next) => {
     // 1) Get user based on the token

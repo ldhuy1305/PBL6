@@ -12,6 +12,7 @@ class userController {
   //   jwtToken.generateAndSendJWTToken(user, 201, res);
   // });
   signUpUser = authController.signUp(User, "User");
+  sendEmail = authController.sendEmailVerify;
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = handleController.getAll(User);
   getUserById = handleController.getOne(User);
