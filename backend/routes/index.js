@@ -10,7 +10,7 @@ const ownerRoute = require("./owner");
 function route(app) {
   // app.use('/admin',adminRoute);
   app.use("/api/shipper", shipperRoute);
-  app.use("/api", authRoute);
+  app.use("/api/auth", authRoute);
   app.use("/api/user", userRoute);
   app.use("/api/contact", userRoute);
   app.use("/api/store", storeRoute);

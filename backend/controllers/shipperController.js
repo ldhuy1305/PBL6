@@ -6,8 +6,6 @@ const catchAsync = require("../utils/catchAsync");
 exports.signUpShipper = authController.signUp(Shipper, "Shipper");
 exports.verifiedSignUp = authController.verifiedSignUp(Shipper);
 exports.sendEmailVerify = authController.sendEmailVerify;
-exports.forgotPassword = authController.forgotPassword(Shipper);
-exports.resetPassword = authController.resetPassword(Shipper);
 
 exports.getShipperById = handleController.getOne(Shipper);
 exports.updateShipper = handleController.putOne(Shipper);
@@ -16,6 +14,6 @@ exports.getAllShipper = catchAsync(async (req, res, next) => {
   const shippers = await Shipper.find({
     isAccepted: true,
     isVerified: true,
-  });
+  }).select("+isAccepted +isVerified");
   return res.status(200).json(shippers);
 });

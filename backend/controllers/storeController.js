@@ -41,7 +41,6 @@ class storeController {
   // Product
   getAllProduct = catchAsync(async (req, res, next) => {});
   addProduct = catchAsync(async (req, res, next) => {
-    console.log(req.params.storeId);
     req.body.storeId = req.params.storeId;
     const product = await Product.create(req.body);
     res.status(201).json({

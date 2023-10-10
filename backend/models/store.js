@@ -42,7 +42,7 @@ const storeSchema = new Schema(
     images: {
       type: String,
     },
-    ownerID: {
+    ownerId: {
       type: Schema.Types.ObjectId,
       ref: "Owner",
     },

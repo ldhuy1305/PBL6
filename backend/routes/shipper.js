@@ -2,8 +2,6 @@ var express = require("express");
 var router = express.Router();
 const shipperController = require("../controllers/shipperController");
 
-router.post("/forgot-password", shipperController.forgotPassword);
-router.post("/reset-password/:id", shipperController.resetPassword);
 router
   .route("/")
   .post(shipperController.signUpShipper, shipperController.sendEmailVerify)

@@ -2,8 +2,6 @@ var express = require("express");
 var router = express.Router();
 const userController = require("../controllers/userController");
 const contactController = require("../controllers/contactController");
-router.post("/forgot-password", userController.forgotPassword);
-router.post("/reset-password/:id", userController.resetPassword);
 router
   .route("/")
   .post(

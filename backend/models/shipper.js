@@ -4,7 +4,7 @@ const User = require("./userModel");
 const shipperSchema = new mongoose.Schema({
   ratingAverage: {
     type: Number,
-    default: 0,
+    default: 4.5,
   },
   identityNumber: {
     type: String,

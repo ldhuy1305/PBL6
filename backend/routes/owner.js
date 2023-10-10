@@ -6,8 +6,6 @@ const authController = require("../controllers/authController");
 // router.get("/", storeController.getAllStore);
 // router.put("/:id", storeController.updateStore);
 // router.delete("/:id", storeController.deleteStore);
-router.route("/forgot-password").post(ownerController.forgotPassword);
-router.route("/reset-password/:id").post(ownerController.resetPassword);
 router
   .route("/")
   .post(
