@@ -1,7 +1,19 @@
 const mongoose = require("mongoose");
 const User = require("./userModel");
 const ownerSchema = new mongoose.Schema({
-  accountNumber: {
+  bankName: {
+    type: String,
+    required: true,
+  },
+  bankNumber: {
+    type: String,
+    required: true,
+  },
+  frontImageCCCD: {
+    type: String,
+    required: true,
+  },
+  behindImageCCCD: {
     type: String,
     required: true,
   },

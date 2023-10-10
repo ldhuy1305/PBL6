@@ -16,7 +16,6 @@ router
   .get(contactController.getAllContact, userController.getUserById)
   .patch(contactController.updateContact, userController.updateUser)
   .delete(contactController.delAllContact, userController.deleteUser);
-
 router.post("/change-pass/:id", userController.changePass);
 router.put(
   "/add-contact/:id",

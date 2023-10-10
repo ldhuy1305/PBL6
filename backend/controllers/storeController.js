@@ -1,13 +1,16 @@
 const Store = require("../models/store");
 const Product = require("../models/product");
-const handleController = require("./handleController");
+const Owner = require("../models/owner");
+const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
+const handleController = require("./handleController");
 
 class storeController {
   getStoreById = handleController.getOne(Store);
   getAllStore = catchAsync(async (req, res, next) => {
     let stores;
-    if (req.params.isLocked == true) stores = await Store.find();
+    if (req.params.isLocked == false || req.params.isLocked == undefined)
+      stores = await Store.find();
     else stores = await Store.find({ isLocked: true });
     res.status(200).json({
       status: "success",
@@ -38,21 +41,6 @@ class storeController {
   viewOrder = catchAsync(async (req, res, next) => {});
   rejectOrder = catchAsync(async (req, res, next) => {});
   acceptOrder = catchAsync(async (req, res, next) => {});
-  // Product
-  getAllProduct = catchAsync(async (req, res, next) => {});
-  addProduct = catchAsync(async (req, res, next) => {
-    req.body.storeId = req.params.storeId;
-    const product = await Product.create(req.body);
-    res.status(201).json({
-      status: "success",
-      data: {
-        data: product,
-      },
-    });
-  });
-  viewProduct = catchAsync(async (req, res, next) => {});
-  deleteProduct = catchAsync(async (req, res, next) => {});
-  updateProduct = catchAsync(async (req, res, next) => {});
 }
 
 module.exports = new storeController();

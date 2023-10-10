@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const productSchema = new Schema({
   category: {
-    name: {
+    catName: {
       type: String,
       required: true,
     },
   },
-  store_id: {
+  storeId: {
     type: Schema.Types.ObjectId,
     ref: "Store",
     required: true,
@@ -33,6 +33,10 @@ const productSchema = new Schema({
   description: {
     type: String,
     required: true,
+  },
+  isFavoured: {
+    type: Boolean,
+    default: false,
   },
 });
 

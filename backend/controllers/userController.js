@@ -8,6 +8,7 @@ const authController = require("../controllers/authController");
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
+  sendEmail = authController.sendEmailVerify;
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = catchAsync(async (req, res, next) => {
     const shippers = await User.find({
@@ -20,11 +21,10 @@ class userController {
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
-    console.log(user);
-    for (let i = 0; i < user.contact.length; i++) {
-      if (user.contact[i]._id == user.defaultContact) {
-        user.contact[i].phoneNumber = req.body.phoneNumber;
-        user.contact[i].address = req.body.address;
+    for (let contact of user.contact) {
+      if (contact._id == user.defaultContact) {
+        contact.phoneNumber = req.body.phoneNumber;
+        contact.address = req.body.address;
       }
     }
     user.firstName = req.body.firstName;

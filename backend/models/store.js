@@ -41,6 +41,7 @@ const storeSchema = new Schema(
     },
     images: {
       type: String,
+      default: "",
     },
     ownerId: {
       type: Schema.Types.ObjectId,

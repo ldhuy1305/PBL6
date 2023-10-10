@@ -6,10 +6,13 @@ const shipperSchema = new mongoose.Schema({
     type: Number,
     default: 4.5,
   },
-  identityNumber: {
+  frontImageCCCD: {
     type: String,
     required: true,
-    unique: true,
+  },
+  behindImageCCCD: {
+    type: String,
+    required: true,
   },
   status: {
     type: String,
@@ -19,11 +22,27 @@ const shipperSchema = new mongoose.Schema({
   location: {
     type: String,
   },
-  licensePlate: {
+  //GPLX
+  licenseId: {
     type: String,
+    required: true,
   },
-  carInfo: {
+  licenseImage: {
     type: String,
+    required: true,
+  },
+  //vehicle
+  vehicleNumber: {
+    type: String,
+    required: true,
+  },
+  vehicleType: {
+    type: String,
+    required: true,
+  },
+  vehicleLicense: {
+    type: String,
+    require: true,
   },
   isAccepted: {
     type: Boolean,
