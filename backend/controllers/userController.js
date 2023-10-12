@@ -8,7 +8,6 @@ const authController = require("../controllers/authController");
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
-  sendEmail = authController.sendEmailVerify;
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = catchAsync(async (req, res, next) => {
     const shippers = await User.find({

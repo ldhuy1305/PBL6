@@ -2,6 +2,7 @@ const Shipper = require("../models/shipper");
 const handleController = require("./handleController");
 const authController = require("./authController");
 const catchAsync = require("../utils/catchAsync");
+const fileUploader = require("../utils/uploadImage");
 
 exports.signUpShipper = authController.signUp(Shipper, "Shipper");
 exports.verifiedSignUp = authController.verifiedSignUp(Shipper);
@@ -17,3 +18,9 @@ exports.getAllShipper = catchAsync(async (req, res, next) => {
   }).select("+isAccepted +isVerified");
   return res.status(200).json(shippers);
 });
+
+exports.uploadShipperImages = fileUploader.fields([
+  { name: "frontImageCCCD", maxCount: 1 },
+  { name: "behindImageCCCD", maxCount: 1 },
+  { name: "licenseImage", maxCount: 1 },
+]);

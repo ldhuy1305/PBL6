@@ -10,9 +10,10 @@ router
     userController.sendEmail
   )
   .get(userController.getAllUser);
+
+router.route("/:email").post(userController.verifiedUser);
 router
   .route("/:id")
-  .post(userController.verifiedUser, userController.sendEmail)
   .get(contactController.getAllContact, userController.getUserById)
   .patch(contactController.updateContact, userController.updateUser)
   .delete(contactController.delAllContact, userController.deleteUser);

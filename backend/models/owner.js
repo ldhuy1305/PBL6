@@ -12,14 +12,17 @@ const ownerSchema = new mongoose.Schema({
   frontImageCCCD: {
     type: String,
     required: true,
+    select: false,
   },
   behindImageCCCD: {
     type: String,
     required: true,
+    select: false,
   },
   registrationLicense: {
     type: String,
     required: true,
+    select: false,
   },
   isAccepted: {
     type: Boolean,

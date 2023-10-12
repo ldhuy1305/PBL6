@@ -4,13 +4,18 @@ const shipperController = require("../controllers/shipperController");
 
 router
   .route("/")
-  .post(shipperController.signUpShipper, shipperController.sendEmailVerify)
+  .post(
+    shipperController.uploadShipperImages,
+    shipperController.signUpShipper,
+    shipperController.sendEmailVerify
+  )
   .get(shipperController.getAllShipper);
 router
   .route("/:id")
-  .post(shipperController.verifiedSignUp)
   .get(shipperController.getShipperById)
   .put(shipperController.updateShipper)
   .delete(shipperController.deleteShipper);
+
+router.route("/:email").post(shipperController.verifiedSignUp);
 
 module.exports = router;
