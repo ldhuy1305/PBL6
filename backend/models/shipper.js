@@ -4,15 +4,17 @@ const User = require("./userModel");
 const shipperSchema = new mongoose.Schema({
   ratingAverage: {
     type: Number,
-    default: 0,
+    default: 4.5,
   },
   frontImageCCCD: {
     type: String,
     required: true,
+    select: false,
   },
   behindImageCCCD: {
     type: String,
     required: true,
+    select: false,
   },
   status: {
     type: String,
@@ -30,6 +32,7 @@ const shipperSchema = new mongoose.Schema({
   licenseImage: {
     type: String,
     required: true,
+    select: false,
   },
   //vehicle
   vehicleNumber: {

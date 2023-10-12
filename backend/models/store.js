@@ -47,7 +47,7 @@ const storeSchema = new Schema(
       type: String,
       default: "",
     },
-    ownerID: {
+    ownerId: {
       type: Schema.Types.ObjectId,
       ref: "Owner",
     },
