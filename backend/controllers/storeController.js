@@ -41,23 +41,6 @@ class storeController {
   viewOrder = catchAsync(async (req, res, next) => {});
   rejectOrder = catchAsync(async (req, res, next) => {});
   acceptOrder = catchAsync(async (req, res, next) => {});
-  // Product
-  getAllProduct = catchAsync(async (req, res, next) => {});
-  addProduct = catchAsync(async (req, res, next) => {
-    // console.log(req.body);
-    req.body.store_id = req.params.storeId;
-    req.body.category = await Category.findById(req.body.categoryId);
-    const product = await Product.create(req.body);
-    res.status(201).json({
-      status: "success",
-      data: {
-        data: product,
-      },
-    });
-  });
-  viewProduct = catchAsync(async (req, res, next) => {});
-  deleteProduct = catchAsync(async (req, res, next) => {});
-  updateProduct = catchAsync(async (req, res, next) => {});
 }
 
 module.exports = new storeController();

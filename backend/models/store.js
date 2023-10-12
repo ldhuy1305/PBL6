@@ -35,6 +35,10 @@ const storeSchema = new Schema(
       type: String,
       trim: true,
     },
+    registrationLicense: {
+      type: String,
+      required: true,
+    },
     ratingAverage: {
       type: Number,
       default: 0,
@@ -43,7 +47,7 @@ const storeSchema = new Schema(
       type: String,
       default: "",
     },
-    ownerID: {
+    ownerId: {
       type: Schema.Types.ObjectId,
       ref: "Owner",
     },

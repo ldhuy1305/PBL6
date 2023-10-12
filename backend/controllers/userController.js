@@ -8,9 +8,14 @@ const authController = require("../controllers/authController");
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
-  sendEmail = authController.sendEmailVerify;
   verifiedUser = authController.verifiedSignUp(User);
-  getAllUser = handleController.getAll(User);
+  getAllUser = catchAsync(async (req, res, next) => {
+    const shippers = await User.find({
+      isVerified: true,
+      role: "User",
+    });
+    return res.status(200).json(shippers);
+  });
   getUserById = handleController.getOne(User);
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
@@ -28,13 +33,12 @@ class userController {
   });
   changePass = catchAsync(async (req, res, next) => {
     const { oldPass, newPass, confirmedPass } = req.body;
-    const user = await User.findById(req.params.id);
-
-    if (!(await user.isCorrectPassword(oldPass, user.password)))
-      next(new AppError("Invalid password", 404));
+    const user = await User.findById(req.params.id).select("+password");
 
     if (confirmedPass != newPass)
       next(new AppError("passwordConfirm: Passwords are not the same!", 404));
+    if (!(await user.isCorrectPassword(user.password, oldPass)))
+      next(new AppError("Invalid password", 404));
 
     user.password = confirmedPass;
     user.passwordConfirm = confirmedPass;
@@ -62,8 +66,6 @@ class userController {
     res.status(200).json(user);
   });
   viewOrder = catchAsync(async (req, res, next) => {});
-  forgotPassword = authController.forgotPassword(User);
-  resetPassword = authController.resetPassword(User);
 }
 
 module.exports = new userController();

@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const AppError = require("./../utils/AppError");
 const catchAsync = require("./../utils/catchAsync");
+const cloudinary = require("cloudinary").v2;
 
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -24,23 +25,51 @@ exports.postOne = (Model) =>
     res.status(201).json(created);
   });
 
-exports.delOne = (Model) =>
-  catchAsync(async (req, res, next) => {
+exports.delOne = (Model) => async (req, res, next) => {
+  try {
     const id = req.params.id;
-    const doc = await Model.findByIdAndDelete({ id });
+    const doc = await Model.findById(id).select(
+      "+behindImageCCCD +frontImageCCCD +licenseImage"
+    );
     if (!doc) {
-      return next(new AppError("Couldn't find this document", 404));
+      return next(new AppError("Couldn't find document with this id", 404));
     }
+
+    let behindImageCCCD = filenameImage(doc?.behindImageCCCD);
+    let frontImageCCCD = filenameImage(doc?.frontImageCCCD);
+    let licenseImage = filenameImage(doc?.licenseImage);
+    console.log(behindImageCCCD);
+
+    cloudinary.uploader.destroy(frontImageCCCD);
+    cloudinary.uploader.destroy(behindImageCCCD);
+    cloudinary.uploader.destroy(licenseImage);
+    await Model.findByIdAndDelete({ _id: id });
+
     res.status(201).json("Delete successfully");
-  });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const filenameImage = (url) => {
+  let parts = url.split("/");
+  let filename = parts[parts.length - 1];
+  let result = parts[parts.length - 2] + "/" + filename.split(".")[0];
+  return result;
+};
 
 exports.putOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const id = req.params.id;
-    const body = req.body;
-    const doc = await Model.findByIdAndUpdate({ id }, body);
+    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
     if (!doc) {
-      return next(new AppError("Couldn't find this document", 404));
+      return next(new AppError("No document found with that ID", 404));
     }
-    res.status(200).json(doc);
+
+    res.status(200).json({
+      data: doc,
+    });
   });

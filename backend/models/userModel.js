@@ -90,10 +90,12 @@ const userSchema = new Schema(
     },
     signUpExpires: {
       type: Date,
+      select: false,
     },
     isVerified: {
       type: Boolean,
       default: false,
+      select: false,
     },
   },
   {
@@ -112,12 +114,10 @@ userSchema.pre("save", async function(next) {
   next();
 });
 
-// userSchema.pre(/^find/, function(next) {
-//   // this points to the current query
-//   this.find({ isVerified: { $ne: false } });
-//   this.select("-__t -__v -signUpExpires -signUpToken -isVerified");
-//   next();
-// });
+userSchema.pre(/^find/, function(next) {
+  this.select("-__t -__v");
+  next();
+});
 
 userSchema.methods.isCorrectPassword = async function(
   userPassword,
@@ -136,8 +136,11 @@ userSchema.methods.createSignUpToken = function() {
 
   this.signUpToken = resetTokenHex;
 
-  this.signUpExpires = Date.now() + 60 * 60 * 1000;
-
+  this.signUpExpires = new Date(Date.now() + 60 * 60 * 1000);
+  // this.signUpExpires.setTime(
+  //   this.signUpExpires.getTime() -
+  //     this.signUpExpires.getTimezoneOffset() * 60 * 1000
+  // );
   return resetToken;
 };
 
