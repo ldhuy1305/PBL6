@@ -23,7 +23,7 @@ const shipperSchema = new mongoose.Schema({
     type: String,
   },
   //GPLX
-  licenseId: {
+  licenseNumber: {
     type: String,
     required: true,
   },

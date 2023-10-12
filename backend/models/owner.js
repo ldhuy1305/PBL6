@@ -17,10 +17,6 @@ const ownerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  registrationLicense: {
-    type: String,
-    required: true,
-  },
   isAccepted: {
     type: Boolean,
     default: false,

@@ -34,10 +34,6 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
-  isFavoured: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 module.exports = mongoose.model("Product", productSchema);
