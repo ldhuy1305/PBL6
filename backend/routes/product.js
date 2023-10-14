@@ -3,6 +3,8 @@ var router = express.Router();
 const productController = require("../controllers/productController");
 
 router.route("/").get(productController.viewProductsByCat);
+router.route("/search").get(productController.searchProduct);
+router.route("/recommend").get(productController.recommendProduct);
 router
   .route("/store/:storeId")
   .get(productController.getAllProductByStore)
@@ -11,8 +13,7 @@ router
   .route("/:id")
   .get(productController.viewProduct)
   .delete(productController.deleteProduct)
-  .put(productController.updateProduct)
-  .patch(productController.favorProduct);
+  .put(productController.updateProduct);
 
 router.get(
   "/stat/favor-product/:storeId",
@@ -26,4 +27,5 @@ router.get(
   "/stat/product-quantity/:storeId",
   productController.productQuantity
 );
+router.get("/product-by-cat/:storeId", productController.getProductByCat);
 module.exports = router;
