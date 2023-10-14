@@ -2,12 +2,22 @@ const Product = require("../models/product");
 const catchAsync = require("../utils/catchAsync");
 const Category = require("../models/category");
 const handleController = require("./handleController");
+const ApiFeatures = require("../utils/ApiFeatures");
 class ProductController {
   // get All Product by Store
   getAllProductByStore = catchAsync(async (req, res, next) => {
-    const products = await Product.find({ storeId: req.params.storeId });
+    const features = new ApiFeatures(
+      Product.find({ storeId: req.params.storeId }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const products = await features.query;
     res.status(200).json({
       status: "success",
+      length: products.length,
       data: {
         data: products,
       },
@@ -55,19 +65,6 @@ class ProductController {
       },
     });
   });
-  // Favor Product
-  favorProduct = catchAsync(async (req, res, next) => {
-    const product = await Product.findById(req.params.id);
-    console.log(product);
-    product.isFavoured = !product.isFavoured;
-    await product.save();
-    res.status(200).json({
-      status: "success",
-      data: {
-        data: product,
-      },
-    });
-  });
   // View Products by Category
   viewProductsByCat = catchAsync(async (req, res, next) => {
     const products = await Product.find({
@@ -82,11 +79,13 @@ class ProductController {
   });
   // Count product by storeId
   productQuantity = catchAsync(async (req, res, next) => {
-    const products = await Product.find({ storeId: req.params.storeId });
+    const totalProducts = await Product.countDocuments({
+      storeId: req.params.storeId,
+    });
     res.status(200).json({
       status: "success",
       data: {
-        data: products.length,
+        data: totalProducts,
       },
     });
   });
@@ -103,6 +102,39 @@ class ProductController {
       status: "success",
       data: {
         data: products.length,
+      },
+    });
+  });
+  searchProduct = catchAsync(async (req, res, next) => {
+    const products = await Product.find({
+      name: { $regex: req.query.search, $options: "i" },
+    }).sort("-ratingAverage");
+    res.status(200).json({
+      status: "success",
+      data: {
+        data: products,
+      },
+    });
+  });
+  recommendProduct = catchAsync(async (req, res, next) => {});
+  getProductByCat = catchAsync(async (req, res, next) => {
+    const storeId = req.params.storeId;
+    const products = await Product.find({ storeId: storeId }).aggregate([
+      // { $unwind: "$category" },
+      {
+        $group: {
+          _id: null,
+          // name: "$category",
+          productCount: { $sum: 1 },
+          // productName: { $push: "$name" },
+        },
+      },
+    ]);
+    res.status(200).json({
+      status: "success",
+      length: products.length,
+      data: {
+        data: products,
       },
     });
   });

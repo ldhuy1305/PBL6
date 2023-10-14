@@ -6,8 +6,8 @@ const storeRoute = require("./store");
 const ownerRoute = require("./owner");
 const productRoute = require("./product");
 const categoryRoute = require("./category");
-
-// const storeRoute = require('./store');
+const favouriteRoute = require("./favourite");
+const globalErrorHandler = require("../controllers/errorController");
 function route(app) {
   // app.use('/admin',adminRoute);
   app.use("/api/shipper", shipperRoute);
@@ -17,5 +17,10 @@ function route(app) {
   app.use("/api/owner", ownerRoute);
   app.use("/api/product", productRoute);
   app.use("/api/category", categoryRoute);
+  app.use("/api/favourite", favouriteRoute);
+  app.all("*", (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  });
+  app.use(globalErrorHandler);
 }
 module.exports = route;
