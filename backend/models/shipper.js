@@ -8,12 +8,12 @@ const shipperSchema = new mongoose.Schema({
   },
   frontImageCCCD: {
     type: String,
-    required: true,
+    required: [true, "Phía trước CCCD là bắt buộc"],
     select: false,
   },
   behindImageCCCD: {
     type: String,
-    required: true,
+    required: [true, "Phía sau CCCD là bắt buộc"],
     select: false,
   },
   status: {
@@ -27,25 +27,25 @@ const shipperSchema = new mongoose.Schema({
   //GPLX
   licenseNumber: {
     type: String,
-    required: true,
+    required: [true, "Mã giấy phép lái xe là bắt buộc"],
   },
   licenseImage: {
     type: String,
-    required: true,
+    required: [true, "Hình ảnh giấy phép lái xe là bắt buộc"],
     select: false,
   },
   //vehicle
   vehicleNumber: {
     type: String,
-    required: true,
+    required: [true, "Biển số xe là bắt buộc"],
   },
   vehicleType: {
     type: String,
-    required: true,
+    required: [true, "Loại xe là bắt buộc"],
   },
   vehicleLicense: {
     type: String,
-    require: true,
+    require: [true, "Giấy tờ xe là bắt buộc"],
   },
   isAccepted: {
     type: Boolean,

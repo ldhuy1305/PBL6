@@ -3,20 +3,20 @@ const User = require("./userModel");
 const ownerSchema = new mongoose.Schema({
   bankName: {
     type: String,
-    required: true,
+    required: [true, "Tên ngân hàng là bắt buộc"],
   },
   bankNumber: {
     type: String,
-    required: true,
+    required: [true, "Số tài khoản là bắt buộc"],
   },
   frontImageCCCD: {
     type: String,
-    required: true,
+    required: [true, "Phía trước CCCD là bắt buộc"],
     select: false,
   },
   behindImageCCCD: {
     type: String,
-    required: true,
+    required: [true, "Phía sau CCCD là bắt buộc"],
   },
   isAccepted: {
     type: Boolean,
