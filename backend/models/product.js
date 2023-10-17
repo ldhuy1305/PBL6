@@ -4,7 +4,7 @@ const productSchema = new Schema({
   category: {
     catName: {
       type: String,
-      required: true,
+      required: [true, "Tên danh mục là bắt buộc"],
     },
   },
   storeId: {
@@ -14,11 +14,11 @@ const productSchema = new Schema({
   },
   name: {
     type: String,
-    required: true,
+    required: [true, "Tên sản phẩm là bắt buộc"],
   },
   images: {
     type: String,
-    required: true,
+    required: [true, "Hình ảnh là bắt buộc"],
   },
   price: {
     type: Number,
@@ -32,7 +32,7 @@ const productSchema = new Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: [true, "Mô tả sản phẩm là bắt buộc"],
   },
 });
 

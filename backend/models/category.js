@@ -5,7 +5,7 @@ const categorySchema = new Schema(
   {
     catName: {
       type: String,
-      required: true,
+      required: [true, "Tên danh mục là bắt buộc"],
       unique: true,
     },
   },

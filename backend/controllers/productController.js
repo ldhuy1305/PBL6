@@ -3,6 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const Category = require("../models/category");
 const handleController = require("./handleController");
 const ApiFeatures = require("../utils/ApiFeatures");
+const AppError = require("../utils/AppError");
 class ProductController {
   // get All Product by Store
   getAllProductByStore = catchAsync(async (req, res, next) => {
@@ -29,8 +30,7 @@ class ProductController {
     let cat = await Category.findOne({
       catName: req.body.catName,
     });
-    if (cat == null) cat = await Category.create({ catName: req.body.catName });
-    req.body.category = cat;
+    if (!cat) return new AppError("Không tìm thấy tên danh mục", 404);
     const product = await Product.create(req.body);
     res.status(201).json({
       status: "success",
@@ -43,9 +43,9 @@ class ProductController {
   deleteProduct = catchAsync(async (req, res, next) => {
     const product = await Product.findByIdAndDelete({ _id: req.params.id });
     if (!product) {
-      return next(new AppError("Couldn't find this document", 404));
+      return next(new AppError("Không thể tìm thấy sản phẩm", 404));
     }
-    res.status(201).json("Delete successfully");
+    res.status(201).json("Đã xoá thành công");
   });
   updateProduct = catchAsync(async (req, res, next) => {
     let cat = await Category.findOne({

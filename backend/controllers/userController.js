@@ -32,19 +32,21 @@ class userController {
     res.status(200).json(user);
   });
   changePass = catchAsync(async (req, res, next) => {
+    // const { newPass, confirmedPass } = req.body;
+    // const user = await User.findById(req.params.id).select("+password");
+
     const { oldPass, newPass, confirmedPass } = req.body;
     const user = await User.findById(req.params.id).select("+password");
-
     if (confirmedPass != newPass)
-      next(new AppError("passwordConfirm: Passwords are not the same!", 404));
+      next(new AppError("Mật khẩu xác nhận không trùng khớp!", 404));
     if (!(await user.isCorrectPassword(user.password, oldPass)))
-      next(new AppError("Invalid password", 404));
+      next(new AppError("Mật khẩu không đúng", 404));
 
     user.password = confirmedPass;
     user.passwordConfirm = confirmedPass;
 
     await user.save();
-    jwtToken.generateAndSendJWTToken(user, 201, res);
+    // jwtToken.generateAndSendJWTToken(user, 201, res);
   });
   delContact = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);

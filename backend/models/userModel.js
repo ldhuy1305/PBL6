@@ -15,52 +15,52 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       unique: true,
-      required: [true, "Email is required"],
+      required: [true, "Email là bắt buộc"],
       validate: {
         validator: (value) => {
           return /^([\w-.]{3,})+@([\w-.]{3,15})+.([a-zA-Z]{2,3})$/.test(value);
         },
-        message: (problem) => `${problem.value} is not valid`,
+        message: (problem) => `${problem.value} không hợp lệ`,
       },
     },
     firstName: {
       type: String,
       trim: true,
-      required: [true, "Name is required"],
+      required: [true, "Tên là bắt buộc"],
       validate: {
         validator: (value) => {
           return /^[a-zA-Z]{2,15}$/.test(value);
         },
-        message: (problem) => `${problem.value} is not a valid first name`,
+        message: (problem) => `${problem.value} không hợp lệ`,
       },
     },
     lastName: {
       type: String,
       trim: true,
-      required: [true, "Name is required"],
+      required: [true, "Họ là bắt buộc"],
       validate: {
         validator: (value) => {
           return /^[a-zA-Z]{2,15}$/.test(value);
         },
-        message: (problem) => `${problem.value} is not a valid last name`,
+        message: (problem) => `${problem.value} không hợp lệ`,
       },
     },
     password: {
       type: String,
       trim: true,
-      required: [true, "Password is required"],
+      required: [true, "Mật khẩu là bắt buộc"],
       minLength: 7,
       select: false,
     },
     passwordConfirm: {
       type: String,
-      required: [true, "Please confirm your password"],
+      required: [true, "Vui lòng xác nhận mật khẩu"],
       validate: {
         // This only works on CREATE and SAVE!!!
         validator: function(el) {
           return el === this.password;
         },
-        message: "Passwords are not the same!",
+        message: "Mật khẩu không trùng khớp!",
       },
     },
     contact: [
@@ -72,12 +72,14 @@ const userSchema = new Schema(
             validator: (value) => {
               return /^[0-9]{10}$/.test(value);
             },
-            message: (problem) => `${problem.value} is not a valid last name`,
+            message: (problem) => `${problem.value} không hợp lệ`,
           },
+          required: [true, "Số điện thoại là bắt buộc"],
         },
         address: {
           type: String,
           trim: true,
+          required: [true, "Địa chỉ là bắt buộc"],
         },
       },
     ],

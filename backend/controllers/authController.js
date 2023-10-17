@@ -6,21 +6,27 @@ const jwtToken = require("../utils/jwtToken");
 const cloudinary = require("cloudinary").v2;
 const crypto = require("crypto");
 const Email = require("../utils/email");
+const jwt = require("jsonwebtoken");
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new AppError("please enter an email and password", 400));
+    return next(new AppError("Vui lòng nhập email và mật khẩu", 400));
   }
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    return next(new AppError("invalid email", 401));
+    return next(new AppError("Email không hợp lệ", 401));
   }
   if (!(await user.isCorrectPassword(user.password, password))) {
-    return next(new AppError("invalid password", 401));
+    return next(new AppError("Mật khẩu không hợp lệ", 401));
   }
   jwtToken.generateAndSendJWTToken(user, 200, res);
 });
-
+exports.logout = catchAsync(async (req, res, next) => {
+  res
+    .clearCookie("jwt")
+    .status(200)
+    .json({ message: "Đăng xuất thành công" });
+});
 exports.signUp = (Model, role) => async (req, res, next) => {
   try {
     let body = {
@@ -64,7 +70,7 @@ exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   try {
     await new Email(doc, signUpToken, null).sendWelcome();
     res.status(200).json({
-      message: "Token sent to email!",
+      message: "Mã đã được gửi đến email!",
     });
   } catch (err) {
     doc.signUpToken = undefined;
@@ -72,7 +78,7 @@ exports.sendEmailVerify = catchAsync(async (req, res, next) => {
     await doc.save({ validateBeforeSave: false });
 
     return next(
-      new AppError("There was an error sending the email. Try again later!"),
+      new AppError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
       500
     );
   }
@@ -94,7 +100,7 @@ exports.verifiedSignUp = (Model) =>
       doc.signUpToken !== hashedToken ||
       !doc.signUpExpires > Date.now()
     ) {
-      return next(new AppError("Token is invalid or has expired", 400));
+      return next(new AppError("Mã không hợp lệ hoặc đã hết hạn", 400));
     }
     doc.isVerified = true;
     doc.signUpToken = undefined;
@@ -103,7 +109,7 @@ exports.verifiedSignUp = (Model) =>
     await doc.save({ validateBeforeSave: false });
 
     res.status(200).json({
-      message: "Sign up successfully",
+      message: "Đăng kí thành công!",
     });
   });
 
@@ -111,7 +117,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
   const doc = await User.findOne({ email: req.body.email });
   if (!doc) {
-    return next(new AppError("There is no account with email address", 404));
+    return next(
+      new AppError("Không tồn tại người dùng với địa chỉ email!", 404)
+    );
   }
   // 2) Generate the random reset token
   const resetToken = doc.createSignUpToken();
@@ -120,7 +128,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
     await new Email(doc, resetToken, url).sendPasswordReset();
     res.status(200).json({
-      message: "Token sent to email!",
+      message: "Mã đã được gửi đến email!",
     });
   } catch (error) {
     doc.signUpResetExpires = undefined;
@@ -128,7 +136,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await doc.save({ validateBeforeSave: false });
 
     return next(
-      new AppError("There was an error sending the email. Try again later!"),
+      new AppError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
       500
     );
   }
@@ -148,7 +156,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     doc.signUpToken !== hashedToken ||
     !doc.signUpExpires > Date.now()
   ) {
-    return next(new AppError("Token is invalid or has expired", 400));
+    return next(new AppError("Mã không hợp lệ hoặc đã hết hạn", 400));
   }
 
   // 2) If token has not expired, and there is doc, set the new password
@@ -160,7 +168,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await doc.save();
 
   res.status(200).json({
-    message: "Reset password successfully. Please login again.",
+    message: "Đặt lại mật khẩu thành công. Xin vui lòng đăng nhập lại!",
   });
 });
 
@@ -179,9 +187,34 @@ exports.verifiedToken = catchAsync(async (req, res, next) => {
     doc.signUpToken !== hashedToken ||
     !doc.signUpExpires > Date.now()
   ) {
-    return next(new AppError("Token is invalid or has expired", 400));
+    return next(new AppError("Mã không hợp lệ hoặc đã hết hạn", 400));
   }
   res.status(200).json({
-    message: "Your token is correct. Please reset your password",
+    message: "Mã của bạn là chính xác. Hãy đặt lại mật khẩu của bạn!",
   });
 });
+exports.protect = catchAsync(async (req, res, next) => {
+  //1. Read the token & check if it exists
+
+  const token = req.cookies.jwt;
+  if (!token) {
+    return next(new AppError("Người dùng chưa đăng nhập!", 403));
+  }
+  // 2. validate the token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // 3. If the user is exits
+  const user = await User.findById(decoded.id);
+  if (!user) {
+    return next(new AppError("Người dùng không tồn tại!", 401));
+  }
+  // 4. Allow the user to access routes
+  req.user = user;
+  next();
+});
+exports.restrict = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role))
+      next(new AppError("Bạn không có quyền thực hiện yêu cầu này.", 403));
+    next();
+  };
+};
