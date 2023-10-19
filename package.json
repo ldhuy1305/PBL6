@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f .env nodemon index.js",
+    "start": "env-cmd -f .env nodemon backend/index.js",
     "start_dev": "SET NODE_ENV=development& nodemon index.js",
     "start_prod": "SET NODE_ENV=production& nodemon index.js",
     "debug": "ndb server.js"
