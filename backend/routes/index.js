@@ -19,7 +19,7 @@ function route(app) {
   app.use("/api/category", categoryRoute);
   app.use("/api/favourite", favouriteRoute);
   app.all("*", (req, res, next) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+    next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));
   });
   app.use(globalErrorHandler);
 }

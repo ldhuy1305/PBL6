@@ -1,6 +1,6 @@
 const { promisify } = require("util");
 const User = require("../models/userModel");
-const AppError = require("../utils/AppError");
+const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
 const cloudinary = require("cloudinary").v2;
@@ -10,22 +10,19 @@ const jwt = require("jsonwebtoken");
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new AppError("Vui lòng nhập email và mật khẩu", 400));
+    return next(new appError("Vui lòng nhập email và mật khẩu", 400));
   }
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    return next(new AppError("Email không hợp lệ", 401));
+    return next(new appError("Email không hợp lệ", 401));
   }
   if (!(await user.isCorrectPassword(user.password, password))) {
-    return next(new AppError("Mật khẩu không hợp lệ", 401));
+    return next(new appError("Mật khẩu không hợp lệ", 401));
   }
   jwtToken.generateAndSendJWTToken(user, 200, res);
 });
 exports.logout = catchAsync(async (req, res, next) => {
-  res
-    .clearCookie("jwt")
-    .status(200)
-    .json({ message: "Đăng xuất thành công" });
+  res.clearCookie("jwt").status(200).json({ message: "Đăng xuất thành công" });
 });
 exports.signUp = (Model, role) => async (req, res, next) => {
   try {
@@ -78,7 +75,7 @@ exports.sendEmailVerify = catchAsync(async (req, res, next) => {
     await doc.save({ validateBeforeSave: false });
 
     return next(
-      new AppError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
+      new appError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
       500
     );
   }
@@ -87,10 +84,7 @@ exports.verifiedSignUp = (Model) =>
   catchAsync(async (req, res, next) => {
     // 1) Get user based on the token
     const code = req.body.signUpToken.toString();
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(code)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(code).digest("hex");
     const doc = await Model.findOne({ email: req.params.email }).select(
       "+signUpExpires"
     );
@@ -100,7 +94,7 @@ exports.verifiedSignUp = (Model) =>
       doc.signUpToken !== hashedToken ||
       !doc.signUpExpires > Date.now()
     ) {
-      return next(new AppError("Mã không hợp lệ hoặc đã hết hạn", 400));
+      return next(new appError("Mã không hợp lệ hoặc đã hết hạn", 400));
     }
     doc.isVerified = true;
     doc.signUpToken = undefined;
@@ -118,7 +112,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const doc = await User.findOne({ email: req.body.email });
   if (!doc) {
     return next(
-      new AppError("Không tồn tại người dùng với địa chỉ email!", 404)
+      new appError("Không tồn tại người dùng với địa chỉ email!", 404)
     );
   }
   // 2) Generate the random reset token
@@ -136,7 +130,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await doc.save({ validateBeforeSave: false });
 
     return next(
-      new AppError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
+      new appError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
       500
     );
   }
@@ -156,7 +150,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     doc.signUpToken !== hashedToken ||
     !doc.signUpExpires > Date.now()
   ) {
-    return next(new AppError("Mã không hợp lệ hoặc đã hết hạn", 400));
+    return next(new appError("Mã không hợp lệ hoặc đã hết hạn", 400));
   }
 
   // 2) If token has not expired, and there is doc, set the new password
@@ -187,7 +181,7 @@ exports.verifiedToken = catchAsync(async (req, res, next) => {
     doc.signUpToken !== hashedToken ||
     !doc.signUpExpires > Date.now()
   ) {
-    return next(new AppError("Mã không hợp lệ hoặc đã hết hạn", 400));
+    return next(new appError("Mã không hợp lệ hoặc đã hết hạn", 400));
   }
   res.status(200).json({
     message: "Mã của bạn là chính xác. Hãy đặt lại mật khẩu của bạn!",
@@ -198,14 +192,14 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const token = req.cookies.jwt;
   if (!token) {
-    return next(new AppError("Người dùng chưa đăng nhập!", 403));
+    return next(new appError("Người dùng chưa đăng nhập!", 403));
   }
   // 2. validate the token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   // 3. If the user is exits
   const user = await User.findById(decoded.id);
   if (!user) {
-    return next(new AppError("Người dùng không tồn tại!", 401));
+    return next(new appError("Người dùng không tồn tại!", 401));
   }
   // 4. Allow the user to access routes
   req.user = user;
@@ -214,7 +208,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.restrict = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role))
-      next(new AppError("Bạn không có quyền thực hiện yêu cầu này.", 403));
+      next(new appError("Bạn không có quyền thực hiện yêu cầu này.", 403));
     next();
   };
 };

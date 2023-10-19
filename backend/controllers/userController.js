@@ -1,5 +1,5 @@
 const User = require("../models/userModel");
-const AppError = require("../utils/AppError");
+const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
@@ -38,9 +38,9 @@ class userController {
     const { oldPass, newPass, confirmedPass } = req.body;
     const user = await User.findById(req.params.id).select("+password");
     if (confirmedPass != newPass)
-      next(new AppError("Mật khẩu xác nhận không trùng khớp!", 404));
+      next(new appError("Mật khẩu xác nhận không trùng khớp!", 404));
     if (!(await user.isCorrectPassword(user.password, oldPass)))
-      next(new AppError("Mật khẩu không đúng", 404));
+      next(new appError("Mật khẩu không đúng", 404));
 
     user.password = confirmedPass;
     user.passwordConfirm = confirmedPass;

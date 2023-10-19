@@ -1,4 +1,4 @@
-const AppError = require("../utils/AppError");
+const appError = require("../utils/appError");
 require("dotenv").config();
 const devErrors = (res, err) => {
   res.status(err.statusCode).json({
@@ -11,26 +11,26 @@ const devErrors = (res, err) => {
 const castErrorHandler = (err) => {
   const message = `Không hợp lệ cho ${err.path}: ${err.value}.`;
   console.log(message);
-  return new AppError(message, 400);
+  return new appError(message, 400);
 };
 const duplicateKeyErrorHandler = (err) => {
   const key = Object.keys(err.keyValue);
   const value = err.keyValue[key];
   const message = `Đã tồn tại giá trị ${value} cho trường ${key}. Vui lòng nhập giá trị khác!`;
-  return new AppError(message, 400);
+  return new appError(message, 400);
 };
 const validationErrorHandler = (err) => {
   const errors = Object.values(err.errors).map((val) => val.message);
   const message = `Dữ liệu đầu vào không hợp lệ: ${errors.join(". ")}`;
-  return new AppError(message, 400);
+  return new appError(message, 400);
 };
 const expiredJWTHandler = () => {
   const message = `Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!`;
-  return new AppError(message, 400);
+  return new appError(message, 400);
 };
 const JWTErrorHandler = () => {
   const message = `Đăng nhập không hợp lệ. Vui lòng đăng nhập lại!`;
-  return new AppError(message, 400);
+  return new appError(message, 400);
 };
 const prodErrors = (res, err) => {
   if (err.isOperational) {

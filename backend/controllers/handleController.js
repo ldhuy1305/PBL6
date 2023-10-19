@@ -1,5 +1,5 @@
 const { ObjectId } = require("mongodb");
-const AppError = require("./../utils/AppError");
+const appError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 const cloudinary = require("cloudinary").v2;
 
@@ -8,7 +8,7 @@ exports.getOne = (Model) =>
     const id = req.params.id;
     const doc = await Model.findById(id);
     if (!doc) {
-      return next(new AppError("Couldn't find this document", 404));
+      return next(new appError("Couldn't find this document", 404));
     }
     res.status(200).json(doc);
   });
@@ -32,7 +32,7 @@ exports.delOne = (Model) => async (req, res, next) => {
       "+behindImageCCCD +frontImageCCCD +licenseImage"
     );
     if (!doc) {
-      return next(new AppError("Couldn't find document with this id", 404));
+      return next(new appError("Couldn't find document with this id", 404));
     }
 
     let behindImageCCCD = filenameImage(doc?.behindImageCCCD);
@@ -66,7 +66,7 @@ exports.putOne = (Model) =>
     });
 
     if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+      return next(new appError("No document found with that ID", 404));
     }
 
     res.status(200).json({
