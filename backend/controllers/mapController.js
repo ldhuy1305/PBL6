@@ -47,50 +47,29 @@ class mapController {
     });
     return response.data;
   };
-  getGeoCode = catchAsync(async (req, res, next) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-      req.query.address
-    )}&key=${API_KEY}`;
-
-    const k = await getCode(
-      "193 Nguyễn Lương Bằng, Hoà Khánh Bắc, Liên Chiểu, Đà Nẵng 550000, Việt Nam"
-    );
-    console.log(k);
-    return axios
-      .get(url)
-      .then((data) => {
-        res.status(200).json({
-          status: "success",
-          data: data.data.results[0].geometry.location,
-        });
-      })
-      .catch((err) => {
-        next(err);
-      });
+  viewGeoCode = catchAsync(async (req, res, next) => {
+    const data = await getGeoCode(req.query.address);
+    if (!data) next(new appError("Không tìm thấy địa chỉ", 404));
+    res.status(200).json({
+      status: "success",
+      data,
+    });
   });
 
-  getAddress = catchAsync(async (req, res, next) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.query.latlng}&key=${API_KEY}`;
-
-    return axios
-      .get(url)
-      .then((data) => {
-        res.status(200).json({
-          status: "success",
-          data: data.data.results[0].formatted_address,
-        });
-      })
-      .catch((err) => {
-        next(err);
-      });
+  viewAddress = catchAsync(async (req, res, next) => {
+    const data = await getAddress(req.query.latlng);
+    if (!data) next(new appError("Không tìm thấy địa chỉ", 404));
+    res.status(200).json({
+      status: "success",
+      data,
+    });
   });
-  getDistance = catchAsync(async (req, res, next) => {
-    const { destination, origin } = req.query;
-    const url = `https://maps.googleapis.com/maps/api/directions/json
-      ?destinations=${encodeURIComponent(destination)}
-      &origins=${encodeURIComponent(origin)}
-      &units=imperial
-      &key=${API_KEY}`;
+  viewDistance = catchAsync(async (req, res, next) => {
+    let { destination, origin } = req.query;
+    destination = await getPlaceId(destination);
+    origin = await getPlaceId(origin);
+    const url = `https://maps.googleapis.com/maps/api/directions/json?destination=place_id:${destination}&origin=place_id:${origin}&units=imperial&key=${API_KEY}`;
+    console.log(url);
     return axios
       .get(url)
       .then((data) => {
@@ -104,17 +83,32 @@ class mapController {
       });
   });
 }
-getCode = async (address) => {
+getGeoCode = async (address) => {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
     address
   )}&key=${API_KEY}`;
+  const response = await axios.get(url);
 
-  const res = await axios
-    .get(url)
-    .then((data) => {
-      console.log(data.data.results[0].geometry.location);
-      return data.data.results[0].geometry.location;
-    })
-    .catch();
+  if (response.data.status === "OK") {
+    return response.data.results[0].geometry.location;
+  }
+};
+getAddress = async (latlng) => {
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng}&key=${API_KEY}`;
+  const response = await axios.get(url);
+
+  if (response.data.status === "OK") {
+    return response.data.results[0].formatted_address;
+  }
+};
+getPlaceId = async (address) => {
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+    address
+  )}&key=${API_KEY}`;
+  const response = await axios.get(url);
+
+  if (response.data.status === "OK") {
+    return response.data.results[0].place_id;
+  }
 };
 module.exports = new mapController();
