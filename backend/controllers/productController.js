@@ -27,11 +27,10 @@ class ProductController {
   // add Product to Store
   addProduct = catchAsync(async (req, res, next) => {
     req.body.storeId = req.params.storeId;
-    let cat = await Category.findOne({
-      catName: req.body.catName,
-    });
+    const catName = req.body.catName;
+    let cat = await Category.findOne({ catName });
     if (!cat) return new appError("Không tìm thấy tên danh mục", 404);
-    const product = await Product.create(req.body);
+    product = await Product.create(req.body);
     res.status(201).json({
       status: "success",
       data: {
