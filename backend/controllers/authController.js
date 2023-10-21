@@ -22,7 +22,10 @@ exports.login = catchAsync(async (req, res, next) => {
   jwtToken.generateAndSendJWTToken(user, 200, res);
 });
 exports.logout = catchAsync(async (req, res, next) => {
-  res.clearCookie("jwt").status(200).json({ message: "Đăng xuất thành công" });
+  res
+    .clearCookie("jwt")
+    .status(200)
+    .json({ message: "Đăng xuất thành công" });
 });
 exports.signUp = (Model, role) => async (req, res, next) => {
   try {
@@ -84,7 +87,10 @@ exports.verifiedSignUp = (Model) =>
   catchAsync(async (req, res, next) => {
     // 1) Get user based on the token
     const code = req.body.signUpToken.toString();
-    const hashedToken = crypto.createHash("sha256").update(code).digest("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(code)
+      .digest("hex");
     const doc = await Model.findOne({ email: req.params.email }).select(
       "+signUpExpires"
     );
