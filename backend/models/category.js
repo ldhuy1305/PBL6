@@ -1,13 +1,20 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const categorySchema = new Schema({
-  id: {
-    type: Schema.Types.ObjectId,
+const categorySchema = new Schema(
+  {
+    catName: {
+      type: String,
+      required: [true, "Tên danh mục là bắt buộc"],
+      unique: true,
+    },
   },
-  name: {
-    type: String,
-    required: true,
-  },
+  {
+    versionKey: false,
+  }
+);
+categorySchema.pre(/^find/, function(next) {
+  this.select("-__v");
+  next();
 });
 module.exports = mongoose.model("Category", categorySchema);

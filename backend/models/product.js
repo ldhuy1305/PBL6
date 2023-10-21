@@ -1,26 +1,25 @@
 const mongoose = require("mongoose");
-
+const Schema = mongoose.Schema;
 const productSchema = new Schema({
-  id: {
+  category: {
+    catName: {
+      type: String,
+      required: [true, "Tên danh mục là bắt buộc"],
+    },
+  },
+  storeId: {
     type: Schema.Types.ObjectId,
-  },
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-    required: true,
-  },
-  store_id: {
-    type: mongoose.Schema.Types.ObjectId,
     ref: "Store",
     required: true,
   },
   name: {
     type: String,
-    required: true,
+    unique: true,
+    required: [true, "Tên sản phẩm là bắt buộc"],
   },
   images: {
     type: String,
-    required: true,
+    required: [true, "Hình ảnh là bắt buộc"],
   },
   price: {
     type: Number,
@@ -34,7 +33,11 @@ const productSchema = new Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: [true, "Mô tả sản phẩm là bắt buộc"],
+  },
+  isOutofOrder: {
+    type: Boolean,
+    default: true,
   },
 });
 

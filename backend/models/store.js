@@ -3,13 +3,10 @@ const Schema = mongoose.Schema;
 
 const storeSchema = new Schema(
   {
-    id: {
-      type: Schema.Types.ObjectId,
-    },
     name: {
       type: String,
       trim: true,
-      required: [true, "Store name is required"],
+      required: [true, "Tên cửa hàng là bắt buộc"],
     },
     phoneNumber: {
       type: String,
@@ -18,25 +15,29 @@ const storeSchema = new Schema(
         validator: (value) => {
           return /^[0-9]{10}$/.test(value);
         },
-        message: (problem) => `${problem.value} is not a valid phone number`,
+        message: (problem) => `${problem.value} không hợp lệ`,
       },
     },
     address: {
       type: String,
       trim: true,
-      required: [true, "Store address is required"],
+      required: [true, "Địa chỉ là bắt buộc"],
     },
     openAt: {
-      type: Date,
-      required: [true, "Store opening time is required"],
+      type: String,
+      required: [true, "Thời gian mở cửa là bắt buộc"],
     },
     closeAt: {
-      type: Date,
-      required: [true, "Store closing time is required"],
+      type: String,
+      required: [true, "Thời gian đóng cửa là bắt buộc"],
     },
     description: {
       type: String,
       trim: true,
+    },
+    registrationLicense: {
+      type: String,
+      required: true,
     },
     ratingAverage: {
       type: Number,
@@ -44,11 +45,19 @@ const storeSchema = new Schema(
     },
     images: {
       type: String,
+      default: "",
+    },
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      ref: "Owner",
+    },
+    isLocked: {
+      type: Boolean,
+      default: false,
     },
   },
   {
     timestamps: true,
   }
 );
-
 module.exports = mongoose.model("Store", storeSchema);

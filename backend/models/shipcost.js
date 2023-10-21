@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 const shipCostSchema = new Schema({
-  id: {
-    type: Schema.ObjectId.String,
-  },
   stoe: {
     type: Number,
     required: true,

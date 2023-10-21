@@ -1,26 +1,29 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const User = mongoose.User;
-const ownerSchema = new Schema({
-  accountNumber: {
+const User = require("./userModel");
+const ownerSchema = new mongoose.Schema({
+  bankName: {
     type: String,
-    required: true,
+    required: [true, "Tên ngân hàng là bắt buộc"],
   },
-  registrationLicense: {
+  bankNumber: {
     type: String,
-    required: true,
+    required: [true, "Số tài khoản là bắt buộc"],
   },
-  storeID: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Store",
-    },
-  ],
-  status: {
+  frontImageCCCD: {
+    type: String,
+    required: [true, "Phía trước CCCD là bắt buộc"],
+    select: false,
+  },
+  behindImageCCCD: {
+    type: String,
+    required: [true, "Phía sau CCCD là bắt buộc"],
+  },
+  isAccepted: {
     type: Boolean,
     default: false,
   },
 });
-ownerSchema.add(User.Schema);
 
-module.exports = mongoose.model("Owner", ownerSchema);
+const Owner = User.discriminator("Owner", ownerSchema);
+
+module.exports = Owner;
