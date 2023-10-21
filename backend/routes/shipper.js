@@ -13,7 +13,7 @@ router
 router
   .route("/:id")
   .get(shipperController.getShipperById)
-  .put(shipperController.updateShipper)
+  .patch(shipperController.updatePhoto, shipperController.updateShipper)
   .delete(shipperController.deleteShipper);
 
 router.route("/:email").post(shipperController.verifiedSignUp);

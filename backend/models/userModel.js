@@ -5,6 +5,10 @@ const crypto = require("crypto");
 
 const userSchema = new Schema(
   {
+    photo: {
+      type: String,
+      default: process.env.DEFAULT_AVATAR,
+    },
     role: {
       type: String,
       trim: true,
@@ -90,6 +94,11 @@ const userSchema = new Schema(
     },
     signUpExpires: {
       type: Date,
+      default: Date.now,
+      index: {
+        expireAfterSeconds: 10,
+        partialFilterExpression: { isVerified: false },
+      },
       select: false,
     },
     isVerified: {
@@ -136,11 +145,7 @@ userSchema.methods.createSignUpToken = function() {
 
   this.signUpToken = resetTokenHex;
 
-  this.signUpExpires = new Date(Date.now() + 60 * 60 * 1000);
-  // this.signUpExpires.setTime(
-  //   this.signUpExpires.getTime() -
-  //     this.signUpExpires.getTimezoneOffset() * 60 * 1000
-  // );
+  this.signUpExpires = new Date(Date.now() + 30 * 1000);
   return resetToken;
 };
 

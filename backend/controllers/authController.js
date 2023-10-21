@@ -6,6 +6,9 @@ const jwtToken = require("../utils/jwtToken");
 const cloudinary = require("cloudinary").v2;
 const crypto = require("crypto");
 const Email = require("../utils/email");
+const passport = require("passport");
+const { generateAndSendJWTToken } = require("../utils/jwtToken");
+
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -54,22 +57,24 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         );
       });
     }
-    next(err);
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
+  console.log(doc, signUpToken);
   try {
-    await new Email(doc, signUpToken, null).sendWelcome();
+    await new Email(doc, signUpToken).sendWelcome();
     res.status(200).json({
       message: "Token sent to email!",
     });
   } catch (err) {
-    doc.signUpToken = undefined;
-    doc.signUpResetExpires = undefined;
-    await doc.save({ validateBeforeSave: false });
+    // doc.signUpToken = undefined;
+    // doc.signUpResetExpires = undefined;
+    // await doc.save({ validateBeforeSave: false });
+    await User.findByIdAndDelete(doc._id);
 
     return next(
       new AppError("There was an error sending the email. Try again later!"),
@@ -117,8 +122,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = doc.createSignUpToken();
   await doc.save({ validateBeforeSave: false });
   try {
-    const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
-    await new Email(doc, resetToken, url).sendPasswordReset();
+    // const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
+    await new Email(doc, resetToken).sendPasswordReset();
     res.status(200).json({
       message: "Token sent to email!",
     });
@@ -184,4 +189,20 @@ exports.verifiedToken = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: "Your token is correct. Please reset your password",
   });
+});
+
+exports.googleLogin = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+exports.googleLoginCallback = passport.authenticate("google", {
+  failureRedirect: "/login",
+});
+
+exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {
+  generateAndSendJWTToken(req.user, 200, res);
+});
+
+exports.logout = catchAsync((req, res, next) => {
+  res.cookie("jwt", "", { expires: new Date(Date.now() - 10 * 1000) });
+  res.status(200).json({ status: "success" });
 });

@@ -10,6 +10,7 @@ const favouriteRoute = require("./favourite");
 const globalErrorHandler = require("../controllers/errorController");
 function route(app) {
   // app.use('/admin',adminRoute);
+
   app.use("/api/shipper", shipperRoute);
   app.use("/api/auth", authRoute);
   app.use("/api/user", userRoute);
@@ -18,9 +19,12 @@ function route(app) {
   app.use("/api/product", productRoute);
   app.use("/api/category", categoryRoute);
   app.use("/api/favourite", favouriteRoute);
-  app.all("*", (req, res, next) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  app.use("/", (req, res, next) => {
+    res.status(200).json({ message: "Welcome to homepage" });
   });
-  app.use(globalErrorHandler);
+  // app.all("*", (req, res, next) => {
+  //   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  // });
+  // app.use(globalErrorHandler);
 }
 module.exports = route;
