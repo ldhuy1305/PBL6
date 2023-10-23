@@ -8,6 +8,10 @@ const categorySchema = new Schema(
       required: true,
       unique: true,
     },
+    photo: {
+      type: String,
+      required: [true, "Category must be have a photo"],
+    },
   },
   {
     versionKey: false,

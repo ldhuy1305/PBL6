@@ -1,6 +1,13 @@
 const nodemailer = require("nodemailer");
 const pug = require("pug");
-const htmlToText = require("html-to-text");
+const { google } = require("googleapis");
+
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.REDIRECT_URI
+);
+oAuth2Client.setCredentials({ refresh_token: process.env.REFRESEH_TOKEN });
 
 module.exports = class Email {
   constructor(user, token) {
@@ -11,13 +18,23 @@ module.exports = class Email {
     this.token = token;
   }
 
-  newTransport() {
+  async newTransport() {
+    const accessToken = await oAuth2Client.getAccessToken();
     return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
+      service: "gmail",
+      // host: process.env.EMAIL_HOST,
+      // port: process.env.EMAIL_PORT,
+      // auth: {
+      //   user: process.env.EMAIL_USERNAME,
+      //   pass: process.env.EMAIL_PASSWORD,
+      // },
       auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
+        type: "OAuth2",
+        user: "lehonganh1903@gmail.com",
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.REFRESEH_TOKEN,
+        accessToken: accessToken,
       },
     });
   }
@@ -40,7 +57,8 @@ module.exports = class Email {
       html,
     };
     // 3) Create a transport and send email
-    await this.newTransport().sendMail(mailOptions);
+    const transport = await this.newTransport();
+    await transport.sendMail(mailOptions);
   }
 
   async sendWelcome() {

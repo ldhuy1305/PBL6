@@ -74,6 +74,7 @@ exports.sendEmailVerify = catchAsync(async (req, res, next) => {
     // doc.signUpToken = undefined;
     // doc.signUpResetExpires = undefined;
     // await doc.save({ validateBeforeSave: false });
+    console.log(err.message);
     await User.findByIdAndDelete(doc._id);
 
     return next(

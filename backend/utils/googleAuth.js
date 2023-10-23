@@ -12,7 +12,7 @@ passport.use(
       passReqToCallback: true,
     },
     async function(request, accesstoken, refreshtoken, profile, done) {
-      await User.findOne({ email: profile.emails[0].value }, async function(
+      await User.findOne({ email: profile.emails[0].value }, function(
         err,
         user
       ) {
