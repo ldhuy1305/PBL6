@@ -10,7 +10,6 @@ class categoryController {
     const body = { catName: req.body.catName, photo: req.file?.photo };
     try {
       const doc = await Category.create(body);
-      console.log(doc);
       res.status(200).json({
         data: doc,
       });

@@ -25,7 +25,8 @@ router
   .patch(
     authController.protect,
     authController.restrict("Shipper"),
-    shipperController.updatePhoto, shipperController.updateShippe
+    shipperController.updatePhoto,
+    shipperController.updateShipper
   )
   .delete(
     authController.protect,

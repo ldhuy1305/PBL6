@@ -3,7 +3,7 @@ const handleController = require("./handleController");
 const authController = require("./authController");
 const catchAsync = require("../utils/catchAsync");
 const fileUploader = require("../utils/uploadImage");
-const AppError = require("../utils/AppError");
+const appError = require("../utils/appError");
 const cloudinary = require("cloudinary").v2;
 
 exports.signUpShipper = authController.signUp(Shipper, "Shipper");
@@ -32,7 +32,7 @@ exports.updatePhoto = fileUploader.single("photo");
 exports.updateShipper = catchAsync(async (req, res, next) => {
   const shipper = await Shipper.findById({ _id: req.params.id });
   if (!shipper) {
-    return next(new AppError("No document found with that ID", 404));
+    return next(new appError("No document found with that ID", 404));
   }
   const body = {
     phoneNumber: req.body.phoneNumber,

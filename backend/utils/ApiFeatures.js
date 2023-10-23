@@ -34,7 +34,6 @@ class ApiFeatures {
     } else {
       this.query = this.query.select("-__v");
     }
-    console.log(this.queryStr);
     return this;
   }
   paginate() {
