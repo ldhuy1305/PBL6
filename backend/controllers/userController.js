@@ -46,6 +46,10 @@ class userController {
     user.passwordConfirm = confirmedPass;
 
     await user.save();
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
     // jwtToken.generateAndSendJWTToken(user, 201, res);
   });
   delContact = catchAsync(async (req, res, next) => {
