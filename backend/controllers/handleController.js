@@ -60,7 +60,15 @@ const filenameImage = (url) => {
 
 exports.putOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    if (req.file) {
+      body = {
+        ...body,
+        photo: req.file.photo?.path,
+      };
+    }
+    console.log(body);
+
+    const doc = await Model.findByIdAndUpdate(req.params.id, body, {
       new: true,
       runValidators: true,
     });
