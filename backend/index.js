@@ -5,6 +5,7 @@ const route = require("./routes");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
 
 require("./utils/googleAuth");
@@ -44,6 +45,9 @@ app.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
+    store: new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }),
   })
 );
 
