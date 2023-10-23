@@ -5,4 +5,5 @@ router.route("/").get(mapController.setAddress);
 router.route("/geocode").get(mapController.viewGeoCode);
 router.route("/address").get(mapController.viewAddress);
 router.route("/distance").get(mapController.viewDistance);
+router.route("/store").get(mapController.findStore);
 module.exports = router;
