@@ -20,7 +20,7 @@ exports.generateAndSendJWTToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_TTL * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    SameSite: strict,
+    secure: process.env.NODE_ENV === "production",
   });
   res.status(statusCode).json({
     status: "success",

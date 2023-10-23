@@ -8,7 +8,7 @@ const contactSchema = new Schema({
       validator: (value) => {
         return /^[0-9]{10}$/.test(value);
       },
-      message: (problem) => `${problem.value} is not a valid last name`,
+      message: (problem) => `${problem.value} không hợp lệ`,
     },
   },
   address: {

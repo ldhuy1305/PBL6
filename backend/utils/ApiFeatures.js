@@ -1,4 +1,4 @@
-const AppError = require("./AppError");
+const appError = require("./appError");
 class ApiFeatures {
   constructor(query, queryStr) {
     this.query = query;
@@ -45,7 +45,7 @@ class ApiFeatures {
     // if(this.queryStr.page){{
     //     const count = await this.query.countDocument();
     //     if (skip >= count){
-    //         return AppError("This page is not found",404);
+    //         return appError("This page is not found",404);
     //     }
     // }}
     return this;

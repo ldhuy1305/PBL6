@@ -13,7 +13,7 @@ router.get(
 router.get("/logout", authController.logout);
 
 router.post("/login", authController.login);
-
+router.post("/logout", authController.logout);
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/reset-password/:email", authController.resetPassword);
 router.post("/verify-token/:email", authController.verifiedToken);

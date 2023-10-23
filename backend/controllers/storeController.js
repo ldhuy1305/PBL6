@@ -4,9 +4,18 @@ const Owner = require("../models/owner");
 const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
+const appError = require("../utils/appError");
 
 class storeController {
-  getStoreById = handleController.getOne(Store);
+  getStoreById = catchAsync(async (req, res, next) => {
+    const ownerId = req.params.owwnerId;
+    const store = await Store.findOne({ ownerId });
+    if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
+    res.status(200).json({
+      status: "success",
+      data: store,
+    });
+  });
   getAllStore = catchAsync(async (req, res, next) => {
     let stores;
     if (req.params.isLocked == false || req.params.isLocked == undefined)

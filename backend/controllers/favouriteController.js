@@ -1,5 +1,5 @@
 const Favourite = require("../models/favourite");
-const AppError = require("../utils/AppError");
+const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 class FavouriteController {
   // Favour product
@@ -29,7 +29,7 @@ class FavouriteController {
     const userId = req.params.userId;
     const favorite = await Favourite.find({ userId }).select("-__v -_id");
     if (!favorite)
-      return next(new AppError("Couldn't find this document", 404));
+      return next(new appError("Couldn't find this document", 404));
     res.status(200).json({
       status: "success",
       length: favorite.length,
@@ -43,7 +43,7 @@ class FavouriteController {
     const productId = req.params.productId;
     const favorite = await Favourite.find({ productId }).select("-__v -_id ");
     if (!favorite)
-      return next(new AppError("Couldn't find this document", 404));
+      return next(new appError("Couldn't find this document", 404));
     res.status(200).json({
       status: "success",
       length: favorite.length,

@@ -1,10 +1,26 @@
 var express = require("express");
 var router = express.Router();
 const favouriteController = require("../controllers/favouriteController");
-router.route("/:userId/:productId").post(favouriteController.favourProduct);
-//   .delete(favouriteController.unFavourProduct);
-router.route("/user/:userId").get(favouriteController.getFavouritesByUserId);
+const authController = require("../controllers/authController");
+router
+  .route("/:userId/:productId")
+  .post(
+    authController.protect,
+    authController.restrict("User"),
+    favouriteController.favourProduct
+  );
+router
+  .route("/user/:userId")
+  .get(
+    authController.protect,
+    authController.restrict("User"),
+    favouriteController.getFavouritesByUserId
+  );
 router
   .route("/product/:productId")
-  .get(favouriteController.getFavouritesByProductId);
+  .get(
+    authController.protect,
+    authController.restrict("Owner"),
+    favouriteController.getFavouritesByProductId
+  );
 module.exports = router;
