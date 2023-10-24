@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
-
+const { fileParser } = require("express-multipart-file-parser");
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
@@ -58,6 +58,18 @@ app.use(
     extended: true,
   })
 );
+app.use(
+  fileParser({
+    rawBodyOptions: {
+      limit: "15mb",
+    },
+    busboyOptions: {
+      limits: {
+        fields: 2,
+      },
+    },
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 //DDOS
@@ -72,7 +84,12 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(limiter);
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
 app.use(xss());
 
 app.use(
