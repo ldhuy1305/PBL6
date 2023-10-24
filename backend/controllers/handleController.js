@@ -38,7 +38,6 @@ exports.delOne = (Model) => async (req, res, next) => {
     let behindImageCCCD = filenameImage(doc?.behindImageCCCD);
     let frontImageCCCD = filenameImage(doc?.frontImageCCCD);
     let licenseImage = filenameImage(doc?.licenseImage);
-    console.log(behindImageCCCD);
 
     cloudinary.uploader.destroy(frontImageCCCD);
     cloudinary.uploader.destroy(behindImageCCCD);
@@ -66,7 +65,6 @@ exports.putOne = (Model) =>
         photo: req.file.photo?.path,
       };
     }
-    console.log(body);
 
     const doc = await Model.findByIdAndUpdate(req.params.id, body, {
       new: true,

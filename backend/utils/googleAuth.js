@@ -1,7 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userModel");
-const AppError = require("./AppError");
+const appError = require("./appError");
 
 passport.use(
   new GoogleStrategy(
@@ -20,7 +20,7 @@ passport.use(
         if (user) {
           return done(null, user);
         } else {
-          return done(new AppError("Your account does not exist"));
+          return done(new appError("Your account does not exist"));
         }
       });
     }

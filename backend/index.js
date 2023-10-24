@@ -5,8 +5,9 @@ const route = require("./routes");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
-
+const { fileParser } = require("express-multipart-file-parser");
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
@@ -44,6 +45,9 @@ app.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
+    store: new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }),
   })
 );
 
@@ -52,6 +56,18 @@ app.use(passport.session());
 app.use(
   express.urlencoded({
     extended: true,
+  })
+);
+app.use(
+  fileParser({
+    rawBodyOptions: {
+      limit: "15mb",
+    },
+    busboyOptions: {
+      limits: {
+        fields: 2,
+      },
+    },
   })
 );
 app.use(express.json());
@@ -68,7 +84,12 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(limiter);
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
 app.use(xss());
 
 app.use(
