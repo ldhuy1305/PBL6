@@ -22,9 +22,10 @@ router
     authController.restrict("Shipper"),
     shipperController.getShipperById
   )
-  .put(
+  .patch(
     authController.protect,
     authController.restrict("Shipper"),
+    shipperController.updatePhoto,
     shipperController.updateShipper
   )
   .delete(

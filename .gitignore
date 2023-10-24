@@ -1,7 +1,6 @@
 /backend/node_modules
 /node_modules
 /backend/data
-/backend/img
 /node_modules
 .vscode
 data.json

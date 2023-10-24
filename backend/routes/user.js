@@ -44,11 +44,16 @@ router.put(
   contactController.addContact,
   userController.addContact
 );
+router.get(
+  "/get-default-contact/:userId",
+  authController.restrict("User"),
+  userController.getDefaultContact
+);
 router.delete(
   "/del-contact/:userId/:contactId",
   authController.restrict("User"),
-  contactController.delContact,
-  userController.delContact
+  userController.delContact,
+  contactController.delContact
 );
 router.post(
   "/set-default-contact/:userId/:contactId",
