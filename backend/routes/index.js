@@ -10,7 +10,7 @@ const favouriteRoute = require("./favourite");
 const mapRoute = require("./map");
 const ratingRoute = require("./rating");
 const globalErrorHandler = require("../controllers/errorController");
-const appError = require("../utils/AppError");
+const appError = require("../utils/appError");
 function route(app) {
   // app.use('/admin',adminRoute);
 
