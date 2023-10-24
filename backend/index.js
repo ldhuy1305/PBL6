@@ -58,18 +58,18 @@ app.use(
     extended: true,
   })
 );
-app.use(
-  fileParser({
-    rawBodyOptions: {
-      limit: "15mb",
-    },
-    busboyOptions: {
-      limits: {
-        fields: 2,
-      },
-    },
-  })
-);
+// app.use(
+//   fileParser({
+//     rawBodyOptions: {
+//       limit: "15mb",
+//     },
+//     busboyOptions: {
+//       limits: {
+//         fields: 2,
+//       },
+//     },
+//   })
+// );
 app.use(express.json());
 app.use(cookieParser());
 //DDOS
