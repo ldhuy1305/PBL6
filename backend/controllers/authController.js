@@ -6,7 +6,11 @@ const jwtToken = require("../utils/jwtToken");
 const cloudinary = require("cloudinary").v2;
 const crypto = require("crypto");
 const Email = require("../utils/email");
+const passport = require("passport");
+const { generateAndSendJWTToken } = require("../utils/jwtToken");
+
 const jwt = require("jsonwebtoken");
+
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -19,7 +23,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!(await user.isCorrectPassword(user.password, password))) {
     return next(new appError("Mật khẩu không hợp lệ", 401));
   }
-  jwtToken.generateAndSendJWTToken(user, 200, res);
+  jwtToken.generateAndSendJWTToken(user, 200, res, req);
 });
 exports.logout = catchAsync(async (req, res, next) => {
   res
@@ -60,22 +64,24 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         );
       });
     }
-    next(err);
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
+  console.log(doc, signUpToken);
   try {
-    await new Email(doc, signUpToken, null).sendWelcome();
+    await new Email(doc, signUpToken).sendWelcome();
     res.status(200).json({
       message: "Mã đã được gửi đến email!",
     });
   } catch (err) {
-    doc.signUpToken = undefined;
-    doc.signUpResetExpires = undefined;
-    await doc.save({ validateBeforeSave: false });
+    // doc.signUpToken = undefined;
+    // doc.signUpResetExpires = undefined;
+    // await doc.save({ validateBeforeSave: false });
+    await User.findByIdAndDelete(doc._id);
 
     return next(
       new appError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
@@ -125,8 +131,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = doc.createSignUpToken();
   await doc.save({ validateBeforeSave: false });
   try {
-    const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
-    await new Email(doc, resetToken, url).sendPasswordReset();
+    // const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
+    await new Email(doc, resetToken).sendPasswordReset();
     res.status(200).json({
       message: "Mã đã được gửi đến email!",
     });
@@ -193,10 +199,31 @@ exports.verifiedToken = catchAsync(async (req, res, next) => {
     message: "Mã của bạn là chính xác. Hãy đặt lại mật khẩu của bạn!",
   });
 });
+
+exports.googleLogin = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+exports.googleLoginCallback = passport.authenticate("google", {
+  failureRedirect: "/login",
+});
+
+exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {
+  generateAndSendJWTToken(req.user, 200, res);
+});
+
+exports.logout = catchAsync((req, res, next) => {
+  res.cookie("jwt", "", { expires: new Date(Date.now() - 10 * 1000) });
+  res.status(200).json({ status: "success" });
+});
 exports.protect = catchAsync(async (req, res, next) => {
   //1. Read the token & check if it exists
-
-  const token = req.cookies.jwt;
+  let token = req.cookies.jwt;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
   if (!token) {
     return next(new appError("Người dùng chưa đăng nhập!", 403));
   }

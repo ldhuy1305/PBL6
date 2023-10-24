@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Contact = require("../models/contact");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
@@ -46,6 +47,10 @@ class userController {
     user.passwordConfirm = confirmedPass;
 
     await user.save();
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
     // jwtToken.generateAndSendJWTToken(user, 201, res);
   });
   delContact = catchAsync(async (req, res, next) => {
@@ -70,6 +75,14 @@ class userController {
     user.defaultContact = req.params.contactId;
     await user.save({ validateBeforeSave: false });
     res.status(200).json(user);
+  });
+  getDefaultContact = catchAsync(async (req, res, next) => {
+    let id = req.params.userId;
+    const user = await User.findById(id);
+    if (!user) next(new appError("Người dùng không tồn tại!", 404));
+    id = user.defaultContact;
+    const contact = await Contact.findById(id, { _id: 0, __v: 0 });
+    res.status(200).json(contact);
   });
   viewOrder = catchAsync(async (req, res, next) => {});
 }
