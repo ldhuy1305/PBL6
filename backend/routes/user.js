@@ -52,8 +52,8 @@ router.get(
 router.delete(
   "/del-contact/:userId/:contactId",
   authController.restrict("User"),
-  contactController.delContact,
-  userController.delContact
+  userController.delContact,
+  contactController.delContact
 );
 router.post(
   "/set-default-contact/:userId/:contactId",

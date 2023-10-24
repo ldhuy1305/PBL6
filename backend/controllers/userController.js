@@ -55,7 +55,11 @@ class userController {
   });
   delContact = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
-    user.contact = user.contact.filter((obj) => obj.id != req.body.contact.id);
+    if (req.params.contactId == user.defaultContact)
+      next(new appError("Thông tin liên hệ mặc định không được xoá!", 404));
+    user.contact = user.contact.filter(
+      (obj) => obj._id != req.params.contactId
+    );
     await user.save({ validateBeforeSave: false });
     res.status(200).json(user);
   });
