@@ -1,14 +1,16 @@
 const Product = require("../models/product");
+const Store = require("../models/store");
 const catchAsync = require("../utils/catchAsync");
 const Category = require("../models/category");
 const handleController = require("./handleController");
 const ApiFeatures = require("../utils/ApiFeatures");
 const appError = require("../utils/appError");
 class ProductController {
-  // get All Product by Store
+  // View All Product by Store
   getAllProductByStore = catchAsync(async (req, res, next) => {
+    const store = await Store.findOne({ ownerId: req.params.ownerId });
     const features = new ApiFeatures(
-      Product.find({ storeId: req.params.storeId }),
+      Product.find({ storeId: store._id }),
       req.query
     )
       .filter()
@@ -26,11 +28,12 @@ class ProductController {
   });
   // add Product to Store
   addProduct = catchAsync(async (req, res, next) => {
-    req.body.storeId = req.params.storeId;
-    const catName = req.body.catName;
-    let cat = await Category.findOne({ catName });
+    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    req.body.storeId = store._id;
+    let cat = await Category.findOne({ catName: req.body.catName });
     if (!cat) return new appError("Không tìm thấy tên danh mục", 404);
-    product = await Product.create(req.body);
+    req.body.category = cat;
+    const product = await Product.create(req.body);
     res.status(201).json({
       status: "success",
       data: {
@@ -71,6 +74,7 @@ class ProductController {
     });
     res.status(200).json({
       status: "success",
+      length: products.length,
       data: {
         data: products,
       },
