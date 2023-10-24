@@ -6,6 +6,16 @@ const shipperSchema = new mongoose.Schema({
     type: Number,
     default: 4.5,
   },
+  phoneNumber: {
+    type: String,
+    trim: true,
+    validate: {
+      validator: (value) => {
+        return /^[0-9]{10}$/.test(value);
+      },
+      message: (problem) => `${problem.value} is not a valid last name`,
+    },
+  },
   frontImageCCCD: {
     type: String,
     required: [true, "Phía trước CCCD là bắt buộc"],

@@ -10,7 +10,7 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  allowedFormats: ["jpeg"],
+  allowedFormats: ["jpg", "png"],
   params: {
     folder: "pbl6",
   },
