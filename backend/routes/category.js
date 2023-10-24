@@ -5,7 +5,12 @@ const authController = require("../controllers/authController");
 router
   .route("/")
   .get(categoryController.getAllCategory)
-  .post(categoryController.addCategory);
+  .post(
+    // authController.protect,
+    // authController.restrict("Owner"),
+    categoryController.uploadCategoryImage,
+    categoryController.addCategory
+  );
 router
   .route("/store/:id")
   .get(
