@@ -26,12 +26,9 @@ class contactController {
     next();
   });
   delContact = catchAsync(async (req, res, next) => {
-    if (req.params.contactId == delContact.contact)
-      next(new appError("Thông tin liên hệ mặc định không được xoá!", 404));
     const contact = await Contact.findById(req.params.contactId);
     if (!contact) next(new appError("Thông tin liên hệ không tìm thấy!", 404));
     contact.__v = undefined;
-    req.body.contact = contact;
     await Contact.findByIdAndDelete(req.params.contactId);
     next();
   });
