@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
-
+const { fileParser } = require("express-multipart-file-parser");
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
@@ -15,7 +15,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./.env" });
 // Connecting to the database
 
 mongoose
@@ -58,6 +58,19 @@ app.use(
     extended: true,
   })
 );
+// app.use(
+//   fileParser({
+//     rawBodyOptions: {
+
+//       limit: "15mb",
+//     },
+//     busboyOptions: {
+//       limits: {
+//         fields: 2,
+//       },
+//     },
+//   })
+// );
 app.use(express.json());
 app.use(cookieParser());
 //DDOS
@@ -72,7 +85,12 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(limiter);
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
 app.use(xss());
 
 app.use(
@@ -95,3 +113,4 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+module.exports = app;

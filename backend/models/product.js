@@ -14,13 +14,14 @@ const productSchema = new Schema({
   },
   name: {
     type: String,
-    unique: true,
     required: [true, "Tên sản phẩm là bắt buộc"],
   },
-  images: {
-    type: String,
-    required: [true, "Hình ảnh là bắt buộc"],
-  },
+  images: [
+    {
+      type: String,
+      required: [true, "Hình ảnh là bắt buộc"],
+    },
+  ],
   price: {
     type: Number,
     required: true,
