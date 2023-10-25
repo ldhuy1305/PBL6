@@ -50,7 +50,7 @@ class ProductController {
     let cat = await Category.findOne({
       catName: req.body.catName,
     });
-    if (cat == null) cat = await Category.create({ catName: req.body.catName });
+    if (cat) cat = await Category.create({ catName: req.body.catName });
     req.body.category = cat;
     const product = await Product.findByIdAndUpdate(
       { _id: req.params.id },
