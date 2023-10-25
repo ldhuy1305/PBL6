@@ -75,7 +75,7 @@ class ProductController {
     let cat = await Category.findOne({
       catName: req.body.catName,
     });
-    if (cat == null) cat = await Category.create({ catName: req.body.catName });
+    if (cat) cat = await Category.create({ catName: req.body.catName });
     req.body.category = cat;
     let body = {
       ...req.body,
