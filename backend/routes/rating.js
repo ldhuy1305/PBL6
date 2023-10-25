@@ -3,11 +3,11 @@ var router = express.Router();
 const ratingController = require("../controllers/ratingController");
 router
   .route("/user/:userID/product/:productId")
-  .post(ratingController.ratingForProduct);
+  .post(ratingController.updatePhoto, ratingController.ratingForProduct);
 router
   .route("/user/:userID/shipper/:shipperId")
-  .post(ratingController.ratingForShipper);
+  .post(ratingController.updatePhoto, ratingController.ratingForShipper);
 router
-  .route("/user/:userID/store/:storetId")
-  .post(ratingController.ratingForStore);
+  .route("/user/:userID/store/:storeId")
+  .post(ratingController.updatePhoto, ratingController.ratingForStore);
 module.exports = router;
