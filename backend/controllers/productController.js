@@ -29,7 +29,7 @@ class ProductController {
     req.body.storeId = req.params.storeId;
     const catName = req.body.catName;
     let cat = await Category.findOne({ catName });
-    if (!cat) return new appError("Không tìm thấy tên danh mục", 404);
+    if (!cat) next(new appError("Không tìm thấy tên danh mục", 404));
     product = await Product.create(req.body);
     res.status(201).json({
       status: "success",
