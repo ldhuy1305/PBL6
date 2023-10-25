@@ -1,5 +1,6 @@
 const { promisify } = require("util");
 const User = require("../models/userModel");
+
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
@@ -44,7 +45,7 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         ...body,
         frontImageCCCD: req.files.frontImageCCCD[0]?.path,
         behindImageCCCD: req.files.behindImageCCCD[0]?.path,
-        licenseImage: req.files.licenseImage[0]?.path,
+        // licenseImage: req.files.licenseImage[0]?.path,
       };
     }
     const doc = await Model.create(body);

@@ -43,9 +43,9 @@ const storeSchema = new Schema(
       type: Number,
       default: 0,
     },
-    images: {
+    image: {
       type: String,
-      default: "",
+      required: [true, "Hình ảnh cửa hàng là bắt buộc"],
     },
     ownerId: {
       type: Schema.Types.ObjectId,
