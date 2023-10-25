@@ -9,7 +9,11 @@ exports.createOwner = authController.signUp(Owner, "Owner");
 exports.verifiedSignUp = authController.verifiedSignUp(Owner);
 exports.createStore = catchAsync(async (req, res, next) => {
   try {
+    req.body.phoneNumber = req.body.phoneNumberStore;
+    req.body.address = req.body.addressStore;
     const body = { ...req.body, ownerId: req.doc._id };
+
+    console.log(body);
     const storeCreated = await Store.create(body);
     res.store = storeCreated;
     next();

@@ -10,7 +10,7 @@ const categorySchema = new Schema(
     },
     photo: {
       type: String,
-      required: [true, "Category must be have a photo"],
+      required: [true, "Danh mục bắt buộc phải có hình ảnh"],
     },
   },
   {

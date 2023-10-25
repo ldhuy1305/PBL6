@@ -17,6 +17,7 @@ const ownerSchema = new mongoose.Schema({
   behindImageCCCD: {
     type: String,
     required: [true, "Phía sau CCCD là bắt buộc"],
+    select: false,
   },
   isAccepted: {
     type: Boolean,
