@@ -11,7 +11,6 @@ const passport = require("passport");
 const { generateAndSendJWTToken } = require("../utils/jwtToken");
 
 const jwt = require("jsonwebtoken");
-const appError = require("../utils/appError");
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
