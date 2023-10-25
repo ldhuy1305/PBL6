@@ -34,7 +34,7 @@ class ProductController {
       const store = await Store.findOne({ ownerId: req.params.ownerId });
       req.body.storeId = store._id;
       let cat = await Category.findOne({ catName: req.body.catName });
-      if (!cat) return new appError("Không tìm thấy tên danh mục", 404);
+      if (!cat) return next(new appError("Không tìm thấy tên danh mục", 404));
       req.body.category = cat;
       let body = {
         ...req.body,

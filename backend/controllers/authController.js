@@ -45,7 +45,7 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         ...body,
         frontImageCCCD: req.files.frontImageCCCD[0]?.path,
         behindImageCCCD: req.files.behindImageCCCD[0]?.path,
-        // licenseImage: req.files.licenseImage[0]?.path,
+        licenseImage: req.files.licenseImage[0]?.path,
       };
     }
     const doc = await Model.create(body);
