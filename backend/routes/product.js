@@ -12,7 +12,7 @@ router
   .route("/store/:ownerId")
   .all(authController.restrict("Owner"))
   .get(productController.getAllProductByStore)
-  .post(productController.addProduct);
+  .post(productController.uploadProductImages, productController.addProduct);
 router
   .route("/:id")
   .all(authController.restrict("Owner"))
