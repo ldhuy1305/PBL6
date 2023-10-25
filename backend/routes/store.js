@@ -4,19 +4,20 @@ const storeController = require("../controllers/storeController");
 const authController = require("../controllers/authController");
 
 router.get("/:ownerId", storeController.getStoreById);
+router.put("/:ownerId", storeController.updateStore);
+router.patch("/lock/:ownerId", storeController.lockStore);
+router.get("/city/:name", storeController.getStoreByCity);
 router.get("/", storeController.getAllStore);
-router.put("/:id", storeController.updateStore);
-router.patch("/lock/:id", storeController.lockStore);
 //Stat
-router.get("/stat/category/:id", storeController.mostCategory);
-router.get("/stat/order/:id", storeController.order);
-router.get("/stat/cus-quantity/:id", storeController.cusQuantity);
-router.get("/stat/inc-cus/:id", storeController.increaseCus);
-router.get("/stat/cus-quantity-vip/:id", storeController.cusQuantityVip);
+router.get("/stat/category/:ownerId", storeController.mostCategory);
+router.get("/stat/order/:ownerId", storeController.order);
+router.get("/stat/cus-quantity/:ownerId", storeController.cusQuantity);
+router.get("/stat/inc-cus/:ownerId", storeController.increaseCus);
+router.get("/stat/cus-quantity-vip/:ownerId", storeController.cusQuantityVip);
 // Order
-router.get("/order/:storeId", storeController.getAllOrder);
-router.get("/order/:storeId/:userId", storeController.viewOrder);
-router.delete("/order/:storeId/:userId", storeController.rejectOrder);
-router.post("/order/:storeId/:userId", storeController.acceptOrder);
+router.get("/order/:ownerId", storeController.getAllOrder);
+router.get("/order/:ownerId/:userId", storeController.viewOrder);
+router.delete("/order/:ownerId/:userId", storeController.rejectOrder);
+router.post("/order/:ownerId/:userId", storeController.acceptOrder);
 
 module.exports = router;
