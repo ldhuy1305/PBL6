@@ -41,6 +41,8 @@ class ProductController {
         images: req.files.map((image) => image.path),
       };
       const product = await Product.create(body);
+
+      if (!product) return next(new appError("Không tạo được sản phẩm", 404));
       res.status(201).json({
         status: "success",
         data: {
@@ -51,7 +53,7 @@ class ProductController {
       if (req.files) {
         req.files.forEach((file) => cloudinary.uploader.destroy(file.filename));
       }
-      next(err);
+      next(new appError("Xuất hiện lỗi", 404));
     }
   });
   viewProduct = handleController.getOne(Product);
@@ -86,6 +88,7 @@ class ProductController {
       body,
       { new: true }
     );
+    if (!product) return next(new appError("Không thể tìm thấy sản phẩm", 404));
     res.status(200).json({
       status: "success",
       data: {
