@@ -84,8 +84,8 @@ app.use(
     maxAge: 15552000, // 180 days in seconds
   })
 );
-Strict-Transport-Security: max-age: 15552000; includeSubDomains
-route
+// Strict-Transport-Security: max-age: 15552000; includeSubDomains
+route;
 route(app);
 
 port = process.env.PORT;
