@@ -45,7 +45,7 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         ...body,
         frontImageCCCD: req.files.frontImageCCCD[0]?.path,
         behindImageCCCD: req.files.behindImageCCCD[0]?.path,
-        // licenseImage: req.files.licenseImage[0]?.path,
+        licenseImage: req.files.licenseImage[0]?.path,
       };
     }
     const doc = await Model.create(body);
@@ -72,7 +72,6 @@ exports.signUp = (Model, role) => async (req, res, next) => {
 exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
-  console.log(doc, signUpToken);
   try {
     await new Email(doc, signUpToken).sendWelcome();
     res.status(200).json({
