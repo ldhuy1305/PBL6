@@ -7,7 +7,6 @@ const dotenv = require("dotenv");
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
-const { fileParser } = require("express-multipart-file-parser");
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
