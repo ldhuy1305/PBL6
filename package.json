@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=5000",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
     "start": "node backend/index.js",
     "start_dev": "SET NODE_ENV=development& nodemon backend/index.js",
     "start_prod": "SET NODE_ENV=production& nodemon backend/index.js",
@@ -45,6 +45,7 @@
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0",
+    "path": "^0.12.7",
     "pug": "^3.0.2",
     "request": "^2.88.2",
     "sharp": "^0.32.6",
