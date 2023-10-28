@@ -60,32 +60,32 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 //DDOS
-// app.use(helmet());
-// app.use(express.json({ limit: "100kb" }));
+app.use(helmet());
+app.use(express.json({ limit: "100kb" }));
 
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 100,
-//   message: "You have exceeded the 100 requests in 15 minutes limit!",
-//   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-//   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-// });
-// app.use(limiter);
-// app.use(
-//   cors({
-//     origin: "*",
-//     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-//   })
-// );
-// app.use(xss());
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "You have exceeded the 100 requests in 15 minutes limit!",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+app.use(limiter);
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
+app.use(xss());
 
-// app.use(
-//   hsts({
-//     maxAge: 15552000, // 180 days in seconds
-//   })
-// );
-// Strict-Transport-Security: max-age: 15552000; includeSubDomains
-// route
+app.use(
+  hsts({
+    maxAge: 15552000, // 180 days in seconds
+  })
+);
+Strict-Transport-Security: max-age: 15552000; includeSubDomains
+route
 route(app);
 
 port = process.env.PORT;
