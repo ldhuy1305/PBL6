@@ -21,19 +21,11 @@ exports.getAllShipper = catchAsync(async (req, res, next) => {
   return res.status(200).json(shippers);
 });
 
-exports.uploadShipperImages = (req, res, next) => {
-  fileUploader.fields([
-    { name: "frontImageCCCD", maxCount: 1 },
-    { name: "behindImageCCCD", maxCount: 1 },
-    { name: "licenseImage", maxCount: 1 },
-  ])(req, res, (err) => {
-    if (err) {
-      res.status(500).send({ error: err.message });
-    } else {
-      next();
-    }
-  });
-};
+exports.uploadShipperImages = fileUploader.fields([
+  { name: "frontImageCCCD", maxCount: 1 },
+  { name: "behindImageCCCD", maxCount: 1 },
+  { name: "licenseImage", maxCount: 1 },
+]);
 
 exports.updatePhoto = fileUploader.single("photo");
 
