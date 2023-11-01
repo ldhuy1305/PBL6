@@ -15,7 +15,7 @@ router
   .route("/store/:id")
   .get(
     authController.protect,
-    authController.restrict("Owner"),
+    authController.restrict("Owner", "User"),
     categoryController.getAllCategoryByStore
   );
 module.exports = router;
