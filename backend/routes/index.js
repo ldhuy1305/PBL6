@@ -9,10 +9,11 @@ const categoryRoute = require("./category");
 const favouriteRoute = require("./favourite");
 const mapRoute = require("./map");
 const ratingRoute = require("./rating");
+const adminRoute = require("./admin");
 const globalErrorHandler = require("../controllers/errorController");
 const appError = require("../utils/appError");
 function route(app) {
-  // app.use('/admin',adminRoute);
+  app.use("/api/admin", adminRoute);
 
   app.use("/api/shipper", shipperRoute);
   app.use("/api/auth", authRoute);
