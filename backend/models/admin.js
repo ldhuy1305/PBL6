@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const User = mongoose.User;
-const adminSchema = new Schema({});
-adminSchema.add(User.Schema);
-
-module.exports = mongoose.model("Admin", adminSchema);
+const User = require("../models/userModel");
+const adminSchema = new mongoose.Schema({});
+const Admin = User.discriminator("Admin", adminSchema);
+module.exports = Admin;

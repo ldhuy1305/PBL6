@@ -65,4 +65,7 @@ module.exports = class Email {
       "Your password reset token (valid for only 10 minutes)"
     );
   }
+  async sendAcceptEmail() {
+    await this.send("acceptedEmail", "Email xác nhận đăng ký");
+  }
 };
