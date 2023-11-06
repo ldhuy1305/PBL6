@@ -35,8 +35,7 @@ class ProductController {
       req.query
     )
       .filter()
-      .sort()
-      .limitFields()
+      .search()
       .paginate();
     const products = await features.query;
     res.status(200).json({
