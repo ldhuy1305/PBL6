@@ -3,6 +3,7 @@ var router = express.Router();
 const userController = require("../controllers/userController");
 const contactController = require("../controllers/contactController");
 const authController = require("../controllers/authController");
+const orderController = require("../controllers/orderController");
 router.route("/:email").post(userController.verifiedUser);
 router
   .route("/")
@@ -59,5 +60,10 @@ router.post(
   "/set-default-contact/:userId/:contactId",
   authController.restrict("User"),
   userController.setDefaultContact
+);
+router.get(
+  "/:userId/store/:storeId",
+  authController.restrict("User"),
+  userController.getInfoCart
 );
 module.exports = router;
