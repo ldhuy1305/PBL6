@@ -6,8 +6,8 @@ router
   .route("/")
   .get(categoryController.getAllCategory)
   .post(
-    // authController.protect,
-    // authController.restrict("Owner"),
+    authController.protect,
+    authController.restrict("Owner"),
     categoryController.uploadCategoryImage,
     categoryController.addCategory
   );

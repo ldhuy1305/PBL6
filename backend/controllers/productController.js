@@ -44,9 +44,7 @@ class ProductController {
       if (!product) return next(new appError("Không tạo được sản phẩm", 404));
       res.status(201).json({
         status: "success",
-        data: {
-          data: product,
-        },
+        data: product,
       });
     } catch (err) {
       if (req.files) {
@@ -70,7 +68,7 @@ class ProductController {
       cloudinary.uploader.destroy(id);
     });
 
-    res.status(201).json("Đã xoá thành công");
+    res.status(200).json("Đã xoá thành công");
   });
   updateProduct = catchAsync(async (req, res, next) => {
     let cat = await Category.findOne({
