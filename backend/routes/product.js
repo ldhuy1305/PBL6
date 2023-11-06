@@ -17,7 +17,7 @@ router
   .route("/:id")
   .all(authController.restrict("Owner"))
   .delete(productController.deleteProduct)
-  .put(productController.updateProduct);
+  .put(productController.uploadProductImages, productController.updateProduct);
 
 router.get(
   "/stat/favor-product/:ownerId",

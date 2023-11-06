@@ -7,8 +7,6 @@ const dotenv = require("dotenv");
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
-const { fileParser } = require("express-multipart-file-parser");
-const moment = require("moment-timezone");
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
@@ -59,19 +57,6 @@ app.use(
     extended: true,
   })
 );
-// app.use(
-//   fileParser({
-//     rawBodyOptions: {
-
-//       limit: "15mb",
-//     },
-//     busboyOptions: {
-//       limits: {
-//         fields: 2,
-//       },
-//     },
-//   })
-// );
 app.use(express.json());
 app.use(cookieParser());
 //DDOS
@@ -100,7 +85,7 @@ app.use(
   })
 );
 // Strict-Transport-Security: max-age: 15552000; includeSubDomains
-// route
+route;
 route(app);
 
 port = process.env.PORT;

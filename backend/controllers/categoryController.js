@@ -33,6 +33,7 @@ class categoryController {
 
     res.status(200).json({
       status: "success",
+      length: categories.length,
       data: categories,
     });
   });
