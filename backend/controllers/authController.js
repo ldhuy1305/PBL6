@@ -72,8 +72,11 @@ exports.signUp = (Model, role) => async (req, res, next) => {
 exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
+  const url = `${req.protocol}://${req.get("host")}/api/auth/verify-token/${
+    doc.email
+  }`;
   try {
-    await new Email(doc, signUpToken).sendWelcome();
+    await new Email(doc, signUpToken, url).sendWelcome();
     res.status(200).json({
       message: "Mã đã được gửi đến email!",
     });
@@ -131,8 +134,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = doc.createSignUpToken();
   await doc.save({ validateBeforeSave: false });
   try {
-    // const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
-    await new Email(doc, resetToken).sendPasswordReset();
+    const url = `${req.protocol}://${req.get("host")}/api/auth/verify-token/${
+      doc.email
+    }`;
+
+    await new Email(doc, resetToken, url).sendPasswordReset();
     res.status(200).json({
       message: "Mã đã được gửi đến email!",
     });

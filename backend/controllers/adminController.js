@@ -1,5 +1,6 @@
 const Shipper = require("../models/shipper");
 const Owner = require("../models/owner");
+const Store = require("../models/store");
 const User = require("../models/userModel");
 const ApiFeatures = require("../utils/ApiFeatures");
 const appError = require("../utils/appError");
@@ -38,26 +39,39 @@ class adminController {
       isAccepted: false,
       isVerified: true,
     });
+    const ownersId = owners.map((owner) => owner._id);
+    const data = await Store.find({ ownerId: { $in: ownersId } }).populate(
+      "ownerId"
+    );
     if (owners.length === 0) {
       return next(new appError("Không có chủ cửa hàng nào cần phê duyệt", 400));
     }
     return res.status(200).json({
       length: owners.length,
-      data: owners,
+      data,
     });
   });
   appoveShipperAccount = catchAsync(async (req, res, next) => {
     const isAccepted = req.body.isAccepted;
-    const shipper = await Shipper.findById({ _id: req.params.id });
+    const shipper = await Shipper.findById({ _id: req.params.id }).select(
+      "+isAccepted"
+    );
 
     if (!shipper || !isAccepted) {
       return next(new appError("Không tìm thấy người giao hàng !!!", 500));
     }
+    if (shipper.isAccepted === true) {
+      return next(
+        new appError("Người giao hàng này đã được duyệt rồi !!!"),
+        500
+      );
+    }
     if (isAccepted === true) {
       try {
+        const url = `${req.protocol}://${req.get("host")}/`;
         shipper.isAccepted = true;
         await shipper.save({ validateBeforeSave: false });
-        await new Email(shipper, null).sendAcceptEmail();
+        await new Email(shipper, null, url).sendAcceptEmail();
         res.status(200).json({
           message: "Xác nhận đăng ký thành công !!!",
         });
@@ -70,7 +84,7 @@ class adminController {
     } else {
       try {
         await Shipper.findByIdAndDelete({ _id: req.params.id });
-        await new Email(data, null).sendAcceptEmail();
+        await new Email(data, null, null).sendRefuseEmail();
         res.status(200).json({
           message: "Xác nhận đăng ký thất bại !",
         });
@@ -90,9 +104,10 @@ class adminController {
     }
     if (isAccepted === true) {
       try {
+        const url = `${req.protocol}://${req.get("host")}/`;
         owner.isAccepted = true;
         await owner.save({ validateBeforeSave: false });
-        await new Email(owner, null).sendAcceptEmail();
+        await new Email(owner, null, url).sendAcceptEmail();
         res.status(200).json({
           message: "Xác nhận đăng ký thành công !!!",
         });
@@ -105,7 +120,7 @@ class adminController {
     } else {
       try {
         await Owner.findByIdAndDelete({ _id: req.params.id });
-        await new Email(doc, null).sendAcceptEmail();
+        await new Email(doc, null).sendRefuseEmail();
         res.status(200).json({
           message: "Xác nhận đăng ký thất bại !!!",
         });
