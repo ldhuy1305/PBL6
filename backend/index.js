@@ -15,8 +15,7 @@ const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
 dotenv.config({ path: "./.env" });
-// Connecting to the database
-moment.tz.setDefault("Asia/Ho_Chi_Minh");
+
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
