@@ -15,6 +15,7 @@ const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
 dotenv.config({ path: "./.env" });
+
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
