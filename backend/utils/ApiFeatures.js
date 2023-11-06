@@ -27,6 +27,16 @@ class ApiFeatures {
     }
     return this;
   }
+  search() {
+    console.log(123123);
+    let obj;
+    if (this.queryStr.search) {
+      obj = { name: { $regex: this.queryStr.search, $options: "i" } };
+      console.log(obj);
+    }
+    this.query = this.query.find(obj);
+    return this;
+  }
   limitFields() {
     if (this.queryStr.fields) {
       const fields = this.queryStr.fields.split(",").join(" ");

@@ -15,9 +15,7 @@ class ProductController {
       Product.find({ storeId: store._id }),
       req.query
     )
-      .filter()
-      .sort()
-      .limitFields()
+      .search()
       .paginate();
     const products = await features.query;
     res.status(200).json({
@@ -35,9 +33,7 @@ class ProductController {
       Product.find({ storeId: store._id }),
       req.query
     )
-      .filter()
       .sort()
-      .limitFields()
       .paginate();
     const products = await features.query;
     res.status(200).json({
