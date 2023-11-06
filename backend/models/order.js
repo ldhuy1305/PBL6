@@ -2,31 +2,45 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const orderSchema = new Schema(
   {
-    customerId: {
+    userId: {
       type: Schema.Types.ObjectId,
-      ref: "Customer",
+      ref: "User",
+    },
+    storeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Store",
     },
     shipperId: {
       type: Schema.Types.ObjectId,
       ref: "Shipper",
     },
-    contact: {
-      type: Schema.Types.ObjectId,
-      ref: "Contact",
-    },
+    cart: [
+      {
+        product: { type: Schema.Types.ObjectId, ref: "Product" },
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+        notes: {
+          type: String,
+          default: undefined,
+        },
+        price: {
+          type: Number,
+          default: 0,
+        },
+      },
+    ],
     shipCost: {
       type: Number,
-      required: true,
       defaultValue: 0,
     },
     totalPrice: {
       type: Number,
-      required: true,
       defaultValue: 0,
     },
     status: {
       type: String,
-      required: true,
       enum: [
         "Đặt hàng thành công",
         "Chuẩn bị soạn đơn hàng",
@@ -35,16 +49,16 @@ const orderSchema = new Schema(
         "Giao hàng thành công",
       ],
     },
-    time: {
+    paymentMethod: {
+      type: String,
+    },
+    dateOrdered: {
       type: Date,
-      required: true,
     },
   },
   {
     timestamps: true,
   }
 );
-
-const Order = mongoose.model("Order", orderSchema);
 
 module.exports = mongoose.model("Order", orderSchema);

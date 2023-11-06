@@ -11,14 +11,14 @@ router.use(authController.protect);
 router.route("/store/:storeId").get(productController.getAllProductByStoreId);
 router
   .route("/owner/:ownerId")
-  .all(authController.restrict("Owner"))
+  .all(authController.restrict("Owner", "User"))
   .get(productController.getAllProductByOwnerId)
   .post(productController.uploadProductImages, productController.addProduct);
 router
   .route("/:id")
   .all(authController.restrict("Owner"))
   .delete(productController.deleteProduct)
-  .put(productController.updateProduct);
+  .put(productController.uploadProductImages, productController.updateProduct);
 
 router.get(
   "/stat/favor-product/:ownerId",
