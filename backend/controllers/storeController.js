@@ -7,8 +7,17 @@ const handleController = require("./handleController");
 const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 class storeController {
-  getStoreById = catchAsync(async (req, res, next) => {
+  getStoreByOwnerId = catchAsync(async (req, res, next) => {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
+    if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
+    res.status(200).json({
+      status: "success",
+      data: store,
+    });
+  });
+  getStoreByStoreId = catchAsync(async (req, res, next) => {
+    const id = req.params.id;
+    const store = await Store.findById(id);
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
@@ -41,6 +50,8 @@ class storeController {
       };
     }
     const features = new ApiFeatures(Store.find(obj), req.query)
+      // .filter()
+      .search()
       .limitFields()
       .paginate();
     stores = await features.query;
@@ -72,7 +83,6 @@ class storeController {
   });
   // View Store in City
   getStoreByCity = catchAsync(async (req, res, next) => {
-    console.log(123);
     const stores = await Store.find({
       address: new RegExp(req.params.name, "i"),
     });

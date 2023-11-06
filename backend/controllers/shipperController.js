@@ -4,6 +4,7 @@ const authController = require("./authController");
 const catchAsync = require("../utils/catchAsync");
 const fileUploader = require("../utils/uploadImage");
 const appError = require("../utils/appError");
+const ApiFeatures = require("../utils/ApiFeatures");
 const cloudinary = require("cloudinary").v2;
 
 exports.signUpShipper = authController.signUp(Shipper, "Shipper");
@@ -14,11 +15,20 @@ exports.getShipperById = handleController.getOne(Shipper);
 
 exports.deleteShipper = handleController.delOne(Shipper);
 exports.getAllShipper = catchAsync(async (req, res, next) => {
-  const shippers = await Shipper.find({
+  // const shippers = await Shipper.find().select("+isAccepted +isVerified");
+  let obj = {
     isAccepted: true,
     isVerified: true,
-  }).select("+isAccepted +isVerified");
-  return res.status(200).json(shippers);
+  };
+  const features = new ApiFeatures(Shipper.find(obj), req.query)
+    .search()
+    .limitFields()
+    .paginate();
+  shippers = await features.query;
+  return res.status(200).json({
+    length: shippers.length,
+    data: shippers,
+  });
 });
 
 exports.uploadShipperImages = fileUploader.fields([

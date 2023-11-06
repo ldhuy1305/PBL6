@@ -6,7 +6,7 @@ class ApiFeatures {
   }
   filter() {
     let queryObj = { ...this.queryStr };
-    const excludedFields = ["page", "sort", "limit", "fields"];
+    const excludedFields = ["page", "sort", "limit", "fields", "search"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     let queryString = JSON.stringify(queryObj);
@@ -28,11 +28,9 @@ class ApiFeatures {
     return this;
   }
   search() {
-    console.log(123123);
     let obj;
     if (this.queryStr.search) {
       obj = { name: { $regex: this.queryStr.search, $options: "i" } };
-      console.log(obj);
     }
     this.query = this.query.find(obj);
     return this;

@@ -40,6 +40,12 @@ const productSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  rating: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Rating",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Product", productSchema);
