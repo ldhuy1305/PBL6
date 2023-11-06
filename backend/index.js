@@ -8,6 +8,7 @@ const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
 const { fileParser } = require("express-multipart-file-parser");
+const moment = require("moment-timezone");
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
@@ -17,7 +18,7 @@ const xss = require("xss-clean");
 const hsts = require("hsts");
 dotenv.config({ path: "./.env" });
 // Connecting to the database
-
+moment.tz.setDefault("Asia/Ho_Chi_Minh");
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
