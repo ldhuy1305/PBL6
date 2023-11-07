@@ -7,7 +7,6 @@ const dotenv = require("dotenv");
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
 const passport = require("passport");
-
 require("./utils/googleAuth");
 
 const rateLimit = require("express-rate-limit");
@@ -15,8 +14,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
-dotenv.config({ path: "./config.env" });
-// Connecting to the database
+dotenv.config({ path: "./.env" });
 
 mongoose
   .connect(process.env.DATABASE, {
@@ -72,7 +70,12 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(limiter);
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
 app.use(xss());
 
 app.use(
@@ -81,7 +84,7 @@ app.use(
   })
 );
 // Strict-Transport-Security: max-age: 15552000; includeSubDomains
-// route
+route;
 route(app);
 
 port = process.env.PORT;
@@ -95,3 +98,4 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+module.exports = app;

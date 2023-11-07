@@ -3,13 +3,16 @@ const handleController = require("./handleController");
 const Category = require("../models/category");
 const Product = require("../models/product");
 const fileUploader = require("../utils/uploadImage");
+const cloudinary = require("cloudinary").v2;
 
 class categoryController {
   getAllCategory = handleController.getAll(Category);
   addCategory = catchAsync(async (req, res, next) => {
-    const body = { catName: req.body.catName, photo: req.file?.photo };
     try {
-      const doc = await Category.create(body);
+      const doc = await Category.create({
+        ...req.body,
+        photo: req.file?.path,
+      });
       res.status(200).json({
         data: doc,
       });
@@ -30,6 +33,7 @@ class categoryController {
 
     res.status(200).json({
       status: "success",
+      length: categories.length,
       data: categories,
     });
   });

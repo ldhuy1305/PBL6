@@ -3,6 +3,7 @@ var router = express.Router();
 const userController = require("../controllers/userController");
 const contactController = require("../controllers/contactController");
 const authController = require("../controllers/authController");
+const orderController = require("../controllers/orderController");
 router.route("/:email").post(userController.verifiedUser);
 router
   .route("/")
@@ -52,8 +53,8 @@ router.get(
 router.delete(
   "/del-contact/:userId/:contactId",
   authController.restrict("User"),
-  contactController.delContact,
-  userController.delContact
+  userController.delContact,
+  contactController.delContact
 );
 router.post(
   "/set-default-contact/:userId/:contactId",
@@ -64,5 +65,9 @@ router.patch(
   "/:userId/contact/:contactId",
   authController.restrict("User"),
   contactController.updateContact
+router.get(
+  "/:userId/store/:storeId",
+  authController.restrict("User"),
+  userController.getInfoCart
 );
 module.exports = router;

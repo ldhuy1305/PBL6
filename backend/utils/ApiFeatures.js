@@ -6,7 +6,7 @@ class ApiFeatures {
   }
   filter() {
     let queryObj = { ...this.queryStr };
-    const excludedFields = ["page", "sort", "limit", "fields"];
+    const excludedFields = ["page", "sort", "limit", "fields", "search"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     let queryString = JSON.stringify(queryObj);
@@ -23,8 +23,16 @@ class ApiFeatures {
       const sortBy = this.queryStr.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort("-createdAt");
+      this.query = this.query.sort("_id");
     }
+    return this;
+  }
+  search() {
+    let obj;
+    if (this.queryStr.search) {
+      obj = { name: { $regex: this.queryStr.search, $options: "i" } };
+    }
+    this.query = this.query.find(obj);
     return this;
   }
   limitFields() {
