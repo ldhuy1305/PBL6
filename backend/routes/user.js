@@ -65,6 +65,7 @@ router.patch(
   "/:userId/contact/:contactId",
   authController.restrict("User"),
   contactController.updateContact
+);
 router.get(
   "/:userId/store/:storeId",
   authController.restrict("User"),
