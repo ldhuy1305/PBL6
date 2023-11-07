@@ -46,8 +46,13 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         frontImageCCCD: req.files.frontImageCCCD[0]?.path,
         behindImageCCCD: req.files.behindImageCCCD[0]?.path,
       };
+      if (req.files.licenseImage) {
+        body = {
+          ...body,
+          licenseImage: req.files.licenseImage[0]?.path,
+        };
+      }
     }
-
     console.log(body);
     const doc = await Model.create(body);
 
@@ -82,9 +87,13 @@ exports.sendEmailVerify = catchAsync(async (req, res, next) => {
       message: "Mã đã được gửi đến email!",
     });
   } catch (err) {
-    // doc.signUpToken = undefined;
-    // doc.signUpResetExpires = undefined;
-    // await doc.save({ validateBeforeSave: false });
+    if (req.files) {
+      Object.keys(req.files).forEach((key) => {
+        req.files[key].forEach((file) =>
+          cloudinary.uploader.destroy(file.filename)
+        );
+      });
+    }
     await User.findByIdAndDelete(doc._id);
 
     return next(

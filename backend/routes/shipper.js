@@ -2,11 +2,13 @@ var express = require("express");
 var router = express.Router();
 const shipperController = require("../controllers/shipperController");
 const authController = require("../controllers/authController");
+const contactController = require("../controllers/contactController");
 
 router
   .route("/")
   .post(
     shipperController.uploadShipperImages,
+    contactController.createContact,
     shipperController.signUpShipper,
     shipperController.sendEmailVerify
   )
