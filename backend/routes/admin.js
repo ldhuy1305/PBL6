@@ -19,7 +19,7 @@ router
 // Manage Owner
 router.get("/owner/approve", adminController.getListOwnerAppove);
 router
-  .route("owner/:id")
+  .route("/owner/:id")
   .patch(adminController.appoveOwnerAccount)
   .get(storeController.getStoreByOwnerId);
 

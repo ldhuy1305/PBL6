@@ -19,8 +19,14 @@ const shipperSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["Đang rảnh", "Đang giao hàng"],
-    default: "Đang rảnh",
+    enum: [
+      "Tạm Ngừng",
+      "Đang giao hàng",
+      "Chờ phê duyệt",
+      "Không hoạt động",
+      "Hoạt động",
+    ],
+    default: "Chờ phê duyệt",
   },
   //GPLX
   licenseNumber: {

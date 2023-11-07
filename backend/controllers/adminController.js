@@ -70,6 +70,7 @@ class adminController {
       try {
         const url = `${req.protocol}://${req.get("host")}/`;
         shipper.isAccepted = true;
+        shipper.status = "Không hoạt động";
         await shipper.save({ validateBeforeSave: false });
         await new Email(shipper, null, url).sendAcceptEmail();
         res.status(200).json({
@@ -112,6 +113,8 @@ class adminController {
           message: "Xác nhận đăng ký thành công !!!",
         });
       } catch (err) {
+        owner.isAccepted = false;
+        await owner.save({ validateBeforeSave: false });
         return next(
           new appError("Đã xuất hiện lỗi gửi email. Vui lòng thử lại!"),
           500
