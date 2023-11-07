@@ -6,16 +6,13 @@ router
   .route("/")
   .get(categoryController.getAllCategory)
   .post(
-    // authController.protect,
-    // authController.restrict("Owner"),
+    authController.protect,
+    authController.restrict("Owner"),
     categoryController.uploadCategoryImage,
     categoryController.addCategory
   );
 router
   .route("/store/:id")
-  .get(
-    authController.protect,
-    authController.restrict("Owner", "User"),
-    categoryController.getAllCategoryByStore
-  );
+  .get(authController.protect, categoryController.getAllCategoryByStore);
+
 module.exports = router;

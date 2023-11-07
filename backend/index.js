@@ -15,7 +15,6 @@ const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
 dotenv.config({ path: "./.env" });
-// Connecting to the database
 
 mongoose
   .connect(process.env.DATABASE, {

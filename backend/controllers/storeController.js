@@ -83,7 +83,6 @@ class storeController {
   });
   // View Store in City
   getStoreByCity = catchAsync(async (req, res, next) => {
-    console.log(123);
     const stores = await Store.find({
       address: new RegExp(req.params.name, "i"),
     });

@@ -13,7 +13,6 @@ exports.createStore = catchAsync(async (req, res, next) => {
     req.body.phoneNumber = req.body.phoneNumberStore;
     req.body.address = req.body.addressStore;
     let body = { ...req.body, ownerId: req.doc._id };
-    console.log(req.files);
     if (req.files) {
       body = { ...body, image: req.files.image[0]?.path };
     } else {

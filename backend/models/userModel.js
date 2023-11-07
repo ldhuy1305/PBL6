@@ -33,7 +33,7 @@ const userSchema = new Schema(
       required: [true, "Tên là bắt buộc"],
       validate: {
         validator: (value) => {
-          return /^[a-zA-Z]{2,15}$/.test(value);
+          return /^[\p{L}\s'-.]{2,50}$/u.test(value);
         },
         message: (problem) => `${problem.value} không hợp lệ`,
       },
@@ -44,7 +44,7 @@ const userSchema = new Schema(
       required: [true, "Họ là bắt buộc"],
       validate: {
         validator: (value) => {
-          return /^[a-zA-Z]{2,15}$/.test(value);
+          return /^[\p{L}\s'-.]{2,50}$/u.test(value);
         },
         message: (problem) => `${problem.value} không hợp lệ`,
       },
@@ -85,10 +85,21 @@ const userSchema = new Schema(
           trim: true,
           required: [true, "Địa chỉ là bắt buộc"],
         },
+        location: {
+          type: {
+            type: String,
+            enum: ["Point"],
+          },
+          coordinates: {
+            type: [Number],
+            index: "2dshpere",
+          },
+        },
       },
     ],
+
     defaultContact: {
-      type: Schema.Types,
+      type: Schema.Types.ObjectId,
       ref: "Contact",
     },
     signUpToken: {
