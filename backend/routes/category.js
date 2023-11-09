@@ -7,7 +7,7 @@ router
   .get(categoryController.getAllCategory)
   .post(
     authController.protect,
-    authController.restrict("Owner"),
+    authController.restrict("Admin"),
     categoryController.uploadCategoryImage,
     categoryController.addCategory
   );
