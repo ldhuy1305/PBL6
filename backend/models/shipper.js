@@ -1,20 +1,11 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const User = require("./userModel");
 
-const shipperSchema = new mongoose.Schema({
+const shipperSchema = new Schema({
   ratingAverage: {
     type: Number,
     default: 4.5,
-  },
-  phoneNumber: {
-    type: String,
-    trim: true,
-    validate: {
-      validator: (value) => {
-        return /^[0-9]{10}$/.test(value);
-      },
-      message: (problem) => `${problem.value} is not a valid last name`,
-    },
   },
   frontImageCCCD: {
     type: String,
@@ -28,11 +19,14 @@ const shipperSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Đang rảnh", "Đang giao hàng"],
-    default: "Đang rảnh",
-  },
-  location: {
-    type: String,
+    enum: [
+      "Tạm Ngừng",
+      "Đang giao hàng",
+      "Chờ phê duyệt",
+      "Không hoạt động",
+      "Hoạt động",
+    ],
+    default: "Chờ phê duyệt",
   },
   //GPLX
   licenseNumber: {
@@ -62,8 +56,13 @@ const shipperSchema = new mongoose.Schema({
     default: false,
     select: false,
   },
+  rating: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Rating",
+    },
+  ],
 });
-
 const Shipper = User.discriminator("Shipper", shipperSchema);
 
 module.exports = Shipper;

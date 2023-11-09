@@ -10,11 +10,11 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: process.env.REFRESEH_TOKEN });
 
 module.exports = class Email {
-  constructor(user, token) {
+  constructor(user, token, url) {
     this.to = user.email;
     this.firstName = user.firstName;
-    this.from = ` hong anh le`;
-    // url: this.url,
+    this.from = `FALTH`;
+    this.url = url;
     this.token = token;
   }
 
@@ -22,12 +22,6 @@ module.exports = class Email {
     const accessToken = await oAuth2Client.getAccessToken();
     return nodemailer.createTransport({
       service: "gmail",
-      // host: process.env.EMAIL_HOST,
-      // port: process.env.EMAIL_PORT,
-      // auth: {
-      //   user: process.env.EMAIL_USERNAME,
-      //   pass: process.env.EMAIL_PASSWORD,
-      // },
       auth: {
         type: "OAuth2",
         user: "lehonganh1903@gmail.com",
@@ -45,7 +39,7 @@ module.exports = class Email {
     // 1) Render HTML based on a pug template
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
-      // url: this.url,
+      url: this.url,
       subject,
       token: this.token,
     });
@@ -70,5 +64,11 @@ module.exports = class Email {
       "passwordReset",
       "Your password reset token (valid for only 10 minutes)"
     );
+  }
+  async sendAcceptEmail() {
+    await this.send("acceptedEmail", "Email xác nhận đăng ký");
+  }
+  async sendRefuseEmail() {
+    await this.send("refuseEmail", "Email xác nhận đăng ký");
   }
 };

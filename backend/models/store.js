@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mapUtils = require("../utils/mapUtils");
 
 const storeSchema = new Schema(
   {
@@ -23,6 +24,16 @@ const storeSchema = new Schema(
       trim: true,
       required: [true, "Địa chỉ là bắt buộc"],
     },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+      },
+      coordinates: {
+        type: [Number],
+        index: "2dshpere",
+      },
+    },
     openAt: {
       type: String,
       required: [true, "Thời gian mở cửa là bắt buộc"],
@@ -43,9 +54,15 @@ const storeSchema = new Schema(
       type: Number,
       default: 0,
     },
-    images: {
+    rating: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Rating",
+      },
+    ],
+    image: {
       type: String,
-      default: "",
+      required: [true, "Hình ảnh cửa hàng là bắt buộc"],
     },
     ownerId: {
       type: Schema.Types.ObjectId,
@@ -60,4 +77,13 @@ const storeSchema = new Schema(
     timestamps: true,
   }
 );
+
+storeSchema.pre("save", async function(next) {
+  const loc = await mapUtils.getGeoCode(this.address);
+  this.location = {
+    type: "Point",
+    coordinates: [loc[0].latitude, loc[0].longitude],
+  };
+  next();
+});
 module.exports = mongoose.model("Store", storeSchema);

@@ -16,10 +16,12 @@ const productSchema = new Schema({
     type: String,
     required: [true, "Tên sản phẩm là bắt buộc"],
   },
-  images: {
-    type: String,
-    required: [true, "Hình ảnh là bắt buộc"],
-  },
+  images: [
+    {
+      type: String,
+      required: [true, "Hình ảnh là bắt buộc"],
+    },
+  ],
   price: {
     type: Number,
     required: true,
@@ -38,6 +40,12 @@ const productSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  rating: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Rating",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Product", productSchema);

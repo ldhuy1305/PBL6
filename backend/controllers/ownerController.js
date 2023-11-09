@@ -4,17 +4,24 @@ const authController = require("../controllers/authController");
 const catchAsync = require("../utils/catchAsync");
 const Owner = require("../models/owner");
 const fileUploader = require("../utils/uploadImage");
-
+const cloudinary = require("cloudinary").v2;
 exports.createOwner = authController.signUp(Owner, "Owner");
 exports.verifiedSignUp = authController.verifiedSignUp(Owner);
 exports.createStore = catchAsync(async (req, res, next) => {
   try {
-    req.body.phoneNumber = req.body.phoneNumberStore;
-    req.body.address = req.body.addressStore;
-    const body = { ...req.body, ownerId: req.doc._id };
-
-    console.log(body);
+    let body = {
+      ...req.body,
+      ownerId: req.doc._id,
+      phoneNumber: req.body.phoneNumberStore,
+      address: req.body.addressStore,
+    };
+    if (req.files) {
+      body = { ...body, image: req.files.image[0]?.path };
+    } else {
+      return next(new AppError("Vui lòng cung cấp hình ảnh cửa hàng", 500));
+    }
     const storeCreated = await Store.create(body);
+
     res.store = storeCreated;
     next();
   } catch (err) {
@@ -31,4 +38,5 @@ exports.createStore = catchAsync(async (req, res, next) => {
 exports.uploadOwnerImages = fileUploader.fields([
   { name: "frontImageCCCD", maxCount: 1 },
   { name: "behindImageCCCD", maxCount: 1 },
+  { name: "image", maxCount: 1 },
 ]);

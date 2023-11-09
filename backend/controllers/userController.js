@@ -1,10 +1,12 @@
 const User = require("../models/userModel");
 const Contact = require("../models/contact");
+const Store = require("../models/store");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
+const mapUtils = require("../utils/mapUtils");
 
 class userController {
   sendEmail = authController.sendEmailVerify;
@@ -20,13 +22,15 @@ class userController {
   getUserById = handleController.getOne(User);
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
-    for (let contact of user.contact) {
-      if (contact._id == user.defaultContact) {
-        contact.phoneNumber = req.body.phoneNumber;
-        contact.address = req.body.address;
-      }
-    }
+    const user = await User.findById(req.params.id).populate("contact");
+    let contact = user.contact.find(
+      (el) => el._id.toString() === user.defaultContact.toString()
+    );
+    contact.address = req.body.address ? req.body.address : contact.address;
+    contact.phoneNumber = req.body.phoneNumber
+      ? req.body.phoneNumber
+      : contact.phoneNumber;
+    user.markModified("contact");
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     await user.save({ validateBeforeSave: false });
@@ -84,7 +88,51 @@ class userController {
     const contact = await Contact.findById(id, { _id: 0, __v: 0 });
     res.status(200).json(contact);
   });
-  viewOrder = catchAsync(async (req, res, next) => {});
+  getInfoCart = catchAsync(async (req, res, next) => {
+    const { userId, storeId } = req.params;
+    let user = await User.findById(userId);
+
+    user = await user.populate("contactId").execPopulate();
+    const store = await Store.findById(storeId);
+
+    const storeCoordinates = {
+      latitude: store.location.coordinates[0],
+      longitude: store.location.coordinates[1],
+    };
+    const data = user.contact.map(function(contact) {
+      console.log(contact);
+      const contactCoordinates = {
+        latitude: contact.location.coordinates[0],
+        longitude: contact.location.coordinates[1],
+      };
+      let distance = +mapUtils.getDistance(
+        storeCoordinates,
+        contactCoordinates
+      );
+
+      const prepareTime = 10; // time expected for preparing
+      distance = (distance / 1000).toFixed(1);
+      let deliveryTime = Math.round((distance / 40) * 60 + prepareTime); // 40 is deliverySpeed -- duration = distance / deliverySpeed
+
+      //totalPrice
+      let shipCost;
+      const baseFee = 16000;
+      const feePerKm = 5000;
+      distance > 3
+        ? (shipCost = baseFee + Math.ceil(distance - 3) * feePerKm)
+        : (shipCost = baseFee);
+      return {
+        contact,
+        deliveryTime,
+        distance,
+        shipCost,
+      };
+    });
+    res.status(200).json({
+      status: "success",
+      data,
+    });
+  });
 }
 
 module.exports = new userController();

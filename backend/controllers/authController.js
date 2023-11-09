@@ -1,6 +1,7 @@
 const { promisify } = require("util");
 const User = require("../models/userModel");
-const appError = require("../utils/AppError");
+
+const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
 const cloudinary = require("cloudinary").v2;
@@ -44,9 +45,15 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         ...body,
         frontImageCCCD: req.files.frontImageCCCD[0]?.path,
         behindImageCCCD: req.files.behindImageCCCD[0]?.path,
-        licenseImage: req.files.licenseImage[0]?.path,
       };
+      if (req.files.licenseImage) {
+        body = {
+          ...body,
+          licenseImage: req.files.licenseImage[0]?.path,
+        };
+      }
     }
+    console.log(body);
     const doc = await Model.create(body);
 
     const signUpToken = doc.createSignUpToken();
@@ -71,16 +78,22 @@ exports.signUp = (Model, role) => async (req, res, next) => {
 exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
-  console.log(doc, signUpToken);
+  const url = `${req.protocol}://${req.get("host")}/api/auth/verify-token/${
+    doc.email
+  }`;
   try {
-    await new Email(doc, signUpToken).sendWelcome();
+    await new Email(doc, signUpToken, url).sendWelcome();
     res.status(200).json({
       message: "Mã đã được gửi đến email!",
     });
   } catch (err) {
-    // doc.signUpToken = undefined;
-    // doc.signUpResetExpires = undefined;
-    // await doc.save({ validateBeforeSave: false });
+    if (req.files) {
+      Object.keys(req.files).forEach((key) => {
+        req.files[key].forEach((file) =>
+          cloudinary.uploader.destroy(file.filename)
+        );
+      });
+    }
     await User.findByIdAndDelete(doc._id);
 
     return next(
@@ -131,8 +144,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = doc.createSignUpToken();
   await doc.save({ validateBeforeSave: false });
   try {
-    // const url = `${req.protocol}://${req.get("host")}/auth/verify-token`;
-    await new Email(doc, resetToken).sendPasswordReset();
+    const url = `${req.protocol}://${req.get("host")}/api/auth/verify-token/${
+      doc.email
+    }`;
+
+    await new Email(doc, resetToken, url).sendPasswordReset();
     res.status(200).json({
       message: "Mã đã được gửi đến email!",
     });

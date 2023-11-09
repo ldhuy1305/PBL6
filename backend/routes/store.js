@@ -3,6 +3,7 @@ var router = express.Router();
 const storeController = require("../controllers/storeController");
 const authController = require("../controllers/authController");
 
+
 router.get("/owner/:ownerId", storeController.getStoreByOwnerId);
 router.get("/:storeId", storeController.getStoreByStoreId);
 router.put("/:ownerId", storeController.updateStore);

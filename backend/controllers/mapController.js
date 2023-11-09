@@ -1,13 +1,8 @@
-const Shipper = require("../models/shipper");
 const Store = require("../models/store");
 const appError = require("../utils/appError");
-const ApiFeatures = require("../utils/ApiFeatures");
-const axios = require("axios");
 const fs = require("fs");
 const catchAsync = require("../utils/catchAsync");
-
-require("dotenv").config();
-const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const mapUtils = require("../utils/mapUtils");
 class mapController {
   setAddress = catchAsync(async (req, res, next) => {
     fs.readFile("cities.json", "utf8", (err, data) => {
@@ -37,7 +32,7 @@ class mapController {
     });
   });
   nearBySearch = catchAsync(async (req, res, next) => {
-    const data = await search(req.query.address, 50000);
+    const data = await mapUtils.search(req.query.address, 50000);
     if (!data) next(new appError("Không tìm thấy địa chỉ", 404));
     res.status(200).json({
       status: "success",
@@ -50,7 +45,7 @@ class mapController {
     const distance = 5;
     const filteredAddresses = [];
     for (const address of addresses) {
-      let data = await getDistance(userAddress, address.address);
+      let data = await mapUtils.getDistance(userAddress, address.address);
       data = +data.routes[0].legs[0].distance.text.split("km")[0];
       if (data < distance) {
         filteredAddresses.push(address);
@@ -63,79 +58,33 @@ class mapController {
   });
 
   viewGeoCode = catchAsync(async (req, res, next) => {
-    console.log(req.query.address);
-    const data = await getGeoCode(req.query.address);
+    const data = await mapUtils.getGeoCode(req.query.address);
     if (!data) next(new appError("Không tìm thấy địa chỉ", 404));
     res.status(200).json({
       status: "success",
-      data,
+      data: {
+        lat: data[0].latitude,
+        lng: data[0].longitude,
+      },
     });
   });
 
   viewAddress = catchAsync(async (req, res, next) => {
-    const data = await getAddress(req.query.latlng);
+    const data = await mapUtils.getAddress(req.query.latlng);
     if (!data) next(new appError("Không tìm thấy địa chỉ", 404));
     res.status(200).json({
       status: "success",
-      data,
+      data: data[0].formattedAddress,
     });
   });
-  viewDistance = catchAsync(async (req, res, next) => {
+  viewDistanceAndDuration = catchAsync(async (req, res, next) => {
     let { destination, origin } = req.query;
-    const data = await getDistance(origin, destination);
+    const data = await mapUtils.getDistanceAndDuration(origin, destination);
     if (!data) next(new appError("Không tìm thấy địa chỉ", 404));
-    const distance = data.routes[0].legs[0].distance.text;
-    const duration = data.routes[0].legs[0].duration.text;
-
     res.status(200).json({
       status: "success",
-      data: { distance, duration },
+      data: { distance: data[0], duration: data[1] },
     });
   });
 }
-getGeoCode = async (address) => {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-    address
-  )}&key=${API_KEY}`;
-  const response = await axios.get(url);
-  if (response.data.status === "OK") {
-    return response.data.results[0].geometry.location;
-  }
-};
-getAddress = async (latlng) => {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng}&key=${API_KEY}`;
-  const response = await axios.get(url);
-
-  if (response.data.status === "OK") {
-    return response.data.results[0].formatted_address;
-  }
-};
-getPlaceId = async (address) => {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-    address
-  )}&key=${API_KEY}`;
-  const response = await axios.get(url);
-
-  if (response.data.status === "OK") {
-    return response.data.results[0].place_id;
-  }
-};
-getDistance = async (origin, destination) => {
-  destination = await getPlaceId(destination);
-  origin = await getPlaceId(origin);
-  const url = `https://maps.googleapis.com/maps/api/directions/json?destination=place_id:${destination}&origin=place_id:${origin}&units=metric&key=${API_KEY}`;
-  const response = await axios.get(url);
-
-  if (response.data.status === "OK") {
-    return response.data;
-  }
-};
-search = async (location, radius) => {
-  location = await getGeoCode(location);
-  const url = `https://maps.googleapis.com/maps/api/place//nearbysearch/json?location=${location}&radius${radius}&key=${API_KEY}`;
-  const response = await axios.get(url);
-  if (response.data.status === "OK") {
-    return response.data;
-  }
-};
 module.exports = new mapController();

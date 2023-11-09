@@ -8,34 +8,35 @@ router.route("/search").get(productController.searchProduct);
 router.route("/recommend").get(productController.recommendProduct);
 router.route("/:id").get(productController.viewProduct);
 router.use(authController.protect);
+router.route("/store/:storeId").get(productController.getAllProductByStoreId);
 router
-  .route("/store/:storeId")
-  .all(authController.restrict("Owner"))
-  .get(productController.getAllProductByStore)
-  .post(productController.addProduct);
+  .route("/owner/:ownerId")
+  .all(authController.restrict("Owner", "User"))
+  .get(productController.getAllProductByOwnerId)
+  .post(productController.uploadProductImages, productController.addProduct);
 router
   .route("/:id")
   .all(authController.restrict("Owner"))
   .delete(productController.deleteProduct)
-  .put(productController.updateProduct);
+  .put(productController.uploadProductImages, productController.updateProduct);
 
 router.get(
-  "/stat/favor-product/:storeId",
+  "/stat/favor-product/:ownerId",
   authController.restrict("Owner"),
   productController.favorProductQuantity
 );
 router.get(
-  "/stat/no-sale-product/:storeId",
+  "/stat/no-sale-product/:ownerId",
   authController.restrict("Owner"),
   productController.noSaleProductQuantity
 );
 router.get(
-  "/stat/product-quantity/:storeId",
+  "/stat/product-quantity/:ownerId",
   authController.restrict("Owner"),
   productController.productQuantity
 );
 router.get(
-  "/product-by-cat/:storeId",
+  "/product-by-cat/:ownerId",
   authController.restrict("Owner"),
   productController.getProductByCat
 );

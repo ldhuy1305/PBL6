@@ -4,27 +4,80 @@ const catchAsync = require("../utils/catchAsync");
 const fileUploader = require("../utils/uploadImage");
 
 class ratingController {
-  uploadRatingImages = fileUploader.fields([{ name: "image", maxCount: 1 }]);
+  uploadRatingImages = fileUploader.fields({ name: "image", maxCount: 1 });
+  updatePhoto = fileUploader.single("image");
   ratingForProduct = catchAsync(async (req, res, next) => {
     let body = {
       ...req.body,
       referenceId: req.params.productId,
       userId: req.params.userID,
     };
-    if (req.files) {
+    if (req.file) {
       body = {
         ...body,
-        image: req.files.image[0]?.path,
+        image: req.file?.path,
       };
     }
+    await Rating.create(body)
+      .then((rating) => {
+        res.status(201).json(rating);
+      })
+      .catch((err) => {
+        if (req.file) {
+          cloudinary.uploader.destroy(req.file.filename);
 
-    res.json(body);
-    // const rating = await Rating.create(body);
-    // if (!rating) console.log("Could");
-    // res.status(201).json(rating);
+          next(err);
+        }
+      });
   });
-  ratingForShipper = catchAsync(async (req, res, next) => {});
-  ratingForStore = catchAsync(async (req, res, next) => {});
+  ratingForShipper = catchAsync(async (req, res, next) => {
+    let body = {
+      ...req.body,
+      referenceId: req.params.shipperId,
+      userId: req.params.userID,
+    };
+    if (req.file) {
+      body = {
+        ...body,
+        image: req.file?.path,
+      };
+    }
+    await Rating.create(body)
+      .then((rating) => {
+        res.status(201).json(rating);
+      })
+      .catch((err) => {
+        if (req.file) {
+          cloudinary.uploader.destroy(req.file.filename);
+
+          next(err);
+        }
+      });
+  });
+  ratingForStore = catchAsync(async (req, res, next) => {
+    let body = {
+      ...req.body,
+      referenceId: req.params.storeId,
+      userId: req.params.userID,
+    };
+    if (req.file) {
+      body = {
+        ...body,
+        image: req.file?.path,
+      };
+    }
+    await Rating.create(body)
+      .then((rating) => {
+        res.status(201).json(rating);
+      })
+      .catch((err) => {
+        if (req.file) {
+          cloudinary.uploader.destroy(req.file.filename);
+
+          next(err);
+        }
+      });
+  });
 }
 
 module.exports = new ratingController();
