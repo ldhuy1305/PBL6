@@ -70,7 +70,7 @@ class storeController {
   });
   getStoreByStoreId = catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    const store = await Store.findById(id);
+    const store = await Store.findById(req.params.storeId);
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",

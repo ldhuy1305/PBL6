@@ -11,6 +11,7 @@ router.post(
 
 router.get("/owner/:id", storeController.getStoreByOwnerId);
 router.get("/:id", storeController.getStoreByStoreId);
+
 router.put("/:ownerId", storeController.updateStore);
 router.patch("/lock/:ownerId", storeController.lockStore);
 router.get("/city/:name", storeController.getStoreByCity);
