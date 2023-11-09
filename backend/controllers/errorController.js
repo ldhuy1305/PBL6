@@ -10,7 +10,6 @@ const devErrors = (res, err) => {
 };
 const castErrorHandler = (err) => {
   const message = `Không hợp lệ cho ${err.path}: ${err.value}.`;
-  console.log(message);
   return new appError(message, 400);
 };
 const duplicateKeyErrorHandler = (err) => {
