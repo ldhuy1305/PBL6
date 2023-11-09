@@ -3,8 +3,9 @@ var router = express.Router();
 const storeController = require("../controllers/storeController");
 const authController = require("../controllers/authController");
 
-router.get("/owner/:id", storeController.getStoreByOwnerId);
-router.get("/:id", storeController.getStoreByStoreId);
+
+router.get("/owner/:ownerId", storeController.getStoreByOwnerId);
+router.get("/:storeId", storeController.getStoreByStoreId);
 router.put("/:ownerId", storeController.updateStore);
 router.patch("/lock/:ownerId", storeController.lockStore);
 router.get("/city/:name", storeController.getStoreByCity);
