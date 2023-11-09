@@ -7,15 +7,13 @@ const contactController = require("../controllers/contactController");
 // router.get("/", storeController.getAllStore);
 // router.put("/:id", storeController.updateStore);
 // router.delete("/:id", storeController.deleteStore);
-router
-  .route("/")
-  .post(
-    ownerController.uploadOwnerImages,
-    contactController.createContact,
-    ownerController.createOwner,
-    ownerController.createStore,
-    authController.sendEmailVerify
-  );
+router.route("/").post(
+  ownerController.uploadOwnerImages,
+  contactController.createContact,
+  ownerController.createOwner,
+  // ownerController.createStore,
+  authController.sendEmailVerify
+);
 router.post("/:email", ownerController.verifiedSignUp);
 
 module.exports = router;

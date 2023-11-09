@@ -7,17 +7,28 @@ const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
-
+const ApiFeatures = require("../utils/ApiFeatures");
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = catchAsync(async (req, res, next) => {
-    const shippers = await User.find({
+    let obj = {
       isVerified: true,
       role: "User",
+    };
+    const features = new ApiFeatures(
+      User.find(obj).select("+isVerified"),
+      req.query
+    )
+      .search()
+      .limitFields()
+      .paginate();
+    const users = await features.query;
+    return res.status(200).json({
+      length: users.length,
+      data: users,
     });
-    return res.status(200).json(shippers);
   });
   getUserById = handleController.getOne(User);
   deleteUser = handleController.delOne(User);

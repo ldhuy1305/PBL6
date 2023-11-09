@@ -27,4 +27,7 @@ router
 router.route("/store").get(storeController.getAllStore);
 router.route("/store/:id").get(storeController.getStoreByStoreId);
 
+//Manage Users
+router.route("/user").get(userController.getAllUser);
+
 module.exports = router;

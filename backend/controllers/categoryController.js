@@ -11,7 +11,7 @@ class categoryController {
     try {
       const doc = await Category.create({
         ...req.body,
-        photo: req.file?.path,
+        photo: req.file.path,
       });
       res.status(200).json({
         data: doc,

@@ -47,17 +47,16 @@ class adminController {
       return next(new appError("Không có chủ cửa hàng nào cần phê duyệt", 400));
     }
     return res.status(200).json({
-      length: owners.length,
+      length: data.length,
       data,
     });
   });
   appoveShipperAccount = catchAsync(async (req, res, next) => {
     const isAccepted = req.body.isAccepted;
-    const shipper = await Shipper.findById({ _id: req.params.id }).select(
-      "+isAccepted"
-    );
+    const shipper = await Shipper.findById(req.params.id).select("+isAccepted");
+    console.log(shipper);
 
-    if (!shipper || !isAccepted) {
+    if (!shipper || isAccepted === undefined) {
       return next(new appError("Không tìm thấy người giao hàng !!!", 500));
     }
     if (shipper.isAccepted === true) {

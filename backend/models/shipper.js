@@ -25,6 +25,7 @@ const shipperSchema = new Schema({
       "Chờ phê duyệt",
       "Không hoạt động",
       "Hoạt động",
+      "Đã khoá",
     ],
     default: "Chờ phê duyệt",
   },
