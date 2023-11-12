@@ -6,6 +6,7 @@ const fileUploader = require("../utils/uploadImage");
 const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 const cloudinary = require("cloudinary").v2;
+const Order = require("../models/order");
 
 exports.signUpShipper = authController.signUp(Shipper, "Shipper");
 exports.verifiedSignUp = authController.verifiedSignUp(Shipper);
@@ -68,4 +69,75 @@ exports.updateShipper = catchAsync(async (req, res, next) => {
     }
     next(err);
   }
+});
+exports.setCoordinates = catchAsync(async (req, res, next) => {
+  const { id, lat, lng } = req.params;
+
+  const coordinates = [parseFloat(lat), parseFloat(lng)];
+
+  const shipper = await Shipper.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        location: {
+          type: "Point",
+          coordinates: coordinates,
+        },
+      },
+    },
+    { new: true }
+  );
+
+  if (!shipper) return next(new appError("Không tìm thấy shipper", 404));
+  res.status(200).json({
+    status: "success",
+    data: shipper,
+  });
+});
+
+// find Orders near by Shipper <
+exports.findOrdersNearByShipper = catchAsync(async (req, res, next) => {
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || 10;
+  const shipper = await Shipper.findById(req.params.id);
+  const coordinates = shipper.location.coordinates.reverse();
+  const order = await Order.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          coordinates,
+        },
+        key: "storeLocation",
+        maxDistance: 10 * 1000,
+        distanceField: "dist.calculated",
+        query: { status: "Pending" },
+        spherical: true,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        status: 1,
+        storeLocation: 1,
+        dist: "$dist.calculated",
+      },
+    },
+    {
+      $sort: {
+        "dist.calculated": 1,
+      },
+    },
+    {
+      $skip: (page - 1) * limit,
+    },
+    {
+      $limit: limit,
+    },
+  ]);
+  res.status(200).json({
+    status: "success",
+    length: order.length,
+    data: order,
+  });
 });

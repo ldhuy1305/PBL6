@@ -62,6 +62,16 @@ const shipperSchema = new Schema({
       ref: "Rating",
     },
   ],
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+    },
+    coordinates: {
+      type: [Number],
+      index: "2dsphere",
+    },
+  },
 });
 const Shipper = User.discriminator("Shipper", shipperSchema);
 
