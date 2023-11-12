@@ -37,5 +37,6 @@ router
   );
 
 router.route("/:email").post(shipperController.verifiedSignUp);
-
+router.route("/:id/lat/:lat/lng/:lng").post(shipperController.setCoordinates);
+router.route("/:id/find-orders").get(shipperController.findOrdersNearByShipper);
 module.exports = router;
