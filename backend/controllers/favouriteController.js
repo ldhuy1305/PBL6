@@ -5,7 +5,10 @@ class FavouriteController {
   // Favour product
   favourProduct = catchAsync(async (req, res, next) => {
     const { userId, productId } = req.params;
-    const favourite = await Favourite.findOneAndDelete({ userId, productId });
+    const favourite = await Favourite.findOneAndDelete({
+      user: userId,
+      product: productId,
+    });
     if (favourite) {
       res.status(200).json({
         status: "success",
@@ -13,8 +16,8 @@ class FavouriteController {
       });
     } else {
       const favorite = await Favourite.create({
-        userId: userId,
-        productId: productId,
+        user: userId,
+        product: productId,
       });
       res.status(201).json({
         status: "success",
@@ -26,8 +29,8 @@ class FavouriteController {
   });
   // get favorite products by userId
   getFavouritesByUserId = catchAsync(async (req, res, next) => {
-    const userId = req.params.userId;
-    const favorite = await Favourite.find({ userId }).select("-__v -_id");
+    const id = req.params.userId;
+    const favorite = await Favourite.find({ id }).select("-__v -_id");
     if (!favorite)
       return next(new appError("Couldn't find this document", 404));
     res.status(200).json({
