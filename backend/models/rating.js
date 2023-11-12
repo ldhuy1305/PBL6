@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ratingSchema = new Schema(
   {
-    referenceId: {
+    reference: {
       type: Schema.Types.ObjectId,
     },
-    userId: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
