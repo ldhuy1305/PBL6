@@ -45,7 +45,10 @@ class userController {
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     await user.save({ validateBeforeSave: false });
-    res.status(200).json(user);
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
   });
   changePass = catchAsync(async (req, res, next) => {
     // const { newPass, confirmedPass } = req.body;

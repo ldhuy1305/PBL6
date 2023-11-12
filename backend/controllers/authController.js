@@ -248,13 +248,13 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new appError("Người dùng không tồn tại!", 401));
   }
-  // if (user.role == "Shipper" && user.isAccepted == false)
-  //   return next(new appError("Người giao hàng chờ phê duyệt!", 401));
-  // if (user.role == "Owner" && user.isAccepted == false)
-  //   return next(new appError("Chủ cửa hàng chờ phê duyệt!", 401));
-  // if (!token) {
-  //   return next(new appError("Người dùng chưa đăng nhập!", 403));
-  // }
+  if (user.role == "Shipper" && user.isAccepted == false)
+    return next(new appError("Người giao hàng chờ phê duyệt!", 401));
+  if (user.role == "Owner" && user.isAccepted == false)
+    return next(new appError("Chủ cửa hàng chờ phê duyệt!", 401));
+  if (!token) {
+    return next(new appError("Người dùng chưa đăng nhập!", 403));
+  }
   // 4. Allow the user to access routes
   req.user = user;
   next();

@@ -117,7 +117,10 @@ class storeController {
   updateStore = catchAsync(async (req, res, next) => {
     const store = await Store.findOneAndUpdate(
       { ownerId: req.params.ownerId },
-      req.body
+      req.body,
+      {
+        new: true,
+      }
     );
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({

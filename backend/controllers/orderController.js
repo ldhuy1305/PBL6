@@ -6,7 +6,6 @@ const userModel = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
 const appError = require("../utils/appError");
-const vnpayService = require("../utils/vnpayService");
 const request = require("request");
 const moment = require("moment");
 const crypto = require("crypto");
@@ -211,7 +210,11 @@ class orderController {
         }
       });
     }
-    next();
+    res.status(200).json({
+      status: "success",
+      data: orders,
+    });
+    // next();
   });
   changeStatus = catchAsync(async (req, res, next) => {
     const { id, shipperId } = req.params;
