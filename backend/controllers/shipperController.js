@@ -36,6 +36,7 @@ exports.uploadShipperImages = fileUploader.fields([
   { name: "frontImageCCCD", maxCount: 1 },
   { name: "behindImageCCCD", maxCount: 1 },
   { name: "licenseImage", maxCount: 1 },
+  { name: "vehicleLicense", maxCount: 1 },
 ]);
 
 exports.updatePhoto = fileUploader.single("photo");
