@@ -4,7 +4,7 @@ const Owner = require("../models/owner");
 const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
-const AppError = require("../utils/appError");
+const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
@@ -20,7 +20,7 @@ class storeController {
       const checkOwner = await Store.findOne({ ownerId: req.params.ownerId });
       if (checkOwner) {
         return next(
-          new AppError(
+          new appError(
             "Chủ cửa hàng này đã được đăng ký cho cửa hàng khác!",
             500
           )
@@ -39,7 +39,7 @@ class storeController {
           image: req.files.image[0]?.path,
         };
       } else {
-        return next(new AppError("Vui lòng cung cấp hình ảnh cửa hàng", 500));
+        return next(new appError("Vui lòng cung cấp hình ảnh cửa hàng", 500));
       }
       const storeCreated = await Store.create(body);
       res.status(201).json({
