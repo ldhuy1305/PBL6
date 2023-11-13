@@ -61,7 +61,7 @@ class storeController {
   });
 
   getStoreByOwnerId = catchAsync(async (req, res, next) => {
-    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    const store = await Store.findOne({ ownerId: req.params.id });
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
@@ -70,7 +70,7 @@ class storeController {
   });
   getStoreByStoreId = catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    const store = await Store.findById(req.params.storeId);
+    const store = await Store.findById(req.params.id);
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
