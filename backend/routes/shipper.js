@@ -2,11 +2,13 @@ var express = require("express");
 var router = express.Router();
 const shipperController = require("../controllers/shipperController");
 const authController = require("../controllers/authController");
+const contactController = require("../controllers/contactController");
 
 router
   .route("/")
   .post(
     shipperController.uploadShipperImages,
+    contactController.createContact,
     shipperController.signUpShipper,
     shipperController.sendEmailVerify
   )
@@ -35,5 +37,6 @@ router
   );
 
 router.route("/:email").post(shipperController.verifiedSignUp);
-
+router.route("/:id/lat/:lat/lng/:lng").post(shipperController.setCoordinates);
+router.route("/:id/find-orders").get(shipperController.findOrdersNearByShipper);
 module.exports = router;

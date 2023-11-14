@@ -19,12 +19,15 @@ router
 // Manage Owner
 router.get("/owner/approve", adminController.getListOwnerAppove);
 router
-  .route("owner/:id")
+  .route("/owner/:id")
   .patch(adminController.appoveOwnerAccount)
   .get(storeController.getStoreByOwnerId);
 
 // Manage Store
 router.route("/store").get(storeController.getAllStore);
 router.route("/store/:id").get(storeController.getStoreByStoreId);
+
+//Manage Users
+router.route("/user").get(userController.getAllUser);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mapUtils = require("../utils/mapUtils");
 
 const storeSchema = new Schema(
   {
@@ -77,7 +78,7 @@ const storeSchema = new Schema(
   }
 );
 
-storeSchema.pre("save", async (next) => {
+storeSchema.pre("save", async function(next) {
   const loc = await mapUtils.getGeoCode(this.address);
   this.location = {
     type: "Point",
