@@ -17,13 +17,13 @@ router.get(
 router.get(
   "/owner/:ownerId",
   authController.restrict("Owner"),
-  orderController.cancelOrderWhenTimeOut,
+  orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByOwnerId
 );
 router.get(
   "/user/:userId",
   authController.restrict("User"),
-  orderController.cancelOrderWhenTimeOut,
+  orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByUserId
 );
 module.exports = router;
