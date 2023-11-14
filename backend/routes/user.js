@@ -26,7 +26,7 @@ router
   )
   .patch(
     authController.restrict("User"),
-    contactController.updateContact,
+    contactController.updateDefaultContact,
     userController.updateUser
   )
   .delete(
@@ -60,6 +60,11 @@ router.post(
   "/set-default-contact/:userId/:contactId",
   authController.restrict("User"),
   userController.setDefaultContact
+);
+router.patch(
+  "/:userId/contact/:contactId",
+  authController.restrict("User"),
+  contactController.updateContact
 );
 router.get(
   "/:userId/store/:storeId",

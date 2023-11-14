@@ -7,32 +7,48 @@ const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
-
+const ApiFeatures = require("../utils/ApiFeatures");
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = catchAsync(async (req, res, next) => {
-    const shippers = await User.find({
+    let obj = {
       isVerified: true,
       role: "User",
+    };
+    const features = new ApiFeatures(
+      User.find(obj).select("+isVerified"),
+      req.query
+    )
+      .search()
+      .limitFields()
+      .paginate();
+    const users = await features.query;
+    return res.status(200).json({
+      length: users.length,
+      data: users,
     });
-    return res.status(200).json(shippers);
   });
   getUserById = handleController.getOne(User);
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
-    for (let contact of user.contact) {
-      if (contact._id == user.defaultContact) {
-        contact.phoneNumber = req.body.phoneNumber;
-        contact.address = req.body.address;
-      }
-    }
+    const user = await User.findById(req.params.id).populate("contact");
+    let contact = user.contact.find(
+      (el) => el._id.toString() === user.defaultContact.toString()
+    );
+    contact.address = req.body.address ? req.body.address : contact.address;
+    contact.phoneNumber = req.body.phoneNumber
+      ? req.body.phoneNumber
+      : contact.phoneNumber;
+    user.markModified("contact");
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     await user.save({ validateBeforeSave: false });
-    res.status(200).json(user);
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
   });
   changePass = catchAsync(async (req, res, next) => {
     // const { newPass, confirmedPass } = req.body;

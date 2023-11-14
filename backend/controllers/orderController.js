@@ -1,5 +1,6 @@
 const Contact = require("../models/contact");
 const Order = require("../models/order");
+const Transaction = require("../models/transaction");
 const Store = require("../models/store");
 const Transaction = require("../models/transaction");
 const User = require("../models/userModel");
@@ -21,8 +22,10 @@ class orderController {
       cart,
       totalPrice,
       shipCost,
+      status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
+
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();
@@ -85,9 +88,10 @@ class orderController {
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const { id } = req.params;
+    const id = req.params;
     const order = await Order.findById(id);
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    console.log(order.shipperId);
     res.status(200).json({
       status: "success",
       data: order,
@@ -261,6 +265,7 @@ class orderController {
       data: orders,
     });
   });
+  
   getOrdersByUserId = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     if (!user) return next(new appError("Không tìm thấy người dùng"), 404);

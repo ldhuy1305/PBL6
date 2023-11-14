@@ -46,8 +46,13 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         frontImageCCCD: req.files.frontImageCCCD[0]?.path,
         behindImageCCCD: req.files.behindImageCCCD[0]?.path,
       };
+      if (req.files.licenseImage) {
+        body = {
+          ...body,
+          licenseImage: req.files.licenseImage[0]?.path,
+        };
+      }
     }
-
     console.log(body);
     const doc = await Model.create(body);
 
@@ -82,9 +87,13 @@ exports.sendEmailVerify = catchAsync(async (req, res, next) => {
       message: "Mã đã được gửi đến email!",
     });
   } catch (err) {
-    // doc.signUpToken = undefined;
-    // doc.signUpResetExpires = undefined;
-    // await doc.save({ validateBeforeSave: false });
+    if (req.files) {
+      Object.keys(req.files).forEach((key) => {
+        req.files[key].forEach((file) =>
+          cloudinary.uploader.destroy(file.filename)
+        );
+      });
+    }
     await User.findByIdAndDelete(doc._id);
 
     return next(
@@ -120,6 +129,7 @@ exports.verifiedSignUp = (Model) =>
 
     res.status(200).json({
       message: "Đăng kí thành công!",
+      doc,
     });
   });
 
@@ -231,15 +241,19 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
-  if (!token) {
-    return next(new appError("Người dùng chưa đăng nhập!", 403));
-  }
   // 2. validate the token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   // 3. If the user is exits
   const user = await User.findById(decoded.id);
   if (!user) {
     return next(new appError("Người dùng không tồn tại!", 401));
+  }
+  if (user.role == "Shipper" && user.isAccepted == false)
+    return next(new appError("Người giao hàng chờ phê duyệt!", 401));
+  if (user.role == "Owner" && user.isAccepted == false)
+    return next(new appError("Chủ cửa hàng chờ phê duyệt!", 401));
+  if (!token) {
+    return next(new appError("Người dùng chưa đăng nhập!", 403));
   }
   // 4. Allow the user to access routes
   req.user = user;

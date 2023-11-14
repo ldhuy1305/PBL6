@@ -92,7 +92,7 @@ const userSchema = new Schema(
           },
           coordinates: {
             type: [Number],
-            index: "2dshpere",
+            index: "2dsphere",
           },
         },
       },
@@ -158,7 +158,7 @@ userSchema.methods.createSignUpToken = function() {
 
   this.signUpToken = resetTokenHex;
 
-  this.signUpExpires = new Date(Date.now() + 30 * 1000);
+  this.signUpExpires = new Date(Date.now() + 30 * 1000 * 1000);
   return resetToken;
 };
 

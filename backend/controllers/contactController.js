@@ -14,11 +14,36 @@ class contactController {
     req.body.contact = await Contact.find();
     next();
   });
-  updateContact = catchAsync(async (req, res, next) => {
+  updateDefaultContact = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
     if (!user) return next(new appError("Người dùng không được tìm thấy", 404));
-    await Contact.findByIdAndUpdate(user.defaultContact, req.body);
+    const contact = await Contact.findByIdAndUpdate(
+      user.defaultContact,
+      req.body
+    );
+    if (!contact)
+      return next(new appError("Không tìm thấy địa chỉ liên lạc", 404));
     next();
+  });
+  updateContact = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.params.userId).populate("contact");
+    if (!user) return next(new appError("Người dùng không được tìm thấy", 404));
+    let contact = user.contact.find((el) => el.id === req.params.contactId);
+    contact.address = req.body.address ? req.body.address : contact.address;
+    contact.phoneNumber = req.body.phoneNumber
+      ? req.body.phoneNumber
+      : contact.phoneNumber;
+    user.markModified("contact");
+    await user.save({ validateBeforeSave: false });
+
+    contact = await Contact.findByIdAndUpdate(req.params.contactId, req.body);
+    if (!contact)
+      return next(new appError("Không tìm thấy địa chỉ liên lạc", 404));
+
+    res.status(200).send({
+      status: "success",
+      data: user,
+    });
   });
   addContact = catchAsync(async (req, res, next) => {
     const body = req.body;

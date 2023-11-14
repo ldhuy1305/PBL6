@@ -31,7 +31,7 @@ const storeSchema = new Schema(
       },
       coordinates: {
         type: [Number],
-        index: "2dshpere",
+        index: "2dsphere",
       },
     },
     openAt: {
@@ -78,7 +78,7 @@ const storeSchema = new Schema(
   }
 );
 
-storeSchema.pre("save", async (next) => {
+storeSchema.pre("save", async function(next) {
   const loc = await mapUtils.getGeoCode(this.address);
   this.location = {
     type: "Point",

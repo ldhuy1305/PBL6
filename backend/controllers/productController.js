@@ -8,8 +8,8 @@ const appError = require("../utils/appError");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
 class ProductController {
-  // View All Product by Store
-  getAllProductByStore = catchAsync(async (req, res, next) => {
+  // View All Product by OwnerID
+  getAllProductByOwnerId = catchAsync(async (req, res, next) => {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     const features = new ApiFeatures(
       Product.find({ storeId: store._id }),
@@ -25,6 +25,25 @@ class ProductController {
       status: "success",
       length: products.length,
       data: products,
+    });
+  });
+  // View All Product by StoreID
+  getAllProductByStoreId = catchAsync(async (req, res, next) => {
+    const store = await Store.findById(req.params.storeId);
+    const features = new ApiFeatures(
+      Product.find({ storeId: store._id }),
+      req.query
+    )
+      .filter()
+      .search()
+      .paginate();
+    const products = await features.query;
+    res.status(200).json({
+      status: "success",
+      length: products.length,
+      data: {
+        data: products,
+      },
     });
   });
   // add Product to Store
