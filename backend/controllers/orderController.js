@@ -2,7 +2,6 @@ const Contact = require("../models/contact");
 const Order = require("../models/order");
 const Transaction = require("../models/transaction");
 const Store = require("../models/store");
-const Transaction = require("../models/transaction");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
@@ -265,7 +264,7 @@ class orderController {
       data: orders,
     });
   });
-  
+
   getOrdersByUserId = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     if (!user) return next(new appError("Không tìm thấy người dùng"), 404);
