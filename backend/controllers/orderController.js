@@ -2,10 +2,12 @@ const Contact = require("../models/contact");
 const Order = require("../models/order");
 const Transaction = require("../models/transaction");
 const Store = require("../models/store");
-const userModel = require("../models/userModel");
+const Transaction = require("../models/transaction");
+const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
 const appError = require("../utils/appError");
+const ApiFeatures = require("../utils/ApiFeatures");
 const request = require("request");
 const moment = require("moment");
 const crypto = require("crypto");
@@ -65,8 +67,11 @@ class orderController {
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
-    console.log(vnpUrl);
-    res.redirect(vnpUrl);
+    res.status(200).json({
+      status: "success",
+      data: order,
+      url: vnpUrl,
+    });
   });
 
   // after check out, system create transaction
@@ -106,9 +111,7 @@ class orderController {
         }
       });
     }
-    res.status(200).json({
-      status: "success",
-    });
+    next();
   });
   changeStatus = catchAsync(async (req, res, next) => {
     const { id, shipperId } = req.params;
@@ -244,6 +247,43 @@ class orderController {
     // });
   }
 
+  getOrdersByOwnerId = catchAsync(async (req, res, next) => {
+    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
+    const features = new ApiFeatures(
+      Order.find({ store: store._id }, { new: True }).populate("user"),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const orders = await features.query;
+    res.status(200).json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  });
+  
+  getOrdersByUserId = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.params.userId);
+    if (!user) return next(new appError("Không tìm thấy người dùng"), 404);
+    const features = new ApiFeatures(
+      Order.find({ user: user._id }).populate("store"),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const orders = await features.query;
+    res.status(200).json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  });
 }
 function sortObject(obj) {
   let sorted = {};

@@ -14,7 +14,16 @@ router.get(
   authController.restrict("Owner", "Shipper", "User"),
   orderController.viewOrder
 );
-// router.post("/:id/checkout", orderController.checkout);
-// router.post("/:id/refund", orderController.refundOrder);
-router.post("/cancel-order", orderController.cancelOrderWhenTimeOut);
+router.get(
+  "/owner/:ownerId",
+  authController.restrict("Owner"),
+  orderController.cancelOrderWhenTimeOut,
+  orderController.getOrdersByOwnerId
+);
+router.get(
+  "/user/:userId",
+  authController.restrict("User"),
+  orderController.cancelOrderWhenTimeOut,
+  orderController.getOrdersByUserId
+);
 module.exports = router;
