@@ -96,19 +96,18 @@ class orderController {
       data: order,
     });
   });
-  // Cancel order when time out
-  cancelOrderWhenTimeOut = catchAsync(async (req, res, next) => {
+  // refuse order when time out
+  refuseOrderWhenTimeOut = catchAsync(async (req, res, next) => {
     const orders = await Order.find();
     if (orders) {
-      orders.forEach(async (order) => {
+      for (let order of orders) {
         let t = (Date.now() - order.createdAt) / 60000;
         if (order.status == "Pending" && t > 30) {
-          order.status = "Cancelled";
-          // Refund money for canceled order
+          order.status = "Refused";
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
-      });
+      }
     }
     next();
   });
@@ -250,7 +249,7 @@ class orderController {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
     const features = new ApiFeatures(
-      Order.find({ store: store._id }, { new: True }).populate("user"),
+      Order.find({ store: store._id }).populate("user"),
       req.query
     )
       .filter()
