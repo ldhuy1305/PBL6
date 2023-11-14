@@ -23,14 +23,6 @@ class orderController {
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-    res.status(200).json({
-      status: "success",
-      data: order,
-    });
-  });
-  checkout = catchAsync(async (req, res, next) => {
-    const order = await Order.findById(req.params.id);
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
 
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
@@ -76,11 +68,84 @@ class orderController {
     console.log(vnpUrl);
     res.redirect(vnpUrl);
   });
-  // Refund money for canceled order
-  refundOrder = catchAsync(async (req, res, next) => {
+
+  // after check out, system create transaction
+  payment = catchAsync(async (req, res, next) => {
+    const vnp_Params = req.query;
+    if (req.query.vnp_TransactionStatus != "00") {
+      await Order.findByIdAndDelete(req.query.vnp_TxnRef);
+      return next(new appError("Thanh toán không thành công!"), 404);
+    }
+    await Transaction.create(vnp_Params);
+    res.status(200).json({
+      status: "success",
+      data: vnp_Params,
+    });
+  });
+  viewOrder = catchAsync(async (req, res, next) => {
+    const id = req.params;
+    const order = await Order.findById(id);
+    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    console.log(order.shipperId);
+    res.status(200).json({
+      status: "success",
+      data: order,
+    });
+  });
+  // Cancel order when time out
+  cancelOrderWhenTimeOut = catchAsync(async (req, res, next) => {
+    const orders = await Order.find();
+    if (orders) {
+      orders.forEach(async (order) => {
+        let t = (Date.now() - order.createdAt) / 60000;
+        if (order.status == "Pending" && t > 30) {
+          order.status = "Cancelled";
+          // Refund money for canceled order
+          await this.refundOrder(req, order._id, next);
+          await order.save();
+        }
+      });
+    }
+    res.status(200).json({
+      status: "success",
+    });
+  });
+  changeStatus = catchAsync(async (req, res, next) => {
+    const { id, shipperId } = req.params;
+    const order = await Order.findById(id);
+    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    let message;
+    // when shipper accept order
+    if (order.status == "Pending") {
+      order.shipper = shipperId;
+      order.status = "Preparing";
+      message = "Shipper đã xác nhận giao hàng";
+    }
+    // when shipper take order
+    if (order.status == "Preparing") {
+      order.status = "Ready";
+      message = "Shipper đã nhận hàng";
+    }
+    // when shipper delivery order
+    if (order.status == "Ready") {
+      order.status = "Delivering";
+      message = "Shipper đang giao hàng";
+    }
+    // when shipper deliveried
+    if (order.status == "Delivering") {
+      order.status = "Finished";
+      message = "Shipper đã giao hàng thành công";
+    }
+    await order.save();
+    return res.status(200).json({
+      success: "success",
+      message,
+    });
+  });
+  async refundOrder(req, id, next) {
     process.env.TZ = "Asia/Ho_Chi_Minh";
     const transaction = await Transaction.findOne({
-      vnp_TxnRef: `${req.params.id}`,
+      vnp_TxnRef: `${id}`,
     });
     if (!transaction) return next(new appError("Không tìm thấy đơn hàng"), 404);
     let date = new Date();
@@ -173,83 +238,13 @@ class orderController {
         }
       }
     );
+    // res.status(200).json({
+    //   status: "success",
+    //   data: transaction,
+    // });
+  }
 
-    res.status(200).json({
-      status: "success",
-      data: transaction,
-    });
-  });
-  // after check out, system create transaction
-  payment = catchAsync(async (req, res, next) => {
-    const vnp_Params = req.query;
-    await Transaction.create(vnp_Params);
-    res.status(200).json({
-      status: "success",
-      data: vnp_Params,
-    });
-  });
-  viewOrder = catchAsync(async (req, res, next) => {
-    const id = req.params;
-    const order = await Order.findById(id);
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
-    console.log(order.shipperId);
-    res.status(200).json({
-      status: "success",
-      data: order,
-    });
-  });
-  // Cancel order when time out
-  cancelOrderWhenTimeOut = catchAsync(async (req, res, next) => {
-    const orders = await Order.find();
-    if (orders) {
-      orders.forEach(async (order) => {
-        let t = (Date.now() - order.createdAt) / 60000;
-        if (order.status == "Pending" && t > 30) {
-          order.status = "Cancelled";
-          await order.save();
-        }
-      });
-    }
-    res.status(200).json({
-      status: "success",
-      data: orders,
-    });
-    // next();
-  });
-  changeStatus = catchAsync(async (req, res, next) => {
-    const { id, shipperId } = req.params;
-    const order = await Order.findById(id);
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
-    let message;
-    // when shipper accept order
-    if (order.status == "Pending") {
-      order.shipper = shipperId;
-      order.status = "Preparing";
-      message = "Shipper đã xác nhận giao hàng";
-    }
-    // when shipper take order
-    if (order.status == "Preparing") {
-      order.status = "Ready";
-      message = "Shipper đã nhận hàng";
-    }
-    // when shipper delivery order
-    if (order.status == "Ready") {
-      order.status = "Delivering";
-      message = "Shipper đang giao hàng";
-    }
-    // when shipper deliveried
-    if (order.status == "Delivering") {
-      order.status = "Finished";
-      message = "Shipper đã giao hàng thành công";
-    }
-    await order.save();
-    return res.status(200).json({
-      success: "success",
-      message,
-    });
-  });
 }
-
 function sortObject(obj) {
   let sorted = {};
   let str = [];
