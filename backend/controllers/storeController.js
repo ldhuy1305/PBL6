@@ -115,13 +115,15 @@ class storeController {
     });
   });
   updateStore = catchAsync(async (req, res, next) => {
-    const store = await Store.findOneAndUpdate(
-      { ownerId: req.params.ownerId },
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    store.phoneNumber = req.body.phoneNumber;
+    store.address = req.body.address;
+    store.name = req.body.name;
+    store.openAt = req.body.openAt;
+    store.closeAt = req.body.closeAt;
+    store.description = req.body.description;
+    await store.save();
+    console.log(store);
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
