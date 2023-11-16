@@ -87,8 +87,7 @@ class orderController {
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const id = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(req.params.id);
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
     console.log(order.shipperId);
     res.status(200).json({
