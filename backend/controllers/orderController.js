@@ -14,17 +14,18 @@ require("dotenv").config();
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice } = req.body;
+    const { shipCost, cart, totalPrice, coordinates } = req.body;
     const order = await Order.create({
       user: userId,
       store: storeId,
       cart,
       totalPrice,
       shipCost,
+      userLocation: { type: "Point", coordinates: coordinates.reverse() },
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-
+    console.log(order.userLocation);
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();

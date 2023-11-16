@@ -15,5 +15,9 @@ router.route("/").post(
   authController.sendEmailVerify
 );
 router.post("/:email", ownerController.verifiedSignUp);
-
+router.get("/:id/best-seller", ownerController.getBestSeller);
+router.get("/:id/chart", ownerController.getInfoChart);
+router.get("/:id/daily", ownerController.getOrdersDaily);
+router.get("/:id/monthly", ownerController.getOrdersMonthly);
+router.get("/:id/weekly", ownerController.getOrdersWeekly);
 module.exports = router;
