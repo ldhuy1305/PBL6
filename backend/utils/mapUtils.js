@@ -7,6 +7,11 @@ var distance = require("google-distance-matrix");
 const mapquest = require("mapquest");
 const geolib = require("geolib");
 const options = {
+  provider: "google",
+  apiKey: API_KEY,
+  formatter: null,
+};
+const options2 = {
   provider: GEOCODER_PROVIDER,
   apiKey: GEOCODER_KEY,
   formatter: null,
@@ -15,11 +20,23 @@ const geocoder = NodeGeocoder(options);
 
 class mapUtils {
   getGeoCode = async (address) => {
-    return await geocoder.geocode(address);
+    return await geocoder
+      .geocode(address)
+      .then()
+      .catch((err) => {
+        const geocoder2 = NodeGeocoder(options2);
+        return geocoder2.geocode(address);
+      });
   };
   getAddress = async (latlng) => {
     const obj = { lat: +latlng.split(",")[0], lon: +latlng.split(",")[1] };
-    return await geocoder.reverse(obj);
+    return await geocoder
+      .reverse(obj)
+      .then()
+      .catch((err) => {
+        const geocoder2 = NodeGeocoder(options2);
+        return geocoder2.geocode(address);
+      });
   };
   getDistance = (origin, destination) => {
     return geolib.getDistance(origin, destination);
