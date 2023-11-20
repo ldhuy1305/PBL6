@@ -15,17 +15,18 @@ require("dotenv").config();
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice } = req.body;
+    const { shipCost, cart, totalPrice, coordinates } = req.body;
     const order = await Order.create({
       user: userId,
       store: storeId,
       cart,
       totalPrice,
       shipCost,
+      userLocation: { type: "Point", coordinates: coordinates.reverse() },
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-
+    console.log(order.userLocation);
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();
@@ -98,19 +99,18 @@ class orderController {
       data: order,
     });
   });
-  // Cancel order when time out
-  cancelOrderWhenTimeOut = catchAsync(async (req, res, next) => {
+  // refuse order when time out
+  refuseOrderWhenTimeOut = catchAsync(async (req, res, next) => {
     const orders = await Order.find();
     if (orders) {
-      orders.forEach(async (order) => {
+      for (let order of orders) {
         let t = (Date.now() - order.createdAt) / 60000;
         if (order.status == "Pending" && t > 30) {
-          order.status = "Cancelled";
-          // Refund money for canceled order
+          order.status = "Refused";
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
-      });
+      }
     }
     next();
   });
@@ -252,7 +252,7 @@ class orderController {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
     const features = new ApiFeatures(
-      Order.find({ store: store._id }, { new: True }).populate("user"),
+      Order.find({ store: store._id }).populate("user"),
       req.query
     )
       .filter()
