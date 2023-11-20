@@ -8,7 +8,13 @@ const fileUploader = require("../utils/uploadImage");
 const appError = require("../utils/appError");
 const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
-const moment = require("moment");
+const moment = require("moment-timezone");
+process.env.TZ = "Asia/Ho_Chi_Minh";
+moment.updateLocale("en", {
+  week: {
+    dow: 1,
+  },
+});
 exports.createOwner = authController.signUp(Owner, "Owner");
 exports.verifiedSignUp = authController.verifiedSignUp(Owner);
 exports.uploadOwnerImages = fileUploader.fields([
@@ -16,21 +22,30 @@ exports.uploadOwnerImages = fileUploader.fields([
   { name: "behindImageCCCD", maxCount: 1 },
 ]);
 exports.getOrdersDaily = catchAsync(async (req, res, next) => {
-  process.env.TZ = "Asia/Ho_Chi_Minh";
+  const store = await Store.findOne({ ownerId: req.params.id });
+  if (!store) return next(appError("Không tìm thấy cửa hàng", 404));
   const now = moment().format("YYYY-MM-DD");
   const lastWeek = moment().subtract(req.query.limit || 5, "days");
   const daily = [];
+
   while (lastWeek.isSameOrBefore(now, "day")) {
-    const count = await this.getOrderOneDate(lastWeek.toDate());
-    daily.push({ date: lastWeek.format("YYYY-MM-DD"), count });
+    let data = await this.getOrderOneDate(store._id, lastWeek.toDate());
+    daily.push({
+      date: lastWeek.format("YYYY-MM-DD"),
+      revenue: data ? data.revenue : 0,
+      count: data ? data.count : 0,
+    });
     lastWeek.add(1, "day");
   }
   res.status(200).json({
     status: "success",
-    length: daily,
+    data: daily,
   });
 });
 exports.getOrdersWeekly = catchAsync(async (req, res, next) => {
+  const store = await Store.findOne({ ownerId: req.params.id });
+  if (!store) return next(appError("Không tìm thấy cửa hàng", 404));
+
   process.env.TZ = "Asia/Ho_Chi_Minh";
 
   const now = moment().endOf("week");
@@ -42,17 +57,24 @@ exports.getOrdersWeekly = catchAsync(async (req, res, next) => {
   let currentWeek = moment(last);
 
   while (currentWeek.isSameOrBefore(now, "week")) {
-    const count = await this.getOrderOneWeek(currentWeek.toDate());
-    weekly.push({ week: currentWeek.format("YYYY-MM-DD"), count });
+    const data = await this.getOrderOneWeek(store._id, currentWeek.toDate());
+    weekly.push({
+      date: currentWeek.format("YYYY-MM-DD"),
+      revenue: data ? data.revenue : 0,
+      count: data ? data.count : 0,
+    });
     currentWeek.add(1, "week");
   }
 
   res.status(200).json({
     status: "success",
-    weekly,
+    data: weekly,
   });
 });
 exports.getOrdersMonthly = catchAsync(async (req, res, next) => {
+  const store = await Store.findOne({ ownerId: req.params.id });
+  if (!store) return next(appError("Không tìm thấy cửa hàng", 404));
+
   process.env.TZ = "Asia/Ho_Chi_Minh";
 
   const now = moment().startOf("month");
@@ -64,16 +86,17 @@ exports.getOrdersMonthly = catchAsync(async (req, res, next) => {
   let currentMonth = moment(last);
 
   while (currentMonth.isSameOrBefore(now, "month")) {
-    const count = await this.getOrderOneMonth(currentMonth.toDate());
+    const data = await this.getOrderOneMonth(store._id, currentMonth.toDate());
     monthly.push({
-      month: currentMonth.endOf("month").format("YYYY-MM-DD"),
-      count,
+      date: currentMonth.endOf("month").format("YYYY-MM-DD"),
+      revenue: data ? data.revenue : 0,
+      count: data ? data.count : 0,
     });
     currentMonth.add(1, "month");
   }
   res.status(200).json({
     status: "success",
-    monthly,
+    data: monthly,
   });
 });
 exports.getInfoChart = catchAsync(async (req, res, next) => {
@@ -170,47 +193,189 @@ exports.getBestSeller = catchAsync(async (req, res, next) => {
     data: products,
   });
 });
-exports.getOrderOneDate = async function(date) {
-  const data = await Order.find({
-    dateOrdered: {
-      $gte: date,
-      $lte: moment(date)
-        .add(1, "day")
-        .toDate(),
+
+exports.getRevenueByCat = catchAsync(async (req, res, next) => {
+  const store = await Store.findOne({ ownerId: req.params.id });
+  if (!store) return next(appError("Không tìm thấy cửa hàng", 404));
+  const data = await Order.aggregate([
+    {
+      $match: {
+        store: mongoose.Types.ObjectId(store._id),
+        status: {
+          $nin: ["Cancelled", "Refused", "Pending"],
+        },
+      },
     },
+    {
+      $unwind: {
+        path: "$cart",
+      },
+    },
+    {
+      $project: {
+        revenue: { $multiply: ["$cart.quantity", "$cart.price"] },
+        product: "$cart.product",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "product",
+        foreignField: "_id",
+        as: "product",
+      },
+    },
+    {
+      $group: {
+        _id: "$product.category.catName",
+        revenue: { $sum: "$revenue" },
+      },
+    },
+    {
+      $unwind: {
+        path: "$_id",
+      },
+    },
+    {
+      $sort: {
+        revenue: -1,
+      },
+    },
+  ]);
+  res.status(200).json({
+    status: "success",
+    data,
   });
-  console.log(date);
-  return data.length;
+});
+
+exports.getOrderOneDate = async function(id, date) {
+  const startOfDay = moment(date)
+    .startOf("day")
+    .add(7, "hours")
+    .toDate();
+  const endOfDay = moment(date)
+    .endOf("day")
+    .add(7, "hours")
+    .toDate();
+  const data = await Order.aggregate([
+    {
+      $match: {
+        store: mongoose.Types.ObjectId(id),
+        dateOrdered: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
+      },
+    },
+    {
+      $project: {
+        revenue: {
+          $cond: {
+            if: {
+              $in: ["$status", ["Cancelled", "Refused"]],
+            },
+            then: 0,
+            else: { $subtract: ["$totalPrice", "$shipCost"] },
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        revenue: { $sum: "$revenue" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  return data[0];
 };
-exports.getOrderOneWeek = async function(date) {
+exports.getOrderOneWeek = async function(id, date) {
   const startOfWeek = moment(date)
     .startOf("week")
+    .startOf("day")
+    .add(7, "hours")
     .toDate();
   const endOfWeek = moment(date)
     .endOf("week")
+    .endOf("day")
+    .add(7, "hours")
     .toDate();
-
-  const data = await Order.find({
-    dateOrdered: {
-      $gte: startOfWeek,
-      $lt: endOfWeek,
+  const data = await Order.aggregate([
+    {
+      $match: {
+        store: mongoose.Types.ObjectId(id),
+        dateOrdered: {
+          $gte: startOfWeek,
+          $lte: endOfWeek,
+        },
+      },
     },
-  });
-  return data.length;
+    {
+      $project: {
+        revenue: {
+          $cond: {
+            if: {
+              $in: ["$status", ["Cancelled", "Refused"]],
+            },
+            then: 0,
+            else: { $subtract: ["$totalPrice", "$shipCost"] },
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        revenue: { $sum: "$revenue" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  return data[0];
 };
-exports.getOrderOneMonth = async function(date) {
-  const firstDayOfMonth = moment(date)
+exports.getOrderOneMonth = async function(id, date) {
+  const startOfMonth = moment(date)
     .startOf("month")
+    .startOf("day")
+    .add(7, "hours")
     .toDate();
-  const lastDayOfMonth = moment(date)
+  const endOfMonth = moment(date)
     .endOf("month")
+    .endOf("day")
+    .add(7, "hours")
     .toDate();
 
-  const data = await Order.find({
-    dateOrdered: {
-      $gte: firstDayOfMonth,
-      $lt: lastDayOfMonth,
+  const data = await Order.aggregate([
+    {
+      $match: {
+        store: mongoose.Types.ObjectId(id),
+        dateOrdered: {
+          $gte: startOfMonth,
+          $lte: endOfMonth,
+        },
+      },
     },
-  });
-  return data.length;
+    {
+      $project: {
+        revenue: {
+          $cond: {
+            if: {
+              $in: ["$status", ["Cancelled", "Refused"]],
+            },
+            then: 0,
+            else: { $subtract: ["$totalPrice", "$shipCost"] },
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        revenue: { $sum: "$revenue" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  return data[0];
 };
