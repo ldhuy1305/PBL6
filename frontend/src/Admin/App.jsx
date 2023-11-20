@@ -28,7 +28,7 @@ const App = () => {
     const [isSidebar, setIsSidebar] = useState(true);
     const Login = async () => {
         try {
-            const response = await axios.post('https://falth.vercel.app/api/auth/login/', {
+            const response = await axios.post('https://falth-api.vercel.app/api/auth/login/', {
                 email: 'admin@gmail.com',
                 password: 'leduchuy123',
             });
@@ -44,7 +44,7 @@ const App = () => {
     };
     const fetchCatname = async () => {
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/category`
+            const response = await axios.get(`https://falth-api.vercel.app/api/category`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`

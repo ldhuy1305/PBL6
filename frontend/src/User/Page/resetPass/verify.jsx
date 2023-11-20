@@ -25,7 +25,7 @@ const Verify = () => {
             setLoadingAPI(true);
             try {
                 // Gọi API đăng ký người dùng
-                const response = await axios.post(`https://falth.vercel.app/api/user/${email}`, {signUpToken: otp});
+                const response = await axios.post(`https://falth-api.vercel.app/api/user/${email}`, {signUpToken: otp});
                 handleShow()
             } catch (error) {
                 seterror(t("error4"))
@@ -35,7 +35,7 @@ const Verify = () => {
             setLoadingAPI(true);
             try {
                 // Gọi API đăng ký người dùng
-                const response = await axios.post(`https://falth.vercel.app/api/shipper/${email}`, {signUpToken: otp});
+                const response = await axios.post(`https://falth-api.vercel.app/api/shipper/${email}`, {signUpToken: otp});
                 handleShow()
             } catch (error) {
                 seterror(t("error4"))
@@ -45,7 +45,7 @@ const Verify = () => {
             setLoadingAPI(true);
             try {
                 // Gọi API đăng ký người dùng
-                const response = await axios.post(`https://falth.vercel.app/api/owner/${email}`, {signUpToken: otp});
+                const response = await axios.post(`https://falth-api.vercel.app/api/owner/${email}`, {signUpToken: otp});
                 handleShow()
             } catch (error) {
                 seterror(t("error4"))
@@ -54,7 +54,7 @@ const Verify = () => {
         } else if (action === "verifyToken") {
             setLoadingAPI(true);
             try {
-                const response = await axios.post(`https://falth.vercel.app/api/auth/verify-token/${email}`, {token: otp});    
+                const response = await axios.post(`https://falth-api.vercel.app/api/auth/verify-token/${email}`, {token: otp});    
                 console.log('Đăng ký thành công', response.data);
                 navigate("/resetPass", {state: {email: email, token: otp}})
             } catch (error) {

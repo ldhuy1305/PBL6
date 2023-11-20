@@ -27,7 +27,7 @@ function Add({ data, fetchData, setError, setMessage, setOpenNotify, show, handl
     });
     const Addproduct = async (formData) => {
         try {
-            await axios.post(`https://falth.vercel.app/api/product/owner/${_id}`, formData, {
+            await axios.post(`https://falth-api.vercel.app/api/product/owner/${_id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

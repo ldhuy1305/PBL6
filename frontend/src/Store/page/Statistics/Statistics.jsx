@@ -22,7 +22,7 @@ const Product = () => {
     const _id = localStorage.getItem('_id');
     const fetchDataorder = async (value) => {
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/owner/6555d23dbbba9a0008a81230/${value}?limit=0`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/owner/6555d23dbbba9a0008a81230/${value}?limit=0`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -35,7 +35,7 @@ const Product = () => {
     };
     const fetchDatabestseller = async () => {
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/owner/6555d23dbbba9a0008a81230/best-seller`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/owner/6555d23dbbba9a0008a81230/best-seller`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -49,7 +49,7 @@ const Product = () => {
     };
     const fetchDatachart = async () => {
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/owner/6555d23dbbba9a0008a81230/chart`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/owner/6555d23dbbba9a0008a81230/chart`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

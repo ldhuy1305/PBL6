@@ -17,7 +17,7 @@ const Product = ({ data, fetchData, setError, setMessage, setOpenNotify, show, h
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
     const [category, setCategory] = useState(data[0].catName);
-    const api = `https://falth.vercel.app/api/product/store/${_id}?limit=100`;
+    const api = `https://falth-api.vercel.app/api/product/store/${_id}?limit=100`;
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const [deletedImageUrls, setDeletedImageUrls] = useState([]);
     const initialValues = {
@@ -38,7 +38,7 @@ const Product = ({ data, fetchData, setError, setMessage, setOpenNotify, show, h
 
     const Addproduct = async (formData) => {
         try {
-            await axios.post(`https://falth.vercel.app/api/product/owner/${_id}`, formData, {
+            await axios.post(`https://falth-api.vercel.app/api/product/owner/${_id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

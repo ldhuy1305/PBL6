@@ -108,7 +108,7 @@ const Profile = () => {
                     console.log(changePasswordData)
                     const decodedToken = JSON.parse(atob(token.split(".")[1]));
                     console.log(decodedToken.id)
-                    const response = await axios.post(`https://falth.vercel.app/api/user/change-pass/${decodedToken.id}`, changePasswordData, {
+                    const response = await axios.post(`https://falth-api.vercel.app/api/user/change-pass/${decodedToken.id}`, changePasswordData, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -158,7 +158,7 @@ const Profile = () => {
                 const userData = JSON.parse(user);
                 console.log(formDataInfo)
                 if (token) {
-                    const response = await axios.patch(`https://falth.vercel.app/api/user/${userData._id}`, formDataInfo, {
+                    const response = await axios.patch(`https://falth-api.vercel.app/api/user/${userData._id}`, formDataInfo, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }

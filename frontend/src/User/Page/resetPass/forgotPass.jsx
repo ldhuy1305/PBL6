@@ -17,7 +17,7 @@ const ForgotPass = () => {
             setLoadingAPI(true); 
             try {
                 // Gọi API đăng ký người dùng
-                const response = await axios.post('https://falth.vercel.app/api/auth/forgot-password', {email});
+                const response = await axios.post('https://falth-api.vercel.app/api/auth/forgot-password', {email});
         
                 // Xử lý phản hồi từ máy chủ, ví dụ: hiển thị thông báo thành công
                 console.log('Nhập email thành công', response.data);

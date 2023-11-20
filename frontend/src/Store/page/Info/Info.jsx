@@ -78,7 +78,7 @@ const UserProfile = () => {
 
     const getdatainfostore = async (json) => {
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/store/owner/${_id}`, json
+            const response = await axios.get(`https://falth-api.vercel.app/api/store/owner/${_id}`, json
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -126,7 +126,7 @@ const UserProfile = () => {
 
     const UpdateStore = async () => {
         try {
-            const response = await axios.put(`https://falth.vercel.app/api/store/${_id}`, formData
+            const response = await axios.put(`https://falth-api.vercel.app/api/store/${_id}`, formData
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`

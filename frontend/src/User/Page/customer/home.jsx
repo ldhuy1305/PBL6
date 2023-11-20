@@ -66,7 +66,7 @@ const Home = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedAreas, setSelectedAreas] = useState([]);
   useEffect(() => {
-    const api = `https://falth.vercel.app/api/category`
+    const api = `https://falth-api.vercel.app/api/category`
     fetch(api)
       .then((response) => response.json())
       .then((data) => {
@@ -107,7 +107,7 @@ const Home = () => {
     setIsLoading(true)
     const selectedCat = selectedCategories[0] || '';
     console.log(selectedLocation, key, selectedCat)
-    const api = `https://falth.vercel.app/api/store?address=${selectedLocation}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
+    const api = `https://falth-api.vercel.app/api/store?address=${selectedLocation}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
     console.log(api)
     fetch(api)
       .then((response) => response.json())

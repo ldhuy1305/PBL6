@@ -37,7 +37,7 @@ function Update({ data, selectedRow, setOpenEdit, fetchData, setError, setMessag
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
     const [selectActive, setSelectActive] = useState(false);
-    const api = `https://falth.vercel.app/api/product/store/${_id}?limit=100`;
+    const api = `https://falth-api.vercel.app/api/product/store/${_id}?limit=100`;
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const [errorText, setErrorText] = useState("");
     const phoneRegExp =
@@ -53,7 +53,7 @@ function Update({ data, selectedRow, setOpenEdit, fetchData, setError, setMessag
 
     const updateProduct = async () => {
         try {
-            await axios.put(`https://falth.vercel.app/api/product/${selectedRow._id}`, formData, {
+            await axios.put(`https://falth-api.vercel.app/api/product/${selectedRow._id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

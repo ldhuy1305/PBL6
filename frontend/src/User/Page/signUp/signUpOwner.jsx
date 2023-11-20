@@ -88,7 +88,7 @@ const SignUpOwner = () => {
             try {
                 setIsLoading(true)
               // Gọi API đăng ký người dùng
-              const response = await axios.post('https://falth.vercel.app/api/user', registrationData);
+              const response = await axios.post('https://falth-api.vercel.app/api/user', registrationData);
     
               // Xử lý phản hồi từ máy chủ, ví dụ: hiển thị thông báo thành công
               console.log('Đăng ký thành công', response.data);

@@ -14,7 +14,7 @@ const Category = ({ listCat }) => {
     const [catName, setCatName] = useState('');
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/category/store/${_id}`;
+    const api = `https://falth-api.vercel.app/api/category/store/${_id}`;
     const [data, setData] = useState([]);
     const itemsPerPage = 4;
     const [totalPages, setTotalPages] = useState(1);
@@ -22,7 +22,7 @@ const Category = ({ listCat }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`https://falth.vercel.app/api/product/owner/${_id}?limit=100`, {
+                const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -44,7 +44,7 @@ const Category = ({ listCat }) => {
     }, [api, token, catName]);
     const fetchProductList = async (Name) => {
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/product?catName=${Name}`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product?catName=${Name}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

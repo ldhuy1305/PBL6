@@ -49,7 +49,7 @@ const Product = ({ Catname }) => {
 
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/product/owner/${_id}?limit=100`;
+    const api = `https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`;
     const fetchData = async () => {
         try {
             const response = await axios.get(api, {
@@ -68,7 +68,7 @@ const Product = ({ Catname }) => {
     const Searchproduct = async (name) => {
         console.log(name);
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/product/search?search=${name}`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/search?search=${name}`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`

@@ -34,7 +34,7 @@ const ManageUser = ({ Catname }) => {
 
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/admin/user`;
+    const api = `https://falth-api.vercel.app/api/admin/user`;
     const fetchData = async () => {
         try {
             const response = await axios.get(api, {

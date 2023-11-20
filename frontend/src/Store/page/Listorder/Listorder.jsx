@@ -20,7 +20,7 @@ const Product = () => {
     };
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/order/owner/${_id}`;
+    const api = `https://falth-api.vercel.app/api/order/owner/${_id}`;
     const fetchData = async () => {
         try {
             const response = await axios.get(api, {

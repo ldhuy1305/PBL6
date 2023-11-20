@@ -24,7 +24,7 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
             const user = localStorage.getItem("user");
             const token = localStorage.getItem("token");
             const userData = JSON.parse(user);
-            const response = await axios.get(`https://falth.vercel.app/api/user/${userData._id}/store/${cart.idStore}`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/user/${userData._id}/store/${cart.idStore}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

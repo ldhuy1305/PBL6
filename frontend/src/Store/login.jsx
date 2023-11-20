@@ -5,7 +5,7 @@ function Login() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.post('https://falth.vercel.app/api/auth/login/', {
+            const response = await axios.post('https://falth-api.vercel.app/api/auth/login/', {
                 email: 'owner1@gmail.com',
                 password: 'leduchuy123',
             });
@@ -22,7 +22,7 @@ function Login() {
     };
     const fetchData2 = async () => {
         try {
-            const response = await axios.post('https://falth.vercel.app/api/product/store/653233e16d8d513510d93744', {
+            const response = await axios.post('https://falth-api.vercel.app/api/product/store/653233e16d8d513510d93744', {
                 "catName": "Đồ ăn",
                 "description": "Thịt  chó lá mơ",
                 "name": "Thịt chó",
@@ -41,7 +41,7 @@ function Login() {
     };
     const fetchData1 = async () => {
         try {
-            await axios.post('https://falth.vercel.app/api/user', {
+            await axios.post('https://falth-api.vercel.app/api/user', {
                 "firstName": "Huynh",
                 "lastName": "Thuan",
                 "email": "thuanhuynh.122607ssss12202@gmail.com",

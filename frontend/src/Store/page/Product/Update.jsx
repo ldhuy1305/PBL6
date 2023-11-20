@@ -41,7 +41,7 @@ function Update({ data, selectedRow, setOpenEdit, fetchData, setError, setMessag
     const _id = localStorage.getItem('_id');
 
     const [selectActive, setSelectActive] = useState(false);
-    const api = `https://falth.vercel.app/api/product/store/${_id}?limit=100`;
+    const api = `https://falth-api.vercel.app/api/product/store/${_id}?limit=100`;
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const priceRegExp = /^\d+$/;
@@ -93,7 +93,7 @@ function Update({ data, selectedRow, setOpenEdit, fetchData, setError, setMessag
     };
     const Update = async (json) => {
         try {
-            await axios.put(`https://falth.vercel.app/api/product/${selectedRow._id}`, json, {
+            await axios.put(`https://falth-api.vercel.app/api/product/${selectedRow._id}`, json, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

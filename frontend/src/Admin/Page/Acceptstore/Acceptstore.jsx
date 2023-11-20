@@ -43,7 +43,7 @@ const Acceptstore = ({ Catname }) => {
 
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/admin/owner/approve`;
+    const api = `https://falth-api.vercel.app/api/admin/owner/approve`;
 
     const fetchData = async () => {
         try {
@@ -66,7 +66,7 @@ const Acceptstore = ({ Catname }) => {
     const Searchproduct = async (name) => {
         console.log(name);
         try {
-            const response = await axios.get(`https://falth.vercel.app/api/product/search?search=${name}`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/search?search=${name}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -83,7 +83,7 @@ const Acceptstore = ({ Catname }) => {
     };
     const Accept = async (id) => {
         try {
-            await axios.get(`https://falth.vercel.app/api/admin/owner/${id}`, {
+            await axios.get(`https://falth-api.vercel.app/api/admin/owner/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

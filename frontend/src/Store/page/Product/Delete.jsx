@@ -12,10 +12,10 @@ function Delete({ selectedRow, setOpenDelete, setError, fetchData, setMessage, s
     console.log(selectedRow);
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/product/store/${_id}?limit=100`;
+    const api = `https://falth-api.vercel.app/api/product/store/${_id}?limit=100`;
     const handleDeleteProduct = async (id) => {
         try {
-            await axios.delete(`https://falth.vercel.app/api/product/${id}`, {
+            await axios.delete(`https://falth-api.vercel.app/api/product/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

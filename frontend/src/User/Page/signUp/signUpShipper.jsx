@@ -109,7 +109,7 @@ const SignUpShipper = () => {
                 setIsLoading(true)
                 console.log(registrationData)
 
-              const response = await axios.post('https://falth.vercel.app/api/shipper', registrationData);
+              const response = await axios.post('https://falth-api.vercel.app/api/shipper', registrationData);
               console.log('Đăng ký thành công', response.data);
               setError('')
               setSuccess('Đã nhận được thông tin! Mời bạn xác nhận email')

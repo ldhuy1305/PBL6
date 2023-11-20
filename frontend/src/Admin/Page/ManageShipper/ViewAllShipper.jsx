@@ -43,7 +43,7 @@ function ManageShipper() {
 
     const token = localStorage.getItem('autoken');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth.vercel.app/api/admin/shipper/approve`;
+    const api = `https://falth-api.vercel.app/api/admin/shipper/approve`;
 
 
     const fetchData = async () => {
@@ -67,7 +67,7 @@ function ManageShipper() {
 
         if (confirmed) {
             try {
-                axios.patch(`https://falth.vercel.app/api/admin/shipper/${id}`, {
+                axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
