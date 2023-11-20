@@ -2,7 +2,6 @@ const Contact = require("../models/contact");
 const Order = require("../models/order");
 const Transaction = require("../models/transaction");
 const Store = require("../models/store");
-const Transaction = require("../models/transaction");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
@@ -10,6 +9,7 @@ const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 const request = require("request");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 require("dotenv").config();
 class orderController {
@@ -88,10 +88,11 @@ class orderController {
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const id = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(req.params.id).populate({
+      path: "cart.product",
+      select: "name",
+    });
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
-    console.log(order.shipperId);
     res.status(200).json({
       status: "success",
       data: order,
@@ -235,7 +236,7 @@ class orderController {
         json: true,
         body: dataObj,
       },
-      function(error, response, body) {
+      function (error, response, body) {
         if (error) {
           return next(new appError("Xuất hiện lỗi hoàn tiền", 404));
         }
@@ -265,7 +266,7 @@ class orderController {
       data: orders,
     });
   });
-  
+
   getOrdersByUserId = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     if (!user) return next(new appError("Không tìm thấy người dùng"), 404);
