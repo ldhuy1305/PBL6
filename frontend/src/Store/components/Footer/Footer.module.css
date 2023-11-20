@@ -1,0 +1,6 @@
+.container{
+    background-color: red;
+    width: 1400px;
+    display: flex;
+    margin: auto;
+}
