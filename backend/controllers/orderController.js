@@ -12,6 +12,7 @@ const moment = require("moment");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 require("dotenv").config();
+process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
@@ -251,11 +252,33 @@ class orderController {
   getOrdersByOwnerId = catchAsync(async (req, res, next) => {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
+    let start, end;
+
+    if (!req.query.start)
+      start = moment().subtract(30, "days").add(7, "hours").toDate();
+    else start = moment(req.query.start, "DD-MM-YYYY").add(7, "hours").toDate();
+
+    if (!req.query.end) end = moment().add(7, "hours").toDate();
+    else end = moment(req.query.end, "DD-MM-YYYY").add(31, "hours").toDate(); // 7 + 24 hours
+
     const features = new ApiFeatures(
-      Order.find({ store: store._id }).populate("user"),
+      Order.find({
+        store: store._id,
+        status: req.query.status,
+        dateOrdered: {
+          $gte: start,
+          $lt: end,
+        },
+      }).populate({
+        path: "user",
+        select: "-role -photo -email -contact -createdAt -updatedAt -_id -__t",
+        populate: {
+          path: "defaultContact",
+          select: "-location -_id -__v",
+        },
+      }),
       req.query
     )
-      .filter()
       .sort()
       .limitFields()
       .paginate();
@@ -270,11 +293,30 @@ class orderController {
   getOrdersByUserId = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     if (!user) return next(new appError("Không tìm thấy người dùng"), 404);
+    let start, end;
+
+    if (!req.query.start)
+      start = moment().subtract(30, "days").add(7, "hours").toDate();
+    else start = moment(req.query.start, "DD-MM-YYYY").add(7, "hours").toDate();
+
+    if (!req.query.end) end = moment().add(7, "hours").toDate();
+    else end = moment(req.query.end, "DD-MM-YYYY").add(31, "hours").toDate(); // 7 + 24 hours
+
     const features = new ApiFeatures(
-      Order.find({ user: user._id }).populate("store"),
+      Order.find({
+        user: req.params.userId,
+        status: req.query.status,
+        dateOrdered: {
+          $gte: start,
+          $lt: end,
+        },
+      }).populate({
+        path: "store",
+        select:
+          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",
+      }),
       req.query
     )
-      .filter()
       .sort()
       .limitFields()
       .paginate();
