@@ -1,7 +1,7 @@
 {
     "error1": "Vui lòng nhập email",
     "error2": "Vui lòng nhập mật khẩu",
-    "error3": "Mật khẩu không hợp lệ",
+    "error3": "Mật khẩu hoặc tài khoản không đúng",
     "error4": "Mã xác thực không hợp lệ hoặc đã hết hạn",
     "error5": "Mật khẩu phải có ít nhật 8 kí tự gồm cả chữ và số",
     "error6": "Mật khẩu và xác nhận mật khẩu không trùng khớp",
@@ -9,17 +9,22 @@
     "error8": "Email không hợp lệ",
     "error9": "Số điện thoại không hợp lệ",
     "error10": "Địa chỉ email đã tồn tại",
+    "error11": "Vui lòng nhập đầy đủ thông tin!",
+    "error12": "Thay đổi thông tin thất bại",
 
 
     "success": "Đã nhận được thông tin! Mời bạn xác nhận email",
 
     "alert": "Đổi mật khẩu thành công mời bạn đăng nhập lại",
     "alert1": "Đăng ký chủ cửa hàng thành công! Mời bạn đăng ký thông tin cửa hàng.",
+    "alert2": "Thay đổi thông tin thành công",
+    "notify": "Thông báo",
 
     "newPass": "Mật khẩu mới",
-    "oldPass": "Mật khẩu mới",
+    "oldPass": "Mật khẩu cũ",
     "confirmPass": "Xác nhận mật khẩu",
     "pass": "Mật khẩu",
+    "back":"Trở về",
 
     "title_SI": "Đăng nhập",
     "loginMess_SI": "Bạn chưa có tài khoản?",
@@ -39,7 +44,6 @@
     "headCartTitle": "Sản phẩm đã thêm",
     "headCartRequire": "Yêu cầu đặc biệt",
     "delete": "Xóa",
-    "headViewCart": "Xem giỏ hàng",
 
     "homeArea": "Khu vực",
     "homeCategory": "Danh mục",
@@ -123,6 +127,25 @@
     "orderTime" : "Thời gian đặt",
     "receiveTime" : "Thời gian nhận",
     "rating": "Đánh giá",
-    "orderDetail": "Chi tiết đơn hàng"
+    "orderDetail": "Chi tiết đơn hàng",
+    "action": "Thao tác",
+
+    "cartTitle" : "Bắt đầu đặt đồ ăn!",
+   "cartMess" : "Thêm sản phẩm vào giỏ hàng của bạn và đặt hàng tại đây.",
+   "cartNav" : "Tiếp tục lướt web",
+
+   "cartName" : "Giỏ hàng",
+   "timeDelivery" : "Thời gian giao:",
+   "minutes": "phút",
+   "distance": "Cách bạn",
+   "cartMess1" : "Phí giao hàng sẽ được hiển thị sau khi bạn xem xét đơn hàng",
+   "order" : "Đặt đơn",
+   "signinToOrder" : "Đăng nhập để đặt đơn",
+
+   "store" : "Quán ăn",
+   "ratingInFALTH" : "đánh giá trên FALTH",
+   "menu" : "Thực đơn",
+   "searchDish" : "Tìm món"
+   
 }
   
