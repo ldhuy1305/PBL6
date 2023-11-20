@@ -67,7 +67,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                     <button
                         class="font-weight-bold history-table-status gray pointer"
                         style={{ backgroundColor: '#0288d1', color: 'white' }}
-                        onClick={handleShowRating}
+                        onClick={() => handleShowRating(item)}
                     >
                         {t('rating')}
                     </button>

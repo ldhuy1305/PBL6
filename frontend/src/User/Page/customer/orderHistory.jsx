@@ -64,6 +64,11 @@ const OrderHistory = () => {
         shipCost: '',
         cart: []
     })
+    const [item, setItem] = useState(null)
+    const [store, setStore] = useState({
+        name:'',
+        ratingAverage: 2
+    })
 
     const handleShowModal = async (id, storeName) => {
         console.log(storeName)
@@ -86,14 +91,16 @@ const OrderHistory = () => {
         setShowModal(false);
     };
 
-    const handleShowModal1 = () => {
+    const handleShowModal1 = (item) => {
+        setItem({...item})
         setShowModal1(true);
         console.log("Mở modal")
     };
     const handleCloseModal1 = () => {
         setShowModal1(false);
     };
-    const handleShowModal2 = () => {
+    const handleShowModal2 = (storInfo) => {
+        setStore({...storInfo})
         setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2
     };
@@ -196,8 +203,8 @@ const OrderHistory = () => {
             </div>
 
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
-            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} />
-            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1}/>
+            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item}/>
+            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store}/>
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )
