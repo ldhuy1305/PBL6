@@ -9,6 +9,7 @@ const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 const request = require("request");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 require("dotenv").config();
 class orderController {
@@ -88,9 +89,11 @@ class orderController {
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate({
+      path: "cart.product",
+      select: "name",
+    });
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
-    console.log(order.shipperId);
     res.status(200).json({
       status: "success",
       data: order,
@@ -233,7 +236,7 @@ class orderController {
         json: true,
         body: dataObj,
       },
-      function(error, response, body) {
+      function (error, response, body) {
         if (error) {
           return next(new appError("Xuất hiện lỗi hoàn tiền", 404));
         }
