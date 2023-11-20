@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
-const RatingStore = ({ show, handleClose}) => {
-    const {t} = useTranslation();
+const RatingStore = ({ show, handleClose, handleReturn, store }) => {
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
         rating: '',
@@ -80,7 +80,16 @@ const RatingStore = ({ show, handleClose}) => {
                                                                 src={ava}
                                                                 alt=""
                                                             />
-                                                            <div class="shipper-name">Tôn Long Tiến</div>
+                                                            <div class="shipper-name">{store.name}</div>
+                                                            <div className="rating-star-container">
+                                                                {(Array(store.ratingAverage).fill(true).concat(Array(5 - store.ratingAverage).fill(false))).map((isActive, index) => (
+                                                                    <i
+                                                                        key={index}
+                                                                        className={`fas fa-star icon-star ${isActive ? 'active' : ''} disabled`}
+                                                                        data-rate={index + 101}
+                                                                    ></i>
+                                                                ))}
+                                                            </div>
                                                             <div >
                                                                 <select defaultValue="" className="custom-select" name='rating' value={formData.rating} onChange={handleChange}>
                                                                     <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
@@ -129,7 +138,7 @@ const RatingStore = ({ show, handleClose}) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-cancel">{t('back')}</button>
+                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
                                                             <button type="button" disabled="" class="btn btn-submit">Gửi đánh giá</button>
                                                         </div>
                                                     </div>

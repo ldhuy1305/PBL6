@@ -1,5 +1,5 @@
 import axios from "axios";
-
+const moment = require('moment');
 
 //Auth
 const loginAPI = (email, password) => {
@@ -153,8 +153,12 @@ const placeOrder = async (totalPrice, shipCost, coordinates) => {
 const getAllOderByUserId = async () => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
+
+  // Ngày hiện tại
+  const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?fields=status,dateOrdered,totalPrice&sort=-createdAt`, {
+    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=Refused&sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

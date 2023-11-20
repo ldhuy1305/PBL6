@@ -28,6 +28,18 @@ const OrderHistory = () => {
         flatpickr(toDateRef.current, {
             dateFormat: 'Y-m-d', // Định dạng ngày tháng
         });
+        const queryString = window.location.search;
+
+        // Kiểm tra xem chuỗi có rỗng hay không
+        if (queryString) {
+            // Trang có query parameters
+            console.log('Trang có query parameters:', queryString);
+
+            // Bạn có thể thực hiện các hành động khác dựa trên query parameters tại đây
+        } else {
+            // Trang không có query parameters
+            console.log('Trang không có query parameters');
+        }
         const getOrder = async () => {
             try {
                 setIsLoading(true)
@@ -49,8 +61,13 @@ const OrderHistory = () => {
     const [orderId, setOrderId] = useState('')
     const [storeName, setStoreName] = useState('')
     const [orderDetail, setOrderDetail] = useState({
-        shipCost : '',
+        shipCost: '',
         cart: []
+    })
+    const [item, setItem] = useState(null)
+    const [store, setStore] = useState({
+        name:'',
+        ratingAverage: 2
     })
 
     const handleShowModal = async (id, storeName) => {
@@ -74,14 +91,16 @@ const OrderHistory = () => {
         setShowModal(false);
     };
 
-    const handleShowModal1 = () => {
+    const handleShowModal1 = (item) => {
+        setItem({...item})
         setShowModal1(true);
         console.log("Mở modal")
     };
     const handleCloseModal1 = () => {
         setShowModal1(false);
     };
-    const handleShowModal2 = () => {
+    const handleShowModal2 = (storInfo) => {
+        setStore({...storInfo})
         setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2
     };
@@ -167,10 +186,10 @@ const OrderHistory = () => {
                                 </div>
                             </div>
                             {isLoading && Array(4).fill(0).map((index) => (
-                                <div class="history-table-row" style={{ height: '50px', width: '1160px', marginBottom:'5px'}} key={index}>
-                                <Skeleton />
-                            </div>
-                            ))}                           
+                                <div class="history-table-row" style={{ height: '50px', width: '1160px', marginBottom: '5px' }} key={index}>
+                                    <Skeleton />
+                                </div>
+                            ))}
                             {items.map((item, index) => (
                                 <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal1} />
                             ))}
@@ -183,10 +202,10 @@ const OrderHistory = () => {
                 </div>
             </div>
 
-            <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName}/>
-            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} />
-            <RatingStore show={showModal2} handleClose={handleCloseModal2} />
-            {isLoadingModal && (<LoadingModal/>)}
+            <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
+            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item}/>
+            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store}/>
+            {isLoadingModal && (<LoadingModal />)}
         </div>
     )
 }
