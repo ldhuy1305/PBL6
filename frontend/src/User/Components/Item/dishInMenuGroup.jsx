@@ -1,4 +1,5 @@
 import React from "react";
+import soldout from '../../assets/img/hethang.webp'
 
 const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
 
@@ -56,7 +57,15 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                             <div
                                 class="col-auto adding-food-cart txt-right"
                             >
+                            {dish.isOutOfOrder ? (
+                                <img 
+                                    src={soldout}
+                                    alt="Hết hàng"
+                                    style={{height:'80%', width:'80px'}}
+                                ></img>
+                            ) : (
                                 <div class="btn-adding" onClick={handleAdd}>+</div>
+                            )}
                             </div>
                         </div>
                     </div>

@@ -25,22 +25,35 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                             >{item.store.address}</span>
                         </div></a>
                 </div>
-                <div class="history-table-cell history-table-col5">
-                    <strong class="d-block text-truncate">Tôn Long Tiến</strong>
+                <div className="history-table-cell history-table-col5">
+                    {item.shipper ? (
+                        <strong className="d-block text-truncate">{item.shipper}</strong>
+                    ) : (
+                        <span></span>
+                    )}
                 </div>
                 <div class="history-table-cell history-table-col6">
-                    <div style={{ fontWeight: 'bold' }}><span>171,550đ</span></div>
-                    <div style={{ color: 'green', fontWeight: 'bold' }}>
+                    <div style={{ fontWeight: 'bold' }}><span>{item.totalPrice}đ</span></div>
+                    {/* <div style={{ color: 'green', fontWeight: 'bold' }}>
                         Thanh toán trực tuyến
-                    </div>
+                    </div> */}
                 </div>
                 <div class="history-table-cell history-table-col7">
-                    <div class="font-weight-bold history-table-status" style={{ color: '#6cc942' }}>
-                        Complete
+                    <div class="font-weight-bold history-table-status" style={{
+                        color:
+                            item.status === 'Complete'
+                                ? '#6cc942' // Màu xanh cho trạng thái complete
+                                : item.status === 'Pending'
+                                    ? 'orange' // Màu vàng cho trạng thái pending
+                                    : item.status === 'Refused'
+                                        ? 'red' // Màu đỏ cho trạng thái reject
+                                        : 'black' // Màu mặc định nếu không phù hợp với các trạng thái trên
+                    }}>
+                        {item.status}
                     </div>
                 </div>
                 <div class="history-table-cell history-table-col8">
-                    <button className="d-block mb-1" onClick={handleShowDetail} style={{ color: '#0288d1', fontWeight: '600' }}>
+                    <button className="d-block mb-1" onClick={() => handleShowDetail(item._id, item.store.name)} style={{ color: '#0288d1', fontWeight: '600' }}>
                         {t("orderDetail")}
                     </button>
                 </div>

@@ -15651,13 +15651,13 @@ button.history-table-status.gray {
   width: 180px;
 }
 .history-customer-order .history-table-col2 {
-  width: 250px;
+  width: 300px;
   -ms-flex: 0 0 auto;
   flex: 0 0 auto;
   padding: 10px;
 }
 .history-customer-order .history-table-col3 {
-  width: 100px;
+  width: 250px;
   padding: 10px;
 }
 .history-customer-order .history-table-col4 {
@@ -15667,10 +15667,10 @@ button.history-table-status.gray {
 }
 .history-customer-order .history-table-col5,
 .history-customer-order .history-table-col6 {
-  width: 90px;
+  width: 140px;
 }
 .history-customer-order .history-table-col7 {
-  width: 110px;
+  width: 140px;
 }
 .history-customer-order .history-table-col8 {
   -ms-flex: 1 1;

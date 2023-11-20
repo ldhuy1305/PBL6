@@ -181,7 +181,7 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
                                             <div class="Close___3j6yl" role="button" tabindex="0"
                                             ><div role="button" tabIndex="0" style={{ fontSize: '25px', fontWeight: '300', color: 'black', cursor: 'pointer' }} onClick={handleClose}>x</div></div>
                                             <div class="BlockTitle___2pGA_">
-                                                <div class="title___3Sq4y" style={{ fontSize: '30px' }}>{t("cartName")}</div>
+                                                <div class="title___3Sq4y" style={{ fontSize: '30px' }}>{t('cartName')}</div>
                                                 {/* <div class="subtitle___1Stq2">
                                                 <div class="small___1YhlN CartHeader-Caption-Clock___cBpaH"><i class="fa-regular fa-clock"></i></div>
                                                 <span>{t("timeDelivery")} 15 {t("minutes")} ({t("distance")} 1,2 km)</span>

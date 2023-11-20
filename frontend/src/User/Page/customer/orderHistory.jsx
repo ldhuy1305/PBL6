@@ -10,6 +10,7 @@ import RatingStore from '../../Components/Modal/ratingStore';
 import OrderDetail from '../../Components/Modal/orderDetail';
 import OrderHisItem from '../../Components/Item/orderHisItem';
 import Skeleton from '../../Components/Skeleton/skeleton'
+import LoadingModal from '../../Components/Loading/Loading';
 const OrderHistory = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const OrderHistory = () => {
     const toDateRef = useRef(null);
     const [items, setItems] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingModal, setIsLoadingModal] = useState(false)
 
     useEffect(() => {
         flatpickr(fromDateRef.current, {
@@ -44,8 +46,28 @@ const OrderHistory = () => {
     const [showModal, setShowModal] = useState(false);
     const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
+    const [orderId, setOrderId] = useState('')
+    const [storeName, setStoreName] = useState('')
+    const [orderDetail, setOrderDetail] = useState({
+        shipCost : '',
+        cart: []
+    })
 
-    const handleShowModal = () => {
+    const handleShowModal = async (id, storeName) => {
+        console.log(storeName)
+        // setOrderId(id)
+        try {
+            setIsLoadingModal(true)
+            const response = await viewOrder(id);
+            console.log('Lấy thông tin thành công: ', response.data)
+            setOrderDetail({
+                ...response.data
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        setIsLoadingModal(false)
+        setStoreName(storeName)
         setShowModal(true);
     };
     const handleCloseModal = () => {
@@ -161,10 +183,10 @@ const OrderHistory = () => {
                 </div>
             </div>
 
-            <OrderDetail show={showModal} handleClose={handleCloseModal} />
+            <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName}/>
             <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} />
             <RatingStore show={showModal2} handleClose={handleCloseModal2} />
-
+            {isLoadingModal && (<LoadingModal/>)}
         </div>
     )
 }
