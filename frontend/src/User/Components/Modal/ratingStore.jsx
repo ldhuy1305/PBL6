@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
-const RatingStore = ({ show, handleClose}) => {
+const RatingStore = ({ show, handleClose, handleReturn}) => {
     const {t} = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -129,7 +129,7 @@ const RatingStore = ({ show, handleClose}) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-cancel">{t('back')}</button>
+                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
                                                             <button type="button" disabled="" class="btn btn-submit">Gửi đánh giá</button>
                                                         </div>
                                                     </div>
