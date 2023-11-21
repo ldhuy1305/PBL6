@@ -18,7 +18,7 @@ router
   .patch(
     authController.protect,
     authController.restrict("User"),
-    // ratingController.updatePhoto,
+    ratingController.updatePhoto,
     ratingController.updateRating
   )
   .delete(

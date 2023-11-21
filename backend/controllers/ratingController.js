@@ -6,7 +6,7 @@ const cloudinary = require("cloudinary").v2;
 const ApiFeatures = require("../utils/ApiFeatures");
 
 class ratingController {
-  updatePhoto = fileUploader.single("image");
+  updatePhoto = fileUploader.array("images", 10);
   ratingForShipper = catchAsync(async (req, res, next) => {
     if (!req.body.reference) {
       if (req.params.shipperId) {
@@ -24,10 +24,10 @@ class ratingController {
     let body = {
       ...req.body,
     };
-    if (req.file) {
+    if (req.files) {
       body = {
         ...body,
-        image: req.file?.path,
+        images: req.files.map((image) => image.path),
       };
     }
     await Rating.create(body)
@@ -35,9 +35,12 @@ class ratingController {
         res.status(201).json(rating);
       })
       .catch((err) => {
-        if (req.file) {
-          cloudinary.uploader.destroy(req.file.filename);
-
+        if (req.files) {
+          if (req.files) {
+            req.files.forEach((file) =>
+              cloudinary.uploader.destroy(file.filename)
+            );
+          }
           next(err);
         }
       });
@@ -71,17 +74,57 @@ class ratingController {
     });
   });
   updateRating = catchAsync(async (req, res, next) => {
+    console.log(req.body, req.files);
+    let body = { content: req.body.content, number: req.body.number };
     const checkUser = await Rating.findById(req.params.id);
+    if (!checkUser)
+      return next(new appError("Can't not find this document", 404));
+    let images = [...checkUser.images];
+    let dels = [req.body.dels];
+    // fillter exits image
+    if (req.body.dels) {
+      images = images.filter((el) => !dels.includes(el));
+    }
+    if (req.files) {
+      images = images.concat(req.files.map((image) => image.path));
+    }
+    // let dels = product.images;
+    console.log({
+      ...body,
+      images,
+    });
     if (checkUser.user._id.toString() === req.user.id) {
-      const rating = await Rating.findOneAndUpdate(
-        { _id: req.params.id },
+      const rating = await Rating.findByIdAndUpdate(
+        req.params.id,
         {
-          content: req.body.content,
-          number: req.body.number,
-          //image:
+          ...body,
+          images,
         },
         { new: true, runValidators: true }
-      );
+      )
+        .then()
+        .catch((err) => {
+          if (req.files) {
+            req.files.forEach((file) =>
+              cloudinary.uploader.destroy(file.filename)
+            );
+          }
+          next(new appError("Error", 404));
+        });
+
+      // delete images
+      if (req.body.dels) {
+        // let urls = [...req.body.dels];
+        // console.log(urls);
+        for (let i = 0; i < dels.length; i++) {
+          let parts = dels[i].split("/");
+          let id =
+            parts.slice(parts.length - 2, parts.length - 1).join("/") +
+            "/" +
+            parts[parts.length - 1].split(".")[0];
+          cloudinary.uploader.destroy(id);
+        }
+      }
       res.status(200).json({
         status: "success",
         data: rating,
@@ -97,9 +140,17 @@ class ratingController {
   deleteRating = catchAsync(async (req, res, next) => {
     const checkUser = await Rating.findById(req.params.id);
     if (checkUser.user._id.toString() === req.user.id) {
-      await Rating.findByIdAndDelete(req.params.id);
-      res.status(200).json({
-        status: "success",
+      const rating = await Rating.findByIdAndDelete({ _id: req.params.id });
+      if (!rating) {
+        return next(new appError("Can't not find this rating", 404));
+      }
+      rating.images.forEach((links) => {
+        let parts = links.split("/");
+        let id =
+          parts.slice(parts.length - 2, parts.length - 1).join("/") +
+          "/" +
+          parts[parts.length - 1].split(".")[0];
+        cloudinary.uploader.destroy(id);
       });
     } else {
       return next(
@@ -107,6 +158,7 @@ class ratingController {
         403
       );
     }
+    res.status(200).json("Delete successfully");
   });
 }
 
