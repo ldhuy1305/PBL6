@@ -33,11 +33,11 @@ const orderSchema = new Schema(
     ],
     shipCost: {
       type: Number,
-      defaultValue: 0,
+      default: 0,
     },
     totalPrice: {
       type: Number,
-      defaultValue: 0,
+      default: 0,
     },
     status: {
       type: String,
@@ -68,6 +68,16 @@ const orderSchema = new Schema(
         index: "2dsphere",
       },
     },
+    userLocation: {
+      type: {
+        type: String,
+        enum: ["Point"],
+      },
+      coordinates: {
+        type: [Number],
+        index: "2dsphere",
+      },
+    },
   },
   {
     timestamps: true,
@@ -82,4 +92,5 @@ orderSchema.pre("save", async function(next) {
   next();
 });
 orderSchema.index({ storeLocation: "2dsphere" });
+orderSchema.index({ userLocation: "2dsphere" });
 module.exports = mongoose.model("Order", orderSchema);

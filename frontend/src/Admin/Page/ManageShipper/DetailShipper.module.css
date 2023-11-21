@@ -1,0 +1,110 @@
+.img_bill {
+    height: 160px;
+    width: 60%;
+    margin-bottom: 10px;
+    border-radius: 50;
+}
+
+.dshd1 {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+    background-color: #a9a9a9;
+    padding: 10px;
+}
+
+.dsdh {
+    background-color: #9a9a9a;
+    margin-top: 0px 10px;
+}
+
+.titledsdh {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.searchBar {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 10px;
+}
+
+
+
+
+.add {
+    position: absolute;
+    background: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.35);
+
+    gap: 10px;
+
+}
+
+.Store {
+    max-height: 100%;
+    overflow-y: auto;
+    margin-left: 30px;
+}
+
+.Name_store {
+    font-size: 25px;
+    width: 100%;
+    margin-top: 20px;
+    font-weight: 700;
+}
+
+.addres_store {
+    font-weight: 10;
+}
+
+.bill {
+    font-size: 20px;
+    gap: 50;
+    margin-top: 20px;
+}
+
+.bill_stt {
+    display: flex;
+    text-align: left;
+    font-size: 15px;
+    gap: 15px;
+    align-items: center;
+}
+
+.bill_time {
+    margin-bottom: 10px;
+}
+
+.Store {
+    text-align: center;
+    width: 90%;
+    gap: 15px;
+}
+
+.col {
+    flex: 2;
+}
+
+.feedback {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px !important;
+    margin-right: 40%;
+}
+
+.col1 {
+    flex: 1;
+}
