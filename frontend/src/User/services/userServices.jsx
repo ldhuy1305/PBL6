@@ -154,11 +154,9 @@ const getAllOderByUserId = async () => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
-
-  // Ngày hiện tại
   const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=Refused&sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice`, {
+    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=Pending&sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -185,6 +183,21 @@ const viewOrder = async (id) => {
   }
 }
 
+const createPayment = async (query) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`https://falth-api.vercel.app/api/order/after-checkout/payment?${query}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log("Transaction success");
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  } 
+}
+
 export {
   loginAPI,
   getUserInfo,
@@ -198,5 +211,6 @@ export {
   getProductByStoreId,
   placeOrder,
   getAllOderByUserId, 
-  viewOrder
+  viewOrder, 
+  createPayment
 }

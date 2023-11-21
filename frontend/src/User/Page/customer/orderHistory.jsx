@@ -4,7 +4,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAllOderByUserId, viewOrder } from '../../services/userServices';
+import { getAllOderByUserId, viewOrder, createPayment } from '../../services/userServices';
 import RatingShipper from '../../Components/Modal/ratingShipper';
 import RatingStore from '../../Components/Modal/ratingStore';
 import OrderDetail from '../../Components/Modal/orderDetail';
@@ -28,17 +28,18 @@ const OrderHistory = () => {
         flatpickr(toDateRef.current, {
             dateFormat: 'Y-m-d', // Định dạng ngày tháng
         });
-        const queryString = window.location.search;
-
-        // Kiểm tra xem chuỗi có rỗng hay không
-        if (queryString) {
-            // Trang có query parameters
-            console.log('Trang có query parameters:', queryString);
-
-            // Bạn có thể thực hiện các hành động khác dựa trên query parameters tại đây
-        } else {
-            // Trang không có query parameters
-            console.log('Trang không có query parameters');
+        const transaction = async () => {
+            const queryString = window.location.search;
+            if (queryString) {
+                console.log('Trang có query parameters:', queryString);
+                try {
+                    const response = await createPayment(queryString);
+                } catch (error) {
+                    console.log(error)
+                }
+            } else {
+                console.log('Trang không có query parameters');
+            }
         }
         const getOrder = async () => {
             try {
@@ -46,7 +47,6 @@ const OrderHistory = () => {
                 const response1 = await getAllOderByUserId()
                 console.log(response1.data)
                 setItems(response1.data)
-                // const response2 = await viewOrder("65546ead65254f0008541b84")
             } catch (error) {
 
             }
