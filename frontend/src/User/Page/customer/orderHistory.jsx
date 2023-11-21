@@ -52,6 +52,7 @@ const OrderHistory = () => {
             }
             setIsLoading(false)
         }
+        transaction()
         getOrder()
     }, []);
 
