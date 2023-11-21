@@ -237,7 +237,7 @@ class orderController {
         json: true,
         body: dataObj,
       },
-      function (error, response, body) {
+      function(error, response, body) {
         if (error) {
           return next(new appError("Xuất hiện lỗi hoàn tiền", 404));
         }
@@ -255,21 +255,37 @@ class orderController {
     let start, end;
 
     if (!req.query.start)
-      start = moment().subtract(30, "days").add(7, "hours").toDate();
-    else start = moment(req.query.start, "DD-MM-YYYY").add(7, "hours").toDate();
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
 
-    if (!req.query.end) end = moment().add(7, "hours").toDate();
-    else end = moment(req.query.end, "DD-MM-YYYY").add(31, "hours").toDate(); // 7 + 24 hours
-
-    const features = new ApiFeatures(
-      Order.find({
-        store: store._id,
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      store: store._id,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
         status: req.query.status,
-        dateOrdered: {
-          $gte: start,
-          $lt: end,
-        },
-      }).populate({
+      };
+    const features = new ApiFeatures(
+      Order.find(obj).populate({
         path: "user",
         select: "-role -photo -email -contact -createdAt -updatedAt -_id -__t",
         populate: {
@@ -296,21 +312,37 @@ class orderController {
     let start, end;
 
     if (!req.query.start)
-      start = moment().subtract(30, "days").add(7, "hours").toDate();
-    else start = moment(req.query.start, "DD-MM-YYYY").add(7, "hours").toDate();
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
 
-    if (!req.query.end) end = moment().add(7, "hours").toDate();
-    else end = moment(req.query.end, "DD-MM-YYYY").add(31, "hours").toDate(); // 7 + 24 hours
-
-    const features = new ApiFeatures(
-      Order.find({
-        user: req.params.userId,
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      user: req.params.userId,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
         status: req.query.status,
-        dateOrdered: {
-          $gte: start,
-          $lt: end,
-        },
-      }).populate({
+      };
+    const features = new ApiFeatures(
+      Order.find(obj).populate({
         path: "store",
         select:
           "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",
