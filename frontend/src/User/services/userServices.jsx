@@ -156,7 +156,7 @@ const getAllOderByUserId = async () => {
   const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
   const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=Pending&sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice`, {
+    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

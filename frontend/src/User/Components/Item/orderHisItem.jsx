@@ -41,7 +41,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 <div class="history-table-cell history-table-col7">
                     <div class="font-weight-bold history-table-status" style={{
                         color:
-                            item.status === 'Complete'
+                            item.status === 'Finished'
                                 ? '#6cc942' // Màu xanh cho trạng thái complete
                                 : item.status === 'Pending'
                                     ? 'orange' // Màu vàng cho trạng thái pending

@@ -38,7 +38,7 @@ const StoreDetail = () => {
         fetchData();
     }, []);
 
-    const [activeCategory, setActiveCategory] = useState(null);
+    const [activeCategory, setActiveCategory] = useState('');
 
     const handleCategoryClick = (categoryId) => {
         setActiveCategory(categoryId);
@@ -129,13 +129,13 @@ const StoreDetail = () => {
                                             {categories.map((category) => (
                                                 <Link to={category.catName} spy={true} smooth={true} duration={500} offset={-150}>
 
-                                                    <div className="item" key={category.id}>
+                                                    <div className="item" key={category._id}>
                                                         <span
-                                                            // id={`category-link-${category.id}`}
+                                                            id={`category-link-${category._id}`}
                                                             title={category.catName}
-                                                            className={`item-link ${category.id === activeCategory ? 'active' : ''
+                                                            className={`item-link ${category._id === activeCategory ? 'active' : ''
                                                                 }`}
-                                                            onClick={() => handleCategoryClick(category.id)}
+                                                            onClick={() => handleCategoryClick(category._id)}
                                                         >
                                                             {category.catName}
                                                         </span>

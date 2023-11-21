@@ -31,7 +31,13 @@ const Signin = () => {
                 // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
                 setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
                 setImg(res.data.data.user.photo)
-                navigate("/");
+                if(res.data.data.user.role === 'User') {
+                    navigate("/");
+                } else if (res.data.data.user.role === 'Owner') {
+                    navigate("/store");
+                } else if (res.data.data.user.role === 'Admin') {
+                    navigate("/admin");
+                }
                 // window.location.reload()
             } catch (error) {
                 setError(t("error3"));

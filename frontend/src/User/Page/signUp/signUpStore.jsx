@@ -19,16 +19,17 @@ const SignUpStore = () => {
         navigate(`/${nav}`);
     };
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        passwordConfirm: '',
-        firstName: '',
-        lastName: '',
+        name: '',
+        openAt: '',
+        closeAt: '',
+        description: '',
         phoneNumber: '',
         city: '',
         district: '',
         ward: '',
         detailAddress: '',
+        image: null,
+        registrationLicense: null
     });
 
     const handleChangeCity = (e) => {
@@ -108,6 +109,9 @@ const SignUpStore = () => {
                             <form method="POST">
                             <div class="input-group_su">
                                             <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("storeName")} name="storeName" required />
+                                        </div>
+                                        <div class="input-group_su">
+                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("phoneNumber")} name="phoneNumber" required />
                                         </div>
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
