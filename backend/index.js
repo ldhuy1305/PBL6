@@ -14,7 +14,8 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
-dotenv.config({ path: "./.env" });
+
+require("dotenv").config();
 
 mongoose
   .connect(process.env.DATABASE, {

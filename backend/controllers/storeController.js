@@ -4,8 +4,8 @@ const Owner = require("../models/owner");
 const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
-const AppError = require("../utils/appError");
-const ApiFeatures = require("../utils/ApiFeatures");
+const appError = require("../utils/appError");
+const ApiFeatures = require("../utils/apiFeatures");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
 
@@ -20,7 +20,7 @@ class storeController {
       const checkOwner = await Store.findOne({ ownerId: req.params.ownerId });
       if (checkOwner) {
         return next(
-          new AppError(
+          new appError(
             "Chủ cửa hàng này đã được đăng ký cho cửa hàng khác!",
             500
           )
@@ -39,7 +39,7 @@ class storeController {
           image: req.files.image[0]?.path,
         };
       } else {
-        return next(new AppError("Vui lòng cung cấp hình ảnh cửa hàng", 500));
+        return next(new appError("Vui lòng cung cấp hình ảnh cửa hàng", 500));
       }
       const storeCreated = await Store.create(body);
       res.status(201).json({
@@ -61,7 +61,7 @@ class storeController {
   });
 
   getStoreByOwnerId = catchAsync(async (req, res, next) => {
-    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    const store = await Store.findOne({ ownerId: req.params.id });
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
@@ -70,7 +70,7 @@ class storeController {
   });
   getStoreByStoreId = catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    const store = await Store.findById(req.params.storeId);
+    const store = await Store.findById(req.params.id).populate("ratings");
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
@@ -115,10 +115,15 @@ class storeController {
     });
   });
   updateStore = catchAsync(async (req, res, next) => {
-    const store = await Store.findOneAndUpdate(
-      { ownerId: req.params.ownerId },
-      req.body
-    );
+    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    store.phoneNumber = req.body.phoneNumber;
+    store.address = req.body.address;
+    store.name = req.body.name;
+    store.openAt = req.body.openAt;
+    store.closeAt = req.body.closeAt;
+    store.description = req.body.description;
+    await store.save();
+    console.log(store);
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",

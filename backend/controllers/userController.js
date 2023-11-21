@@ -34,18 +34,19 @@ class userController {
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id).populate("contact");
-    let contact = user.contact.find(
+    let index = user.contact.findIndex(
       (el) => el._id.toString() === user.defaultContact.toString()
     );
-    contact.address = req.body.address ? req.body.address : contact.address;
-    contact.phoneNumber = req.body.phoneNumber
-      ? req.body.phoneNumber
-      : contact.phoneNumber;
+
     user.markModified("contact");
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
+    user.contact[index] = req.body.contact;
     await user.save({ validateBeforeSave: false });
-    res.status(200).json(user);
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
   });
   changePass = catchAsync(async (req, res, next) => {
     // const { newPass, confirmedPass } = req.body;
@@ -103,13 +104,13 @@ class userController {
     const { userId, storeId } = req.params;
     let user = await User.findById(userId);
 
-    user = await user.populate("contactId").execPopulate();
     const store = await Store.findById(storeId);
 
     const storeCoordinates = {
       latitude: store.location.coordinates[0],
       longitude: store.location.coordinates[1],
     };
+    console.log(store);
     const data = user.contact.map(function(contact) {
       console.log(contact);
       const contactCoordinates = {

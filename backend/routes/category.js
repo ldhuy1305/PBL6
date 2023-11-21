@@ -11,8 +11,6 @@ router
     categoryController.uploadCategoryImage,
     categoryController.addCategory
   );
-router
-  .route("/store/:id")
-  .get(authController.protect, categoryController.getAllCategoryByStore);
+router.route("/store/:id").get(categoryController.getAllCategoryByStore);
 
 module.exports = router;

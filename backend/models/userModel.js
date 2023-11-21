@@ -92,7 +92,7 @@ const userSchema = new Schema(
           },
           coordinates: {
             type: [Number],
-            index: "2dshpere",
+            index: "2dsphere",
           },
         },
       },
@@ -133,11 +133,6 @@ userSchema.pre("save", async function(next) {
 
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
-  next();
-});
-
-userSchema.pre(/^find/, function(next) {
-  this.select("-__t -__v");
   next();
 });
 
