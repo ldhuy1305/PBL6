@@ -168,6 +168,24 @@ const getAllOderByUserId = async () => {
   }
 }
 
+const getOderByFilter = async (fromDate, toDate, status) => {
+  const token = localStorage.getItem("token");
+  const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=1&start=${fromDate}&end=${toDate}`
+  console.log(api)
+  try {
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log("Order placed successfully:");
+    return response.data
+  } catch (error) {
+    console.error("Error get order:", error);
+  }
+}
+
 const viewOrder = async (id) => {
   const token = localStorage.getItem("token");
   try {
@@ -198,6 +216,16 @@ const createPayment = async (query) => {
   } 
 }
 
+//Rating 
+const getRatingOfStore = async (storeId) => {
+  try {
+    const response = await axios.get(`https://falth-api.vercel.app/api/store/${storeId}/rating`);
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  } 
+}
+
 export {
   loginAPI,
   getUserInfo,
@@ -212,5 +240,6 @@ export {
   placeOrder,
   getAllOderByUserId, 
   viewOrder, 
-  createPayment
+  createPayment,
+  getOderByFilter, getRatingOfStore
 }

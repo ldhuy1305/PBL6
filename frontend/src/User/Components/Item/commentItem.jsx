@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import ZoomImage from "./zoomImage";
+import moment from "moment";
 
-const CommentItem = ({ like, avatar, userName, rating, comment, date, images, renderStars }) => {
+// const CommentItem = ({ like, avatar, userName, rating, comment, date, images, renderStars }) => {
+const CommentItem = ({ like, rating, renderStars }) => {
     const [visible, setVisible] = useState(false)
     const [link, setLink] = useState(false)
+    const formattedCreateTime = moment.utc(rating.createdAt).format('DD/MM/YYYY HH:mm');
     const handleZoom = (link) => {
         setLink(link);
         setVisible(true);
@@ -28,19 +31,19 @@ const CommentItem = ({ like, avatar, userName, rating, comment, date, images, re
                     <img
                         class="shopee-avatar__img"
                         alt="a"
-                        src={avatar}
+                        src={rating.user.photo}
                     />
                 </div>
             </div>
             <div class="shopee-product-rating__main">
                 <div
                     class="shopee-product-rating__author-name"
-                >{userName}</div>
+                >{rating.user.firstName}{rating.user.lastName}</div>
                 <div class="repeat-purchase-con">
-                    {renderStars(rating)}
+                    {renderStars(rating.number)}
                 </div>
                 <div class="shopee-product-rating__time">
-                    {date} | Kích thước: Lớn
+                    {formattedCreateTime} |
                 </div>
                 <div
                     style={{
@@ -57,13 +60,13 @@ const CommentItem = ({ like, avatar, userName, rating, comment, date, images, re
                     }}
 
                 >
-                    {comment}
+                    {rating.content}
 
                 </div>
                 <div class="shopee-product-rating__image-list-wrapper">
                     <div class="rating-media-list">
                         <div class="rating-media-list__container">
-                            {images.map((image) => (
+                            {rating.images.map((image) => (
                                 <div
                                     class="rating-media-list__image-wrapper rating-media-list__image-wrapper--inactive"
                                     onClick={() => handleZoom(image)}
