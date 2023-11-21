@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const storeController = require("../controllers/storeController");
 const authController = require("../controllers/authController");
+const ratingRoute = require("../routes/rating");
 
 router.post(
   "/:ownerId",
@@ -27,5 +28,7 @@ router.get("/order/:ownerId", storeController.getAllOrder);
 router.get("/order/:ownerId/:userId", storeController.viewOrder);
 router.delete("/order/:ownerId/:userId", storeController.rejectOrder);
 router.post("/order/:ownerId/:userId", storeController.acceptOrder);
+
+router.use("/:storeId/rating", ratingRoute);
 
 module.exports = router;

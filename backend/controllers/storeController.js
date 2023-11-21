@@ -5,7 +5,7 @@ const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
 const appError = require("../utils/appError");
-const ApiFeatures = require("../utils/ApiFeatures");
+const ApiFeatures = require("../utils/apiFeatures");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
 
@@ -70,7 +70,7 @@ class storeController {
   });
   getStoreByStoreId = catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    const store = await Store.findById(req.params.id);
+    const store = await Store.findById(req.params.id).populate("ratings");
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",

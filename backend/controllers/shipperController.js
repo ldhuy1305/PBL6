@@ -4,7 +4,7 @@ const authController = require("./authController");
 const catchAsync = require("../utils/catchAsync");
 const fileUploader = require("../utils/uploadImage");
 const appError = require("../utils/appError");
-const ApiFeatures = require("../utils/ApiFeatures");
+const ApiFeatures = require("../utils/apiFeatures");
 const cloudinary = require("cloudinary").v2;
 const Order = require("../models/order");
 
