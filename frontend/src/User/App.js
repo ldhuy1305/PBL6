@@ -16,6 +16,7 @@ import Home from './Page/customer/home'
 import OrderPage from './Page/customer/orderPage'
 import StoreDetail from './Page/customer/storeDetail'
 import ViewComment from './Page/customer/viewComment'
+import Comment from './Components/Modal/comment'
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider} from './services/authContext'
@@ -63,7 +64,7 @@ const App = () => {
                 <Route path="/signin" element={<Signin />} />
                 <Route path="/signUpCustomer" element={<SignUpCustomer />} />
                 <Route path="/signUpShipper" element={<SignUpShipper />} />
-                <Route path="/signUpStore" element={<SignUpOwner />} />
+                <Route path="/signUpOwner" element={<SignUpOwner />} />
                 <Route path="/signUpStore" element={<SignUpStore />} />
                 <Route path="/forgotPass" element={<ForgotPass />} />
                 <Route path="/verify" element={<Verify />} />

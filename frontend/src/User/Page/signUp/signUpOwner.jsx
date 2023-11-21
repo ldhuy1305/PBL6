@@ -34,6 +34,10 @@ const SignUpOwner = () => {
         district: '',
         ward: '',
         detailAddress: '',
+        bankName: '',
+        bankNumber: '',
+        frontImageCCCD: null,
+        behindImageCCCD: null,
     });
 
     const handleChangeCity = (e) => {
@@ -203,7 +207,20 @@ const SignUpOwner = () => {
                                     <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("address")} name="detailAddress" value={formData.detailAddress}
                                         onChange={handleChange} />
                                 </div>
-                                
+                                <div class="row_su row-space">
+                                    <div class="col-2_su">
+                                        <div class="input-group_su">
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("bankName")} name="bankName" required value={formData.bankName}
+                                                onChange={handleChange} />
+                                        </div>
+                                    </div>
+                                    <div class="col-2_su">
+                                        <div class="input-group_su">
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("bankNumber")} name="bankNumber" required value={formData.bankNumber}
+                                                onChange={handleChange} />
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="row_su row-space">
                                     <div class="col-2_su">

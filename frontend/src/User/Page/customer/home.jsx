@@ -121,7 +121,15 @@ const Home = () => {
       });
   }, [selectedLocation, key, selectedCategories]);
 
+  const [page, setPage] = useState(1);
 
+  const handlePageClick = (action) => {
+    if (action === 'prev' && page > 1) {
+      setPage(page - 1);
+    } else if (action === 'next' && page < 5) {
+      setPage(page + 1);
+    }
+  };
 
   return (
     <div>
@@ -229,20 +237,20 @@ const Home = () => {
             </div>
             {isLoading && Array(4).fill(0).map((item, index) => (
               <div class="item-restaurant" >
-              <div class="img-restaurant">
-                <Skeleton />
-              </div>
-              <div class="info-restaurant">
-                <div class="info-basic-res" style={{ height: '50px', width: '285px' }}>
+                <div class="img-restaurant">
                   <Skeleton />
                 </div>
-                <p class="content-promotion" style={{ height: '30px', width: '285px' }}>
-                  <Skeleton />
-                </p>
+                <div class="info-restaurant">
+                  <div class="info-basic-res" style={{ height: '50px', width: '285px' }}>
+                    <Skeleton />
+                  </div>
+                  <p class="content-promotion" style={{ height: '30px', width: '285px' }}>
+                    <Skeleton />
+                  </p>
+                </div>
               </div>
-            </div>
             ))}
-            
+
             {stores.data.map((store) => (
 
               <StoreItem
@@ -255,19 +263,27 @@ const Home = () => {
           </div>
         </div>
         <ul class="pagination">
-          <li class="disabled">
-            <a class="" href="./"><i class="fa-solid fa-circle-chevron-left" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></a>
+          <li class="" onClick={() => handlePageClick('prev')}>
+            <button class="no_hover"><i class="fa-solid fa-circle-chevron-left" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
           </li>
-          <li class="active"><a class="undefined" href="./">1</a></li>
-          <li class=""><a class="" href="./">2</a></li>
-          <li class=""><a class="" href="./">3</a></li>
-          <li class=""><a class="" href="./">4</a></li>
-          <li class=""><a class="" href="./">5</a></li>
-          <li class=""><a class="" href="./">6</a></li>
-          <li class=""><a class="" href="./">7</a></li>
-          <li class=""><a class="" href="./">8</a></li>
-          <li class="">
-            <a class="" href="./"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></a>
+          <li className={`${page === 1 ? 'active' : ''}`}
+            onClick={() => setPage(1)}><button class="" >1</button></li>
+          <li className={`${page === 2 ? 'active' : ''}`}
+            onClick={() => setPage(2)}><button class="" >2</button></li>
+          <li className={`${page === 3 ? 'active' : ''}`}
+            onClick={() => setPage(3)}><button class="" >3</button></li>
+          <li className={`${page === 4 ? 'active' : ''}`}
+            onClick={() => setPage(4)}><button class="" >4</button></li>
+          <li className={`${page === 5 ? 'active' : ''}`}
+            onClick={() => setPage(5)}><button class="" >5</button></li>
+          <li className={`${page === 6 ? 'active' : ''}`}
+            onClick={() => setPage(6)}><button class="" >6</button></li>
+          <li className={`${page === 7 ? 'active' : ''}`}
+            onClick={() => setPage(7)}><button class="" >7</button></li>
+          <li className={`${page === 8 ? 'active' : ''}`}
+            onClick={() => setPage(8)}><button class="" >8</button></li>
+          <li class="" onClick={() => handlePageClick('next')}>
+            <button class="no_hover"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
           </li>
         </ul>
       </div>

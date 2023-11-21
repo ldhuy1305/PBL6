@@ -67,7 +67,7 @@ const OrderHistory = () => {
     })
     const [item, setItem] = useState(null)
     const [store, setStore] = useState({
-        name:'',
+        name: '',
         ratingAverage: 2
     })
 
@@ -93,7 +93,7 @@ const OrderHistory = () => {
     };
 
     const handleShowModal1 = (item) => {
-        setItem({...item})
+        setItem({ ...item })
         setShowModal1(true);
         console.log("Mở modal")
     };
@@ -101,7 +101,7 @@ const OrderHistory = () => {
         setShowModal1(false);
     };
     const handleShowModal2 = (storInfo) => {
-        setStore({...storInfo})
+        setStore({ ...storInfo })
         setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2
     };
@@ -119,6 +119,16 @@ const OrderHistory = () => {
     const handleBack = () => {
         navigate("/user/profile")
     }
+
+    const [page, setPage] = useState(1);
+
+    const handlePageClick = (action) => {
+        if (action === 'prev' && page > 1) {
+            setPage(page - 1);
+        } else if (action === 'next' && page < 5) {
+            setPage(page + 1);
+        }
+    };
 
     return (
         <div>
@@ -196,6 +206,24 @@ const OrderHistory = () => {
                             ))}
 
                         </div>
+                        <ul class="pagination">
+                            <li class="" onClick={() => handlePageClick('prev')}>
+                                <button class="no_hover"><i class="fa-solid fa-circle-chevron-left" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
+                            </li>
+                            <li className={`${page === 1 ? 'active' : ''}`}
+                                onClick={() => setPage(1)}><button class="" >1</button></li>
+                            <li className={`${page === 2 ? 'active' : ''}`}
+                                onClick={() => setPage(2)}><button class="" >2</button></li>
+                            <li className={`${page === 3 ? 'active' : ''}`}
+                                onClick={() => setPage(3)}><button class="" >3</button></li>
+                            <li className={`${page === 4 ? 'active' : ''}`}
+                                onClick={() => setPage(4)}><button class="" >4</button></li>
+                            <li className={`${page === 5 ? 'active' : ''}`}
+                                onClick={() => setPage(5)}><button class="" >5</button></li>
+                            <li class="" onClick={() => handlePageClick('next')}>
+                                <button class="no_hover"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
+                            </li>
+                        </ul>
                         <div class="filter-table-item" style={{ float: "right", marginTop: '30px' }}>
                             <button type="button" class="btn btn-sm" onClick={handleBack}>{t("back")}</button>
                         </div>
@@ -204,8 +232,8 @@ const OrderHistory = () => {
             </div>
 
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
-            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item}/>
-            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store}/>
+            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item} />
+            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store} />
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )
