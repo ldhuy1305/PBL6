@@ -82,7 +82,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                             />
                                                             <div class="shipper-name">{store.name}</div>
                                                             <div className="rating-star-container">
-                                                                {(Array(store.ratingAverage).fill(true).concat(Array(5 - store.ratingAverage).fill(false))).map((isActive, index) => (
+                                                                {(Array(store.ratingsAverage).fill(true).concat(Array(5 - store.ratingAverage).fill(false))).map((isActive, index) => (
                                                                     <i
                                                                         key={index}
                                                                         className={`fas fa-star icon-star ${isActive ? 'active' : ''} disabled`}

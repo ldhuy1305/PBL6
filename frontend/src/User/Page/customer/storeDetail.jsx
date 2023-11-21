@@ -72,10 +72,11 @@ const StoreDetail = () => {
                                 {store.address}
                             </div>
                             <div class="rating" style={{cursor:'pointer'}} onClick={handleComment}>
+                                <span class="number-rating">{store.ratingsAverage}</span>
                                 <div class="stars">
                                     <span class=""><i class="fas fa-solid fa-star"></i></span>
                                 </div>
-                                <span class="number-rating">{store.ratingAverage}</span>{t("ratingInFALTH")}
+                                <span style={{color:'#ee4d2d'}}>{t("ratingInFALTH")}</span>
                             </div>
                             <div class="view-more-rating">
                                 <span

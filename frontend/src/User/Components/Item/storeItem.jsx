@@ -41,7 +41,7 @@ const StoreItem = ({ like, store }) => {
                         </div>
                     </div>
                     <p class="content-promotion">
-                        <i class="fas fa-solid fa-star"></i> {store.ratingAverage}
+                        <i class="fas fa-solid fa-star"></i> {store.ratingsAverage}
                         <p class="opening-hours"><i class="fas fa-solid fa-clock" style={{ color: 'rgb(35, 152, 57)' }}></i>{t("storeActive")} {store.openAt}-{store.closeAt}</p>
                     </p>
                     <div class="opentime-status">

@@ -4,13 +4,14 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAllOderByUserId, viewOrder, createPayment } from '../../services/userServices';
+import { getAllOderByUserId, viewOrder, createPayment, getOderByFilter } from '../../services/userServices';
 import RatingShipper from '../../Components/Modal/ratingShipper';
 import RatingStore from '../../Components/Modal/ratingStore';
 import OrderDetail from '../../Components/Modal/orderDetail';
 import OrderHisItem from '../../Components/Item/orderHisItem';
 import Skeleton from '../../Components/Skeleton/skeleton'
 import LoadingModal from '../../Components/Loading/Loading';
+import moment from 'moment-timezone';
 const OrderHistory = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -19,15 +20,35 @@ const OrderHistory = () => {
     const [items, setItems] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingModal, setIsLoadingModal] = useState(false)
-
+    const [selectedStatus, setSelectedStatus] = useState('All');
+    const currentDate = new Date();
+    const oneMonthAgo = new Date(currentDate);
+    oneMonthAgo.setMonth(currentDate.getMonth() - 1);
+    const [fromDate, setFromDate] = useState(oneMonthAgo);
+    const [toDate, setToDate] = useState(currentDate);
     useEffect(() => {
-        flatpickr(fromDateRef.current, {
-            dateFormat: 'Y-m-d', // Định dạng ngày tháng
-        });
 
-        flatpickr(toDateRef.current, {
-            dateFormat: 'Y-m-d', // Định dạng ngày tháng
-        });
+    // Khởi tạo flatpickr cho fromDate
+    flatpickr(fromDateRef.current, {
+      dateFormat: 'd-m-Y',
+      defaultDate: oneMonthAgo,
+      onChange: function (selectedDates) {
+        const selectedDate = selectedDates[0];
+        setFromDate(selectedDate);
+        console.log('From Date Selected:', selectedDate);
+      },
+    });
+
+    // Khởi tạo flatpickr cho toDate
+    flatpickr(toDateRef.current, {
+      dateFormat: 'd-m-Y',
+      defaultDate: currentDate,
+      onChange: function (selectedDates) {
+        const selectedDate = selectedDates[0];
+        setToDate(selectedDate);
+        console.log('To Date Selected:', selectedDate);
+      },
+    });
         const transaction = async () => {
             const queryString = window.location.search;
             if (queryString) {
@@ -55,6 +76,27 @@ const OrderHistory = () => {
         transaction()
         getOrder()
     }, []);
+
+    const handleStatusChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedStatus(selectedValue);
+      };
+    const handleSearch = async () => {
+        const from = moment(fromDate).format('DD-MM-YYYY');
+        const to = moment(toDate).format('DD-MM-YYYY');
+        if(selectedStatus === 'All') {
+            setSelectedStatus('')
+        }
+        try {
+            setIsLoading(true)
+            const response = await getOderByFilter(from, to, selectedStatus)
+            console.log(response.data)
+                setItems(response.data)
+        } catch (error) {
+            console.log("Sai:",error)
+        }
+        setIsLoading(false)
+    }
 
     const [showModal, setShowModal] = useState(false);
     const [showModal1, setShowModal1] = useState(false);
@@ -142,10 +184,13 @@ const OrderHistory = () => {
                         <div class="filter-table">
                             <div class="filter-table-item">
                                 <div class="text-nowrap">
-                                    <span class="filter-table-label">{t("status")}</span><select name="" class="form-control filter-table-input">
-                                        <option value="-1" selected="">{t("all")}</option>
-                                        <option value="4">{t("complete")}</option>
-                                        <option value="8">{t("cancel")}</option>
+                                    <span class="filter-table-label">{t("status")}</span>
+                                    <select value={selectedStatus}
+        onChange={handleStatusChange} name="" class="form-control filter-table-input">
+                                        <option value="All" selected="">All</option>
+                                        <option value="Finished">Finished</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Refused">Refused</option>
                                     </select>
                                 </div>
                             </div>
@@ -168,7 +213,7 @@ const OrderHistory = () => {
                                 </div>
                             </div>
                             <div class="filter-table-item">
-                                <button type="button" class="btn btn-sm">{t("search")}</button>
+                                <button type="button" class="btn btn-sm" onClick={handleSearch}>{t("search")}</button>
                             </div>
                         </div>
                         <div class="history-table">
