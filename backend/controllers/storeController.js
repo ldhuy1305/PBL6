@@ -5,7 +5,7 @@ const Category = require("../models/category");
 const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
 const appError = require("../utils/appError");
-const ApiFeatures = require("../utils/apiFeatures");
+const ApiFeatures = require("../utils/ApiFeatures");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
 

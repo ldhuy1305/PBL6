@@ -3,7 +3,7 @@ const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
-const ApiFeatures = require("../utils/apiFeatures");
+const ApiFeatures = require("../utils/ApiFeatures");
 
 class ratingController {
   updatePhoto = fileUploader.single("image");
