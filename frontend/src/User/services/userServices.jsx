@@ -169,6 +169,9 @@ const getAllOderByUserId = async () => {
 }
 
 const getOderByFilter = async (fromDate, toDate, status) => {
+  if(status === 'All') {
+    status = ''
+  }
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=1&start=${fromDate}&end=${toDate}`

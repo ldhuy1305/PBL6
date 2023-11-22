@@ -56,7 +56,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
             res.append(`images`, image); // assuming 'images' is an array of files
         });
     }
-    if(res.number === '') {
+    if(formData.number === '') {
         alert('Mời bạn nhập số sao để đánh giá')
     } else {
 
@@ -76,13 +76,13 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
         } finally {
             setIsLoading(false);
         }
+        setFormData({
+            number: '',
+            content: '',
+            images: [],
+        });
     }
 
-    setFormData({
-        number: '',
-        content: '',
-        images: [],
-    });
     };
 
     const renderStars = (rating) => {
