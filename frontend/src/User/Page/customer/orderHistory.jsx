@@ -84,6 +84,7 @@ const OrderHistory = () => {
     const handleSearch = async () => {
         const from = moment(fromDate).format('DD-MM-YYYY');
         const to = moment(toDate).format('DD-MM-YYYY');
+        setItems([])
         if(selectedStatus === 'All') {
             setSelectedStatus('')
         }
