@@ -2,15 +2,28 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
+import { addRatingForStore } from "../../services/userServices";
+import Notify from '../Notify.jsx/Notify'
+import LoadingModal from "../Loading/Loading";
 const RatingStore = ({ show, handleClose, handleReturn, store }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
-        rating: '',
-        reviewText: '',
-        selectedImages: null,
+        number: '',
+        content: '',
+        images: [],
     });
 
+    const [openNotify, setOpenNotify] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [notify, setNotify] = useState('')
+    const handleOpenNotify = () => {
+        setOpenNotify(true)
+    }
+    const handleCloseNotify = () => {
+        setOpenNotify(false)
+        console.log("đóng modal")
+    }
 
     const handleChangeImg = (e) => {
         const name = e.target.name;
@@ -21,7 +34,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
 
         setFormData({
             ...formData,
-            [name]: (formData.selectedImages || []).concat(imagesArray),
+            [name]: (formData.images || []).concat(imagesArray),
         });
     };
     const handleChange = (e) => {
@@ -32,13 +45,73 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
         });
     };
 
-    const handleSubmit = () => {
-        console.log(formData);
-        setFormData({
-            rating: '',
-            reviewText: '',
-            selectedImages: null,
-        })
+    const handleSubmit = async () => {
+        const res = new FormData();
+        res.append('number', formData.number);
+        res.append('content', formData.content);
+
+    // Append each image to the FormData
+    if (formData.images && formData.images.length > 0) {
+        formData.images.forEach((image, index) => {
+            res.append(`images`, image); // assuming 'images' is an array of files
+        });
+    }
+    if(res.number === '') {
+        alert('Mời bạn nhập số sao để đánh giá')
+    } else {
+
+        try {
+            setIsLoading(true);
+    
+            const response = await addRatingForStore(store._id, res);
+    
+            // console.log("Đánh giá thành công:", response);
+            // console.log(formData);
+            // console.log(res);
+            setNotify("Đánh giá thành công")
+            setOpenNotify(true)
+            handleClose()
+        } catch (error) {
+            console.log("Đánh giá thất bại:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    setFormData({
+        number: '',
+        content: '',
+        images: [],
+    });
+    };
+
+    const renderStars = (rating) => {
+        return Array(5).fill(0).map((_, index) => {
+            const starValue = index + 1;
+            const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
+            const isHalfFilled = percentFilled > 0 && percentFilled < 100;
+
+            return (
+                <div className="shopee-rating-stars__star-wrapper" key={index}>
+                    <div className="shopee-rating-stars__lit" style={{ width: `${isHalfFilled ? percentFilled : percentFilled}%`, color: '#ffb500' }}>
+                        <svg
+                            enableBackground="new 0 0 15 15"
+                            viewBox="0 0 15 15"
+                            x="0"
+                            y="0"
+                            className="shopee-svg-icon shopee-rating-stars__primary-star icon-rating-solid"
+                        >
+                            <polygon
+                                points="7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeMiterlimit="10"
+                            ></polygon>
+                        </svg>
+                    </div>
+                </div>
+            );
+        });
     };
     return (
         <div>
@@ -80,18 +153,23 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                                 src={ava}
                                                                 alt=""
                                                             />
-                                                            <div class="shipper-name">{store.name}</div>
-                                                            <div className="rating-star-container">
-                                                                {(Array(store.ratingsAverage).fill(true).concat(Array(5 - store.ratingAverage).fill(false))).map((isActive, index) => (
+                                                            <div class="shipper-name" style={{margin:'0'}}>{store.name}</div>
+                                                            {/* <div className="rating-star-container">
+                                                                {Array.from({ length: 5 }, (_, index) => (
                                                                     <i
                                                                         key={index}
-                                                                        className={`fas fa-star icon-star ${isActive ? 'active' : ''} disabled`}
-                                                                        data-rate={index + 101}
+                                                                        className={`fas fa-star icon-star ${index < store.ratingsAverage ? 'active' : ''} disabled`}
+                                                                        data-rate={index + 1}
                                                                     ></i>
                                                                 ))}
-                                                            </div>
+                                                            </div> */}
+                                                            <div class="shopee-rating-stars product-rating-overview__stars" style={{margin:'0'}}>
+                                <div className="shopee-rating-stars__stars">
+                                    {renderStars(store.ratingsAverage)}
+                                </div>
+                            </div>
                                                             <div >
-                                                                <select defaultValue="" className="custom-select" name='rating' value={formData.rating} onChange={handleChange}>
+                                                                <select defaultValue="" className="custom-select" name='number' value={formData.number} onChange={handleChange}>
                                                                     <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
                                                                     <option value={1}>1 sao</option>
                                                                     <option value={2}>2 sao</option>
@@ -103,16 +181,16 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                         </div>
                                                         <div class="block-comment">
                                                             <textarea
-                                                                name="reviewText"
+                                                                name="content"
                                                                 id=""
                                                                 placeholder="Chia sẻ đánh giá của bạn. Đánh giá và bình luận của bạn sẽ được giữ dưới chế độ ẩn danh."
                                                                 maxlength="300"
-                                                                value={formData.reviewText} onChange={handleChange}
+                                                                value={formData.content} onChange={handleChange}
                                                             ></textarea>
                                                             <div class="upload-image">
                                                                 <div style={{ display: 'flex' }}>
                                                                     {/* Hiển thị các ảnh đã chọn */}
-                                                                    {formData.selectedImages && formData.selectedImages.map((image, index) => (
+                                                                    {formData.images && formData.images.map((image, index) => (
                                                                         <img
                                                                             key={index}
                                                                             src={URL.createObjectURL(image)}
@@ -127,7 +205,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                                         <input
                                                                             type="file"
                                                                             multiple=""
-                                                                            name="selectedImages"
+                                                                            name="images"
                                                                             accept="image/*"
                                                                             style={{ visibility: 'hidden' }}
                                                                             onChange={handleChangeImg}
@@ -139,7 +217,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                         </div>
                                                         <div class="submit-section">
                                                             <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
-                                                            <button type="button" disabled="" class="btn btn-submit">Gửi đánh giá</button>
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -153,6 +231,8 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                     <div class="modal-backdrop fade under-modal"></div>
                 </Modal.Body>
             </Modal>
+            {openNotify && (<Notify message={notify} setOpenNotify={setOpenNotify} handleClose={handleCloseNotify}/>)}
+            {isLoading  && (<LoadingModal/>)}
         </div>
 
     )

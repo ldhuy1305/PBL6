@@ -80,33 +80,33 @@ const Comment = ({ store, ratings }) => {
                                 Tất cả
                             </div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === '5 Sao (2,3k)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('5 Sao (2,3k)')}
-                            >5 Sao (2,3k)</div>
+                                className={`product-rating-overview__filter ${activeFilter === '5 Sao' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('5 Sao')}
+                            >5 Sao</div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === '4 Sao (114)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('4 Sao (114)')}
-                            >4 Sao (114)</div>
+                                className={`product-rating-overview__filter ${activeFilter === '4 Sao' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('4 Sao')}
+                            >4 Sao</div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === '3 Sao (40)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('3 Sao (40)')}
-                            >3 Sao (40)</div>
+                                className={`product-rating-overview__filter ${activeFilter === '3 Sao' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('3 Sao')}
+                            >3 Sao</div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === '2 Sao (9)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('2 Sao (9)')}
-                            >2 Sao (9)</div>
+                                className={`product-rating-overview__filter ${activeFilter === '2 Sao' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('2 Sao')}
+                            >2 Sao</div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === '1 Sao (11)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('1 Sao (11)')}
-                            >1 Sao (11)</div>
+                                className={`product-rating-overview__filter ${activeFilter === '1 Sao' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('1 Sao')}
+                            >1 Sao</div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === 'Có Bình luận (1,1k)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('Có Bình luận (1,1k)')}
-                            >Có Bình luận (1,1k)</div>
+                                className={`product-rating-overview__filter ${activeFilter === 'Có Bình luận' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('Có Bình luận')}
+                            >Có Bình luận</div>
                             <div
-                                className={`product-rating-overview__filter ${activeFilter === 'Có hình ảnh (439)' ? 'product-rating-overview__filter--active' : ''}`}
-                                onClick={() => handleFilterClick('Có hình ảnh (439)')}
-                            >Có hình ảnh (439)</div>
+                                className={`product-rating-overview__filter ${activeFilter === 'Có hình ảnh' ? 'product-rating-overview__filter--active' : ''}`}
+                                onClick={() => handleFilterClick('Có hình ảnh')}
+                            >Có hình ảnh</div>
                         </div>
                     </div>
                     <div class="product-ratings__list" style={{ opacity: '1' }}>
@@ -141,7 +141,6 @@ const Comment = ({ store, ratings }) => {
                     </div>
                 </div>
             </div>
-            <button class="" onClick={show} >Xem</button>
         </div>
     )
 }

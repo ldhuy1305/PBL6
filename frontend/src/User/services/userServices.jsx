@@ -226,6 +226,21 @@ const getRatingOfStore = async (storeId) => {
   } 
 }
 
+const addRatingForStore = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`https://falth-api.vercel.app/api/store/${id}/rating`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+    },
+    });
+    console.log('đánh giá thành công')
+  } catch (error) {
+    console.log('đánh giá thất bại:', error)
+  }
+}
+
 export {
   loginAPI,
   getUserInfo,
@@ -241,5 +256,7 @@ export {
   getAllOderByUserId, 
   viewOrder, 
   createPayment,
-  getOderByFilter, getRatingOfStore
+  getOderByFilter, 
+  getRatingOfStore,
+  addRatingForStore
 }
