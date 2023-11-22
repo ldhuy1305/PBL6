@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
+import LoadingModal from "../Loading/Loading";
+import { getStoreById } from "../../services/userServices";
+import { useNavigate } from "react-router-dom";
 const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
     const { t } = useTranslation()
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false)
     const formatteOrderTime = moment.utc(item.dateOrdered).format('DD/MM/YYYY HH:mm');
     // const localFormattedDate = moment(item.dateOrdered).local().format('DD/MM/YYYY HH:mm');
+    const handleStore = async () => {
+
+        try {
+            setIsLoading(true)
+            const storeData = await getStoreById(item.store._id);
+            const store = storeData.data;
+            navigate("/home/storeDetail", { state: { store: { store } } });
+            // handleClose();
+        } catch (error) {
+        } finally {
+            setIsLoading(false);
+        }
+    }
     return (
         <div>
             <div class="history-table-row">
@@ -16,7 +34,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 </div>
                 <div class="history-table-cell history-table-col4">
                     <a
-                        href="/da-nang/coco-che"
+                        onClick={handleStore}
                         target="_blank"
                         rel="noopener noreferrer"
                     ><div class="text-body">
@@ -73,6 +91,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                     </button>
                 </div>
             </div>
+            {isLoading && (<LoadingModal/>)}
         </div>
     )
 }
