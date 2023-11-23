@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../services/authContext';
 import { useTranslation } from 'react-i18next';
 import { useCity } from '../../services/CityContext';
-import { getStoreById } from '../../services/userServices';
+import { getStoreById, getFeeShip } from '../../services/userServices';
 import LoadingModal from '../Loading/Loading';
 import axios from 'axios';
 const CartModal = ({ show, handleClose, handleOpen }) => {
@@ -20,21 +20,20 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
 
     const handleOrder = async (activity) => {
         if (activity === "order") {
-            setIsLoading(true)
-            const user = localStorage.getItem("user");
-            const token = localStorage.getItem("token");
-            const userData = JSON.parse(user);
-            const response = await axios.get(`https://falth-api.vercel.app/api/user/${userData._id}/store/${cart.idStore}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            const calArray = response.data.data
-            const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
-            console.log(feeShipElement)
-            navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
+            try {
+                setIsLoading(true)
+                const user = localStorage.getItem("user");
+                const userData = JSON.parse(user);
+                const response = await getFeeShip(cart.idStore)
+                const calArray = response.data
+                const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
+                navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
+                handleClose()
+            } catch (error) {
+
+            }
             setIsLoading(false)
-            handleClose()
+
         } else {
             handleClose()
             navigate("/signin")
@@ -154,7 +153,6 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
     }, [isModalOpen, handleOpen]);
 
     const handleStore = async () => {
-
         try {
             const storeData = await getStoreById(cart.idStore);
             const store = storeData.data;
@@ -224,7 +222,7 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
                                             <div class="ant-row-flex CartFooter-PriceInfo___1UEeS">
                                                 <div class="ant-col-8">{t("total")}</div>
                                                 <div class="ant-col-16 CartFooter-Price___1jcoa">
-                                                    {total} ₫
+                                                    {total.toLocaleString('vi-VN')} ₫
                                                 </div>
                                             </div>
                                             <div>

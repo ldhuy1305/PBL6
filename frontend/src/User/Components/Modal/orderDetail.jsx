@@ -48,7 +48,7 @@ const OrderDetail = ( {show, handleClose, orderDetail, storeName}) => {
                                                 ))}
                                             </div>
                                             <div class="history-table-cell history-table-col4">
-                                                {orderDetail.totalPrice - orderDetail.shipCost}<span
+                                                {(orderDetail.totalPrice - orderDetail.shipCost).toLocaleString('vi-VN')}<span
                                                     style={{
                                                         fontWeight: '400',
                                                         position: 'relative',
@@ -58,7 +58,7 @@ const OrderDetail = ( {show, handleClose, orderDetail, storeName}) => {
                                                     }}>đ</span>
                                             </div>
                                             <div class="history-table-cell history-table-col5">
-                                            {orderDetail.shipCost}<span
+                                            {orderDetail.shipCost.toLocaleString('vi-VN')}<span
                                                     style={{
                                                         fontWeight: '400',
                                                         position: 'relative',
@@ -70,7 +70,7 @@ const OrderDetail = ( {show, handleClose, orderDetail, storeName}) => {
                                             </div>
 
                                             <div class="history-table-cell history-table-col7">
-                                                <strong class="text-danger">{orderDetail.totalPrice}đ</strong>
+                                                <strong class="text-danger">{orderDetail.totalPrice.toLocaleString('vi-VN')}đ</strong>
                                             </div>
 
                                         </div>

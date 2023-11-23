@@ -41,7 +41,6 @@ const addContact = async (e, formData) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Liên hệ đã được thêm', response.data);
     return response.data
   } catch (error) {
     console.error('Lỗi khi thêm liên hệ', error);
@@ -58,7 +57,6 @@ const updateContact = async (e, formData, id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Liên hệ đã được chỉnh sửa', response.data);
     return response.data
   } catch (error) {
     console.error('Lỗi khi thêm liên hệ', error);
@@ -75,7 +73,6 @@ const deleteContact = async (id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Liên hệ đã được xóa', response.data);
   } catch (error) {
     console.error('Lỗi khi xóa liên hệ', error);
   }
@@ -114,6 +111,21 @@ const getProductByStoreId = async (storeId, catName) => {
 }
 
 //cart
+const getFeeShip = async (idStore) => {
+  const user = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+  const userData = JSON.parse(user);
+  try {
+    const response = await axios.get(`https://falth-api.vercel.app/api/user/${userData._id}/store/${idStore}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.log('Lỗi khi lấy thông tin phí ship: ', error)
+  }
+}
 
 //order
 
@@ -122,28 +134,24 @@ const placeOrder = async (totalPrice, shipCost, coordinates) => {
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const cart = JSON.parse(localStorage.getItem("cart"));
 
-  // Tạo đối tượng dữ liệu để truyền vào API
   const products = cart.products.map((product) => ({
     quantity: product.amount,
     price: product.price,
     product: product._id,
     notes: product.specialRequest
   }));
-  console.log(products)
   const orderData = {
-    cart: products, // Lấy thông tin giỏ hàng từ đối tượng cart
+    cart: products, 
     coordinates: coordinates,
     totalPrice: totalPrice,
     shipCost: shipCost,
   };
-  console.log(orderData)
   try {
     const response = await axios.post(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}/store/${cart.idStore}`, orderData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Order placed successfully:");
     return response.data
   } catch (error) {
     console.error("Error placing order:", error);
@@ -161,7 +169,6 @@ const getAllOderByUserId = async () => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Order placed successfully:");
     return response.data
   } catch (error) {
     console.error("Error get order:", error);
@@ -169,20 +176,18 @@ const getAllOderByUserId = async () => {
 }
 
 const getOderByFilter = async (fromDate, toDate, status) => {
-  if(status === 'All') {
+  if (status === 'All') {
     status = ''
   }
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=1&start=${fromDate}&end=${toDate}`
-  console.log(api)
   try {
     const response = await axios.get(api, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Order placed successfully:");
     return response.data
   } catch (error) {
     console.error("Error get order:", error);
@@ -197,7 +202,6 @@ const viewOrder = async (id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Get successfully:");
     return response.data
   } catch (error) {
     console.error("Error get order:", error);
@@ -212,11 +216,10 @@ const createPayment = async (query) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Transaction success");
     return response.data
   } catch (error) {
     console.error("Error:", error);
-  } 
+  }
 }
 
 //Rating 
@@ -226,7 +229,7 @@ const getRatingOfStore = async (storeId) => {
     return response.data
   } catch (error) {
     console.error("Error:", error);
-  } 
+  }
 }
 
 const addRatingForStore = async (id, ratingData) => {
@@ -236,9 +239,9 @@ const addRatingForStore = async (id, ratingData) => {
       headers: {
         Authorization: `Bearer ${token}`,
         ContentType: 'multipart/form-data',
-    },
+      }
     });
-    console.log('đánh giá thành công')
+    return response.data
   } catch (error) {
     console.log('đánh giá thất bại:', error)
   }
@@ -255,11 +258,12 @@ export {
   getAllCategoryByStoreId,
   updateContact,
   getProductByStoreId,
+  getFeeShip,
   placeOrder,
-  getAllOderByUserId, 
-  viewOrder, 
+  getAllOderByUserId,
+  viewOrder,
   createPayment,
-  getOderByFilter, 
+  getOderByFilter,
   getRatingOfStore,
   addRatingForStore
 }

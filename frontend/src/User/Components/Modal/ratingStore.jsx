@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
-import { addRatingForStore } from "../../services/userServices";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
+import axios from "axios";
 const RatingStore = ({ show, handleClose, handleReturn, store }) => {
     const { t } = useTranslation();
 
@@ -17,9 +17,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
     const [openNotify, setOpenNotify] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [notify, setNotify] = useState('')
-    const handleOpenNotify = () => {
-        setOpenNotify(true)
-    }
+
     const handleCloseNotify = () => {
         setOpenNotify(false)
         console.log("đóng modal")
@@ -50,38 +48,41 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
         res.append('number', formData.number);
         res.append('content', formData.content);
 
-    // Append each image to the FormData
-    if (formData.images && formData.images.length > 0) {
-        formData.images.forEach((image, index) => {
-            res.append(`images`, image); // assuming 'images' is an array of files
-        });
-    }
-    if(formData.number === '') {
-        alert('Mời bạn nhập số sao để đánh giá')
-    } else {
-
-        try {
-            setIsLoading(true);
-    
-            const response = await addRatingForStore(store._id, res);
-    
-            // console.log("Đánh giá thành công:", response);
-            // console.log(formData);
-            // console.log(res);
-            setNotify("Đánh giá thành công")
-            setOpenNotify(true)
-            handleClose()
-        } catch (error) {
-            console.log("Đánh giá thất bại:", error);
-        } finally {
-            setIsLoading(false);
+        // Append each image to the FormData
+        if (formData.images && formData.images.length > 0) {
+            formData.images.forEach((image, index) => {
+                res.append(`images`, image); // assuming 'images' is an array of files
+            });
         }
-        setFormData({
-            number: '',
-            content: '',
-            images: [],
-        });
-    }
+        if (formData.number === '') {
+            setNotify("Mời bạn chọn số sao để đánh giá")
+            setOpenNotify(true)
+        } else {
+            const token = localStorage.getItem("token");
+            try {
+                setIsLoading(true);
+                const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        ContentType: 'multipart/form-data',
+                    }
+                });
+                setNotify("Đánh giá thành công!")
+                setOpenNotify(true)
+                handleClose()
+            } catch (error) {
+                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                setOpenNotify(true)
+                handleClose()
+            } finally {
+                setIsLoading(false);
+            }
+            setFormData({
+                number: '',
+                content: '',
+                images: [],
+            });
+        }
 
     };
 
@@ -153,21 +154,12 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                                 src={ava}
                                                                 alt=""
                                                             />
-                                                            <div class="shipper-name" style={{margin:'0'}}>{store.name}</div>
-                                                            {/* <div className="rating-star-container">
-                                                                {Array.from({ length: 5 }, (_, index) => (
-                                                                    <i
-                                                                        key={index}
-                                                                        className={`fas fa-star icon-star ${index < store.ratingsAverage ? 'active' : ''} disabled`}
-                                                                        data-rate={index + 1}
-                                                                    ></i>
-                                                                ))}
-                                                            </div> */}
-                                                            <div class="shopee-rating-stars product-rating-overview__stars" style={{margin:'0'}}>
-                                <div className="shopee-rating-stars__stars">
-                                    {renderStars(store.ratingsAverage)}
-                                </div>
-                            </div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{store.name}</div>
+                                                            <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
+                                                                <div className="shopee-rating-stars__stars">
+                                                                    {renderStars(store.ratingsAverage)}
+                                                                </div>
+                                                            </div>
                                                             <div >
                                                                 <select defaultValue="" className="custom-select" name='number' value={formData.number} onChange={handleChange}>
                                                                     <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
@@ -231,8 +223,8 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                     <div class="modal-backdrop fade under-modal"></div>
                 </Modal.Body>
             </Modal>
-            {openNotify && (<Notify message={notify} setOpenNotify={setOpenNotify} handleClose={handleCloseNotify}/>)}
-            {isLoading  && (<LoadingModal/>)}
+            {openNotify && (<Notify message={notify} setOpenNotify={setOpenNotify} handleClose={handleCloseNotify} />)}
+            {isLoading && (<LoadingModal />)}
         </div>
 
     )

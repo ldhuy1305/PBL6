@@ -5,7 +5,7 @@ import CommentItem from "../Item/commentItem";
 const Comment = ({ store, ratings }) => {
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, index) => {
-            const starValue = index + 1;
+            // const starValue = index + 1;
             const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
             const isHalfFilled = percentFilled > 0 && percentFilled < 100;
 
@@ -47,16 +47,11 @@ const Comment = ({ store, ratings }) => {
         }
     };
 
-    const show = () => {
-        console.log(ratings)
-    }
-
     return (
         <div>
             <div style={{ display: 'contents' }}>
                 <div class="product-ratings" data-nosnippet="true">
                     <div class="product-ratings__header">
-                        {/* <div class="product-ratings__header_score">ĐÁNH GIÁ SẢN PHẨM</div> */}
                     </div>
                     <div class="product-rating-overview">
                         <div class="product-rating-overview__briefing">

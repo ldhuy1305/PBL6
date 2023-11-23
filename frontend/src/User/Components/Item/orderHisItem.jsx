@@ -51,7 +51,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                     )}
                 </div>
                 <div class="history-table-cell history-table-col6">
-                    <div style={{ fontWeight: 'bold' }}><span>{item.totalPrice}đ</span></div>
+                    <div style={{ fontWeight: 'bold' }}><span>{item.totalPrice.toLocaleString('vi-VN')}đ</span></div>
                     {/* <div style={{ color: 'green', fontWeight: 'bold' }}>
                         Thanh toán trực tuyến
                     </div> */}

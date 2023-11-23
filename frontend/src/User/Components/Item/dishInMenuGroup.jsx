@@ -2,7 +2,6 @@ import React from "react";
 import soldout from '../../assets/img/hethang.webp'
 
 const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
-
     const handleAdd = () => {
         // console.log(dish)
         handleAddToCart(dish);
@@ -43,7 +42,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                         <div class="row">
                             <div class="col-auto product-price">
                                 <div class="current-price">
-                                    {dish.price}<span
+                                    {dish.price.toLocaleString('vi-VN')}<span
                                         style={{
                                             fontWeight: '400',
                                             position: 'relative',
