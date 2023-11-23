@@ -26,18 +26,31 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
         if (/^\d{10}$/.test(formData.phoneNumber)) {
             setIsLoading(true)
             if (action1 === 'add') {
-                const response = await addContact(e, formData);
-                localStorage.setItem("user", JSON.stringify(response));
-                setContacts(response.contact);
-                setMessage("Thêm địa chỉ thành công!");
-                setOpenNotify(true)
+                try {                  
+                    const response = await addContact(e, formData);
+                    localStorage.setItem("user", JSON.stringify(response));
+                    setContacts(response.contact);
+                    setMessage("Thêm địa chỉ thành công!");
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setMessage("Địa chỉ không hợp lệ! Thêm địa chỉ thất bại!");
+                    setOpenNotify(true)
+                    handleClose()
+                }
             } else {
-                const response = await updateContact(e, formData, contactId)
-                console.log(response.data)
-                localStorage.setItem("user", JSON.stringify(response.data));
-                setContacts(response.data.contact);
-                setMessage("Cập nhật địa chỉ thành công!");
-                setOpenNotify(true)
+                try {                   
+                    const response = await updateContact(e, formData, contactId)
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                    setContacts(response.data.contact);
+                    setMessage("Cập nhật địa chỉ thành công!");
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setMessage("Đại chỉ không hợp lệ! Cập nhật địa chỉ thất bại!");
+                    setOpenNotify(true)
+                    handleClose()
+                }
             }
             setIsLoading(false)
         } else {

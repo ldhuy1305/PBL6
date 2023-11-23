@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useCity } from "../../services/CityContext";
 import OrderDishItem from "../../Components/Item/orderedDishItem";
 import LoadingModal from "../../Components/Loading/Loading";
-import { placeOrder } from "../../services/userServices";
+import { placeOrder, getFeeShip } from "../../services/userServices";
 const OrderPage = () => {
   const [showModalAddress, setShowModalAddress] = useState(false);
   const { cart, setCart, productsCount } = useCity();
@@ -40,10 +40,10 @@ const OrderPage = () => {
       const response = await placeOrder(totalPayment, shipFee, selectedContact.location.coordinates);
       const orderUrl = response.url; // Đặt tên phù hợp với trường cần lấy từ response
       window.open(orderUrl, '_blank'); // '_blank' để mở ở một tab mới
-  } catch (error) {
+    } catch (error) {
       console.error("Error placing order:", error);
-  }
-  setIsLoading(false)
+    }
+    setIsLoading(false)
 
   };
   useEffect(() => {
@@ -60,36 +60,45 @@ const OrderPage = () => {
     setTotalPayment(totalPrice + shipFee);
   }, [totalPrice, shipFee]);
 
+  const [contacts, setContacts] = useState([])
+
   useEffect(() => {
-    const fetchData = async () => {
+    const user = localStorage.getItem("user");
+    const userData = JSON.parse(user);
+    const defaultContactId = userData.defaultContact;
+    const defaultContact = userData.contact.find(contact => contact._id === defaultContactId);
+    setUser(userData);
+    setSelectedContact(defaultContact)
+    setUserName(userData.firstName + " " + userData.lastName)
+    setContacts(userData.contact)
+  }, []);
+
+  useEffect(() => {
+    try {
+      const feeShipElement = array.find(element => element.contact._id === selectedContact._id);
+      setShipFee(feeShipElement.shipCost)
+      setDistance(feeShipElement.distance)
+      setDeliveryTime(feeShipElement.deliveryTime)
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin phí vận chuyển:", error);
+    }
+  }, [selectedContact]);
+
+  useEffect(() => {
+    const getNewArray = async () => {
       try {
-        setIsLoading(true)
-        const user = localStorage.getItem("user");
-        const userData = JSON.parse(user);
-        const defaultContactId = userData.defaultContact;
-        const defaultContact = userData.contact.find(contact => contact._id === defaultContactId);
-        setUser(userData);
-        setSelectedContact(defaultContact)
-        setUserName(userData.firstName + " " + userData.lastName)
+          setIsLoading(true)
+          const response = await getFeeShip(cart.idStore)
+          const temp = response.data  
+          setArray(temp)
       } catch (error) {
         console.error("Lỗi khi lấy thông tin phí vận chuyển:", error);
       }
       setIsLoading(false)
-    }
-    fetchData();
-  }, []);
 
-  useEffect(() => {
-      try {
-        const feeShipElement = array.find(element => element.contact._id === selectedContact._id);
-        setShipFee(feeShipElement.shipCost)
-        setDistance(feeShipElement.distance)
-        setDeliveryTime(feeShipElement.deliveryTime)
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin phí vận chuyển:", error);
-      }
-      console.log(selectedContact)
-  }, [selectedContact]);
+    }
+    getNewArray()
+  }, [contacts]);
 
   return (
     <div>
@@ -165,7 +174,7 @@ const OrderPage = () => {
                 <div class="Nivkv-">
                   <div class="ULZMSb">
                     <div class="z10ZuQ">Tổng số tiền ({productsCount} sản phẩm):</div>
-                    <div class="_9F3E9v">{totalPrice}₫</div>
+                    <div class="_9F3E9v">{totalPrice.toLocaleString('vi-VN')}₫</div>
                   </div>
                 </div>
               </div>
@@ -214,11 +223,11 @@ const OrderPage = () => {
             <div class="KQyCj0" aria-live="polite">
               <h2 class="a11y-visually-hidden">Tổng thanh toán:</h2>
               <h3 class="Tc17Ac XIEGGF BcITa9">Tổng tiền hàng</h3>
-              <div class="Tc17Ac mCEcIy BcITa9">{totalPrice}₫</div>
+              <div class="Tc17Ac mCEcIy BcITa9">{totalPrice.toLocaleString('vi-VN')}₫</div>
               <h3 class="Tc17Ac XIEGGF RY9Grr">Phí vận chuyển ({distance}km)</h3>
-              <div class="Tc17Ac mCEcIy RY9Grr">{shipFee}₫</div>
+              <div class="Tc17Ac mCEcIy RY9Grr">{shipFee.toLocaleString('vi-VN')}₫</div>
               <h3 class="Tc17Ac XIEGGF n3vdfL">Tổng thanh toán:</h3>
-              <div class="Tc17Ac kC0GSn mCEcIy n3vdfL">{totalPayment}₫</div>
+              <div class="Tc17Ac kC0GSn mCEcIy n3vdfL">{totalPayment.toLocaleString('vi-VN')}₫</div>
               <div class="uTFqRt">
                 <div class="k4VpYA">
                   <div class="C-NSr-">
@@ -242,9 +251,9 @@ const OrderPage = () => {
         </div>
       </div>
       {showModalAddress && (
-        <PickAddress show={showModalAddress} handleClose={closeModalAddress} user={user} selectedContact={selectedContact} setSelectedContact={setSelectedContact}/>
+        <PickAddress show={showModalAddress} handleClose={closeModalAddress} user={user} selectedContact={selectedContact} setSelectedContact={setSelectedContact} contacts={contacts}  setContacts={setContacts} />
       )}
-      {isLoading && (<LoadingModal/>)}
+      {isLoading && (<LoadingModal />)}
 
     </div>
   )
