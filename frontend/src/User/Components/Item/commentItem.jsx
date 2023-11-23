@@ -3,7 +3,7 @@ import ZoomImage from "./zoomImage";
 import moment from "moment";
 
 // const CommentItem = ({ like, avatar, userName, rating, comment, date, images, renderStars }) => {
-const CommentItem = ({ like, rating, renderStars }) => {
+const CommentItem = ({ like, rating, renderStars, idUser }) => {
     const [visible, setVisible] = useState(false)
     const [link, setLink] = useState(false)
     const formattedCreateTime = moment.utc(rating.createdAt).format('DD/MM/YYYY HH:mm');
@@ -108,6 +108,12 @@ const CommentItem = ({ like, rating, renderStars }) => {
                         <div className="shopee-product-rating__like-count">
                             {likeCount}
                         </div>
+                        {idUser === rating.user._id && (
+                            <div style={{ display: 'flex', marginLeft: '20px' }}>
+                                <button><i class="fa-regular fa-pen-to-square" style={{ fontSize: '20px', color: '#cf2127', marginLeft: '20px' }}></i></button>
+                                <button><i class="fa-regular fa-trash-can" style={{ fontSize: '20px', color: '#cf2127', marginLeft: '20px' }}></i></button>
+                            </div>
+                        )}
                     </div>
 
                 </div>

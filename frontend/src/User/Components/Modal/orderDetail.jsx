@@ -17,7 +17,7 @@ const OrderDetail = ( {show, handleClose, orderDetail, storeName}) => {
                                         <div
                                             class="font-weight-bold mb-0 text-danger history-customer-total"
                                         >
-                                            Tổng cộng: {orderDetail.totalPrice}đ
+                                            Tổng cộng: {orderDetail && orderDetail.totalPrice ? orderDetail.totalPrice.toLocaleString('vi-VN') + 'đ' : 'N/A'}
                                         </div>
                                     </div>
                                 </div>
@@ -58,7 +58,7 @@ const OrderDetail = ( {show, handleClose, orderDetail, storeName}) => {
                                                     }}>đ</span>
                                             </div>
                                             <div class="history-table-cell history-table-col5">
-                                            {orderDetail.shipCost.toLocaleString('vi-VN')}<span
+                                            {(orderDetail.shipCost).toLocaleString('vi-VN')}<span
                                                     style={{
                                                         fontWeight: '400',
                                                         position: 'relative',
@@ -70,7 +70,7 @@ const OrderDetail = ( {show, handleClose, orderDetail, storeName}) => {
                                             </div>
 
                                             <div class="history-table-cell history-table-col7">
-                                                <strong class="text-danger">{orderDetail.totalPrice.toLocaleString('vi-VN')}đ</strong>
+                                                <strong class="text-danger">{orderDetail && orderDetail.totalPrice ? orderDetail.totalPrice.toLocaleString('vi-VN') + 'đ' : 'N/A'}</strong>
                                             </div>
 
                                         </div>

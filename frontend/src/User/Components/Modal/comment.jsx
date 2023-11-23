@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../../assets/css/pcmall.css'
 import CommentItem from "../Item/commentItem";
 
-const Comment = ({ store, ratings }) => {
+const Comment = ({ store, ratings, idUser }) => {
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, index) => {
             // const starValue = index + 1;
@@ -112,6 +112,7 @@ const Comment = ({ store, ratings }) => {
                                     like={6}
                                     rating={rating}
                                     renderStars={renderStars}
+                                    idUser={idUser}
                                 />
                             ))}
                         </div>
