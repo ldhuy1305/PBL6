@@ -10,7 +10,13 @@ const ViewComment = () => {
     const [isLoading, setIsLoading] = useState(false)
     const store = location.state.store.store;
     const [ratings, setRatings] = useState([])
+    const [idUser, setIdUser] = useState('')
     useEffect(() => {
+        const user = localStorage.getItem("user");
+        const userData = JSON.parse(user);
+        if(userData) {
+            setIdUser(userData._id)
+        }
         const fetchData = async () => {
             try {
                 setIsLoading(true)
@@ -99,7 +105,7 @@ const ViewComment = () => {
                             <div class="menu-restaurant-container">
                                 <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                    <Comment store={store} ratings={ratings} />
+                                    <Comment store={store} ratings={ratings} idUser={idUser}/>
 
                                 </div>
 
