@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../../assets/css/pcmall.css'
 import CommentItem from "../Item/commentItem";
 
-const Comment = ({ store, ratings, idUser }) => {
+const Comment = ({ store, ratings, idUser, setRatings }) => {
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, index) => {
             // const starValue = index + 1;
@@ -113,6 +113,8 @@ const Comment = ({ store, ratings, idUser }) => {
                                     rating={rating}
                                     renderStars={renderStars}
                                     idUser={idUser}
+                                    setRatings={setRatings}
+                                    store={store}
                                 />
                             ))}
                         </div>

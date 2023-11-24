@@ -213,7 +213,7 @@ const UpdateAddress = () => {
             </div>
 
             <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts}/>
-            <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={itemToDelete} action={actionDel} setContacts={setContacts}/>
+            <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={itemToDelete} action={actionDel} setData={setContacts}/>
                            
         </div>
     )

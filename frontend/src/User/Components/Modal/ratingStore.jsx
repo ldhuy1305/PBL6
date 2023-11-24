@@ -5,18 +5,27 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
-const RatingStore = ({ show, handleClose, handleReturn, store }) => {
+const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
-        number: '',
-        content: '',
-        images: [],
+        number: rating && rating.number ? rating.number : '',
+        content: rating && rating.content ? rating.content : '',
+        images: rating && rating.images ? [...rating.images] : [],
     });
 
     const [openNotify, setOpenNotify] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [notify, setNotify] = useState('')
+
+    const handleCloseRating = () => {
+        handleClose()
+        setFormData({
+            number: rating && rating.number ? rating.number : '',
+            content: rating && rating.content ? rating.content : '',
+            images: rating && rating.images ? [...rating.images] : [],
+        });
+    }
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
@@ -118,7 +127,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
         <div>
             <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg">
                 <Modal.Header>
-                    <span class="close" style={{ fontSize: '24px' }} onClick={handleClose}
+                    <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
                     <div class="modal-header" style={{ color: 'white' }}>Đánh giá cửa hàng</div>
                 </Modal.Header>
@@ -183,17 +192,32 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                                 <div style={{ display: 'flex' }}>
                                                                     {/* Hiển thị các ảnh đã chọn */}
                                                                     {formData.images && formData.images.map((image, index) => (
-                                                                        <img
-                                                                            key={index}
-                                                                            src={URL.createObjectURL(image)}
-                                                                            alt={`selected-${index}`}
-                                                                            style={{ width: '50px', height: '50px', margin: '10px' }}
-                                                                        />
+                                                                        <div key={index} style={{ position: 'relative' }}>
+                                                                            {image instanceof File ? (
+                                                                                <img
+                                                                                    src={URL.createObjectURL(image)}
+                                                                                    alt={`selected-${index}`}
+                                                                                    style={{ width: '60px', height: '60px', margin: '10px' }}
+                                                                                />
+                                                                            ) : (
+                                                                                <img
+                                                                                    src={image} // Đặt nguồn ảnh trực tiếp nếu không phải là đối tượng File
+                                                                                    alt={`selected-${index}`}
+                                                                                    style={{ width: '60px', height: '60px', margin: '10px' }}
+                                                                                />
+                                                                            )}
+                                                                            <span class="btn-delete-tag" style={{ top: '5px', right: '5px' }}
+                                                                                onClick={() => {
+                                                                                    const newImages = [...formData.images];
+                                                                                    newImages.splice(index, 1);
+                                                                                    setFormData({ ...formData, images: newImages });
+                                                                                }}>x</span>
+                                                                        </div>
                                                                     ))}
                                                                 </div>
                                                                 <div class="item-upload btn-up" style={{ marginTop: '10px' }}>
                                                                     <label
-                                                                    ><span class="fa-solid fa-upload" style={{ fontSize: '50px' }}></span>
+                                                                    ><span class="fa-solid fa-upload" style={{ fontSize: '60px', cursor: 'pointer', marginLeft: '10px' }}></span>
                                                                         <input
                                                                             type="file"
                                                                             multiple=""
@@ -208,7 +232,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
+                                                            {!rating && (<button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>)}
                                                             <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>

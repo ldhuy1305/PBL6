@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 // import  styles from './signIn.module.css'
 import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
 // import '../../assets/fonts/fontawesome-free-6.2.0-web/css/fontawesome.min.css'
-import { useNavigate } from "react-router-dom";
-import { loginAPI } from "../../services/userServices";
+import { useNavigate, useLocation } from "react-router-dom";
+import { loginAPI, getFeeShip } from "../../services/userServices";
 import { useAuth } from "../../services/authContext";
 import { useTranslation } from "react-i18next";
 const Signin = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation()
+    const his = location.state?.his || false;
+    const total = location.state?.total || false;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(""); // Initialize navigate
@@ -32,7 +35,18 @@ const Signin = () => {
                 setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
                 setImg(res.data.data.user.photo)
                 if(res.data.data.user.role === 'User') {
-                    navigate("/");
+                    if(his) {
+                        const user = localStorage.getItem("user");
+                        const userData = JSON.parse(user);
+                        const cart = localStorage.getItem("cart");
+                        const cartData = JSON.parse(cart);
+                        const response = await getFeeShip(cartData.idStore)
+                        const calArray = response.data
+                        const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
+                        navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
+                    } else {
+                        navigate("/");
+                    }
                 } else if (res.data.data.user.role === 'Owner') {
                     navigate("/store");
                 } else if (res.data.data.user.role === 'Admin') {
@@ -154,7 +168,7 @@ const Signin = () => {
                             textDecoration: 'none !important'
                         }}
                         target="_blank"
-                        href="https://shopeefood.vn/gioi-thieu#footer-bottom"
+                        href="/policy"
                     >{t("policyLink")}</a>
                 </div>
             </div>
