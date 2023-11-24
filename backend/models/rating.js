@@ -23,7 +23,6 @@ const ratingSchema = new Schema(
     },
     content: {
       type: String,
-      required: [true, "Rating must not be empty!"],
     },
     images: [String],
     onModel: {
