@@ -35,7 +35,6 @@ const productSchema = new Schema(
     },
     description: {
       type: String,
-      required: [true, "Mô tả sản phẩm là bắt buộc"],
     },
     isOutofOrder: {
       type: Boolean,
