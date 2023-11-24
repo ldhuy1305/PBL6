@@ -79,11 +79,14 @@ class orderController {
   // after check out, system create transaction
   payment = catchAsync(async (req, res, next) => {
     const vnp_Params = req.query;
+    const transaction = await Transaction.findOne({
+      vnp_TxnRef: vnp_Params.vnp_TxnRef,
+    });
     if (req.query.vnp_TransactionStatus != "00") {
       await Order.findByIdAndDelete(req.query.vnp_TxnRef);
       return next(new appError("Thanh toán không thành công!"), 404);
     }
-    await Transaction.create(vnp_Params);
+    if (!transaction) await Transaction.create(vnp_Params);
     res.status(200).json({
       status: "success",
       data: vnp_Params,
@@ -252,6 +255,9 @@ class orderController {
   getOrdersByOwnerId = catchAsync(async (req, res, next) => {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
+    const limit = +req.query.limit || 10;
+    const page = +req.query.page || 1;
+
     let start, end;
 
     if (!req.query.start)
@@ -284,21 +290,59 @@ class orderController {
         ...obj,
         status: req.query.status,
       };
-    const features = new ApiFeatures(
-      Order.find(obj).populate({
-        path: "user",
-        select: "-role -photo -email -contact -createdAt -updatedAt -_id -__t",
-        populate: {
-          path: "defaultContact",
-          select: "-location -_id -__v",
+
+    const orders = await Order.aggregate([
+      {
+        $match: obj,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: { $subtract: ["$totalPrice", "$shipCost"] },
         },
-      }),
-      req.query
-    )
-      .sort()
-      .limitFields()
-      .paginate();
-    const orders = await features.query;
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: 1,
+          depreciation: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$orderCost",
+              else: {
+                $multiply: ["$orderCost", process.env.percentStore / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$orderCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          dateOrdered: -1,
+        },
+      },
+    ]);
     res.status(200).json({
       status: "success",
       length: orders.length,
