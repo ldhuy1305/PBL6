@@ -247,6 +247,22 @@ const addRatingForStore = async (id, ratingData) => {
   }
 }
 
+const deleteRating = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `https://falth-api.vercel.app/api/rating/${id}`
+    const response = await axios.delete(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log('Xóa thành công');
+    return response.data
+  } catch (error) {
+    console.error('Lỗi khi xóa đánh giá', error);
+  }
+}
+
 export {
   loginAPI,
   getUserInfo,
@@ -265,5 +281,6 @@ export {
   createPayment,
   getOderByFilter,
   getRatingOfStore,
-  addRatingForStore
+  addRatingForStore, 
+  deleteRating
 }

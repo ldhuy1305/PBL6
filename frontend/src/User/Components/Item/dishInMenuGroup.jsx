@@ -1,16 +1,23 @@
 import React from "react";
 import soldout from '../../assets/img/hethang.webp'
+import { Navigate, useNavigate } from "react-router-dom";
 
 const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
+    const navigate = useNavigate()
     const handleAdd = () => {
         // console.log(dish)
         handleAddToCart(dish);
         handleOpen();
     }
 
+    const handleProductDetail = () => {
+        navigate('/home/store/productDetail', {state: {dish:dish}})
+    }
+
     return (
         <div>
             <div
+            onClick={handleProductDetail}
                 class="item-restaurant-row"
                 style={{
                     height: '84px',

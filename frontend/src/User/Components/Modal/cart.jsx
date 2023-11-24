@@ -36,7 +36,7 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
 
         } else {
             handleClose()
-            navigate("/signin")
+            navigate("/signin", {state: { his: 'order', total:total}})
         }
 
     }

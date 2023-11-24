@@ -1,17 +1,16 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { deleteContact } from '../../services/userServices';
+import { deleteContact, deleteRating } from '../../services/userServices';
 import LoadingModal from '../Loading/Loading';
 import { useState } from 'react';
 import Notify from '../Notify.jsx/Notify';
-const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, setContacts }) => {
+const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, setData }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [openNotify, setOpenNotify] = useState(false)
     const [message, setMessage] = useState("")
 
     const handleDeleteItem = async() => {
-        console.log(action)
         if(action === 'contact') {
             setIsLoading(true)
             const user = localStorage.getItem("user");
@@ -23,7 +22,7 @@ const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, 
             localStorage.setItem("user", JSON.stringify(userData));
             handleClose();
             const  response = await deleteContact(id)
-            setContacts(userData.contact)
+            setData(userData.contact)
             setIsLoading(false)
             setMessage("Xóa địa chỉ thành công!")
             setOpenNotify(true)
@@ -32,6 +31,15 @@ const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, 
             handleDelete(id);
             handleClose();
             setIsLoading(false)
+        } else if (action === 'rating') {
+            setIsLoading(true)
+            handleClose();
+            const  response = await deleteRating(id)
+            // console.log(response)
+            // setData(response)
+            setIsLoading(false)
+            setMessage("Xóa đánh giá thành công!")
+            setOpenNotify(true)
         }
     };
     return (

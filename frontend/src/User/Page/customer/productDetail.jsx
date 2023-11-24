@@ -4,32 +4,30 @@ import { getRatingOfStore } from "../../services/userServices";
 import { useTranslation } from "react-i18next"
 import Comment from "../../Components/Modal/comment";
 import LoadingModal from "../../Components/Loading/Loading";
-const ViewComment = () => {
-    const { t } = useTranslation()
+const ProductDetail = () => {
     const location = useLocation()
+    const { t } = useTranslation()
+    const product = location.state.dish;
     const [isLoading, setIsLoading] = useState(false)
-    const store = location.state.store.store;
-    const [ratings, setRatings] = useState([])
-    const [idUser, setIdUser] = useState('')
-    useEffect(() => {
-        const user = localStorage.getItem("user");
-        const userData = JSON.parse(user);
-        if(userData) {
-            setIdUser(userData._id)
-        }
-        const fetchData = async () => {
-            try {
-                setIsLoading(true)
-                const data = await getRatingOfStore(store._id)
-                setRatings({ ...data.data })
-                // console.log(ratings)
-            } catch (error) {
-                console.error("Lỗi khi lấy thông tin đánh giá:", error);
-            }
-            setIsLoading(false)
-        }
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     const user = localStorage.getItem("user");
+    //     const userData = JSON.parse(user);
+    //     if(userData) {
+    //         setIdUser(userData._id)
+    //     }
+    //     const fetchData = async () => {
+    //         try {
+    //             setIsLoading(true)
+    //             const data = await getRatingOfStore(store._id)
+    //             setRatings({ ...data.data })
+    //             // console.log(ratings)
+    //         } catch (error) {
+    //             console.error("Lỗi khi lấy thông tin đánh giá:", error);
+    //         }
+    //         setIsLoading(false)
+    //     }
+    //     fetchData();
+    // }, []);
 
 
     return (
@@ -40,23 +38,23 @@ const ViewComment = () => {
                         <div class="detail-restaurant-img">
                             <img
                                 // src="https://images.foody.vn/res/g119/1184583/prof/s640x400/foody-upload-api-foody-mobile-37-80aba800-230914093440.jpeg"
-                                src={store.image}
-                                alt={store.name}
+                                src={product.images[0]}
+                                alt={product.name}
                                 class=""
                                 style={{ height: '250px', width: '100%', marginLeft: '8%' }}
                             />
                         </div>
                         <div class="detail-restaurant-info">
 
-                            <div class="kind-restaurant"><span> {t("store")}</span></div>
+                            {/* <div class="kind-restaurant"><span> {t("store")}</span></div> */}
                             <h1 class="name-restaurant">
-                                {store.name}
+                                {product.name}
                             </h1>
-                            <div class="address-restaurant">
+                            {/* <div class="address-restaurant">
                                 {store.address}
-                            </div>
+                            </div> */}
                             <div class="rating">
-                                <span class="number-rating">{store.ratingsAverage}</span>
+                                <span class="number-rating">{product.ratingsAverage}</span>
                                 <div class="stars">
                                     <span class=""><i class="fas fa-solid fa-star"></i></span>
                                 </div>
@@ -67,14 +65,14 @@ const ViewComment = () => {
                                     rel="noopener noreferrer nofollow"
                                     target="_blank"
                                     class="number-review"
-                                >{store.description}</span>
+                                >{product.description}</span>
                             </div>
-                            <div class="status-restaurant">
+                            {/* <div class="status-restaurant">
                                 <div class="opentime-status">
                                     <span class="stt online" title={t("storeActive")}></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
-                            </div>
+                            </div> */}
 
                             <div class="share-social clearfix">
                                 <div class="share-social-box">
@@ -104,7 +102,7 @@ const ViewComment = () => {
                             <div class="menu-restaurant-container">
                                 <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                    <Comment store={store} ratings={ratings} idUser={idUser} setRatings={setRatings}/>
+                                    {/* <Comment store={store} ratings={ratings} idUser={idUser} setRatings={setRatings}/> */}
 
                                 </div>
 
@@ -121,4 +119,4 @@ const ViewComment = () => {
     )
 }
 
-export default ViewComment
+export default ProductDetail
