@@ -28,30 +28,33 @@ const Signin = () => {
             try {
                 setLoadingAPI(true)
                 let res = await loginAPI(email, password);
-                localStorage.setItem("token", res.data.token);
-                localStorage.setItem('user', JSON.stringify(res.data.data.user));
-                setIsLoggedIn(true);
-                // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
-                setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
-                setImg(res.data.data.user.photo)
-                if(res.data.data.user.role === 'User') {
-                    if(his) {
-                        const user = localStorage.getItem("user");
-                        const userData = JSON.parse(user);
-                        const cart = localStorage.getItem("cart");
-                        const cartData = JSON.parse(cart);
-                        const response = await getFeeShip(cartData.idStore)
-                        const calArray = response.data
-                        const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
-                        navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
-                    } else {
-                        navigate("/");
+
+                    localStorage.setItem("token", res.data.token);
+                    localStorage.setItem('user', JSON.stringify(res.data.data.user));
+                    setIsLoggedIn(true);
+                    console.log(res)
+                    // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
+                    setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
+                    setImg(res.data.data.user.photo)
+                    if(res.data.data.user.role === 'User') {
+                        if(his) {
+                            const user = localStorage.getItem("user");
+                            const userData = JSON.parse(user);
+                            const cart = localStorage.getItem("cart");
+                            const cartData = JSON.parse(cart);
+                            const response = await getFeeShip(cartData.idStore)
+                            const calArray = response.data
+                            const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
+                            navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
+                        } else {
+                            navigate("/");
+                        }
+                    } else if (res.data.data.user.role === 'Owner') {
+                        navigate("/store");
+                    } else if (res.data.data.user.role === 'Admin') {
+                        navigate("/admin");
                     }
-                } else if (res.data.data.user.role === 'Owner') {
-                    navigate("/store");
-                } else if (res.data.data.user.role === 'Admin') {
-                    navigate("/admin");
-                }
+                
                 // window.location.reload()
             } catch (error) {
                 setError(t("error3"));

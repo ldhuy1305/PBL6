@@ -19,9 +19,6 @@ const SignUpOwner = () => {
       const handleNav = ({ nav }) => {
         navigate(`/${nav}`);
       };
-      const handleSignUpStore = () => {
-        navigate("/signUpStore")
-      }
 
       const [formData, setFormData] = useState({
         email: '',
@@ -65,40 +62,55 @@ const SignUpOwner = () => {
             });
     };
 
+    const handleChangeImg = (e) => {
+        const name = e.target.name;
+        const value = e.target.files[0];
+
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const handleSubmit = async (e) => {
         e.preventDefault();
         const address = `${formData.detailAddress}, ${formData.ward}, ${formData.district}, ${formData.city}`;
-        const registrationData = {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          passwordConfirm: formData.passwordConfirm,
-          address: address,
-          phoneNumber: formData.phoneNumber,
-        };
+        const registrationData = new FormData();
+        registrationData.append('email', formData.email);
+        registrationData.append('password', formData.password);
+        registrationData.append('passwordConfirm', formData.passwordConfirm);
+        registrationData.append('firstName', formData.firstName);
+        registrationData.append('lastName', formData.lastName);
+        registrationData.append('address', address);
+        registrationData.append('phoneNumber', formData.phoneNumber);
+        registrationData.append('frontImageCCCD', formData.frontImageCCCD);
+        registrationData.append('behindImageCCCD', formData.behindImageCCCD);
+        registrationData.append('bankName', formData.bankName);
+        registrationData.append('bankNumber', formData.bankNumber);
         // console.log(registrationData)
-        if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(registrationData.email)) {
+        if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
             setError(t("error8"))
-        } else if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(registrationData.password.trim())) {
+        } else if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(formData.password.trim())) {
             setError(t("error5"))
-        }else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
+        }else if(formData.password.trim() !== formData.passwordConfirm.trim()) {
             setError(t("error6"))
-        } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
+        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
         } else {
             try {
                 setIsLoading(true)
-              // Gọi API đăng ký người dùng
-              const response = await axios.post('https://falth-api.vercel.app/api/user', registrationData);
-    
-              // Xử lý phản hồi từ máy chủ, ví dụ: hiển thị thông báo thành công
+              const response = await axios.post('https://falth-api.vercel.app/api/owner', registrationData, {
+                headers: {
+                    ContentType: 'multipart/form-data',
+                }
+            });
+
               console.log('Đăng ký thành công', response.data);
               setError('')
               setSuccess(t("success"))
-                navigate("/verify", { state: { action: "verifyUser", email: registrationData.email } });
+                navigate("/verify", { state: { action: "verifyOwner", email: formData.email } });
             } catch (error) {
               setError(t("error10"));
             }
@@ -120,7 +132,7 @@ const SignUpOwner = () => {
                                     <button class="btn_su btn--radius btn--red" style={{marginLeft:'20px'}} onClick={() => handleNav({ nav: "signUpOwner" })}>{t("owner")}</button>
                                 </div>
                             </div>
-                            <form method="POST">
+                            <form method="POST" onSubmit={handleSubmit} encType="multipart/form-data">
                             <div class="input-group_su">
                                     <input style={{ border: 'none' }} class="input--style-2" type="email" placeholder="Email" name="email" required value={formData.email}
                                         onChange={handleChange} />
@@ -225,12 +237,12 @@ const SignUpOwner = () => {
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" name="class" accept="image/*" placeholder={t("frontCCCD")} readonly/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="class" accept="image/*" placeholder={t("frontCCCD")} readonly />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su" >
-                                            <input style={{border:'none'}}class="input--style-2" type="file" name="frontImageCCCD" accept="image/*" value={formData.frontImageCCCD} />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="frontImageCCCD" accept="image/*" onChange={handleChangeImg} required />
                                         </div>
                                     </div>
                                 </div>
@@ -238,25 +250,26 @@ const SignUpOwner = () => {
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("behindCCCD")} readonly />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("behindCCCD")} readonly />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su" >
-                                            <input style={{border:'none'}}class="input--style-2" type="file" name="behindImageCCCD" accept="image/*" value={formData.behindImageCCCD} />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="behindImageCCCD" accept="image/*" onChange={handleChangeImg} required />
                                         </div>
                                     </div>
                                 </div>
                                 {error && <div className="alert-danger">{error}</div>}
                                 {success && <div className="alert-success">{success}</div>}
                                 <div class="p-t-30">
-                                    <button class="btn_su btn--radius btn--red" type="submit" onClick={handleSignUpStore}>{t("signup")}</button>
+                                    <button class="btn_su btn--radius btn--red" type="submit" onClick={handleSubmit}>{t("signup")}</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
+            {isLoading && (<LoadingModal/>)}
         </div>
     )
 }

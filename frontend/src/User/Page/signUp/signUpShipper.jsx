@@ -35,7 +35,7 @@ const SignUpShipper = () => {
         licenseImage: null,
         vehicleNumber: '',
         vehicleType: '',
-        vehicleLicense: '',
+        vehicleLicense: null,
         licenseNumber: '',
     });
 
@@ -78,25 +78,9 @@ const SignUpShipper = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const address = `${formData.detailAddress}, ${formData.ward}, ${formData.district}, ${formData.city}`;
-        // const registrationData = {
-        // firstName: formData.firstName,
-        // lastName: formData.lastName,
-        // email: formData.email,
-        // password: formData.password,
-        // passwordConfirm: formData.passwordConfirm,
-        // address: address,
-        // phoneNumber: formData.phoneNumber,
-        // frontImageCCCD: formData.frontImageCCCD,
-        // behindImageCCCD: formData.behindImageCCCD,
-        // licenseImage: formData.licenseImage,
-        // vehicleNumber:formData.vehicleNumber,
-        // vehicleType:formData.vehicleType,
-        // vehicleLicense: formData.vehicleLicense,
-        // licenseNumber:formData.licenseNumber,
-        // };
         const registrationData = new FormData();
         registrationData.append('firstName', formData.firstName);
-        registrationData.append('lastNam', formData.lastName);
+        registrationData.append('lastName', formData.lastName);
         registrationData.append('email', formData.email);
         registrationData.append('password', formData.password);
         registrationData.append('passwordConfirm', formData.passwordConfirm);
@@ -109,7 +93,7 @@ const SignUpShipper = () => {
         registrationData.append('vehicleType', formData.vehicleType);
         registrationData.append('vehicleLicense', formData.vehicleLicense);
         registrationData.append('licenseNumber', formData.licenseNumber);
-
+        console.log(formData)
         if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
             setError(t("error8"))
         } else if (!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(formData.password)) {
@@ -131,7 +115,7 @@ const SignUpShipper = () => {
                 console.log('Đăng ký thành công', response.data);
                 setError('')
                 setSuccess('Đã nhận được thông tin! Mời bạn xác nhận email')
-                navigate("/verify", { state: { action: "verifyShipper", email: registrationData.email } });
+                navigate("/verify", { state: { action: "verifyShipper", email: formData.email } });
             } catch (error) {
                 setError('Địa chỉ email đã tồn tại');
             }
@@ -237,11 +221,11 @@ const SignUpShipper = () => {
                                             <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("licenseId")} name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} required />
                                         </div>
                                     </div>
-                                    <div class="col-2_su">
+                                    {/* <div class="col-2_su">
                                         <div class="input-group_su">
                                             <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder="Mã giấy đăng kí xe" name="vehicleLicense" value={formData.vehicleLicense} onChange={handleChange} required />
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
@@ -293,6 +277,19 @@ const SignUpShipper = () => {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row_su row-space">
+                                    <div class="col-2_su">
+                                        <div class="input-group_su">
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("vehicleLicense")} readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-2_su">
+                                        <div class="input-group_su" >
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="vehicleLicense" accept="image/*" onChange={handleChangeImg} required />
+                                        </div>
+                                    </div>
+                                </div>
                                 {error && <div className="alert-danger">{error}</div>}
                                 {success && <div className="alert-success">{success}</div>}
                                 <div class="p-t-30">
@@ -303,7 +300,7 @@ const SignUpShipper = () => {
                     </div>
                 </div>
             </div>
-
+            {isLoading && (<LoadingModal/>)}
         </div>
     )
 }
