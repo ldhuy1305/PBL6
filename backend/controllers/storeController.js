@@ -78,11 +78,17 @@ class storeController {
     });
   });
   getAllStore = catchAsync(async (req, res, next) => {
-    let stores;
     let obj = {
       isLocked: req.query.isLocked,
-      address: new RegExp(req.query.address, "i"),
     };
+    obj = req.query.city
+      ? { ...obj, address: { $regex: new RegExp(req.query.city, "i") } }
+      : obj;
+    if (req.query.district) {
+      let district = req.query.district.split(",");
+      district = district.map((dis) => new RegExp(dis, "i"));
+      obj = { ...obj, address: { $in: district } };
+    }
     if (req.query.catName) {
       const cats = req.query.catName.split(",");
       const products = await Product.aggregate([
@@ -151,7 +157,7 @@ class storeController {
       .search()
       .limitFields()
       .paginate();
-    stores = await features.query;
+    const stores = await features.query;
     res.status(200).json({
       status: "success",
       length: stores.length,
