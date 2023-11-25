@@ -2,7 +2,7 @@ import axios from "axios";
 const moment = require('moment');
 
 //Auth
-const loginAPI = (email, password) => {
+const loginAPI = async (email, password) => {
   return axios.post("https://falth-api.vercel.app/api/auth/login", { email, password });
 }
 

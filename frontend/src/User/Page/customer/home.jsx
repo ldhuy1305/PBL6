@@ -106,7 +106,7 @@ const Home = () => {
   useEffect(() => {
     setIsLoading(true)
     setStores({ data: [] })
-    const selectedCat = selectedCategories[0] || '';
+    const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
     const api = `https://falth-api.vercel.app/api/store?address=${selectedLocation}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
     console.log(api)
     fetch(api)
