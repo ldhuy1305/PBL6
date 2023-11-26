@@ -210,8 +210,10 @@ const viewOrder = async (id) => {
 
 const createPayment = async (query) => {
   const token = localStorage.getItem("token");
+  const api = `https://falth-api.vercel.app/api/order/after-checkout/payment?${query}`;
+  console.log(api)
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/after-checkout/payment?${query}`, {
+    const response = await axios.get(api , {
       headers: {
         Authorization: `Bearer ${token}`
       }
