@@ -43,11 +43,12 @@ const orderSchema = new Schema(
       type: String,
       enum: [
         "Pending", // when user order
+        "Cancelled", // when user want to cancel order
+        "Waiting", // when user checkout
         "Preparing", // when shipper accept order
         "Ready", // when shipper take order
         "Delivering", // when shipper delivery order
         "Finished", // when shipper deliveried
-        "Cancelled", // when user want to cancel order
         "Refused", // when don't find shipper
       ],
       default: "Pending",
