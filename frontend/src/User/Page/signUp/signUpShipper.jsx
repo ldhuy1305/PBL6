@@ -94,7 +94,7 @@ const SignUpShipper = () => {
         registrationData.append('vehicleLicense', formData.vehicleLicense);
         registrationData.append('licenseNumber', formData.licenseNumber);
         console.log(formData)
-        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+        if (!/^[^.].{5,29}@gmail\.com$/.test(formData.email)) {
             setError(t("error8"))
         } else if (!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(formData.password)) {
             setError(t("error5"))
