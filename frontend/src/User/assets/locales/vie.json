@@ -92,6 +92,8 @@
     "description": "Mô tả về quán",
     "licence": "Giấy phép kinh doanh:",
     "storeImage": "Hình ảnh của quán: ",
+    "bankName": "Tên ngân hàng: ",
+    "bankNumber": "Số tài khoản: ",
 
     "infoNav1" : "Quản lý tài khoản",
     "infoNav2" : "Quản lý đơn hàng",
