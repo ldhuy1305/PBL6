@@ -19,11 +19,17 @@ const Signin = () => {
     const [loadingAPI, setLoadingAPI] = useState(false);
     const { setUserName } = useAuth()
     const { setImg } = useAuth()
+    const emailRegex = /^[^.].{5,29}@gmail\.com$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
     const handleLogin = async () => {
         if (email.trim() === "") {
             setError(t("error1"));
         } else if (password.trim() === "") {
             setError(t("error2"));
+        } else if (!emailRegex.test(email)) {
+            setError('Email không hợp lệ'); // Thông báo khi email không đúng định dạng
+        } else if (!passwordRegex.test(password)) {
+            setError(t("Mật khẩu không hợp lệ")); // Thông báo khi mật khẩu không đúng định dạng
         } else {
             try {
                 setLoadingAPI(true)
