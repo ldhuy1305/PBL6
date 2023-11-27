@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
+import { useTranslation } from 'react-i18next';
 
 const AddDish = ({show, handleClose, onConfirm, product, updateTotalPrice}) => {
+  const {t} = useTranslation()
   const [totalPrice, setTotalPrice] = useState(product.amount * product.price);
   const [specialRequestValue, setSpecialRequestValue] = useState(product.specialRequest);
 
@@ -77,12 +79,9 @@ useEffect(() => {
                               >
                                 <div class="nameAndPriceWrapper___r4GvS">
                                   <h5>{product.name}</h5>
-                                  <div class="itemDescription___2mtvG">
-                                    Tặng Coco ly lớn khi mua combo 2 món
-                                  </div>
                                 </div>
                                 <div class="priceInfo___2eeNb">
-                                  <h5>{product.price}</h5>
+                                  <h5>{(product.price).toLocaleString('vi-VN')}₫</h5>
                                 </div>
                               </div>
                             </div>
@@ -90,10 +89,10 @@ useEffect(() => {
                           <div class="lastSection___3cf8g">
                             <div>
                               <h6 class="sectionTitle___pw1R4">
-                                Special instructions
+                                {t('specialRequest')}
                               </h6>
                               <span class="sectionSubtitle___2vloa"
-                                >Optional</span>
+                                >{t('optional')}</span>
                             </div>
                             <textarea
                               // defaultValue={specialRequest === "" ? "" : specialRequest}
@@ -149,7 +148,7 @@ useEffect(() => {
                             class="ant-btn addToCartButton___3-IkG ant-btn-primary"
                             onClick={handleConfirm}
                           >
-                            Xác nhận - {totalPrice} ₫
+                            {t('confirm')} - {totalPrice.toLocaleString('vi-VN')} ₫
                           </button>
                         </div>
                       </div>
