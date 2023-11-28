@@ -81,7 +81,8 @@ const Product = () => {
             setIsLoadingbutton(false);
         }
     };
-    const priceRegExp = /^\d+(\.\d{1,2})?$/;
+    const priceRegExp = /^\d+(\.\d{1,2}0{3})?$/;
+
 
     const schema = yup.object().shape({
         name: yup.string().required("Tên là bắt buộc"),
@@ -141,7 +142,7 @@ const Product = () => {
                                     name: "",
                                     price: "",
                                     description: "",
-                                    category: ""
+                                    category: Catname[0].catName
 
                                 }}
                             >
