@@ -71,7 +71,7 @@ const SignUpCustomer = () => {
           address: address,
           phoneNumber: formData.phoneNumber,
         };
-        // console.log(registrationData)
+        console.log(registrationData)
         if(!/^[^.].{5,29}@gmail\.com$/.test(registrationData.email)) {
             setError(t("error8"))
         } else if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(registrationData.password.trim())) {
@@ -80,6 +80,8 @@ const SignUpCustomer = () => {
             setError(t("error6"))
         } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
             setError(t("error9"))
+        } else if (formData.detailAddress === '' || formData.ward === ""  || formData.district === "" || formData.city === "") {
+            setError("Vui lòng nhập đầy đủ thông tin địa chỉ")
         } else {
             try {
                 setIsLoading(true)
