@@ -78,14 +78,12 @@ const SignUpCustomer = () => {
             setError(t("error5"))
         } else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
             setError(t("error6"))
-        } else if (!/^[\p{L}\s'-.]{2,50}$/.test(registrationData.firstName.trim()) || !/^[\p{L}\s'-.]{2,50}$/.test(registrationData.lastName.trim())) {
-            setError('Họ tên không hợp lệ')
         } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
             setError(t("error9"))
         } else {
             try {
                 setIsLoading(true)
-              // Gọi API đăng ký người dùng
+              console.log('đăng kí')
               const response = await axios.post('https://falth-api.vercel.app/api/user', registrationData);
     
               // Xử lý phản hồi từ máy chủ, ví dụ: hiển thị thông báo thành công

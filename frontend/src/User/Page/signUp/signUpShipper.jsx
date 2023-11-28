@@ -100,8 +100,6 @@ const SignUpShipper = () => {
             setError(t("error5"))
         } else if (formData.password !== formData.passwordConfirm) {
             setError(t("error6"))
-        } else if (!/^[\p{L}\s'-.]{2,50}$/.test(registrationData.firstName.trim()) || !/^[\p{L}\s'-.]{2,50}$/.test(registrationData.lastName.trim())) {
-            setError('Họ tên không hợp lệ')
         } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
         } else {
