@@ -1,7 +1,7 @@
 {
   "error1": "Please enter email",
   "error2": "Please enter a password",
-  "error3": "Invalid password or email",
+  "error3": "Invalid password",
   "error4": "The verification code is invalid or has expired",
   "error5": "Password must have at least 8 characters including letters and numbers",
   "error6": "Password and password confirmation do not match",
@@ -9,21 +9,14 @@
   "error8": "Invalid email",
   "error9": "Invalid phone number",
   "error10": "Email address already exists",
-  "error11": "Please enter full information!",
-  "error12": "Failed to change information",
 
   "success": "Information received! Please confirm your email",
 
   "alert": "Password change successful, please log in again",
   "alert1": "Shop owner registration successful! Please register your store information.",
-  "alert2": "Changed information successfully",
-  "notify": "Notifications",
 
   "newPass": "New password",
   "confirmPass": "Confirm password",
-  "oldPass": "Old password",
-  "back" : "Back",
-
 
   "title_SI": "Login",
   "loginMess_SI": "Do not have an account?",
@@ -45,6 +38,7 @@
   "headCartTitle": "Products added",
   "headCartRequire": "Special requirements",
   "delete": "Delete",
+  "headViewCart": "View cart",
 
   "homeArea": "Area",
   "homeCategory": "Category",
@@ -94,8 +88,6 @@
   "description": "Description of the store",
   "licence": "Business license:",
   "storeImage": "Image of the store: ",
-  "bankName": "Bank name: ",
-  "bankNumber": "Account number: ",
 
   "infoNav1" : "Account Management",
   "infoNav2" : "Order management",
@@ -125,30 +117,11 @@
   "search":"Search",
   "time" : "Time",
   "place" : "Location",
-  "staff" : "Shipper",
-  "total" : "Total",
+  "staff" : "shipper",
+  "total" : "Total amount",
   "detail": "Details",
   "orderTime" : "Order time",
   "receiveTime" : "Receive time",
   "rating": "Rating",
-  "orderDetail": "Order details",
-  "action": "Action",
-
-  "cartTitle" : "Start Ordering Food!",
-  "cartMess" : "Add items to your cart and place order here.",
-  "cartNav" : "Continue browsing",
-
-  "cartName" : "Cart",
-  "timeDelivery" : "Delivery time:",
-  "minutes": "minutes",
-  "distance": "Distance",
-  "cartMess1" : "Delivery charges will be displayed after you review your order",
-  "order" : "Place order",
-  "signinToOrder" : "Sign in to place an order",
-
-  "store" : "Restaurant",
-  "ratingInFALTH" : "rating on FALTH",
-  "menu" : "Menu",
-  "searchDish" : "Search dish in menu"
-
+  "orderDetail": "Order details"
 }

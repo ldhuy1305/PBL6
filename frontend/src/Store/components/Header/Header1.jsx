@@ -1,24 +1,32 @@
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { tokens } from "../../theme";
-const Header = ({ title, subtitle }) => {
+import { useNavigate } from 'react-router-dom';
+
+const Header = ({ title, to }) => {
+    const history = useNavigate();
+    const redirectToProductPage = () => {
+        history(to, { state: { yourData: 'Dữ liệu cần truyền' } });
+    };
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
-        <Box m="20px 0" display="flex" alignItems="center">
+        <Box m="15px 0" display="flex" alignItems="center">
             <Box
                 fontSize="20px"
-                height="30px"
-                width="30px"
-                border="0.1px solid black"
+                height="35px"
+                width="35px"
+                border="0.1px solid gray"
                 borderRadius="2px"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                marginRight="20px"
+                marginRight="10px"
                 color="gray"
+                onClick={() => redirectToProductPage()}
+                style={{ cursor: 'pointer' }}
             >
-                <i style={{ color:"gray"}}className="fa-solid fa-left-long"></i>
+                <i style={{ color: "gray" }} className="fa-solid fa-left-long"></i>
             </Box>
             <Typography
                 display="flex"
