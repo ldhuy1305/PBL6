@@ -2,7 +2,7 @@ import axios from "axios";
 const moment = require('moment');
 
 //Auth
-const loginAPI = (email, password) => {
+const loginAPI = async (email, password) => {
   return axios.post("https://falth-api.vercel.app/api/auth/login", { email, password });
 }
 
@@ -210,8 +210,10 @@ const viewOrder = async (id) => {
 
 const createPayment = async (query) => {
   const token = localStorage.getItem("token");
+  const api = `https://falth-api.vercel.app/api/order/after-checkout/payment${query}`;
+  console.log(api)
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/after-checkout/payment?${query}`, {
+    const response = await axios.get(api , {
       headers: {
         Authorization: `Bearer ${token}`
       }

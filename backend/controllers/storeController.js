@@ -8,7 +8,7 @@ const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
-
+const mongoose = require("mongoose");
 class storeController {
   uploadStoreImages = fileUploader.fields([
     { name: "image", maxCount: 1 },
@@ -78,36 +78,86 @@ class storeController {
     });
   });
   getAllStore = catchAsync(async (req, res, next) => {
-    let stores;
     let obj = {
       isLocked: req.query.isLocked,
-      address: new RegExp(req.query.address, "i"),
     };
-    if (req.query.name)
-      obj = {
-        ...obj,
-        name: req.query.name,
-      };
+    obj = req.query.city
+      ? { ...obj, address: { $regex: new RegExp(req.query.city, "i") } }
+      : obj;
+    if (req.query.district) {
+      let district = req.query.district.split(",");
+      district = district.map((dis) => new RegExp(dis, "i"));
+      obj = { ...obj, address: { $in: district } };
+    }
     if (req.query.catName) {
-      const products = await Product.find({
-        "category.catName": req.query.catName,
-      });
-
-      let storeIds = new Set();
-      for (let i = 0; i < products.length; i++)
-        storeIds.add(String(products[i].storeId));
-      storeIds = [...storeIds];
+      const cats = req.query.catName.split(",");
+      const products = await Product.aggregate([
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category.catName",
+            foreignField: "catName",
+            as: "category",
+          },
+        },
+        {
+          $unwind: "$category",
+        },
+        {
+          $lookup: {
+            from: "stores",
+            localField: "storeId",
+            foreignField: "_id",
+            as: "store",
+          },
+        },
+        {
+          $unwind: "$store",
+        },
+        {
+          $project: {
+            store: 1,
+            category: 1,
+          },
+        },
+        {
+          $match: {
+            "category.catName": { $in: cats },
+          },
+        },
+        {
+          $group: {
+            _id: "$category.catName",
+            storeIds: { $addToSet: "$store._id" },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            storeIds: {
+              $map: {
+                input: "$storeIds",
+                as: "storeId",
+                in: { $toString: "$$storeId" },
+              },
+            },
+          },
+        },
+      ]);
+      let storeIds = products[0].storeIds;
+      for (let i = 1; i < products.length; i++)
+        storeIds = storeIds.filter((el) => products[i].storeIds.includes(el));
+      storeIds = storeIds.map((id) => mongoose.Types.ObjectId(id));
       obj = {
         ...obj,
         _id: { $in: storeIds },
       };
     }
     const features = new ApiFeatures(Store.find(obj), req.query)
-      // .filter()
       .search()
       .limitFields()
       .paginate();
-    stores = await features.query;
+    const stores = await features.query;
     res.status(200).json({
       status: "success",
       length: stores.length,
@@ -166,6 +216,10 @@ class storeController {
   viewOrder = catchAsync(async (req, res, next) => {});
   rejectOrder = catchAsync(async (req, res, next) => {});
   acceptOrder = catchAsync(async (req, res, next) => {});
+  intersect = function (a, b) {
+    var setB = new Set(b);
+    return [...new Set(a)].filter((x) => setB.has(x));
+  };
 }
 
 module.exports = new storeController();

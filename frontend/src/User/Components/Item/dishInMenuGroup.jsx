@@ -17,7 +17,6 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
     return (
         <div>
             <div
-            onClick={handleProductDetail}
                 class="item-restaurant-row"
                 style={{
                     height: '84px',
@@ -25,7 +24,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                 }}
             >
                 <div class="row">
-                    <div class="col-auto item-restaurant-img">
+                    <div class="col-auto item-restaurant-img" onClick={handleProductDetail}>
                         <button class="inline">
                             <img
                                 src={dish.images[0]}
@@ -35,7 +34,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                             />
                         </button>
                     </div>
-                    <div class="col item-restaurant-info">
+                    <div class="col item-restaurant-info" onClick={handleProductDetail}>
                         <h2 class="item-restaurant-name">
                             {dish.name}
                         </h2>

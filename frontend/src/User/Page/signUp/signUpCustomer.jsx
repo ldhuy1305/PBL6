@@ -72,12 +72,14 @@ const SignUpCustomer = () => {
           phoneNumber: formData.phoneNumber,
         };
         // console.log(registrationData)
-        if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(registrationData.email)) {
+        if(!/^[^.].{5,29}@gmail\.com$/.test(registrationData.email)) {
             setError(t("error8"))
         } else if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(registrationData.password.trim())) {
             setError(t("error5"))
-        }else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
+        } else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
             setError(t("error6"))
+        } else if (!/^[\p{L}\s'-.]{2,50}$/.test(registrationData.firstName.trim()) || !/^[\p{L}\s'-.]{2,50}$/.test(registrationData.lastName.trim())) {
+            setError('Họ tên không hợp lệ')
         } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
             setError(t("error9"))
         } else {

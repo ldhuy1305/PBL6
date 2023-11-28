@@ -123,6 +123,29 @@
     "orderTime" : "Thời gian đặt",
     "receiveTime" : "Thời gian nhận",
     "rating": "Đánh giá",
-    "orderDetail": "Chi tiết đơn hàng"
+    "orderDetail": "Chi tiết đơn hàng",
+    "action": "Thao tác",
+
+    "cartTitle" : "Bắt đầu đặt đồ ăn!",
+   "cartMess" : "Thêm sản phẩm vào giỏ hàng của bạn và đặt hàng tại đây.",
+   "cartNav" : "Tiếp tục lướt web",
+
+   "cartName" : "Giỏ hàng",
+   "timeDelivery" : "Thời gian giao:",
+   "minutes": "phút",
+   "distance": "Cách bạn",
+   "cartMess1" : "Phí giao hàng sẽ được hiển thị sau khi bạn xem xét đơn hàng",
+   "order" : "Đặt đơn",
+   "signinToOrder" : "Đăng nhập để đặt đơn",
+
+   "store" : "Quán ăn",
+   "ratingInFALTH" : "đánh giá trên FALTH",
+   "menu" : "Thực đơn",
+   "searchDish" : "Tìm món",
+
+   "specialRequest" : "Yêu cầu đặc biệt",
+   "optional" : "Tùy chọn",
+   "confirm" : "Xác nhận"
+   
 }
   

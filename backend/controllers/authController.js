@@ -32,7 +32,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   if (user.role == "Owner") {
     const owner = await Owner.findOne({ email }).select("+password");
-    if (owner.status === "Chờ phê duyệt")
+    if (owner.isAccepted === false)
       return next(new appError("Chủ cửa hàng chờ phê duyệt!", 401));
   }
   jwtToken.generateAndSendJWTToken(user, 200, res, req);
