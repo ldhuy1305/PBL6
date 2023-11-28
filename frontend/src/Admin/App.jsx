@@ -7,7 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Routes, Route } from 'react-router-dom';
 import Topbar from './components/Topbar/Topbar';
-import ManageStore from './Page/ManageStore/ManageStore';
+import ManageStore from './Page/ManageStore/manageStore';
 import Acceptstore from './Page/Acceptstore/Acceptstore';
 import Detailstore from './Page/ManageStore/Detailstore';
 import ManageShipper from './Page/ManageShipper/ManageShipper';
