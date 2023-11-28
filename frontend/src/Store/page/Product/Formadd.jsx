@@ -28,7 +28,7 @@ const Product = () => {
     const [message, setMessage] = useState("");
     const [validated, setValidated] = useState(false);
     const token = localStorage.getItem('token');
-    const _id = localStorage.getItem('_id'); 
+    const _id = localStorage.getItem('_id');
     const [Catname, setCatname] = useState([]);
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
@@ -211,7 +211,7 @@ const Product = () => {
                                             <Form.Group
                                                 as={Col}
                                                 md="12"
-                                                controlId="validationFormik103"
+                                                controlId="validationFormik104"
                                                 className="position-relative"
                                                 justifyContent="bottom"
                                             >
