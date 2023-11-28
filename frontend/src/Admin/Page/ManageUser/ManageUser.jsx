@@ -6,6 +6,7 @@ import axios from 'axios';
 import style from './ManageUser.module.css'
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import Header2 from "../../components/Header/Header2";
 
 const ManageUser = ({ Catname }) => {
 
@@ -32,7 +33,7 @@ const ManageUser = ({ Catname }) => {
         };
     }, [selectActive]);
 
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/admin/user`;
     const fetchData = async () => {
@@ -79,8 +80,8 @@ const ManageUser = ({ Catname }) => {
         },
         {
             flex: 1,
-            field: "phoneNumber",
-            headerName: "Số điện thoại",
+            field: "email",
+            headerName: "Email",
             headerAlign: "center",
             align: "center",
         },
@@ -88,6 +89,8 @@ const ManageUser = ({ Catname }) => {
             field: "Detsil",
             flex: 1,
             headerName: "Xem Chi Tiết",
+            headerAlign: "center",
+            align: "center",
             renderCell: (params) => {
                 return (
                     <Box
@@ -119,7 +122,8 @@ const ManageUser = ({ Catname }) => {
 
     return (
         <Box m="20px" >
-            <div className={style.dsdh} >
+            <Header2 title="Danh sách người dùng" />
+            {/* <div className={style.dsdh} >
                 <div className={style.dshd1} style={{ background: colors.primary[400], }} >
                     <div className={style.titledsdh}>Danh sách của hàng</div>
                     <div className={style.searchBar}>
@@ -131,35 +135,23 @@ const ManageUser = ({ Catname }) => {
                     </div>
                 </div>
 
-            </div>
+            </div> */}
             <Box
                 display="flex"
                 height="75vh"
             >
                 <Box
                     m="10px  10px 0 0"
-                    width="60%"
+                    width="100%"
                     height="75vh"
                 >
                     <DataGrid rows={rowsWithUniqueIds} columns={columns}
                         loading={isLoading}
                         initialState={{
                             pagination: {
-                                pageSize: 7,
+                                pageSize: 8,
                             },
                         }} />
-                </Box>
-                <Box
-                    m="10px 0  0"
-                    width="40%"
-                    height="75vh"
-                >
-                    <div style={{ height: "100%", width: "100%", background: "blue" }}>
-                        <div className={style.avata}>
-                            <img src="" alt="" />
-                        </div>
-                    </div>
-
                 </Box>
             </Box >
         </Box>

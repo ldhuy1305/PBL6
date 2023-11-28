@@ -1,7 +1,7 @@
 {
     "error1": "Vui lòng nhập email",
     "error2": "Vui lòng nhập mật khẩu",
-    "error3": "Mật khẩu hoặc tài khoản không đúng",
+    "error3": "Mật khẩu không hợp lệ",
     "error4": "Mã xác thực không hợp lệ hoặc đã hết hạn",
     "error5": "Mật khẩu phải có ít nhật 8 kí tự gồm cả chữ và số",
     "error6": "Mật khẩu và xác nhận mật khẩu không trùng khớp",
@@ -9,22 +9,17 @@
     "error8": "Email không hợp lệ",
     "error9": "Số điện thoại không hợp lệ",
     "error10": "Địa chỉ email đã tồn tại",
-    "error11": "Vui lòng nhập đầy đủ thông tin!",
-    "error12": "Thay đổi thông tin thất bại",
 
 
     "success": "Đã nhận được thông tin! Mời bạn xác nhận email",
 
     "alert": "Đổi mật khẩu thành công mời bạn đăng nhập lại",
     "alert1": "Đăng ký chủ cửa hàng thành công! Mời bạn đăng ký thông tin cửa hàng.",
-    "alert2": "Thay đổi thông tin thành công",
-    "notify": "Thông báo",
 
     "newPass": "Mật khẩu mới",
-    "oldPass": "Mật khẩu cũ",
+    "oldPass": "Mật khẩu mới",
     "confirmPass": "Xác nhận mật khẩu",
     "pass": "Mật khẩu",
-    "back":"Trở về",
 
     "title_SI": "Đăng nhập",
     "loginMess_SI": "Bạn chưa có tài khoản?",
@@ -44,6 +39,7 @@
     "headCartTitle": "Sản phẩm đã thêm",
     "headCartRequire": "Yêu cầu đặc biệt",
     "delete": "Xóa",
+    "headViewCart": "Xem giỏ hàng",
 
     "homeArea": "Khu vực",
     "homeCategory": "Danh mục",
@@ -92,8 +88,6 @@
     "description": "Mô tả về quán",
     "licence": "Giấy phép kinh doanh:",
     "storeImage": "Hình ảnh của quán: ",
-    "bankName": "Tên ngân hàng: ",
-    "bankNumber": "Số tài khoản: ",
 
     "infoNav1" : "Quản lý tài khoản",
     "infoNav2" : "Quản lý đơn hàng",
