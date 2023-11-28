@@ -148,8 +148,6 @@ const Profile = () => {
         e.preventDefault();
         if(formDataInfo.firstName === '' || formDataInfo.lastName === ''|| formDataInfo.address === ''|| formDataInfo.phoneNumber === '') {
             setErrorInfo(t("error11"))
-        } else if (!/^[\p{L}\p{M}\s'-.]{2,50}$/.test(formDataInfo.firstName.trim()) || !/^[\p{L}\p{M}\s'-.]{2,50}$/.test(formDataInfo.lastName.trim())) {
-            setError('Họ tên không hợp lệ')
         } else if(!/^\d{10}$/.test(formDataInfo.phoneNumber)) {
             setErrorInfo(t("error9"))
         }else {
