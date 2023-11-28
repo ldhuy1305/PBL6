@@ -10,7 +10,6 @@ import Topbar from './components/Topbar/Topbar';
 import ManageStore from './Page/ManageStore/ManageStore';
 import Acceptstore from './Page/Acceptstore/Acceptstore';
 import Detailstore from './Page/ManageStore/Detailstore';
-import Comments from './components/Comment/Comment';
 import ManageShipper from './Page/ManageShipper/ManageShipper';
 import ViewAllShipper from './Page/ManageShipper/ViewAllShipper';
 import { LanguageProvider } from './services/languageContext';
