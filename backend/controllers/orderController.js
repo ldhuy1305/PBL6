@@ -9,22 +9,25 @@ const appError = require("../utils/appError");
 const ApiFeatures = require("../utils/ApiFeatures");
 const request = require("request");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 require("dotenv").config();
+process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice } = req.body;
+    const { shipCost, cart, totalPrice, coordinates } = req.body;
     const order = await Order.create({
       user: userId,
       store: storeId,
       cart,
       totalPrice,
       shipCost,
+      userLocation: { type: "Point", coordinates: coordinates.reverse() },
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-
+    console.log(order.userLocation);
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();
@@ -76,42 +79,60 @@ class orderController {
   // after check out, system create transaction
   payment = catchAsync(async (req, res, next) => {
     const vnp_Params = req.query;
+    const transaction = await Transaction.findOne({
+      vnp_TxnRef: vnp_Params.vnp_TxnRef,
+    });
     if (req.query.vnp_TransactionStatus != "00") {
       await Order.findByIdAndDelete(req.query.vnp_TxnRef);
       return next(new appError("Thanh toán không thành công!"), 404);
     }
-    await Transaction.create(vnp_Params);
+    if (!transaction) await Transaction.create(vnp_Params);
+    await Order.findByIdAndUpdate(
+      mongoose.Types.ObjectId(vnp_Params.vnp_TxnRef),
+      { status: "Waiting" }
+    );
     res.status(200).json({
       status: "success",
       data: vnp_Params,
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const id = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(req.params.id).populate({
+      path: "cart.product",
+      select: "name",
+    });
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
-    console.log(order.shipperId);
     res.status(200).json({
       status: "success",
       data: order,
     });
   });
-  // Cancel order when time out
-  cancelOrderWhenTimeOut = catchAsync(async (req, res, next) => {
+  // refuse order when time out
+  refuseOrderWhenTimeOut = catchAsync(async (req, res, next) => {
     const orders = await Order.find();
     if (orders) {
-      orders.forEach(async (order) => {
+      for (let order of orders) {
         let t = (Date.now() - order.createdAt) / 60000;
-        if (order.status == "Pending" && t > 30) {
-          order.status = "Cancelled";
-          // Refund money for canceled order
+        if (order.status == "Waiting" && t > 30) {
+          order.status = "Refused";
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
-      });
+      }
     }
     next();
   });
+  // Cancel order
+  cancelOrder = catchAsync(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (order.status != "Waiting")
+      return next(new appError("Không thể huỷ đơn hàng!", 404));
+    order.status = "Cancelled";
+    await this.refundOrder(req, order._id, next);
+    await order.save();
+    res.status(200).json({ status: "success", data: order });
+  });
+
   changeStatus = catchAsync(async (req, res, next) => {
     const { id, shipperId } = req.params;
     const order = await Order.findById(id);
@@ -249,15 +270,94 @@ class orderController {
   getOrdersByOwnerId = catchAsync(async (req, res, next) => {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
-    const features = new ApiFeatures(
-      Order.find({ store: store._id }, { new: True }).populate("user"),
-      req.query
-    )
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-    const orders = await features.query;
+    const limit = +req.query.limit || 10;
+    const page = +req.query.page || 1;
+
+    let start, end;
+
+    if (!req.query.start)
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
+
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      store: store._id,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
+        status: req.query.status,
+      };
+
+    const orders = await Order.aggregate([
+      {
+        $match: obj,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: { $subtract: ["$totalPrice", "$shipCost"] },
+        },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: 1,
+          depreciation: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$orderCost",
+              else: {
+                $multiply: ["$orderCost", process.env.percentStore / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$orderCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          dateOrdered: -1,
+        },
+      },
+    ]);
     res.status(200).json({
       status: "success",
       length: orders.length,
@@ -268,11 +368,46 @@ class orderController {
   getOrdersByUserId = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     if (!user) return next(new appError("Không tìm thấy người dùng"), 404);
+    let start, end;
+
+    if (!req.query.start)
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
+
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      user: req.params.userId,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
+        status: req.query.status,
+      };
     const features = new ApiFeatures(
-      Order.find({ user: user._id }).populate("store"),
+      Order.find(obj).populate({
+        path: "store",
+        select:
+          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",
+      }),
       req.query
     )
-      .filter()
       .sort()
       .limitFields()
       .paginate();

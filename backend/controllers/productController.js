@@ -97,11 +97,10 @@ class ProductController {
     let body = req.body;
     let product = await Product.findById({ _id: req.params.id });
     if (!product) return next(new appError("Không thể tìm thấy sản phẩm", 404));
-    let images = product.images;
-
+    let images = [...product.images];
+    let dels = [req.body.dels];
     // fillter exits image
     if (req.body.dels) {
-      const dels = [req.body.dels];
       images = images.filter((el) => !dels.includes(el));
     }
     if (req.files) {
@@ -111,7 +110,8 @@ class ProductController {
         images,
       };
     }
-    // let urls = product.images;
+    console.log(images);
+    // let dels = product.images;
     const data = await Product.findByIdAndUpdate({ _id: req.params.id }, body, {
       new: true,
     })
@@ -123,13 +123,15 @@ class ProductController {
 
     // delete images
     if (req.body.dels) {
-      let urls = [req.body.dels];
-      for (let i = 0; i < urls.length; i++) {
-        let parts = urls[i].split("/");
+      // let urls = [...req.body.dels];
+      // console.log(urls);
+      for (let i = 0; i < dels.length; i++) {
+        let parts = dels[i].split("/");
         let id =
           parts.slice(parts.length - 2, parts.length - 1).join("/") +
           "/" +
           parts[parts.length - 1].split(".")[0];
+        console.log(id);
         cloudinary.uploader.destroy(id);
       }
     }

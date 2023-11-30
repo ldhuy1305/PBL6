@@ -28,11 +28,13 @@ const contactSchema = new Schema({
   },
 });
 contactSchema.pre("save", async function(next) {
-  const loc = await mapUtils.getGeoCode(this.address);
-  this.location = {
-    type: "Point",
-    coordinates: [loc[0].latitude, loc[0].longitude],
-  };
+  if (this.isNew || this.isModified("address")) {
+    const loc = await mapUtils.getGeoCode(this.address);
+    this.location = {
+      type: "Point",
+      coordinates: [loc[0].latitude, loc[0].longitude],
+    };
+  }
   next();
 });
 module.exports = mongoose.model("Contact", contactSchema);
