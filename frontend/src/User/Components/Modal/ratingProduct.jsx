@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
-const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
+const RatingProduct = ({ show, handleClose, product, rating}) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -70,7 +70,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
             const token = localStorage.getItem("token");
             try {
                 setIsLoading(true);
-                const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
+                const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         ContentType: 'multipart/form-data',
@@ -160,13 +160,13 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={store.image}
-                                                                alt={store.image}
+                                                                src={ava}
+                                                                alt=""
                                                             />
-                                                            <div class="shipper-name" style={{ margin: '0' }}>{store.name}</div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{product.name}</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
                                                                 <div className="shopee-rating-stars__stars">
-                                                                    {renderStars(store.ratingsAverage)}
+                                                                    {renderStars(product.ratingsAverage)}
                                                                 </div>
                                                             </div>
                                                             <div >
@@ -232,7 +232,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            {!rating && (<button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>)}
                                                             <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>
@@ -253,4 +252,4 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
 
     )
 }
-export default RatingStore
+export default RatingProduct

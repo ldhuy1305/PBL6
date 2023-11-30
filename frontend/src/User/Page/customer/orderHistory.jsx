@@ -144,6 +144,7 @@ const OrderHistory = () => {
         setShowModal1(false);
     };
     const handleShowModal2 = (storInfo) => {
+        console.log(storInfo)
         setStore({ ...storInfo })
         setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2

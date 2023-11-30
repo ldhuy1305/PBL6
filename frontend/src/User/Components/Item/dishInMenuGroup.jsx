@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import soldout from '../../assets/img/hethang.webp'
 import { Navigate, useNavigate } from "react-router-dom";
-
+import ProductDetailModal from "../Modal/productDetailModal";
 const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
     const navigate = useNavigate()
-    const handleAdd = () => {
+    const handleAdd = (quantity) => {
         // console.log(dish)
-        handleAddToCart(dish);
+        handleAddToCart(dish, quantity);
         handleOpen();
     }
 
-    const handleProductDetail = () => {
-        navigate('/home/store/productDetail', {state: {dish:dish}})
-    }
+    // const handleProductDetail = () => {
+    //     navigate('/home/store/productDetail', {state: {dish:dish}})
+    // }
+
+    const [showModal, setShowModal] = useState(false)
+    const handleShowModal = async (id, storeName) => {       
+        setShowModal(true);
+    };
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
     return (
         <div>
@@ -24,7 +32,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                 }}
             >
                 <div class="row">
-                    <div class="col-auto item-restaurant-img" onClick={handleProductDetail}>
+                    <div class="col-auto item-restaurant-img" onClick={handleShowModal}>
                         <button class="inline">
                             <img
                                 src={dish.images[0]}
@@ -34,7 +42,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                             />
                         </button>
                     </div>
-                    <div class="col item-restaurant-info" onClick={handleProductDetail}>
+                    <div class="col item-restaurant-info" onClick={handleShowModal}>
                         <h2 class="item-restaurant-name">
                             {dish.name}
                         </h2>
@@ -69,13 +77,14 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                                     style={{height:'80%', width:'80px'}}
                                 ></img>
                             ) : (
-                                <div class="btn-adding" onClick={handleAdd}>+</div>
+                                <div class="btn-adding" onClick={() => handleAdd(1)}>+</div>
                             )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <ProductDetailModal show={showModal} handleClose={handleCloseModal} product={dish} handleAdd={handleAdd}/>
         </div>
 
 
