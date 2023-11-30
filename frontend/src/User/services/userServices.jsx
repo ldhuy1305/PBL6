@@ -99,9 +99,10 @@ const getAllCategoryByStoreId = async (id) => {
 }
 
 //Product
-const getProductByStoreId = async (storeId, catName) => {
+const getProductByStoreId = async (storeId, catName, search) => {
   const token = localStorage.getItem("token");
-  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?category.catName=${catName}&limit=10`
+  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
+  console.log(search)
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`

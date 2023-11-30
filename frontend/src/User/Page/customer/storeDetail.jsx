@@ -14,6 +14,7 @@ const StoreDetail = () => {
     const [categories, setCategories] = useState([]);
     const location = useLocation()
     const [isLoading, setIsLoading] = useState(false)
+    const [searchKey, setSearchKey] = useState('')
     const store = location.state.store.store;
     const openModal = () => {
         setShowModal(true);
@@ -55,7 +56,6 @@ const StoreDetail = () => {
                     <div class="container">
                         <div class="detail-restaurant-img">
                             <img
-                                // src="https://images.foody.vn/res/g119/1184583/prof/s640x400/foody-upload-api-foody-mobile-37-80aba800-230914093440.jpeg"
                                 src={store.image}
                                 alt={store.name}
                                 class=""
@@ -80,7 +80,6 @@ const StoreDetail = () => {
                             </div>
                             <div class="view-more-rating">
                                 <span
-                                    // href="https://foody.vn/da-nang/sau-nuong-lau-nuong-tran-dai-nghia"
                                     rel="noopener noreferrer nofollow"
                                     target="_blank"
                                     class="number-review"
@@ -151,11 +150,13 @@ const StoreDetail = () => {
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
-                                                <i class="fas fa-search"></i><input
+                                                <i class="fas fa-search" style={{cursor:'pointer'}} ></i>
+                                                <input
                                                     type="search"
                                                     name="searchKey"
                                                     placeholder={t("searchDish")}
-                                                    value=""
+                                                    value={searchKey}
+                                                    onChange={(e) => setSearchKey(e.target.value)}
                                                 />
                                             </p>
                                         </div>
@@ -197,6 +198,7 @@ const StoreDetail = () => {
                                                                 category={category}
                                                                 openModal={openModal}
                                                                 store={store}
+                                                                search={searchKey}
                                                             />
                                                         </Element>
                                                     ))}
