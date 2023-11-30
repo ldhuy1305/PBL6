@@ -165,20 +165,37 @@ class storeController {
     });
   });
   updateStore = catchAsync(async (req, res, next) => {
-    const store = await Store.findOne({ ownerId: req.params.ownerId });
-    store.phoneNumber = req.body.phoneNumber;
-    store.address = req.body.address;
-    store.name = req.body.name;
-    store.openAt = req.body.openAt;
-    store.closeAt = req.body.closeAt;
-    store.description = req.body.description;
-    await store.save();
-    console.log(store);
-    if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
-    res.status(200).json({
-      status: "success",
-      data: store,
-    });
+    try {
+      let body = req.body;
+      if (req.files) {
+        body = {
+          ...body,
+          image: req.files.image[0]?.path,
+        };
+      }
+      const store = await Store.findOneAndUpdate(
+        { ownerId: req.params.ownerId },
+        body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      if (!store) return next(new appError("Không tìm thấy cửa hàng", 404));
+      res.status(200).json({
+        message: "success",
+        data: store,
+      });
+    } catch (err) {
+      if (req.files) {
+        Object.keys(req.files).forEach((key) => {
+          req.files[key].forEach((file) =>
+            cloudinary.uploader.destroy(file.filename)
+          );
+        });
+      }
+      next(new appError(err.message, 404));
+    }
   });
   lockStore = catchAsync(async (req, res, next) => {
     let store = await Store.findOne({ ownerId: req.params.ownerId });
