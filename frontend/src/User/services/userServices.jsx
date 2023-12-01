@@ -244,9 +244,24 @@ const addRatingForStore = async (id, ratingData) => {
         ContentType: 'multipart/form-data',
       }
     });
-    return response.data
+    // return response.data
   } catch (error) {
     console.log('đánh giá thất bại:', error)
+  }
+}
+
+const updateRatingForStore = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.patch(`https://falth-api.vercel.app/api/rating/${id}`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    // return response.data
+  } catch (error) {
+    console.log('Chỉnh sửa đánh giá thất bại:', error)
   }
 }
 
@@ -285,5 +300,6 @@ export {
   getOderByFilter,
   getRatingOfStore,
   addRatingForStore, 
+  updateRatingForStore,
   deleteRating
 }

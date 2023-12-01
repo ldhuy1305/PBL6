@@ -45,11 +45,11 @@ const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, 
     return (
         <div>
 
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} style={{zIndex:'100001'}}>
                 <Modal.Header closeButton>
                     <Modal.Title>Cảnh Báo Xóa</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body >
                     Bạn có chắc chắn muốn xóa mục này?
                 </Modal.Body>
                 <Modal.Footer>

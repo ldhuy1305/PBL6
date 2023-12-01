@@ -18635,7 +18635,7 @@ button.history-table-status.gray {
 }
 
 .history-customer-order .history-table-scroll {
-  height: 400px;
+  height: 300px;
   overflow-y: auto;
 }
 
