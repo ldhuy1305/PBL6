@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import soldout from '../../assets/img/hethang.webp'
+import soldout from '../../assets/img/sold-out.png'
 import { Navigate, useNavigate } from "react-router-dom";
 import ProductDetailModal from "../Modal/productDetailModal";
 const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {

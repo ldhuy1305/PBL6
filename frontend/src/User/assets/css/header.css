@@ -15634,7 +15634,7 @@ button.history-table-status.gray {
   border-bottom: 1px solid #ebebeb;
 }
 .history-customer-order .history-table-scroll {
-  height: 400px;
+  height: 300px;
   overflow-y: auto;
 }
 .history-customer-order .history-table-heading {

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import { useTranslation } from "react-i18next";
-// import '../../assets/css/productDetail.css'
 import '../../assets/css/productDetail2.css'
 import minus from '../../assets/img/minus.png'
 import plus from '../../assets/img/plus.png'
+import soldout from '../../assets/img/sold-out.png'
 const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
@@ -19,6 +19,8 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
             setQuantity(quantity - 1);
         }
     }
+
+    const [selectedImage, setSelectedImage] = useState(product.images[0])
     return (
         <div>
             <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
@@ -29,7 +31,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                             <div class="detail-restaurant-img" style={{ width: '48%' }}>
                                 <div class="flex flex-column" style={{ width: '100%' }}>
                                     <img
-                                        src={product.images[0]}
+                                        src={selectedImage}
                                         alt={product.name}
                                         class=""
                                         style={{ height: '200px', width: '100%', marginLeft: '0' }}
@@ -37,7 +39,6 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
 
                                     <div class="LmLCVP">
                                         {product.images.map((image) => (
-
                                             <div class="lnM4pa">
                                                 <div class="OibNSJ">
                                                     <div class="_11mwwv">
@@ -46,12 +47,41 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                                                                 alt=""
                                                                 class="_7D4JtJ"
                                                                 src={image}
+                                                                onClick={() => setSelectedImage(image)}
                                                             /></picture>
                                                     </div>
                                                     <div class=""></div>
                                                 </div>
                                             </div>
                                         ))}
+                                        <div class="lnM4pa">
+                                                <div class="OibNSJ">
+                                                    <div class="_11mwwv">
+                                                        <picture
+                                                        ><img
+                                                                alt=""
+                                                                class="_7D4JtJ"
+                                                                src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg'
+                                                                onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg')}
+                                                            /></picture>
+                                                    </div>
+                                                    <div class=""></div>
+                                                </div>
+                                            </div>
+                                            <div class="lnM4pa">
+                                                <div class="OibNSJ">
+                                                    <div class="_11mwwv">
+                                                        <picture
+                                                        ><img
+                                                                alt=""
+                                                                class="_7D4JtJ"
+                                                                src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
+                                                                onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg')}
+                                                            /></picture>
+                                                    </div>
+                                                    <div class=""></div>
+                                                </div>
+                                            </div>
 
                                         <button class="shopee-icon-button LFMWYe RNDSpb" tabindex="-1">
                                             <svg
@@ -91,7 +121,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                                         <div id="catalog-product-details-price" class="product_price price-block-left ">
                                             <div class="price-box">
                                                 <p class="special-price" style={{ margin: '0' }}>
-                                                    <span class="price" id="product-price-263345">97.000&nbsp;đ</span>
+                                                    <span class="price" id="product-price-263345">{(product.price).toLocaleString('vi-VN')}&nbsp;đ</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -116,7 +146,17 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                                             {product.description}
                                         </p>
                                     </div>
-                                    <div class="product-view-quantity-box">
+                                    
+                                    
+                                    {product.isOutOfOrder ? (
+                                <img 
+                                    src={soldout}
+                                    alt="Hết hàng"
+                                    style={{width:'60%', marginLeft:'15%'}}
+                                ></img>
+                            ) : (
+
+                                <div class="product-view-quantity-box">
                                         <div class="product-view-quantity-box-block">
                                             <a class="btn-subtract-qty" onClick={handleDecrease}>
                                                 <img alt='' style={{ width: '12px', height: 'auto' }} src={minus} /></a>
@@ -129,7 +169,10 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                                                 <span>Thêm vào giỏ hàng</span>
                                             </button>
                                         </div>
-                                    </div>
+                                </div>
+
+
+                            )}
 
                                 </div>
 

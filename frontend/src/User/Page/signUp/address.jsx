@@ -30,9 +30,7 @@ function useLocationSelect() {
   };
 
   const handleCityChange2 = (selectedCityName) => {
-    console.log('a'+selectedCityName+'a')
     if (selectedCityName !== "") {
-      console.log('a'+selectedCityName+'a')
       const selectedCity = cities.find((city) => city.Name.includes(selectedCityName));
       console.log(selectedCity)
       setDistricts(selectedCity.Districts);

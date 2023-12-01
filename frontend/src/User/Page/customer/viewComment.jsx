@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { getRatingOfStore } from "../../services/userServices";
+import { getRatingOfStore, getStoreById } from "../../services/userServices";
 import { useTranslation } from "react-i18next"
 import Comment from "../../Components/Modal/comment";
 import LoadingModal from "../../Components/Loading/Loading";
@@ -8,19 +8,28 @@ const ViewComment = () => {
     const { t } = useTranslation()
     const location = useLocation()
     const [isLoading, setIsLoading] = useState(false)
-    const store = location.state.store.store;
+    const storeId = location.state.store.store._id;
     const [ratings, setRatings] = useState([])
     const [idUser, setIdUser] = useState('')
+    const [store, setStore] = useState({
+        name: '',
+        image:'',
+
+    });
+    const [ratingsAverage, setRatingsAverage] = useState(0)
     useEffect(() => {
         const user = localStorage.getItem("user");
         const userData = JSON.parse(user);
+        
         if(userData) {
             setIdUser(userData._id)
         }
         const fetchData = async () => {
             try {
                 setIsLoading(true)
-                const data = await getRatingOfStore(store._id)
+                const data = await getRatingOfStore(storeId)
+                const storeData = await getStoreById(storeId)
+                setStore({...storeData.data})
                 setRatings({ ...data.data })
                 // console.log(ratings)
             } catch (error) {
