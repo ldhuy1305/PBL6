@@ -34,11 +34,7 @@ router
     contactController.delAllContact,
     userController.deleteUser
   );
-router.post(
-  "/change-pass/:id",
-  authController.restrict("User"),
-  userController.changePass
-);
+router.post("/change-pass/:id", userController.changePass);
 router.put(
   "/add-contact/:id",
   authController.restrict("User"),
