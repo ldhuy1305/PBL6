@@ -151,7 +151,9 @@ class orderController {
       },
       {
         $project: {
-          storeLocation: 1,
+          storeLocation: {
+            coordinates: { $reverseArray: "$storeLocation.coordinates" },
+          },
           shipCost: 1,
           totalPrice: 1,
           status: 1,
