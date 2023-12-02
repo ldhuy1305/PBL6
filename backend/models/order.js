@@ -69,15 +69,9 @@ const orderSchema = new Schema(
         index: "2dsphere",
       },
     },
-    userLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-      },
-      coordinates: {
-        type: [Number],
-        index: "2dsphere",
-      },
+    contact: {
+      type: Schema.Types.ObjectId,
+      ref: "Contact",
     },
   },
   {
@@ -93,5 +87,4 @@ orderSchema.pre("save", async function(next) {
   next();
 });
 orderSchema.index({ storeLocation: "2dsphere" });
-orderSchema.index({ userLocation: "2dsphere" });
 module.exports = mongoose.model("Order", orderSchema);
