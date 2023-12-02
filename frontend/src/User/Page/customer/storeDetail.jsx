@@ -216,6 +216,7 @@ const StoreDetail = () => {
                                                                 openModal={openModal}
                                                                 store={store}
                                                                 search={searchKey}
+                                                                isWithinOperatingHours={isWithinOperatingHours}
                                                             />
                                                         </Element>
                                                     ))}

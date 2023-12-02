@@ -4,7 +4,7 @@ import { useCity } from "../../services/CityContext";
 import { useState } from "react";
 import { getProductByStoreId } from "../../services/userServices";
 import Skeleton from "../Skeleton/skeleton";
-const MenuGroup = ({ category, openModal, store, search }) => {
+const MenuGroup = ({ category, openModal, store, search, isWithinOperatingHours }) => {
     const { cart, setCart, setProductsCount } = useCity();
     const [isLoading, setIsLoading] = useState(false)
     const handleOpen = () => {
@@ -135,7 +135,7 @@ const MenuGroup = ({ category, openModal, store, search }) => {
             </div>
             )) }
             {dishes.map((dish) => (
-                <DishInMenuGroup dish={dish} handleOpen={handleOpen} handleAddToCart={handleAddToCart} />
+                <DishInMenuGroup dish={dish} handleOpen={handleOpen} handleAddToCart={handleAddToCart} isWithinOperatingHours={isWithinOperatingHours} />
             ))}
         </div>
 
