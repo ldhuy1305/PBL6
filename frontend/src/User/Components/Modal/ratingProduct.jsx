@@ -70,12 +70,12 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
             const token = localStorage.getItem("token");
             try {
                 setIsLoading(true);
-                const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        ContentType: 'multipart/form-data',
-                    }
-                });
+                // const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
+                //     headers: {
+                //         Authorization: `Bearer ${token}`,
+                //         ContentType: 'multipart/form-data',
+                //     }
+                // });
                 setNotify("Đánh giá thành công!")
                 setOpenNotify(true)
                 handleClose()
@@ -129,7 +129,7 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
                 <Modal.Header>
                     <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
-                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá cửa hàng</div>
+                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá sản phẩm</div>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="modal-dialog modal-noti" role="document">
@@ -163,7 +163,7 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
                                                                 src={ava}
                                                                 alt=""
                                                             />
-                                                            <div class="shipper-name" style={{ margin: '0' }}>{product.name}</div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{product.product.name}</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
                                                                 <div className="shopee-rating-stars__stars">
                                                                     {renderStars(product.ratingsAverage)}

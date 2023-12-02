@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import soldout from '../../assets/img/sold-out.png'
+import close from '../../assets/img/close.jfif'
 import { Navigate, useNavigate } from "react-router-dom";
 import ProductDetailModal from "../Modal/productDetailModal";
-const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
+const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingHours }) => {
     const navigate = useNavigate()
     const handleAdd = (quantity) => {
         // console.log(dish)
@@ -15,7 +16,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
     // }
 
     const [showModal, setShowModal] = useState(false)
-    const handleShowModal = async (id, storeName) => {       
+    const handleShowModal = async (id, storeName) => {
         setShowModal(true);
     };
     const handleCloseModal = () => {
@@ -70,21 +71,30 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                             <div
                                 class="col-auto adding-food-cart txt-right"
                             >
-                            {dish.isOutOfOrder ? (
-                                <img 
-                                    src={soldout}
-                                    alt="Hết hàng"
-                                    style={{height:'80%', width:'80px'}}
-                                ></img>
-                            ) : (
-                                <div class="btn-adding" onClick={() => handleAdd(1)}>+</div>
-                            )}
+                                {!isWithinOperatingHours ? (
+                                    <img
+                                        src={close}
+                                        alt="Đóng cửa"
+                                        style={{ height: '80%', width: '80px' }}
+                                    ></img>
+                                ) : (
+                                    dish.isOutOfOrder ? (
+                                        <img
+                                            src={soldout}
+                                            alt="Hết hàng"
+                                            style={{ height: '80%', width: '80px' }}
+                                        ></img>
+                                    ) : (
+                                        <div class="btn-adding" onClick={() => handleAdd(1)}>+</div>
+                                    )
+                                )}
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <ProductDetailModal show={showModal} handleClose={handleCloseModal} product={dish} handleAdd={handleAdd}/>
+            <ProductDetailModal show={showModal} handleClose={handleCloseModal} product={dish} handleAdd={handleAdd} isWithinOperatingHours={isWithinOperatingHours} />
         </div>
 
 

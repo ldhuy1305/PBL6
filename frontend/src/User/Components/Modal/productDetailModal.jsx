@@ -5,7 +5,8 @@ import '../../assets/css/productDetail2.css'
 import minus from '../../assets/img/minus.png'
 import plus from '../../assets/img/plus.png'
 import soldout from '../../assets/img/sold-out.png'
-const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
+import close from '../../assets/img/close.jfif'
+const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOperatingHours }) => {
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
     const handleIncrease = () => {
@@ -55,33 +56,33 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                                             </div>
                                         ))}
                                         <div class="lnM4pa">
-                                                <div class="OibNSJ">
-                                                    <div class="_11mwwv">
-                                                        <picture
-                                                        ><img
-                                                                alt=""
-                                                                class="_7D4JtJ"
-                                                                src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg'
-                                                                onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg')}
-                                                            /></picture>
-                                                    </div>
-                                                    <div class=""></div>
+                                            <div class="OibNSJ">
+                                                <div class="_11mwwv">
+                                                    <picture
+                                                    ><img
+                                                            alt=""
+                                                            class="_7D4JtJ"
+                                                            src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg'
+                                                            onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg')}
+                                                        /></picture>
                                                 </div>
+                                                <div class=""></div>
                                             </div>
-                                            <div class="lnM4pa">
-                                                <div class="OibNSJ">
-                                                    <div class="_11mwwv">
-                                                        <picture
-                                                        ><img
-                                                                alt=""
-                                                                class="_7D4JtJ"
-                                                                src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
-                                                                onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg')}
-                                                            /></picture>
-                                                    </div>
-                                                    <div class=""></div>
+                                        </div>
+                                        <div class="lnM4pa">
+                                            <div class="OibNSJ">
+                                                <div class="_11mwwv">
+                                                    <picture
+                                                    ><img
+                                                            alt=""
+                                                            class="_7D4JtJ"
+                                                            src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
+                                                            onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg')}
+                                                        /></picture>
                                                 </div>
+                                                <div class=""></div>
                                             </div>
+                                        </div>
 
                                         <button class="shopee-icon-button LFMWYe RNDSpb" tabindex="-1">
                                             <svg
@@ -146,33 +147,41 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd }) => {
                                             {product.description}
                                         </p>
                                     </div>
-                                    
-                                    
-                                    {product.isOutOfOrder ? (
-                                <img 
-                                    src={soldout}
-                                    alt="Hết hàng"
-                                    style={{width:'60%', marginLeft:'15%'}}
-                                ></img>
-                            ) : (
 
-                                <div class="product-view-quantity-box">
-                                        <div class="product-view-quantity-box-block">
-                                            <a class="btn-subtract-qty" onClick={handleDecrease}>
-                                                <img alt='' style={{ width: '12px', height: 'auto' }} src={minus} /></a>
-                                            <input type="text" name="qty" id="qty" maxvalue="10" minvalue="1" align="center" value={quantity} title="SL" class="input-text qty" readOnly/>
-                                            <a class="btn-add-qty" onClick={handleIncrease}><img alt="" style={{ width: '12px', height: 'auto' }} src={plus} /></a>
-                                        </div>
-                                        <div class="product_view_add_box" style={{ marginLeft: '20px' }}>
-                                            <button type="button" title="Thêm vào giỏ hàng" class="btn-cart-to-cart" onClick={() => handleAdd(quantity)}>
-                                                <i class="fa-solid fa-cart-shopping"></i>
-                                                <span>Thêm vào giỏ hàng</span>
-                                            </button>
-                                        </div>
-                                </div>
+                                    {!isWithinOperatingHours ? (
+                                        <img
+                                            src={close}
+                                            alt="Đóng cửa"
+                                            style={{ width: '60%', marginLeft: '15%' }}
+                                        ></img>
+                                    ) : (
+                                        product.isOutOfOrder ? (
+                                            <img
+                                                src={soldout}
+                                                alt="Hết hàng"
+                                                style={{ width: '60%', marginLeft: '15%' }}
+                                            ></img>
+                                        ) : (
+
+                                            <div class="product-view-quantity-box">
+                                                <div class="product-view-quantity-box-block">
+                                                    <a class="btn-subtract-qty" onClick={handleDecrease}>
+                                                        <img alt='' style={{ width: '12px', height: 'auto' }} src={minus} /></a>
+                                                    <input type="text" name="qty" id="qty" maxvalue="10" minvalue="1" align="center" value={quantity} title="SL" class="input-text qty" readOnly />
+                                                    <a class="btn-add-qty" onClick={handleIncrease}><img alt="" style={{ width: '12px', height: 'auto' }} src={plus} /></a>
+                                                </div>
+                                                <div class="product_view_add_box" style={{ marginLeft: '20px' }}>
+                                                    <button type="button" title="Thêm vào giỏ hàng" class="btn-cart-to-cart" onClick={() => handleAdd(quantity)}>
+                                                        <i class="fa-solid fa-cart-shopping"></i>
+                                                        <span>Thêm vào giỏ hàng</span>
+                                                    </button>
+                                                </div>
+                                            </div>
 
 
-                            )}
+                                        )
+                                    )}
+
 
                                 </div>
 
