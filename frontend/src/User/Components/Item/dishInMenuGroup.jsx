@@ -3,22 +3,36 @@ import soldout from '../../assets/img/sold-out.png'
 import close from '../../assets/img/close.jfif'
 import { Navigate, useNavigate } from "react-router-dom";
 import ProductDetailModal from "../Modal/productDetailModal";
+import { getRatingOfProduct } from "../../services/userServices";
 const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingHours }) => {
     const navigate = useNavigate()
     const handleAdd = (quantity) => {
-        // console.log(dish)
         handleAddToCart(dish, quantity);
         handleOpen();
     }
 
-    // const handleProductDetail = () => {
-    //     navigate('/home/store/productDetail', {state: {dish:dish}})
-    // }
+    const [ratings, setRatings] = useState([])
+    const [idUser, setIdUser] = useState('')
 
     const [showModal, setShowModal] = useState(false)
-    const handleShowModal = async (id, storeName) => {
-        setShowModal(true);
-    };
+    const handleShowModal = async () => {
+        const user = localStorage.getItem("user");
+        const userData = JSON.parse(user);
+        
+        if(userData) {
+            setIdUser(userData._id)
+        }
+            try {
+                // setIsLoading(true)
+                const data = await getRatingOfProduct(dish._id)
+                setRatings({ ...data })
+                console.log(data)
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin đánh giá:", error);
+            }
+            setShowModal(true);
+        }
+
     const handleCloseModal = () => {
         setShowModal(false);
     };
@@ -94,7 +108,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
                     </div>
                 </div>
             </div>
-            <ProductDetailModal show={showModal} handleClose={handleCloseModal} product={dish} handleAdd={handleAdd} isWithinOperatingHours={isWithinOperatingHours} />
+            <ProductDetailModal show={showModal} handleClose={handleCloseModal} product={dish} handleAdd={handleAdd} isWithinOperatingHours={isWithinOperatingHours} ratings={ratings} setRatings={setRatings} idUser={idUser} />
         </div>
 
 

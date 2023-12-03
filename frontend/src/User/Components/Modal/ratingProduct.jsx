@@ -4,6 +4,7 @@ import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
+import { addRatingForProduct } from "../../services/userServices";
 import axios from "axios";
 const RatingProduct = ({ show, handleClose, product, rating}) => {
     const { t } = useTranslation();
@@ -70,17 +71,17 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
             const token = localStorage.getItem("token");
             try {
                 setIsLoading(true);
-                // const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
-                //     headers: {
-                //         Authorization: `Bearer ${token}`,
-                //         ContentType: 'multipart/form-data',
-                //     }
-                // });
+                const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        ContentType: 'multipart/form-data',
+                    }
+                });
                 setNotify("Đánh giá thành công!")
                 setOpenNotify(true)
                 handleClose()
             } catch (error) {
-                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho sản phẩm này rồi!")
                 setOpenNotify(true)
                 handleClose()
             } finally {

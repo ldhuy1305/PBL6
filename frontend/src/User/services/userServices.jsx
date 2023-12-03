@@ -266,6 +266,34 @@ const updateRatingForStore = async (id, ratingData) => {
   }
 }
 
+const getRatingOfProduct = async (productID) => {
+  try {
+    const api = `https://falth-api.vercel.app/api/product/${productID}/rating`
+    console.log(api)
+    const response = await axios.get(api);
+    console.log(response)
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const addRatingForProduct = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`https://falth-api.vercel.app/api/product/${id}/rating`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    console.log(response)
+    // return response.data
+  } catch (error) {
+    console.log('Đánh giá thất bại:', error)
+  }
+}
+
 const deleteRating = async (id) => {
   try {
     const token = localStorage.getItem("token");
@@ -302,5 +330,7 @@ export {
   getRatingOfStore,
   addRatingForStore, 
   updateRatingForStore,
+  getRatingOfProduct,
+  addRatingForProduct,
   deleteRating
 }
