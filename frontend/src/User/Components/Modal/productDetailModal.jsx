@@ -6,7 +6,8 @@ import minus from '../../assets/img/minus.png'
 import plus from '../../assets/img/plus.png'
 import soldout from '../../assets/img/sold-out.png'
 import close from '../../assets/img/close.jfif'
-const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOperatingHours }) => {
+import Comment from "./comment";
+const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOperatingHours, ratings, setRatings,  idUser }) => {
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
     const handleIncrease = () => {
@@ -22,6 +23,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     }
 
     const [selectedImage, setSelectedImage] = useState(product.images[0])
+
     return (
         <div>
             <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
@@ -200,7 +202,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                     <div class="menu-restaurant-container">
                                         <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                            {/* <Comment store={store} ratings={ratings} idUser={idUser} setRatings={setRatings}/> */}
+                                            <Comment store={product} ratings={ratings} idUser={idUser} setRatings={setRatings}/>
 
                                         </div>
 

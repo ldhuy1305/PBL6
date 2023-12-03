@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
-import { addRatingForStore, updateRatingForStore } from "../../services/userServices";
+import { updateRatingForStore } from "../../services/userServices";
 const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
     const { t } = useTranslation();
 
@@ -75,7 +75,12 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
             if (!rating) {
                 try {
                     setIsLoading(true);
-                    const response = await addRatingForStore(store._id, res)
+                    const response = await axios.post(`https://falth-api.vercel.app/api/product/${store._id}/rating`, res, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        ContentType: 'multipart/form-data',
+                    }
+                });
                     setNotify("Đánh giá thành công!")
                     setOpenNotify(true)
                     handleClose()
