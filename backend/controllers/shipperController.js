@@ -22,11 +22,14 @@ exports.getAllShipper = catchAsync(async (req, res, next) => {
     isAccepted: true,
     isVerified: true,
   };
-  const features = new ApiFeatures(Shipper.find(obj), req.query)
+  const features = new ApiFeatures(
+    Shipper.find(obj).select("+isVerified"),
+    req.query
+  )
     .search()
     .limitFields()
     .paginate();
-  shippers = await features.query;
+  const shippers = await features.query;
   return res.status(200).json({
     length: shippers.length,
     data: shippers,

@@ -1,6 +1,34 @@
 var express = require("express");
 var router = express.Router();
 const orderController = require("../controllers/orderController");
-router.post("/user/:userId/store/:storeId", orderController.placeOrder);
-router.get("/:id", orderController.viewOrder);
+const authController = require("../controllers/authController");
+router.get("/after-checkout/payment", orderController.payment);
+router.use(authController.protect);
+router.post(
+  "/user/:userId/store/:storeId",
+  authController.restrict("User"),
+  orderController.placeOrder
+);
+router.get(
+  "/:id",
+  authController.restrict("Owner", "Shipper", "User"),
+  orderController.viewOrder
+);
+router.get(
+  "/owner/:ownerId",
+  authController.restrict("Owner"),
+  orderController.refuseOrderWhenTimeOut,
+  orderController.getOrdersByOwnerId
+);
+router.get(
+  "/user/:userId",
+  authController.restrict("User"),
+  orderController.refuseOrderWhenTimeOut,
+  orderController.getOrdersByUserId
+);
+router.patch(
+  "/:id",
+  authController.restrict("User"),
+  orderController.cancelOrder
+);
 module.exports = router;

@@ -7,34 +7,46 @@ const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
-
+const ApiFeatures = require("../utils/ApiFeatures");
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
   getAllUser = catchAsync(async (req, res, next) => {
-    const shippers = await User.find({
+    let obj = {
       isVerified: true,
       role: "User",
+    };
+    const features = new ApiFeatures(
+      User.find(obj).select("+isVerified"),
+      req.query
+    )
+      .search()
+      .limitFields()
+      .paginate();
+    const users = await features.query;
+    return res.status(200).json({
+      length: users.length,
+      data: users,
     });
-    return res.status(200).json(shippers);
   });
   getUserById = handleController.getOne(User);
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id).populate("contact");
-    let contact = user.contact.find(
+    let index = user.contact.findIndex(
       (el) => el._id.toString() === user.defaultContact.toString()
     );
-    contact.address = req.body.address ? req.body.address : contact.address;
-    contact.phoneNumber = req.body.phoneNumber
-      ? req.body.phoneNumber
-      : contact.phoneNumber;
+
     user.markModified("contact");
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
+    user.contact[index] = req.body.contact;
     await user.save({ validateBeforeSave: false });
-    res.status(200).json(user);
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
   });
   changePass = catchAsync(async (req, res, next) => {
     // const { newPass, confirmedPass } = req.body;
@@ -92,13 +104,13 @@ class userController {
     const { userId, storeId } = req.params;
     let user = await User.findById(userId);
 
-    user = await user.populate("contactId").execPopulate();
     const store = await Store.findById(storeId);
 
     const storeCoordinates = {
       latitude: store.location.coordinates[0],
       longitude: store.location.coordinates[1],
     };
+    console.log(store);
     const data = user.contact.map(function(contact) {
       console.log(contact);
       const contactCoordinates = {

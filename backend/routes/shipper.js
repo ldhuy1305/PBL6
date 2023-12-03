@@ -3,6 +3,7 @@ var router = express.Router();
 const shipperController = require("../controllers/shipperController");
 const authController = require("../controllers/authController");
 const contactController = require("../controllers/contactController");
+const ratingRoute = require("./rating");
 
 router
   .route("/")
@@ -21,7 +22,7 @@ router
   .route("/:id")
   .get(
     authController.protect,
-    authController.restrict("Shipper"),
+    // authController.restrict("Shipper"),
     shipperController.getShipperById
   )
   .patch(
@@ -42,4 +43,9 @@ router.route("/:id/find-orders").get(shipperController.findOrdersNearByShipper);
 router.route("/:id/daily").get(shipperController.getOrdersDaily);
 router.route("/:id/weekly").get(shipperController.getOrdersWeekly);
 router.route("/:id/monthly").get(shipperController.getOrdersMonthly);
+
+// POST /tour/234fad4/reviews
+// GET /tour/234fad4/reviews
+
+router.use("/:shipperId/rating", ratingRoute);
 module.exports = router;

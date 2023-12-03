@@ -6,7 +6,7 @@ const cloudinary = require("cloudinary").v2;
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    const doc = await Model.findById(id);
+    const doc = await Model.findById(id).populate("ratings");
     if (!doc) {
       return next(new appError("Couldn't find this document", 404));
     }

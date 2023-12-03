@@ -27,4 +27,14 @@ router
 router.route("/store").get(storeController.getAllStore);
 router.route("/store/:id").get(storeController.getStoreByStoreId);
 
+//Manage Users
+router.route("/user").get(userController.getAllUser);
+
+// Statistics
+// router.route("/number-user/daily").get(adminController.getNumberUsersDaily);
+// router.route("/number-user/weekly").get(adminController.getNumberUsersWeekly);
+router.route("/user/monthly").get(adminController.getNumberUsersMonthly);
+router.route("/user/quarterly").get(adminController.getNumbersUsersQuarterly);
+router.route("/revenue/monthly").get(adminController.getRevenueMonthly);
+router.route("/revenue/quarterly").get(adminController.getRevenueQuarterly);
 module.exports = router;

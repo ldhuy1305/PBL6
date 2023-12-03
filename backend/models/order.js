@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const orderSchema = new Schema(
   {
-    userId: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    storeId: {
+    store: {
       type: Schema.Types.ObjectId,
       ref: "Store",
     },
-    shipperId: {
+    shipper: {
       type: Schema.Types.ObjectId,
       ref: "Shipper",
     },
@@ -33,21 +33,25 @@ const orderSchema = new Schema(
     ],
     shipCost: {
       type: Number,
-      defaultValue: 0,
+      default: 0,
     },
     totalPrice: {
       type: Number,
-      defaultValue: 0,
+      default: 0,
     },
     status: {
       type: String,
       enum: [
-        "Đặt hàng thành công",
-        "Chuẩn bị soạn đơn hàng",
-        "Chuẩn bị giao hàng",
-        "Đang giao hàng",
-        "Giao hàng thành công",
+        "Pending", // when user order
+        "Cancelled", // when user want to cancel order
+        "Waiting", // when user checkout
+        "Preparing", // when shipper accept order
+        "Ready", // when shipper take order
+        "Delivering", // when shipper delivery order
+        "Finished", // when shipper deliveried
+        "Refused", // when don't find shipper
       ],
+      default: "Pending",
     },
     paymentMethod: {
       type: String,
@@ -55,10 +59,32 @@ const orderSchema = new Schema(
     dateOrdered: {
       type: Date,
     },
+    storeLocation: {
+      type: {
+        type: String,
+        enum: ["Point"],
+      },
+      coordinates: {
+        type: [Number],
+        index: "2dsphere",
+      },
+    },
+    contact: {
+      type: Schema.Types.ObjectId,
+      ref: "Contact",
+    },
   },
   {
     timestamps: true,
   }
 );
-
+orderSchema.pre("save", async function(next) {
+  const store = await mongoose.model("Store").findById(this.store);
+  this.storeLocation = {
+    type: "Point",
+    coordinates: [...store.location.coordinates].reverse(),
+  };
+  next();
+});
+orderSchema.index({ storeLocation: "2dsphere" });
 module.exports = mongoose.model("Order", orderSchema);

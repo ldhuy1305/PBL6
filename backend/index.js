@@ -14,7 +14,8 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 const hsts = require("hsts");
-dotenv.config({ path: "./.env" });
+
+require("dotenv").config();
 
 mongoose
   .connect(process.env.DATABASE, {
@@ -64,8 +65,8 @@ app.use(express.json({ limit: "100kb" }));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: "You have exceeded the 100 requests in 15 minutes limit!",
+  max: 1000,
+  message: "You have exceeded the 1000 requests in 15 minutes limit!",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });

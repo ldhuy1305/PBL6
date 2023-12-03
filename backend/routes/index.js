@@ -1,3 +1,4 @@
+const orderControler = require("../controllers/orderController");
 // const adminRoute = require('./admin');
 const shipperRoute = require("./shipper");
 const userRoute = require("./user");
@@ -30,6 +31,7 @@ function route(app) {
   // app.use("/", (req, res, next) => {
   //   res.status(200).json({ message: "Welcome to homepage" });
   // });
+  app.use("/user/orderHistory", orderControler.payment);
   app.all("/*", (req, res, next) => {
     next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));
   });

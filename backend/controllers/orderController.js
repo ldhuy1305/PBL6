@@ -1,36 +1,531 @@
 const Contact = require("../models/contact");
 const Order = require("../models/order");
+const Transaction = require("../models/transaction");
 const Store = require("../models/store");
-const userModel = require("../models/userModel");
+const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
 const appError = require("../utils/appError");
+const ApiFeatures = require("../utils/ApiFeatures");
+const request = require("request");
+const moment = require("moment");
+const mongoose = require("mongoose");
+const crypto = require("crypto");
+require("dotenv").config();
+process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice } = req.body;
+    const { shipCost, cart, totalPrice, contact } = req.body;
     const order = await Order.create({
-      userId,
-      storeId,
+      user: userId,
+      store: storeId,
       cart,
       totalPrice,
       shipCost,
+      contact,
+      status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
+    process.env.TZ = "Asia/Ho_Chi_Minh";
+
+    let date = new Date();
+    let createDate = moment(date).format("YYYYMMDDHHmmss");
+
+    let env = process.env;
+
+    let tmnCode = env.vnp_TmnCode;
+    let secretKey = env.vnp_HashSecret;
+    let vnpUrl = env.vnp_Url;
+    let returnUrl = env.vnp_ReturnUrl;
+    let ipAddr =
+      req.headers["x-forwarded-for"] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress;
+    let currCode = "VND";
+    let vnp_Params = {};
+    vnp_Params["vnp_Version"] = "2.1.0";
+    vnp_Params["vnp_Command"] = "pay";
+    vnp_Params["vnp_TmnCode"] = tmnCode;
+    vnp_Params["vnp_Locale"] = "vn";
+    vnp_Params["vnp_CurrCode"] = currCode;
+    vnp_Params["vnp_TxnRef"] = order._id;
+    vnp_Params["vnp_OrderInfo"] = `Thanh toan cho mã đơn hàng:${order._id}`;
+    vnp_Params["vnp_OrderType"] = "billpayment";
+    vnp_Params["vnp_Amount"] = order.totalPrice * 100;
+    vnp_Params["vnp_ReturnUrl"] = returnUrl;
+    vnp_Params["vnp_IpAddr"] = ipAddr;
+    vnp_Params["vnp_CreateDate"] = createDate;
+    vnp_Params["vnp_BankCode"] = "VNBANK";
+
+    vnp_Params = sortObject(vnp_Params);
+    let querystring = require("qs");
+    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let crypto = require("crypto");
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let signed = hmac.update(new Buffer.from(signData, "utf-8")).digest("hex");
+    vnp_Params["vnp_SecureHash"] = signed;
+    vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+
     res.status(200).json({
       status: "success",
       data: order,
+      url: vnpUrl,
+    });
+  });
+
+  // after check out, system create transaction
+  payment = catchAsync(async (req, res, next) => {
+    const vnp_Params = req.query;
+    const transaction = await Transaction.findOne({
+      vnp_TxnRef: vnp_Params.vnp_TxnRef,
+    });
+    if (req.query.vnp_TransactionStatus != "00") {
+      await Order.findByIdAndDelete(req.query.vnp_TxnRef);
+      return next(new appError("Thanh toán không thành công!"), 404);
+    }
+    if (!transaction) await Transaction.create(vnp_Params);
+    await Order.findByIdAndUpdate(
+      mongoose.Types.ObjectId(vnp_Params.vnp_TxnRef),
+      { status: "Waiting" }
+    );
+    res.status(200).json({
+      status: "success",
+      data: vnp_Params,
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const order = await Order.findById(id);
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    console.log(req.params.id);
+    const order = await Order.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "store",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $lookup: {
+          from: "contacts",
+          localField: "contact",
+          foreignField: "_id",
+          as: "contact",
+        },
+      },
+      {
+        $unwind: "$contact",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "cart.product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $addFields: {
+          "cart.product.name": "$product.name",
+        },
+      },
+      {
+        $project: {
+          storeLocation: {
+            coordinates: { $reverseArray: "$storeLocation.coordinates" },
+          },
+          shipCost: 1,
+          totalPrice: 1,
+          status: 1,
+          user: {
+            email: 1,
+            firstName: 1,
+            lastName: 1,
+          },
+          store: {
+            name: 1,
+            address: 1,
+          },
+          cart: 1,
+          contact: 1,
+          dateOrdered: 1,
+          depreciationShip: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$shipCost",
+              else: {
+                $multiply: ["$shipCost", process.env.percentShipper / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$shipCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
+        },
+      },
+    ]);
+    if (order[0] == null)
+      return next(new appError("Không tìm thấy đơn hàng"), 404);
     res.status(200).json({
       status: "success",
-      data: order,
+      data: order[0],
+    });
+  });
+  // refuse order when time out
+  refuseOrderWhenTimeOut = catchAsync(async (req, res, next) => {
+    const orders = await Order.find();
+    if (orders) {
+      for (let order of orders) {
+        let t = (Date.now() - order.createdAt) / 60000;
+        if (order.status == "Waiting" && t > 30) {
+          order.status = "Refused";
+          await this.refundOrder(req, order._id, next);
+          await order.save();
+        }
+      }
+    }
+    next();
+  });
+  // Cancel order
+  cancelOrder = catchAsync(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (order.status != "Waiting")
+      return next(new appError("Không thể huỷ đơn hàng!", 404));
+    order.status = "Cancelled";
+    await this.refundOrder(req, order._id, next);
+    await order.save();
+    res.status(200).json({ status: "success", data: order });
+  });
+
+  changeStatus = catchAsync(async (req, res, next) => {
+    const { id, shipperId } = req.params;
+    const order = await Order.findById(id);
+    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    let message;
+    // when shipper accept order
+    if (order.status == "Pending") {
+      order.shipper = shipperId;
+      order.status = "Preparing";
+      message = "Shipper đã xác nhận giao hàng";
+    }
+    // when shipper take order
+    if (order.status == "Preparing") {
+      order.status = "Ready";
+      message = "Shipper đã nhận hàng";
+    }
+    // when shipper delivery order
+    if (order.status == "Ready") {
+      order.status = "Delivering";
+      message = "Shipper đang giao hàng";
+    }
+    // when shipper deliveried
+    if (order.status == "Delivering") {
+      order.status = "Finished";
+      message = "Shipper đã giao hàng thành công";
+    }
+    await order.save();
+    return res.status(200).json({
+      success: "success",
+      message,
+    });
+  });
+  async refundOrder(req, id, next) {
+    process.env.TZ = "Asia/Ho_Chi_Minh";
+    const transaction = await Transaction.findOne({
+      vnp_TxnRef: `${id}`,
+    });
+    if (!transaction) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    let date = new Date();
+
+    let vnp_TmnCode = process.env.vnp_TmnCode;
+    let secretKey = process.env.vnp_HashSecret;
+    let vnp_Api = process.env.vnp_Api;
+
+    let vnp_TxnRef = transaction.vnp_TxnRef;
+    let vnp_TransactionDate = transaction.vnp_PayDate;
+    let vnp_Amount = transaction.vnp_Amount;
+    let vnp_TransactionType = "02";
+    let vnp_CreateBy = "Falth";
+
+    let currCode = "VND";
+
+    let vnp_RequestId = moment(date).format("HHmmss");
+    let vnp_Version = "2.1.0";
+    let vnp_Command = "refund";
+    let vnp_OrderInfo = "Hoan tien GD ma:" + vnp_TxnRef;
+
+    let vnp_IpAddr =
+      req.headers["x-forwarded-for"] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress;
+
+    let vnp_CreateDate = moment(date).format("YYYYMMDDHHmmss");
+
+    let vnp_TransactionNo = "0";
+
+    let data =
+      vnp_RequestId +
+      "|" +
+      vnp_Version +
+      "|" +
+      vnp_Command +
+      "|" +
+      vnp_TmnCode +
+      "|" +
+      vnp_TransactionType +
+      "|" +
+      vnp_TxnRef +
+      "|" +
+      vnp_Amount +
+      "|" +
+      vnp_TransactionNo +
+      "|" +
+      vnp_TransactionDate +
+      "|" +
+      vnp_CreateBy +
+      "|" +
+      vnp_CreateDate +
+      "|" +
+      vnp_IpAddr +
+      "|" +
+      vnp_OrderInfo;
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let vnp_SecureHash = hmac
+      .update(new Buffer.from(data, "utf-8"))
+      .digest("hex");
+
+    let dataObj = {
+      vnp_RequestId: vnp_RequestId,
+      vnp_Version: vnp_Version,
+      vnp_Command: vnp_Command,
+      vnp_TmnCode: vnp_TmnCode,
+      vnp_TransactionType: vnp_TransactionType,
+      vnp_TxnRef: vnp_TxnRef,
+      vnp_Amount: vnp_Amount,
+      vnp_TransactionNo: vnp_TransactionNo,
+      vnp_CreateBy: vnp_CreateBy,
+      vnp_OrderInfo: vnp_OrderInfo,
+      vnp_TransactionDate: vnp_TransactionDate,
+      vnp_CreateDate: vnp_CreateDate,
+      vnp_IpAddr: vnp_IpAddr,
+      vnp_SecureHash: vnp_SecureHash,
+    };
+
+    request(
+      {
+        url: vnp_Api,
+        method: "POST",
+        json: true,
+        body: dataObj,
+      },
+      function(error, response, body) {
+        if (error) {
+          return next(new appError("Xuất hiện lỗi hoàn tiền", 404));
+        }
+      }
+    );
+    // res.status(200).json({
+    //   status: "success",
+    //   data: transaction,
+    // });
+  }
+
+  getOrdersByOwnerId = catchAsync(async (req, res, next) => {
+    const store = await Store.findOne({ ownerId: req.params.ownerId });
+    if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
+    const limit = +req.query.limit || 10;
+    const page = +req.query.page || 1;
+
+    let start, end;
+
+    if (!req.query.start)
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
+
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      store: store._id,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
+        status: req.query.status,
+      };
+
+    const orders = await Order.aggregate([
+      {
+        $match: obj,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: { $subtract: ["$totalPrice", "$shipCost"] },
+        },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: 1,
+          depreciation: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$orderCost",
+              else: {
+                $multiply: ["$orderCost", process.env.percentStore / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$orderCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          dateOrdered: -1,
+        },
+      },
+    ]);
+    res.status(200).json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  });
+
+  getOrdersByUserId = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.params.userId);
+    if (!user) return next(new appError("Không tìm thấy người dùng"), 404);
+    let start, end;
+
+    if (!req.query.start)
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
+
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      user: req.params.userId,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
+        status: req.query.status,
+      };
+    const features = new ApiFeatures(
+      Order.find(obj).populate({
+        path: "store",
+        select:
+          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",
+      }),
+      req.query
+    )
+      .sort()
+      .limitFields()
+      .paginate();
+    const orders = await features.query;
+    res.status(200).json({
+      status: "success",
+      length: orders.length,
+      data: orders,
     });
   });
 }
-
+function sortObject(obj) {
+  let sorted = {};
+  let str = [];
+  let key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      str.push(encodeURIComponent(key));
+    }
+  }
+  str.sort();
+  for (key = 0; key < str.length; key++) {
+    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+  }
+  return sorted;
+}
 module.exports = new orderController();
