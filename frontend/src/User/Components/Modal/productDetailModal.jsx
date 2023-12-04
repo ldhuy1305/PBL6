@@ -7,7 +7,7 @@ import plus from '../../assets/img/plus.png'
 import soldout from '../../assets/img/sold-out.png'
 import close from '../../assets/img/close.jfif'
 import Comment from "./comment";
-const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOperatingHours, ratings, setRatings,  idUser }) => {
+const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOperatingHours, ratings, setRatings, idUser }) => {
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
     const handleIncrease = () => {
@@ -23,6 +23,25 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     }
 
     const [selectedImage, setSelectedImage] = useState(product.images[0])
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const productImages = [
+        'https://res.cloudinary.com/drk3oaeza/image/upload/v1700207292/pbl6/xl2opejo7m1kfzkhiysq.jpg',
+        'https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg',
+        'https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
+    ];
+
+    const handleLeftArrowClick = () => {
+        const newIndex = (currentIndex - 1 + productImages.length) % productImages.length;
+        setSelectedImage(productImages[newIndex]);
+        setCurrentIndex(newIndex);
+    };
+
+    const handleRightArrowClick = () => {
+        const newIndex = (currentIndex + 1) % productImages.length;
+        setSelectedImage(productImages[newIndex]);
+        setCurrentIndex(newIndex);
+    };
 
     return (
         <div>
@@ -41,8 +60,8 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                     />
 
                                     <div class="LmLCVP">
-                                        {product.images.map((image) => (
-                                            <div class="lnM4pa">
+                                        {productImages.map((image, index) => (
+                                            <div className={`lnM4pa ${index === currentIndex ? 'selected-image' : ''}`} key={index}>
                                                 <div class="OibNSJ">
                                                     <div class="_11mwwv">
                                                         <picture
@@ -57,36 +76,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                                 </div>
                                             </div>
                                         ))}
-                                        <div class="lnM4pa">
-                                            <div class="OibNSJ">
-                                                <div class="_11mwwv">
-                                                    <picture
-                                                    ><img
-                                                            alt=""
-                                                            class="_7D4JtJ"
-                                                            src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg'
-                                                            onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg')}
-                                                        /></picture>
-                                                </div>
-                                                <div class=""></div>
-                                            </div>
-                                        </div>
-                                        <div class="lnM4pa">
-                                            <div class="OibNSJ">
-                                                <div class="_11mwwv">
-                                                    <picture
-                                                    ><img
-                                                            alt=""
-                                                            class="_7D4JtJ"
-                                                            src='https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
-                                                            onClick={() => setSelectedImage('https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg')}
-                                                        /></picture>
-                                                </div>
-                                                <div class=""></div>
-                                            </div>
-                                        </div>
-
-                                        <button class="shopee-icon-button LFMWYe RNDSpb" tabindex="-1">
+                                        <button class="shopee-icon-button LFMWYe RNDSpb" tabindex="-1" onClick={handleLeftArrowClick}>
                                             <svg
                                                 enable-background="new 0 0 13 20"
                                                 viewBox="0 0 13 20"
@@ -97,7 +87,9 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                                 <polygon
                                                     points="4.2 10 12.1 2.1 10 -.1 1 8.9 -.1 10 1 11 10 20 12.1 17.9"
                                                 ></polygon>
-                                            </svg></button><button class="shopee-icon-button LFMWYe _41JS8N" tabindex="-1">
+                                            </svg>
+                                        </button>
+                                        <button class="shopee-icon-button LFMWYe _41JS8N" tabindex="-1" onClick={handleRightArrowClick}>
                                             <svg
                                                 enable-background="new 0 0 13 21"
                                                 viewBox="0 0 13 21"
@@ -202,7 +194,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                     <div class="menu-restaurant-container">
                                         <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                            <Comment store={product} ratings={ratings} idUser={idUser} setRatings={setRatings}/>
+                                            <Comment store={product} ratings={ratings} idUser={idUser} setRatings={setRatings} />
 
                                         </div>
 

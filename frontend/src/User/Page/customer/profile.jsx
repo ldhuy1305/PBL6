@@ -148,10 +148,13 @@ const Profile = () => {
         e.preventDefault();
         if(formDataInfo.firstName === '' || formDataInfo.lastName === ''|| formDataInfo.address === ''|| formDataInfo.phoneNumber === '') {
             setErrorInfo(t("error11"))
-        } else if(!/^\d{10}$/.test(formDataInfo.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(formDataInfo.firstName) || !/^[\p{L} ']+$/u.test(formDataInfo.lastName)) {
+            setErrorInfo(t("error13"));
+         } else if(!/^\d{10}$/.test(formDataInfo.phoneNumber)) {
             setErrorInfo(t("error9"))
         }else {
             setIsLoading(true)
+            setErrorInfo('')
             try {
                 const user = localStorage.getItem("user");
                 const token = localStorage.getItem("token");

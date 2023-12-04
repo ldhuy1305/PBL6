@@ -268,10 +268,15 @@ const updateRatingForStore = async (id, ratingData) => {
 
 const getRatingOfProduct = async (productID) => {
   try {
+    const token = localStorage.getItem("token");
     const api = `https://falth-api.vercel.app/api/product/${productID}/rating`
     console.log(api)
-    const response = await axios.get(api);
-    console.log(response)
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
     return response.data
   } catch (error) {
     console.error("Error:", error);

@@ -11,6 +11,7 @@
   "error10": "Email address already exists",
   "error11": "Please enter full information!",
   "error12": "Failed to change information",
+  "error13": "The name only includes letters and the character '",
 
   "success": "Information received! Please confirm your email",
 

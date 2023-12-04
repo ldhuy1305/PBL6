@@ -100,6 +100,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                 try {
                     setIsLoading(true);
                     res.append('dels', dels);
+                    console.log(dels, formData)
                     const response = await updateRatingForStore(rating._id, res)
                     setNotify("Chỉnh sửa đánh giá thành công!")
                     setOpenNotify(true)

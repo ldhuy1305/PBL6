@@ -100,7 +100,9 @@ const SignUpShipper = () => {
             setError(t("error5"))
         } else if (formData.password !== formData.passwordConfirm) {
             setError(t("error6"))
-        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(formData.firstName) || !/^[\p{L} ']+$/u.test(formData.lastName)) {
+            setError(t("error13"));
+         } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
         } else {
             try {

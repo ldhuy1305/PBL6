@@ -78,7 +78,9 @@ const SignUpCustomer = () => {
             setError(t("error5"))
         } else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
             setError(t("error6"))
-        } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(registrationData.firstName) || !/^[\p{L} ']+$/u.test(registrationData.lastName)) {
+            setError(t("error13"));
+         } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
             setError(t("error9"))
         } else if (formData.detailAddress === '' || formData.ward === ""  || formData.district === "" || formData.city === "") {
             setError("Vui lòng nhập đầy đủ thông tin địa chỉ")
