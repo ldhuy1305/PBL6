@@ -2,14 +2,14 @@
   padding: 10px;
   box-shadow: 0 0 5px #ffdfdf;
   border-radius: 5px;
-  width: 300px;
-  height: 200px;
+  width: 100%;
+  /* height: 70%; */
   overflow: hidden;
   border: 0.1px dotted #818181;
 }
 
 
-.card .container {
+.card .container1 {
   gap: 2%;
   width: 100%;
   height: auto;
@@ -23,7 +23,7 @@
 
 }
 
-.card .container .image {
+.card .container1 .image {
   width: 30%;
   margin-right: 5px;
   height: 40%;
@@ -31,13 +31,13 @@
   margin-bottom: 8px;
 }
 
-.card .container img {
+.card .container1 img {
   width: 100%;
   height: 100%;
   border-radius: 5px;
 }
 
-.card .container .image span {
+.card .container1 .image span {
   position: absolute;
   color: rgb(92, 92, 203);
   top: -2px;
@@ -46,11 +46,11 @@
   cursor: pointer;
 }
 
-.card .container .image i {
+.card .container1 .image i {
   position: absolute;
   color: rgb(134, 134, 134);
-  top: 10px;
-  right: 30px;
+  top: 17px;
+  right: 24px;
   font-size: 30px;
   cursor: pointer;
 }
@@ -86,7 +86,7 @@
   height: 100%;
 }
 
-.containerimg {
+.container1img {
   height: 100%;
   width: 100%;
 }

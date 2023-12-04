@@ -136,11 +136,6 @@ userSchema.pre("save", async function(next) {
   next();
 });
 
-userSchema.pre(/^find/, function(next) {
-  this.select("-__t -__v");
-  next();
-});
-
 userSchema.methods.isCorrectPassword = async function(
   userPassword,
   candidatePassword

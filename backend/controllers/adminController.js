@@ -2,10 +2,13 @@ const Shipper = require("../models/shipper");
 const Owner = require("../models/owner");
 const Store = require("../models/store");
 const User = require("../models/userModel");
+const Order = require("../models/order");
 const ApiFeatures = require("../utils/ApiFeatures");
 const appError = require("../utils/appError");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
+const moment = require("moment");
+process.env.TZ = "Asia/Ho_Chi_Minh";
 class adminController {
   getListAllAdmin = catchAsync(async (req, res, next) => {
     const features = new ApiFeatures(User.find({ role: "Admin" }), req.query)
@@ -133,6 +136,282 @@ class adminController {
         );
       }
     }
+  });
+  getNumberUsersMonthly = catchAsync(async (req, res, next) => {
+    process.env.TZ = "Asia/Ho_Chi_Minh";
+
+    const now = moment().startOf("month");
+    const last = moment()
+      .subtract(req.query.limit || 5, "months")
+      .startOf("month");
+    const monthly = [];
+    let currentMonth = moment(last);
+
+    while (currentMonth.isSameOrBefore(now, "month")) {
+      const data = await this.getNumbersUsersOneMonth(currentMonth.toDate());
+      monthly.push({
+        date: currentMonth.endOf("month").format("YYYY-MM-DD"),
+        numUsers: data ? data.numUsers : 0,
+        numOwners: data ? data.numOwners : 0,
+        numShippers: data ? data.numShippers : 0,
+      });
+      currentMonth.add(1, "month");
+    }
+    res.status(200).json({
+      status: "success",
+      data: monthly,
+    });
+  });
+  getNumbersUsersOneMonth = async function (date) {
+    const startOfMonth = moment(date)
+      .startOf("month")
+      .startOf("day")
+      .add(7, "hours")
+      .toDate();
+    const endOfMonth = moment(date)
+      .endOf("month")
+      .endOf("day")
+      .add(7, "hours")
+      .toDate();
+    console.log(startOfMonth, endOfMonth);
+    let data = await User.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startOfMonth,
+            $lte: endOfMonth,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          numUsers: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$role", "User"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+          numOwners: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$role", "Owner"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+          numShippers: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$role", "Shipper"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          numUsers: { $ifNull: ["$numUsers", 0] },
+          numOwners: { $ifNull: ["$numOwners", 0] },
+          numShippers: { $ifNull: ["$numShippers", 0] },
+        },
+      },
+    ]);
+    return data[0];
+  };
+  getNumbersUsersQuarterly = catchAsync(async (req, res, next) => {
+    const data = await User.aggregate([
+      {
+        $project: {
+          role: 1,
+          quarter: {
+            $cond: [
+              { $lte: [{ $month: "$createdAt" }, 3] },
+              "Quý 1",
+              {
+                $cond: [
+                  { $lte: [{ $month: "$createdAt" }, 6] },
+                  "Quý 2",
+                  {
+                    $cond: [
+                      { $lte: [{ $month: "$createdAt" }, 9] },
+                      "Quý 3",
+                      "Quý 4",
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$quarter",
+          numUsers: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$role", "User"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+          numOwners: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$role", "Owner"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+          numShippers: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$role", "Shipper"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+    ]);
+    res.status(200).json({
+      status: "success",
+      data,
+    });
+  });
+  getRevenueMonthly = catchAsync(async (req, res, next) => {
+    process.env.TZ = "Asia/Ho_Chi_Minh";
+    const now = moment().startOf("month");
+    const last = moment()
+      .subtract(req.query.limit || 5, "months")
+      .startOf("month");
+    const monthly = [];
+    let currentMonth = moment(last);
+
+    while (currentMonth.isSameOrBefore(now, "month")) {
+      const data = await this.getRevenueOneMonth(currentMonth.toDate());
+      monthly.push({
+        date: currentMonth.endOf("month").format("YYYY-MM-DD"),
+        revenue: data ? data.revenue : 0,
+      });
+      currentMonth.add(1, "month");
+    }
+    res.status(200).json({
+      status: "success",
+      data: monthly,
+    });
+  });
+  getRevenueOneMonth = async function (date) {
+    const startOfMonth = moment(date)
+      .startOf("month")
+      .startOf("day")
+      .add(7, "hours")
+      .toDate();
+    const endOfMonth = moment(date)
+      .endOf("month")
+      .endOf("day")
+      .add(7, "hours")
+      .toDate();
+    const data = await Order.aggregate([
+      {
+        $match: {
+          status: { $nin: ["Cancelled", "Refused"] },
+          dateOrdered: {
+            $gte: startOfMonth,
+            $lte: endOfMonth,
+          },
+        },
+      },
+      {
+        $project: {
+          revenue: {
+            $add: [
+              {
+                $multiply: [
+                  { $subtract: ["$totalPrice", "$shipCost"] },
+                  process.env.percentStore / 100,
+                ],
+              },
+              { $multiply: ["$shipCost", process.env.percentShipper / 100] },
+            ],
+          },
+        },
+      },
+    ]);
+    return data[0];
+  };
+  getRevenueQuarterly = catchAsync(async (req, res, next) => {
+    const data = await Order.aggregate([
+      {
+        $match: {
+          status: { $nin: ["Cancelled", "Refused"] },
+        },
+      },
+      {
+        $project: {
+          totalPrice: 1,
+          shipCost: 1,
+          quarter: {
+            $cond: [
+              { $lte: [{ $month: "$dateOrdered" }, 3] },
+              "Quý 1",
+              {
+                $cond: [
+                  { $lte: [{ $month: "$dateOrdered" }, 6] },
+                  "Quý 2",
+                  {
+                    $cond: [
+                      { $lte: [{ $month: "$dateOrdered" }, 9] },
+                      "Quý 3",
+                      "Quý 4",
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$quarter",
+          revenue: {
+            $sum: {
+              $add: [
+                {
+                  $multiply: [
+                    { $subtract: ["$totalPrice", "$shipCost"] },
+                    process.env.percentStore / 100,
+                  ],
+                },
+                { $multiply: ["$shipCost", process.env.percentShipper / 100] },
+              ],
+            },
+          },
+        },
+      },
+      // {
+      //   $project: {
+      //     quarter: 1,
+
+      //   },
+      // },
+    ]);
+    res.status(200).json({
+      status: "success",
+      data,
+    });
   });
 }
 module.exports = new adminController();

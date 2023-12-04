@@ -228,7 +228,11 @@ exports.getRevenueByCat = catchAsync(async (req, res, next) => {
     {
       $group: {
         _id: "$product.category.catName",
-        revenue: { $sum: "$revenue" },
+        revenue: {
+          $sum: {
+            $multiply: ["$revenue", 1 - process.env.percentStore / 100],
+          },
+        },
       },
     },
     {
@@ -248,15 +252,9 @@ exports.getRevenueByCat = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getOrderOneDate = async function(id, date) {
-  const startOfDay = moment(date)
-    .startOf("day")
-    .add(7, "hours")
-    .toDate();
-  const endOfDay = moment(date)
-    .endOf("day")
-    .add(7, "hours")
-    .toDate();
+exports.getOrderOneDate = async function (id, date) {
+  const startOfDay = moment(date).startOf("day").add(7, "hours").toDate();
+  const endOfDay = moment(date).endOf("day").add(7, "hours").toDate();
   const data = await Order.aggregate([
     {
       $match: {
@@ -283,14 +281,18 @@ exports.getOrderOneDate = async function(id, date) {
     {
       $group: {
         _id: null,
-        revenue: { $sum: "$revenue" },
+        revenue: {
+          $sum: {
+            $multiply: ["$revenue", 1 - process.env.percentStore / 100],
+          },
+        },
         count: { $sum: 1 },
       },
     },
   ]);
   return data[0];
 };
-exports.getOrderOneWeek = async function(id, date) {
+exports.getOrderOneWeek = async function (id, date) {
   const startOfWeek = moment(date)
     .startOf("week")
     .startOf("day")
@@ -327,14 +329,18 @@ exports.getOrderOneWeek = async function(id, date) {
     {
       $group: {
         _id: null,
-        revenue: { $sum: "$revenue" },
+        revenue: {
+          $sum: {
+            $multiply: ["$revenue", 1 - process.env.percentStore / 100],
+          },
+        },
         count: { $sum: 1 },
       },
     },
   ]);
   return data[0];
 };
-exports.getOrderOneMonth = async function(id, date) {
+exports.getOrderOneMonth = async function (id, date) {
   const startOfMonth = moment(date)
     .startOf("month")
     .startOf("day")
@@ -372,7 +378,11 @@ exports.getOrderOneMonth = async function(id, date) {
     {
       $group: {
         _id: null,
-        revenue: { $sum: "$revenue" },
+        revenue: {
+          $sum: {
+            $multiply: ["$revenue", 1 - process.env.percentStore / 100],
+          },
+        },
         count: { $sum: 1 },
       },
     },

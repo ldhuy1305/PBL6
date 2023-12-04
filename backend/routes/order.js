@@ -26,4 +26,9 @@ router.get(
   orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByUserId
 );
+router.patch(
+  "/:id",
+  authController.restrict("User"),
+  orderController.cancelOrder
+);
 module.exports = router;
