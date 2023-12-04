@@ -25,8 +25,8 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
             try {
                 // setIsLoading(true)
                 const data = await getRatingOfProduct(dish._id)
-                setRatings({ ...data })
-                console.log(data)
+                setRatings({ ...data.data })
+                // console.log(data);  fd
             } catch (error) {
                 console.error("Lỗi khi lấy thông tin đánh giá:", error);
             }

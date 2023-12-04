@@ -20,6 +20,7 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
     const [notify, setNotify] = useState('')
 
     const handleCloseRating = () => {
+        console.log(product)
         handleClose()
         setFormData({
             number: rating && rating.number ? rating.number : '',
@@ -30,14 +31,11 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
         const name = e.target.name;
         const files = e.target.files;
-
-        // Convert fileList to array
         const imagesArray = Array.from(files);
 
         setFormData({
@@ -161,7 +159,7 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={ava}
+                                                                src={product.product.images[0]}
                                                                 alt=""
                                                             />
                                                             <div class="shipper-name" style={{ margin: '0' }}>{product.product.name}</div>

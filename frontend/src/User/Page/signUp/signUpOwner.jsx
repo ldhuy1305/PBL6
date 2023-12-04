@@ -96,7 +96,9 @@ const SignUpOwner = () => {
             setError(t("error5"))
         }else if(formData.password.trim() !== formData.passwordConfirm.trim()) {
             setError(t("error6"))
-        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(formData.firstName) || !/^[\p{L} ']+$/u.test(formData.lastName)) {
+            setError(t("error13"));
+         } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
         } else {
             try {

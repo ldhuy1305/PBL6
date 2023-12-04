@@ -287,3 +287,8 @@ input.qty {
     padding-left: 10px;
 }
 
+.selected-image {
+    border: 2px solid #ff0000; /* Màu đỏ hoặc màu bạn muốn để làm nổi bật */
+    box-shadow: 0 0 5px #ff0000;
+}
+
