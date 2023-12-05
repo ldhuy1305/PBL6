@@ -243,8 +243,11 @@ class orderController {
     const order = await Order.findById(id);
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
     let message;
+    if (order.shipper != shipperId && order.shipper)
+      return next(new appError("Đã xuất hiện lỗi khi giao hàng"), 404);
+
     // when shipper accept order
-    if (order.status == "Pending") {
+    if (order.status == "Waiting") {
       order.shipper = shipperId;
       order.status = "Preparing";
       message = "Shipper đã xác nhận giao hàng";
