@@ -246,26 +246,24 @@ class orderController {
     if (order.shipper != shipperId && order.shipper)
       return next(new appError("Đã xuất hiện lỗi khi giao hàng"), 404);
 
-    // when shipper accept order
-    if (order.status == "Waiting") {
-      order.shipper = shipperId;
-      order.status = "Preparing";
-      message = "Shipper đã xác nhận giao hàng";
-    }
-    // when shipper take order
-    if (order.status == "Preparing") {
-      order.status = "Ready";
-      message = "Shipper đã nhận hàng";
-    }
-    // when shipper delivery order
-    if (order.status == "Ready") {
-      order.status = "Delivering";
-      message = "Shipper đang giao hàng";
-    }
-    // when shipper deliveried
-    if (order.status == "Delivering") {
-      order.status = "Finished";
-      message = "Shipper đã giao hàng thành công";
+    switch (order.status) {
+      case "Waiting":
+        // when shipper take order
+        order.shipper = shipperId;
+        order.status = "Preparing";
+        message = "Shipper has confirmed the delivery";
+        break;
+      case "Preparing":
+        // when shipper delivery order
+        order.status = "Delivering";
+        message = "Shipper is delivering the order";
+        break;
+
+      case "Delivering":
+        // when shipper deliveried
+        order.status = "Finished";
+        message = "Shipper has successfully delivered the order";
+        break;
     }
     await order.save();
     return res.status(200).json({
