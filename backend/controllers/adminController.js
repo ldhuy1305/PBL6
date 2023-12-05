@@ -162,7 +162,7 @@ class adminController {
       data: monthly,
     });
   });
-  getNumbersUsersOneMonth = async function (date) {
+  getNumbersUsersOneMonth = async function(date) {
     const startOfMonth = moment(date)
       .startOf("month")
       .startOf("day")
@@ -284,6 +284,11 @@ class adminController {
           },
         },
       },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
     ]);
     res.status(200).json({
       status: "success",
@@ -312,7 +317,7 @@ class adminController {
       data: monthly,
     });
   });
-  getRevenueOneMonth = async function (date) {
+  getRevenueOneMonth = async function(date) {
     const startOfMonth = moment(date)
       .startOf("month")
       .startOf("day")
@@ -399,6 +404,11 @@ class adminController {
               ],
             },
           },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
         },
       },
       // {
