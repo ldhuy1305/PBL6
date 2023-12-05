@@ -27,7 +27,7 @@ router.get(
   orderController.getOrdersByUserId
 );
 router.put(
-  "/:id",
+  "/:id/cancel",
   authController.restrict("User"),
   orderController.cancelOrder
 );
