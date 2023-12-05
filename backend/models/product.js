@@ -38,7 +38,7 @@ const productSchema = new Schema(
     },
     isOutofOrder: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     ratingsAverage: {
       type: Number,
