@@ -3,11 +3,13 @@ const Owner = require("../models/owner");
 const Store = require("../models/store");
 const User = require("../models/userModel");
 const Order = require("../models/order");
+const Product = require("../models/product");
 const ApiFeatures = require("../utils/ApiFeatures");
 const appError = require("../utils/appError");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
 const moment = require("moment");
+const { Parser } = require("json2csv");
 process.env.TZ = "Asia/Ho_Chi_Minh";
 class adminController {
   getListAllAdmin = catchAsync(async (req, res, next) => {
@@ -162,7 +164,7 @@ class adminController {
       data: monthly,
     });
   });
-  getNumbersUsersOneMonth = async function (date) {
+  getNumbersUsersOneMonth = async function(date) {
     const startOfMonth = moment(date)
       .startOf("month")
       .startOf("day")
@@ -312,7 +314,7 @@ class adminController {
       data: monthly,
     });
   });
-  getRevenueOneMonth = async function (date) {
+  getRevenueOneMonth = async function(date) {
     const startOfMonth = moment(date)
       .startOf("month")
       .startOf("day")
@@ -412,6 +414,292 @@ class adminController {
       status: "success",
       data,
     });
+  });
+
+  //Exports
+  exportShippers = catchAsync(async (req, res, next) => {
+    let shippers = [];
+
+    let shipperData = await Shipper.find({});
+    shipperData.forEach((shipper) => {
+      const {
+        id,
+        firstName,
+        lastName,
+        email,
+        contact,
+        role,
+        photo,
+        defaultContact,
+        vehicleNumber,
+        vehicleLicense,
+        frontImageCCCD,
+        behindImageCCCD,
+        licenseNumber,
+        vehicleType,
+        licenseImage,
+      } = shipper;
+      const contactString = contact.map((c) => JSON.stringify(c)).join("; ");
+
+      shippers.push({
+        id,
+        firstName,
+        lastName,
+        email,
+        contact: contactString,
+        role,
+        photo,
+        defaultContact,
+        vehicleNumber,
+        vehicleLicense,
+        frontImageCCCD,
+        behindImageCCCD,
+        licenseNumber,
+        vehicleType,
+        licenseImage,
+      });
+    });
+
+    const csvFields = [
+      "Id",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Contact",
+      "Role",
+      "Photo",
+      "Default Contact",
+      "Vehicle number",
+      "Vehicle license",
+      "Front image CCCD",
+      "Behind image CCCD",
+      "License number",
+      "Vehicle type",
+      "License image",
+    ];
+    const csvParser = new Parser({ csvFields });
+    const csvData = csvParser.parse(shippers);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=shippersData.csv"
+    );
+    res.status(200).end(csvData);
+  });
+
+  exportStores = catchAsync(async (req, res, next) => {
+    let stores = [];
+
+    let storeData = await Store.find({});
+    storeData.forEach((store) => {
+      const {
+        id,
+        location,
+        ratingsAverage,
+        ratingsQuantity,
+        isLocked,
+        name,
+        openAt,
+        closeAt,
+        description,
+        address,
+        phoneNumber,
+        registrationLicense,
+        image,
+      } = store;
+
+      stores.push({
+        id,
+        location,
+        ratingsAverage,
+        ratingsQuantity,
+        isLocked,
+        name,
+        openAt,
+        closeAt,
+        description,
+        address,
+        phoneNumber,
+        registrationLicense,
+        image,
+      });
+    });
+
+    const csvFields = [
+      "Id",
+      "Location",
+      "Ratings average",
+      "Ratings quantity",
+      "Is locked",
+      "Name",
+      "Open at",
+      "Close at",
+      "Description",
+      "Dddress",
+      "PhoneNumber",
+      "Registration license",
+      "Image",
+    ];
+    const csvParser = new Parser({ csvFields });
+    const csvData = csvParser.parse(stores);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=storesData.csv");
+    res.status(200).end(csvData);
+  });
+  exportUsers = catchAsync(async (req, res, next) => {
+    let users = [];
+
+    let userData = await User.find({ role: "User" });
+    userData.forEach((user) => {
+      const {
+        id,
+        firstName,
+        lastName,
+        email,
+        contact,
+        role,
+        photo,
+        defaultContact,
+      } = user;
+      const contactString = contact.map((c) => JSON.stringify(c)).join("; ");
+
+      users.push({
+        id,
+        firstName,
+        lastName,
+        email,
+        contact: contactString,
+        role,
+        photo,
+        defaultContact,
+      });
+    });
+
+    const csvFields = [
+      "Id",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Contact",
+      "Role",
+      "Photo",
+      "Default Contact",
+    ];
+    const csvParser = new Parser({ csvFields });
+    const csvData = csvParser.parse(users);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=usersData.csv");
+    res.status(200).end(csvData);
+  });
+
+  exportOwners = catchAsync(async (req, res, next) => {
+    let owners = [];
+
+    let ownerData = await Owner.find({});
+    ownerData.forEach((owner) => {
+      const {
+        id,
+        firstName,
+        lastName,
+        email,
+        contact,
+        role,
+        photo,
+        defaultContact,
+        frontImageCCCD,
+        behindImageCCCD,
+        bankName,
+        bankNumber,
+      } = owner;
+
+      owners.push({
+        id,
+        firstName,
+        lastName,
+        email,
+        contact,
+        role,
+        photo,
+        defaultContact,
+        frontImageCCCD,
+        behindImageCCCD,
+        bankName,
+        bankNumber,
+      });
+    });
+
+    const csvFields = [
+      "Id",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Contact",
+      "Role",
+      "Photo",
+      "Default Contact",
+      "Front image CCCD",
+      "Behind image CCCD",
+      "Bank name",
+      "Bank number",
+    ];
+    const csvParser = new Parser({ csvFields });
+    const csvData = csvParser.parse(owners);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=ownersData.csv");
+    res.status(200).end(csvData);
+  });
+
+  exportAllProducts = catchAsync(async (req, res, next) => {
+    let products = [];
+
+    let productData = await Product.find({});
+    productData.forEach((product) => {
+      const {
+        id,
+        images,
+        price,
+        isOutofOrder,
+        ratingsAverage,
+        ratingsQuantity,
+        description,
+        category,
+      } = product;
+      const imageString = images.map((img) => JSON.stringify(img)).join("; ");
+      products.push({
+        id,
+        images: imageString,
+        price,
+        isOutofOrder,
+        ratingsAverage,
+        ratingsQuantity,
+        description,
+        category,
+      });
+    });
+
+    const csvFields = [
+      "Id",
+      "Images",
+      "Price",
+      "Is out of order",
+      "Ratings average",
+      "Ratings quantity",
+      "Description",
+      "Category",
+    ];
+    const csvParser = new Parser({ csvFields });
+    const csvData = csvParser.parse(products);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=productsData.csv"
+    );
+    res.status(200).end(csvData);
   });
 }
 module.exports = new adminController();
