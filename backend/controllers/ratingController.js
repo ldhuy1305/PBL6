@@ -74,13 +74,13 @@ class ratingController {
     });
   });
   updateRating = catchAsync(async (req, res, next) => {
-    console.log(req.body, req.files);
     let body = { content: req.body.content, number: req.body.number };
     const checkUser = await Rating.findById(req.params.id);
     if (!checkUser)
       return next(new appError("Can't not find this document", 404));
     let images = [...checkUser.images];
-    let dels = [req.body.dels];
+    let dels = req.body.dels;
+    console.log(dels);
     // fillter exits image
     if (req.body.dels) {
       images = images.filter((el) => !dels.includes(el));
