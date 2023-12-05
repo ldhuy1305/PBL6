@@ -46,7 +46,6 @@ const orderSchema = new Schema(
         "Cancelled", // when user want to cancel order
         "Waiting", // when user checkout
         "Preparing", // when shipper accept order
-        "Ready", // when shipper take order
         "Delivering", // when shipper delivery order
         "Finished", // when shipper deliveried
         "Refused", // when don't find shipper

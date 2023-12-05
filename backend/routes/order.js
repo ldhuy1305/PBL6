@@ -31,4 +31,9 @@ router.put(
   authController.restrict("User"),
   orderController.cancelOrder
 );
+router.put(
+  "/:id/shipper/:shipperId",
+  authController.restrict("User"),
+  orderController.changeStatus
+);
 module.exports = router;
