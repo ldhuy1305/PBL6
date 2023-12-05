@@ -31,6 +31,11 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
         'https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
     ];
 
+    const handleSelectImage = (index) => {
+        setSelectedImage(productImages[index]);
+        setCurrentIndex(index);
+    };
+
     const handleLeftArrowClick = () => {
         const newIndex = (currentIndex - 1 + productImages.length) % productImages.length;
         setSelectedImage(productImages[newIndex]);
@@ -69,7 +74,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                                                 alt=""
                                                                 class="_7D4JtJ"
                                                                 src={image}
-                                                                onClick={() => setSelectedImage(image)}
+                                                                onClick={() => handleSelectImage(index)}
                                                             /></picture>
                                                     </div>
                                                     <div class=""></div>
