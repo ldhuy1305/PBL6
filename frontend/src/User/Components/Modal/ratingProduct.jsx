@@ -159,7 +159,7 @@ const RatingProduct = ({ show, handleClose, product, rating}) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={product.product.images[0]}
+                                                                src={ava}
                                                                 alt=""
                                                             />
                                                             <div class="shipper-name" style={{ margin: '0' }}>{product.product.name}</div>
