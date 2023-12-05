@@ -12,6 +12,7 @@ router
     userController.signUpUser,
     userController.sendEmail
   );
+
 router.use(authController.protect);
 router
   .route("/")
@@ -66,6 +67,12 @@ router.get(
   "/:userId/store/:storeId",
   authController.restrict("User"),
   userController.getInfoCart
+);
+router.patch(
+  "/:id/photo",
+  authController.restrict("User"),
+  userController.updatePhoto,
+  userController.updateUserPhoto
 );
 
 module.exports = router;
