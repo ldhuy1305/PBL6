@@ -13,7 +13,7 @@ import { Formik } from 'formik';
 import Loading from '../../components/Loading/Loading'
 import style from './Formedit.module.css';
 import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+
 import Spinner from 'react-bootstrap/Spinner';
 import { toast } from 'react-toastify';
 
@@ -35,11 +35,6 @@ const Product = () => {
     const [data, setData] = useState([]);
     const [Catname, setCatname] = useState([]);
 
-
-    const history = useNavigate();
-    const redirectToEditProductPage = (id) => {
-        history('/store/store/Formedit', { state: id });
-    };
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
         autoClose: 5000,
@@ -128,7 +123,7 @@ const Product = () => {
             setIsLoadingbutton(false);
         }
     };
-    const priceRegExp = /^\d+(\.\d{1,2})?$/;
+    const priceRegExp = /^[1-9]\d*000$/;
 
     const schema = yup.object().shape({
         name: yup.string().required("Tên là bắt buộc"),

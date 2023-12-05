@@ -20,7 +20,7 @@ class YourChartComponent extends Component {
           },
         },
         xaxis: {
-          type: 'datetime',
+          type: 'text',
           categories: data.map((item) => item.date),
         },
         legend: {

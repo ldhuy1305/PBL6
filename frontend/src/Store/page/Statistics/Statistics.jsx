@@ -268,8 +268,8 @@ const Product = () => {
                                     <div className={style.top}>
                                         <div className={style.tranding}>
                                             <select className={style.select} id="" onChange={(event) => fetchSelectLinechart(event.target.value)}>
-                                                <option value="count"><span>Thông kê đơn hàng</span></option>
-                                                <option value="revenue"><span>Thông kê doanh thu</span></option>
+                                                <option value="count"><span>Thống kê đơn hàng</span></option>
+                                                <option value="revenue"><span>Thống kê doanh thu</span></option>
                                             </select>
                                         </div>
                                         <div className={style.rightContent1}>
