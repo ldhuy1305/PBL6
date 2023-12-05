@@ -26,7 +26,7 @@ router.get(
   orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByUserId
 );
-router.patch(
+router.put(
   "/:id",
   authController.restrict("User"),
   orderController.cancelOrder
