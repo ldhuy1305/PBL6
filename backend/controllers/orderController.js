@@ -16,18 +16,17 @@ process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice, coordinates } = req.body;
+    const { shipCost, cart, totalPrice, contact } = req.body;
     const order = await Order.create({
       user: userId,
       store: storeId,
       cart,
       totalPrice,
       shipCost,
-      userLocation: { type: "Point", coordinates: coordinates.reverse() },
+      contact,
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-    console.log(order.userLocation);
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();
@@ -79,25 +78,127 @@ class orderController {
   // after check out, system create transaction
   payment = catchAsync(async (req, res, next) => {
     const vnp_Params = req.query;
+    const transaction = await Transaction.findOne({
+      vnp_TxnRef: vnp_Params.vnp_TxnRef,
+    });
     if (req.query.vnp_TransactionStatus != "00") {
       await Order.findByIdAndDelete(req.query.vnp_TxnRef);
       return next(new appError("Thanh toán không thành công!"), 404);
     }
-    await Transaction.create(vnp_Params);
+    if (!transaction) await Transaction.create(vnp_Params);
+    await Order.findByIdAndUpdate(
+      mongoose.Types.ObjectId(vnp_Params.vnp_TxnRef),
+      { status: "Waiting" }
+    );
     res.status(200).json({
       status: "success",
       data: vnp_Params,
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const order = await Order.findById(req.params.id).populate({
-      path: "cart.product",
-      select: "name",
-    });
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    console.log(req.params.id);
+    const order = await Order.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "store",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $lookup: {
+          from: "contacts",
+          localField: "contact",
+          foreignField: "_id",
+          as: "contact",
+        },
+      },
+      {
+        $unwind: "$contact",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "cart.product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $addFields: {
+          "cart.product.name": "$product.name",
+        },
+      },
+      {
+        $project: {
+          storeLocation: {
+            coordinates: { $reverseArray: "$storeLocation.coordinates" },
+          },
+          shipCost: 1,
+          totalPrice: 1,
+          status: 1,
+          user: {
+            email: 1,
+            firstName: 1,
+            lastName: 1,
+          },
+          store: {
+            name: 1,
+            address: 1,
+          },
+          cart: 1,
+          contact: 1,
+          dateOrdered: 1,
+          depreciationShip: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$shipCost",
+              else: {
+                $multiply: ["$shipCost", process.env.percentShipper / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$shipCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
+        },
+      },
+    ]);
+    if (order[0] == null)
+      return next(new appError("Không tìm thấy đơn hàng"), 404);
     res.status(200).json({
       status: "success",
-      data: order,
+      data: order[0],
     });
   });
   // refuse order when time out
@@ -106,7 +207,7 @@ class orderController {
     if (orders) {
       for (let order of orders) {
         let t = (Date.now() - order.createdAt) / 60000;
-        if (order.status == "Pending" && t > 30) {
+        if (order.status == "Waiting" && t > 30) {
           order.status = "Refused";
           await this.refundOrder(req, order._id, next);
           await order.save();
@@ -115,6 +216,17 @@ class orderController {
     }
     next();
   });
+  // Cancel order
+  cancelOrder = catchAsync(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (order.status != "Waiting")
+      return next(new appError("Không thể huỷ đơn hàng!", 404));
+    order.status = "Cancelled";
+    await this.refundOrder(req, order._id, next);
+    await order.save();
+    res.status(200).json({ status: "success", data: order });
+  });
+
   changeStatus = catchAsync(async (req, res, next) => {
     const { id, shipperId } = req.params;
     const order = await Order.findById(id);
@@ -237,7 +349,7 @@ class orderController {
         json: true,
         body: dataObj,
       },
-      function (error, response, body) {
+      function(error, response, body) {
         if (error) {
           return next(new appError("Xuất hiện lỗi hoàn tiền", 404));
         }
@@ -252,37 +364,94 @@ class orderController {
   getOrdersByOwnerId = catchAsync(async (req, res, next) => {
     const store = await Store.findOne({ ownerId: req.params.ownerId });
     if (!store) return next(new appError("Không tìm thấy cửa hàng"), 404);
+    const limit = +req.query.limit || 10;
+    const page = +req.query.page || 1;
+
     let start, end;
 
     if (!req.query.start)
-      start = moment().subtract(30, "days").add(7, "hours").toDate();
-    else start = moment(req.query.start, "DD-MM-YYYY").add(7, "hours").toDate();
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
 
-    if (!req.query.end) end = moment().add(7, "hours").toDate();
-    else end = moment(req.query.end, "DD-MM-YYYY").add(31, "hours").toDate(); // 7 + 24 hours
-
-    const features = new ApiFeatures(
-      Order.find({
-        store: store._id,
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      store: store._id,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
         status: req.query.status,
-        dateOrdered: {
-          $gte: start,
-          $lt: end,
+      };
+
+    const orders = await Order.aggregate([
+      {
+        $match: obj,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: { $subtract: ["$totalPrice", "$shipCost"] },
         },
-      }).populate({
-        path: "user",
-        select: "-role -photo -email -contact -createdAt -updatedAt -_id -__t",
-        populate: {
-          path: "defaultContact",
-          select: "-location -_id -__v",
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          status: 1,
+          dateOrdered: 1,
+          orderCost: 1,
+          depreciation: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$orderCost",
+              else: {
+                $multiply: ["$orderCost", process.env.percentStore / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$orderCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
         },
-      }),
-      req.query
-    )
-      .sort()
-      .limitFields()
-      .paginate();
-    const orders = await features.query;
+      },
+      {
+        $sort: {
+          dateOrdered: -1,
+        },
+      },
+    ]);
     res.status(200).json({
       status: "success",
       length: orders.length,
@@ -296,21 +465,37 @@ class orderController {
     let start, end;
 
     if (!req.query.start)
-      start = moment().subtract(30, "days").add(7, "hours").toDate();
-    else start = moment(req.query.start, "DD-MM-YYYY").add(7, "hours").toDate();
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
 
-    if (!req.query.end) end = moment().add(7, "hours").toDate();
-    else end = moment(req.query.end, "DD-MM-YYYY").add(31, "hours").toDate(); // 7 + 24 hours
-
-    const features = new ApiFeatures(
-      Order.find({
-        user: req.params.userId,
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      user: req.params.userId,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
         status: req.query.status,
-        dateOrdered: {
-          $gte: start,
-          $lt: end,
-        },
-      }).populate({
+      };
+    const features = new ApiFeatures(
+      Order.find(obj).populate({
         path: "store",
         select:
           "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",

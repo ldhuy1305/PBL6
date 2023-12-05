@@ -6,6 +6,7 @@ import { useTheme, Box } from "@mui/material";
 import { tokens } from "../../theme";
 import Loading from '../../components/Loading/Loading'
 import Notify from '../../../Components/Notify/Notify';
+import Header2 from '../../components/Header/Header2'
 
 
 const UserProfile = () => {
@@ -22,7 +23,7 @@ const UserProfile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [imgLink, setimgLink] = useState("");
     const [img, setimg] = useState(null);
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -39,7 +40,7 @@ const UserProfile = () => {
         openingHours: yup.string().required("Giờ mở cửa là bắt buộc"),
         closingHours: yup.string().required("Giờ đóng cửa là bắt buộc"),
     });
-    let formData = new FormData()
+
     const handleSubmit = (event) => {
         event.preventDefault();
 
@@ -51,6 +52,7 @@ const UserProfile = () => {
             closingHours: closingHours,
         })
             .then(valid => {
+                let formData = new FormData()
                 console.log(img)
                 formData.append("image", img);
                 formData.append("name", name);
@@ -124,7 +126,7 @@ const UserProfile = () => {
 
 
 
-    const UpdateStore = async () => {
+    const UpdateStore = async (formData) => {
         try {
             const response = await axios.put(`https://falth-api.vercel.app/api/store/${_id}`, formData
                 , {
@@ -178,6 +180,7 @@ const UserProfile = () => {
 
     return (
         <Box m="0px 20px" position='relative'>
+            <Header2 title=" Thông tin cửa hàng" />
             <Box
                 m="0 0 0 0"
                 sx={{
@@ -203,20 +206,11 @@ const UserProfile = () => {
                     },
                 }}
             >
-                <div className="now-detail-profile" style={{
+                <div className="now-detail-profile1" style={{
                     borderRadius: "4px",
                     boxShadow: " 0 0 3px 0 rgba(50,50,50,.3)"
                 }} >
-                    <div style={{
-                        fontSize: "18px",
-                        fontWeight: 700,
-                        padding: "15px 15px",
-                        borderBottom: "1px solid #ebebeb",
-                        position: "relative",
-                        verticalAlign: "middle",
-                    }}>
-                        Thông tin cửa hàng
-                    </div>
+
                     {isLoading ? (
                         <div style={{
                             display: "flex",
@@ -229,95 +223,95 @@ const UserProfile = () => {
                         </div>
 
                     ) : (
-                        <div className="content-user-profile">
+                        <div className="content-user-profile1">
 
-                            <div className="user-profile-update1">
+                            <div className="user-profile-update11">
                                 <form >
-                                    <div className="title-user">Thay đổi thông tin</div>
-                                    <div className="form-group1">
-                                        <div className="col-3_1 ">Tên quán</div>
-                                        <div className="col-9">
-                                            <div className="input-group1">
+                                    <div className="title-user1">Thay đổi thông tin</div>
+                                    <div className="form-group11">
+                                        <div className="col-3_11">Tên quán</div>
+                                        <div className="col-91">
+                                            <div className="input-group11">
                                                 <input
                                                     name="name"
                                                     placeholder="Tên"
                                                     type="text"
-                                                    className="form-control"
+                                                    className="form-control1"
                                                     value={name}
                                                     onChange={handleNameChange}
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="form-group1">
-                                        <div className="col-3_1 ">Địa chỉ</div>
-                                        <div className="col-9">
-                                            <div className="input-group1">
+                                    <div className="form-group11">
+                                        <div className="col-3_11">Địa chỉ</div>
+                                        <div className="col-91">
+                                            <div className="input-group11">
                                                 <input
                                                     name="address"
                                                     placeholder="Địa chỉ"
                                                     type="text"
-                                                    className="form-control"
+                                                    className="form-control1"
                                                     value={address}
                                                     onChange={handleAddressChange}
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="form-group1">
-                                        <div className="col-3_1 ">Số điện thoại</div>
-                                        <div className="col-9">
-                                            <div className="input-group1">
+                                    <div className="form-group11">
+                                        <div className="col-3_11">Số điện thoại</div>
+                                        <div className="col-91">
+                                            <div className="input-group11">
                                                 <input
                                                     name="phoneNumber"
                                                     placeholder="Số điện thoại"
                                                     type="text"
-                                                    className="form-control"
+                                                    className="form-control1"
                                                     value={phoneNumber}
                                                     onChange={handlePhoneNumberChange}
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="form-group1">
-                                        <div className="col-3_1 ">Mô tả</div>
-                                        <div className="col-9">
-                                            <div className="input-group1">
+                                    <div className="form-group11">
+                                        <div className="col-3_11">Mô tả</div>
+                                        <div className="col-91">
+                                            <div className="input-group11">
                                                 <input
                                                     name="discription"
                                                     placeholder="Mô tả"
                                                     type="text"
-                                                    className="form-control"
+                                                    className="form-control1"
                                                     value={description}
                                                     onChange={handleDiscriptionChange}
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="form-group1">
-                                        <div className="col-3_1 ">Giờ mở cửa</div>
-                                        <div className="col-9">
-                                            <div className="input-group1">
+                                    <div className="form-group11">
+                                        <div className="col-3_11">Giờ mở cửa</div>
+                                        <div className="col-91">
+                                            <div className="input-group11">
                                                 <input
                                                     name="openingHours"
                                                     placeholder="Giờ mở cửa"
                                                     type="time"
-                                                    className="form-control"
-                                                    value="09:00"
+                                                    className="form-control1"
+                                                    value={openingHours}
                                                     onChange={handleOpeningHoursChange}
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="form-group1">
-                                        <div className="col-3_1 ">Giờ đóng cửa</div>
-                                        <div className="col-9">
-                                            <div className="input-group1">
+                                    <div className="form-group11">
+                                        <div className="col-3_11">Giờ đóng cửa</div>
+                                        <div className="col-91">
+                                            <div className="input-group11">
                                                 <input
                                                     name="closingHours"
                                                     placeholder="Giờ đóng cửa"
                                                     type="time"
-                                                    className="form-control"
+                                                    className="form-control1"
                                                     value={closingHours}
                                                     onChange={handleClosingHoursChange}
                                                 />
@@ -326,30 +320,30 @@ const UserProfile = () => {
                                     </div>
                                     {isPasswordChangeVisible ? (
                                         <>
-                                            <div className="form-group1">
-                                                <div className="col-3_1 ">Mật khẩu cũ</div>
-                                                <div className="col-9">
-                                                    <div className="input-group1">
+                                            <div className="form-group11">
+                                                <div className="col-3_11">Mật khẩu cũ</div>
+                                                <div className="col-91">
+                                                    <div className="input-group11">
                                                         <input
                                                             name="oldPassword1"
                                                             placeholder="Mật khẩu cũ"
                                                             type="password"
-                                                            className="form-control"
+                                                            className="form-control1"
                                                             value={password}
                                                             onChange={handlePasswordChange}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="form-group1">
-                                                <div className="col-3_1 ">Mật khẩu mới</div>
-                                                <div className="col-9">
-                                                    <div className="input-group1">
+                                            <div className="form-group11">
+                                                <div className="col-3_11">Mật khẩu mới</div>
+                                                <div className="col-91">
+                                                    <div className="input-group11">
                                                         <input
                                                             name="newPassword"
                                                             placeholder="Mật khẩu mới"
                                                             type="password"
-                                                            className="form-control"
+                                                            className="form-control1"
                                                             value={newpassword}
                                                             onChange={handleNewPasswordChange}
                                                         />
@@ -359,12 +353,12 @@ const UserProfile = () => {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="form-group1">
-                                                <div className="col-3_1 ">Mật khẩu</div>
-                                                <div className="col-9">
-                                                    <div className="input-group1">
-                                                        <span className="show-pass">********</span>
-                                                        <button type="button" className="change-pass" onClick={togglePasswordChange}>
+                                            <div className="form-group11">
+                                                <div className="col-3_11">Mật khẩu</div>
+                                                <div className="col-91">
+                                                    <div className="input-group11">
+                                                        <span className="show-pass1">********</span>
+                                                        <button type="button" className="change-pass1" onClick={togglePasswordChange}>
                                                             Đổi mật khẩu
                                                         </button>
                                                     </div>
@@ -372,9 +366,9 @@ const UserProfile = () => {
                                             </div>
                                         </>
                                     )}
-                                    <div className="row1">
-                                        <div className="col-3_1 ">
-                                            <button onClick={handleSubmit} className="btn1 btn-blue-4 btn-block">Lưu thay đổi</button>
+                                    <div className="row11">
+                                        <div className="col-3_11">
+                                            <button onClick={handleSubmit} className="btn11 btn-blue-4 btn-block">Lưu thay đổi</button>
                                         </div>
                                     </div>
                                     {
@@ -389,28 +383,28 @@ const UserProfile = () => {
                                     }
                                 </form>
                             </div>
-                            <div className="user-profile-update">
-                                <div className="title-user">Tải ảnh đại diện</div>
-                                <div className="row1">
-                                    <div className="col-3_1 ">
-                                        <div className="user-avatar-image">
-                                            <img className="user-avatar-image" src={imgLink} id="avatar_user" />
+                            <div className="user-profile-update1">
+                                <div className="title-user1">Tải ảnh đại diện</div>
+                                <div className="row11">
+                                    <div className="col-3_11">
+                                        <div className="user-avatar-image1">
+                                            <img className="user-avatar-image1" src={imgLink} id="avatar_user" />
                                         </div>
 
                                     </div>
-                                    <div className="col-9">
+                                    <div className="col-91">
                                         <div className="form-group1" style={{ justifyContent: "center", display: "flex", flexDirection: "column" }}>
                                             <span style={{ display: "inline" }}>Tải lên từ</span>
-                                            <div className="custom-file-image">
-                                                <input type="file" id="validatedCustomFile" className="input-custom" required="" hidden accept="image/*"
+                                            <div className="custom-file-image1">
+                                                <input type="file" id="validatedCustomFile1" className="input-custom11" required="" hidden accept="image/*"
                                                     onChange={({ target: { files } }) => {
                                                         if (files) {
                                                             setimg((files[0]))
                                                             setimgLink(URL.createObjectURL(files[0]))
                                                         }
                                                     }} />
-                                                <label className="label-custom1" htmlFor="validatedCustomFile">Chọn</label>
-                                                <span className="font-italic font13">Chấp nhận GIF, JPEG, PNG, BMP với kích thước tối đa 5.0 MB</span>
+                                                <label className="label-custom11" htmlFor="validatedCustomFile1">Chọn</label>
+                                                <span className="font-italic1 font131">Chấp nhận GIF, JPEG, PNG, BMP với kích thước tối đa 5.0 MB</span>
                                             </div>
                                         </div>
                                     </div>

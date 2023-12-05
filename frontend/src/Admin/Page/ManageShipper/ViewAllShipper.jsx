@@ -6,6 +6,8 @@ import { Box, Typography, responsiveFontSizes, useTheme } from "@mui/material";
 import DetailShipper from './DetailShipper';
 import style from "./DetailShipper.module.css";
 import Notify from '../../../Components/Notify/Notify';
+import Header2 from "../../components/Header/Header";
+import { useNavigate } from 'react-router-dom';
 
 function ManageShipper() {
     const [data, setData] = useState([]);
@@ -17,15 +19,11 @@ function ManageShipper() {
     const [message, setMessage] = useState("")
     const formRef = useRef();
 
-    const Showdetailshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
+    const history = useNavigate();
+    const redirectToEditProductPage = (id) => {
+        history('/admin/DetailShipper', { state: id });
+    };
 
-    const Acceptshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -41,9 +39,9 @@ function ManageShipper() {
         };
     }, [selectActive]);
 
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth-api.vercel.app/api/admin/shipper/approve`;
+    const api = `https://falth-api.vercel.app/api/admin/shipper/`;
 
 
     const fetchData = async () => {
@@ -61,24 +59,6 @@ function ManageShipper() {
             console.log(error);
         }
     };
-    const handleDeleteClick = (id) => {
-        const confirmed = window.confirm('Bạn có muốn cấp phép hoạt động cho shipper?');
-        console.log(id)
-
-        if (confirmed) {
-            try {
-                axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    fetchData();
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     useEffect(() => {
         fetchData();
@@ -104,7 +84,7 @@ function ManageShipper() {
                 <img
                     src={params.value}
                     alt="Hình ảnh"
-                    style={{ width: "50px", height: "50px", borderRadius: "50px" }}
+                    style={{ width: "50px", height: "50px" }}
                 />
             ),
         },
@@ -147,7 +127,7 @@ function ManageShipper() {
                         justifyContent="center"
                         backgroundColor={colors.greenAccent[600]}
                         borderRadius="4px"
-                        onClick={() => Showdetailshipper(params.row)}
+                        onClick={() => redirectToEditProductPage(params.row._id)}
                     >
                         <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
                             Xem chi tiết
@@ -159,6 +139,8 @@ function ManageShipper() {
         {
             headerName: "Khóa tài khoản",
             flex: 2,
+            headerAlign: "center",
+            align: "center",
             renderCell: (params) => {
                 return (
                     <Box
@@ -182,49 +164,40 @@ function ManageShipper() {
 
     return (
         <Box m="20px" position='relative'>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Header2 title="Danh sách cửa người giao hàng" />
+
+                <Box>
+                    <div className={style.searchBar}>
+                        <input
+                            type="text"
+                            className={style.searchInput}
+                            placeholder="Tìm kiếm cửa người giao hàng"
+                        // onChange={(e) => Searchproduct(e.target.value)}
+                        />
+                    </div>
+
+
+                </Box>
+                <Box>
+                </Box>
+            </Box>
             <Box
-                m="40px 0 0 0"
+                m="10px 0 0 0"
                 height="75vh"
-                // sx={{
-                //     "& .MuiDataGrid-root": {
-                //         border: "none",
-                //     },
-                //     "& .MuiDataGrid-cell": {
-                //         borderBottom: "none",
-                //     },
-                //     "& .name-column--cell": {
-                //         color: colors.greenAccent[300],
-                //     },
-                //     "& .MuiDataGrid-columnHeaders": {
-                //         backgroundColor: colors.blueAccent[700],
-                //         borderBottom: "none",
-                //     },
-                //     "& .MuiDataGrid-virtualScroller": {
-                //         backgroundColor: colors.primary[400],
-                //     },
-                //     "& .MuiDataGrid-footerContainer": {
-                //         borderTop: "none",
-                //         backgroundColor: colors.blueAccent[700],
-                //     },
-                // }}
+                sx={{
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        borderBottom: "none",
+                        fontSize: "14px"
+                        ,
+                        fontWeight: "bold",
+                    },
+                }}
             >
                 {openDetail && (
 
                     <DetailShipper rows={selectedRow} show={true} handleClose={setOpenDetail} />
                 )}
-                <div className={style.dsdh} >
-                    <div className={style.dshd1} style={{ background: colors.primary[400], }} >
-                        <div className={style.titledsdh}>Danh sách Shipper</div>
-                        <div className={style.searchBar}>
-                            <input
-                                type="text"
-                                className={style.searchInput}
-                                placeholder="Tìm kiếm shipper..."
-                            />
-                        </div>
-                    </div>
-
-                </div>
                 <DataGrid
                     rows={rowsWithUniqueIds}
                     columns={columns}

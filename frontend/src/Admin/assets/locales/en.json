@@ -150,10 +150,6 @@
   "store" : "Restaurant",
   "ratingInFALTH" : "rating on FALTH",
   "menu" : "Menu",
-  "searchDish" : "Search dish in menu",
-
-  "specialRequest" : "Special request",
-  "optional" : "Optional",
-  "confirm" : "Confirm"
+  "searchDish" : "Search dish in menu"
 
 }

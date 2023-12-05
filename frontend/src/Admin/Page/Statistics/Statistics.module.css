@@ -6,6 +6,16 @@
 
 }
 
+.isloading {
+    border: 0.1px solid rgb(230, 230, 230);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75vh;
+    width: 100%;
+    border-radius: 5px;
+}
+
 .box1 {
     margin: 10px 20px;
 }
@@ -20,7 +30,7 @@
 
 .top {
     display: flex;
-    
+
 }
 
 .icon {
@@ -48,6 +58,30 @@
     margin-left: auto;
     font-size: 14px;
     width: 100%;
+}
+
+.SelectTime {
+    display: flex;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-bottom: 10px;
+    height: 28px;
+    font-size: 20px;
+    border-radius: "10px";
+
+}
+
+.selectTime select {
+
+
+
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    width: 150px;
+    border: 0.1px solid rgb(230, 230, 230);
 }
 
 .rightContent1 {
@@ -126,7 +160,7 @@
 }
 
 .LineChart {
-    height: 37vh;
+    height: 32vh;
 
 }
 
@@ -163,6 +197,7 @@
     margin-left: auto;
     font-size: 16px;
 }
+
 
 .producttop {
     display: flex;

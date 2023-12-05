@@ -25,8 +25,8 @@
 }
 
 .img_bill {
-    height: 160px;
-    width: 60%;
+    height: 25vh;
+    width: 100%;
     margin-bottom: 10px;
 }
 
@@ -135,8 +135,8 @@
 
 
 .searchInput {
-    width: 100%;
-    padding: 7px;
+    width: 300px;
+    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -147,6 +147,8 @@
     text-align: center;
     align-items: center;
     gap: 10px;
+    margin-left: auto;
+    margin-bottom: 10px;
 }
 
 
@@ -182,16 +184,12 @@
     align-items: center;
     flex-direction: column;
     box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.35);
-
     gap: 10px;
 
 }
 
 .container {
-    padding: 0px 20px;
-    border: 1px solid rgb(224, 224, 224);
-    height: 100%;
-    border-radius: 4px;
+    padding: 20px;
 }
 
 .Store {
@@ -211,6 +209,8 @@
 }
 
 .bill {
+    height: 100%;
+    width: 100%;
     font-size: 20px;
     gap: 50;
     margin-top: 20px;
@@ -221,21 +221,22 @@
     text-align: left;
     font-size: 15px;
     gap: 15px;
-    align-items: center;
 }
 
 .bill_time {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .Store {
     text-align: center;
-    width: 90%;
+    width: 100%;
     gap: 15px;
+    margin-bottom: 50px;
 }
 
 .col {
     flex: 2;
+
 }
 
 .feedback {
@@ -247,4 +248,41 @@
 
 .col1 {
     flex: 1;
+    font-weight: 600;
+}
+
+.isloading {
+    border: 0.1px solid rgb(230, 230, 230);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75vh;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.infocustumer {
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.infocustumer h6 {
+    margin-bottom: 2px;
+}
+
+.infocustumer span {
+    font-size: 12px;
+    display: inline;
+
+}
+
+.infocustumer1 {
+    height: 30%;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    gap: 5px;
 }

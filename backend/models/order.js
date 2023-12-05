@@ -43,11 +43,12 @@ const orderSchema = new Schema(
       type: String,
       enum: [
         "Pending", // when user order
+        "Cancelled", // when user want to cancel order
+        "Waiting", // when user checkout
         "Preparing", // when shipper accept order
         "Ready", // when shipper take order
         "Delivering", // when shipper delivery order
         "Finished", // when shipper deliveried
-        "Cancelled", // when user want to cancel order
         "Refused", // when don't find shipper
       ],
       default: "Pending",
@@ -68,15 +69,9 @@ const orderSchema = new Schema(
         index: "2dsphere",
       },
     },
-    userLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-      },
-      coordinates: {
-        type: [Number],
-        index: "2dsphere",
-      },
+    contact: {
+      type: Schema.Types.ObjectId,
+      ref: "Contact",
     },
   },
   {
@@ -92,5 +87,4 @@ orderSchema.pre("save", async function(next) {
   next();
 });
 orderSchema.index({ storeLocation: "2dsphere" });
-orderSchema.index({ userLocation: "2dsphere" });
 module.exports = mongoose.model("Order", orderSchema);

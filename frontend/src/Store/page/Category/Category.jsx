@@ -3,19 +3,20 @@ import { useTheme, Box } from "@mui/material";
 import { tokens } from "../../theme";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
-import { mockDataTeam } from "../../data/mockData";
+import Header2 from '../../components/Header/Header2';
 import style from './category.css';
 
-const Category = ({ listCat }) => {
+const Category = () => {
     const [isLoading, setIsLoading] = useState(true);
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [currentPage, setCurrentPage] = useState(1);
-    const [catName, setCatName] = useState('');
-    const token = localStorage.getItem('autoken');
+    const [listCat, setlistCat] = useState([]);
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/category/store/${_id}`;
     const [data, setData] = useState([]);
+
     const itemsPerPage = 4;
     const [totalPages, setTotalPages] = useState(1);
 
@@ -30,18 +31,14 @@ const Category = ({ listCat }) => {
                 const responseData = response.data.data;
                 setData(responseData);
                 setTotalPages(Math.ceil(responseData.length / itemsPerPage));
+                setIsLoading(false);
             } catch (error) {
                 console.log(error);
             }
-            finally {
-                setIsLoading(false)
-            }
         };
-
-
-
         fetchData();
-    }, [api, token, catName]);
+        fetchCatList();
+    }, [api, token]);
     const fetchProductList = async (Name) => {
         try {
             const response = await axios.get(`https://falth-api.vercel.app/api/product?catName=${Name}`, {
@@ -57,6 +54,20 @@ const Category = ({ listCat }) => {
             console.log(error);
         }
     };
+    const fetchCatList = async () => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/category/owner/${_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const responseData = response.data.data;
+            console.log(responseData);
+            setlistCat(responseData);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 
     const handlePageChange = (page) => {
@@ -66,38 +77,17 @@ const Category = ({ listCat }) => {
 
 
     return (
-        <Box m="20px" position='relative'>
+        <Box m="10px" position='relative'>
+            <Header2 title="Danh mục" />
             <Box
-                m="40px 0 0 0"
                 height="75vh"
-                sx={{
-                    "& .MuiDataGrid-root": {
-                        border: "none",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        borderBottom: "none",
-                    },
-                    "& .name-column--cell": {
-                        color: colors.greenAccent[300],
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: colors.blueAccent[700],
-                        borderBottom: "none",
-                    },
-                    "& .MuiDataGrid-virtualScroller": {
-                        backgroundColor: colors.primary[400],
-                    },
-                    "& .MuiDataGrid-footerContainer": {
-                        borderTop: "none",
-                        backgroundColor: colors.blueAccent[700],
-                    },
-                }}
             >
                 <div className="product">
                     {isLoading ? (
-                        <Loading />
+                        <div className="isloading"><Loading /></div>
                     ) : (
                         <>
+
                             <div style={{ height: "145px", display: "flex", }}>
                                 {listCat.map((value, index) => (
                                     <div className='category' onClick={() => fetchProductList(value.catName)}>
@@ -105,7 +95,7 @@ const Category = ({ listCat }) => {
                                             <img style={{
                                                 height: "100px",
                                                 width: "100%"
-                                            }} src={value.photo} alt="dsdsdsd" />
+                                            }} src={value.photo} alt="" />
                                         </div>
 
                                         <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px", justifyContent: "" }}>{value.catName}</span>
