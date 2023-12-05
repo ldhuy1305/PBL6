@@ -112,6 +112,9 @@ class orderController {
         },
       },
       {
+        $unwind: "$store",
+      },
+      {
         $lookup: {
           from: "contacts",
           localField: "contact",
@@ -191,7 +194,7 @@ class orderController {
               },
               then: 0,
               else: {
-                $multiply: ["$shipCost", 1 - process.env.percentStore / 100],
+                $multiply: ["$shipCost", 1 - process.env.percentShipper / 100],
               },
             },
           },
@@ -216,6 +219,8 @@ class orderController {
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
+        if (order.status != "Pending" && t > 30)
+          await Order.findByIdAndDelete(order._id);
       }
     }
     next();
