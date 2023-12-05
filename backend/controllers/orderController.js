@@ -86,10 +86,9 @@ class orderController {
       return next(new appError("Thanh toán không thành công!"), 404);
     }
     if (!transaction) await Transaction.create(vnp_Params);
-    await Order.findByIdAndUpdate(
-      mongoose.Types.ObjectId(vnp_Params.vnp_TxnRef),
-      { status: "Waiting" }
-    );
+    let order = await Order.findById(vnp_Params.vnp_TxnRef);
+    if (order.status == "Pending") order.status = "Waiting";
+    await order.save();
     res.status(200).json({
       status: "success",
       data: vnp_Params,
@@ -235,7 +234,10 @@ class orderController {
     await order.save();
     res.status(200).json({ status: "success", data: order });
   });
-
+  refund = catchAsync(async (req, res, next) => {
+    await this.refundOrder(req, req.params.id, next);
+    res.status(200).json({ status: "success" });
+  });
   changeStatus = catchAsync(async (req, res, next) => {
     const { id, shipperId } = req.params;
     const order = await Order.findById(id);
