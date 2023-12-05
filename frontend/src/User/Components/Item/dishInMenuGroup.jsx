@@ -1,18 +1,41 @@
-import React from "react";
-import soldout from '../../assets/img/hethang.webp'
+import React, { useState } from "react";
+import soldout from '../../assets/img/sold-out.png'
+import close from '../../assets/img/close.jfif'
 import { Navigate, useNavigate } from "react-router-dom";
-
-const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
+import ProductDetailModal from "../Modal/productDetailModal";
+import { getRatingOfProduct } from "../../services/userServices";
+const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingHours }) => {
     const navigate = useNavigate()
-    const handleAdd = () => {
-        // console.log(dish)
-        handleAddToCart(dish);
+    const handleAdd = (quantity) => {
+        handleAddToCart(dish, quantity);
         handleOpen();
     }
 
-    const handleProductDetail = () => {
-        navigate('/home/store/productDetail', {state: {dish:dish}})
-    }
+    const [ratings, setRatings] = useState([])
+    const [idUser, setIdUser] = useState('')
+
+    const [showModal, setShowModal] = useState(false)
+    const handleShowModal = async () => {
+        const user = localStorage.getItem("user");
+        const userData = JSON.parse(user);
+        
+        if(userData) {
+            setIdUser(userData._id)
+        }
+            try {
+                // setIsLoading(true)
+                const data = await getRatingOfProduct(dish._id)
+                setRatings({ ...data.data })
+                // console.log(data);  fd
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin đánh giá:", error);
+            }
+            setShowModal(true);
+        }
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
     return (
         <div>
@@ -24,7 +47,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                 }}
             >
                 <div class="row">
-                    <div class="col-auto item-restaurant-img" onClick={handleProductDetail}>
+                    <div class="col-auto item-restaurant-img" onClick={handleShowModal}>
                         <button class="inline">
                             <img
                                 src={dish.images[0]}
@@ -34,7 +57,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                             />
                         </button>
                     </div>
-                    <div class="col item-restaurant-info" onClick={handleProductDetail}>
+                    <div class="col item-restaurant-info" onClick={handleShowModal}>
                         <h2 class="item-restaurant-name">
                             {dish.name}
                         </h2>
@@ -62,20 +85,30 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart }) => {
                             <div
                                 class="col-auto adding-food-cart txt-right"
                             >
-                            {dish.isOutOfOrder ? (
-                                <img 
-                                    src={soldout}
-                                    alt="Hết hàng"
-                                    style={{height:'80%', width:'80px'}}
-                                ></img>
-                            ) : (
-                                <div class="btn-adding" onClick={handleAdd}>+</div>
-                            )}
+                                {!isWithinOperatingHours ? (
+                                    <img
+                                        src={close}
+                                        alt="Đóng cửa"
+                                        style={{ height: '80%', width: '80px' }}
+                                    ></img>
+                                ) : (
+                                    dish.isOutOfOrder ? (
+                                        <img
+                                            src={soldout}
+                                            alt="Hết hàng"
+                                            style={{ height: '80%', width: '80px' }}
+                                        ></img>
+                                    ) : (
+                                        <div class="btn-adding" onClick={() => handleAdd(1)}>+</div>
+                                    )
+                                )}
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <ProductDetailModal show={showModal} handleClose={handleCloseModal} product={dish} handleAdd={handleAdd} isWithinOperatingHours={isWithinOperatingHours} ratings={ratings} setRatings={setRatings} idUser={idUser} />
         </div>
 
 

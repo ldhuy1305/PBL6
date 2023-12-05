@@ -3,18 +3,25 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import { Button } from "@mui/material";
+import Header2 from "../../components/Header/Header";
 import axios from 'axios';
 import style from './Detailstore.module.css'
 import Bill from './Detailstore';
+import Accept from '../../components/Accept/Accept';
+import { useNavigate } from 'react-router-dom';
 
-const Acceptstore = ({ Catname }) => {
-
+const ManageStore = ({ Catname }) => {
+    const history = useNavigate();
+    const redirectToEditProductPage = (id) => {
+        history('/admin/Detailstore', { state: id });
+    };
 
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [openAccept, SetOpenAccept] = useState(false);
 
     const formRef = useRef();
 
@@ -32,23 +39,20 @@ const Acceptstore = ({ Catname }) => {
         };
     }, [selectActive]);
 
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth-api.vercel.app/api/store/city/Đà Nẵng`;
     const fetchData = async () => {
         try {
-            const response = await axios.get(api, {
+            const response = await axios.get("https://falth-api.vercel.app/api/admin/store?isLocked=false", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const responseData = response.data.data.data;
+            const responseData = response.data.data;
             setData(responseData);
-
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
-        }
-        finally {
             setIsLoading(false);
         }
     };
@@ -80,6 +84,10 @@ const Acceptstore = ({ Catname }) => {
 
         setSelectedRow(row);
         setOpenDetail(true);
+    };
+    const handleopenAcceptClick = (row) => {
+        setSelectedRow(row);
+        SetOpenAccept(true);
     };
 
 
@@ -121,7 +129,7 @@ const Acceptstore = ({ Catname }) => {
                         justifyContent="center"
                         backgroundColor={colors.greenAccent[600]}
                         borderRadius="4px"
-                        onClick={() => handleDetailClick(params.row)}
+                        onClick={() => redirectToEditProductPage(params.row._id)}
                     >
                         <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
                             Xem chi tiết
@@ -145,7 +153,7 @@ const Acceptstore = ({ Catname }) => {
                         justifyContent="center"
                         backgroundColor={colors.greenAccent[600]}
                         borderRadius="4px"
-                    // onClick={() => handleDeleteClick(params.row)}
+                        onClick={() => handleopenAcceptClick(params.row)}
                     >
                         <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
                             Khóa cửa hàng
@@ -164,27 +172,42 @@ const Acceptstore = ({ Catname }) => {
 
     return (
         <Box m="20px" position='relative'>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+
+                <Box> <Header2 title="Danh sách cửa hàng" /></Box>
+                {/* <Box>
+                    <div className={style.searchBar}>
+                        <input
+                            type="text"
+                            className={style.searchInput}
+                            placeholder="Tìm kiếm cửa hàng"
+                            onChange={(e) => Searchproduct(e.target.value)}
+                        />
+                    </div>
+
+
+                </Box> */}
+                <Box>
+                </Box>
+            </Box>
             <Box
-                m="40px 0 0 0"
+                m="10px 0 0 0"
                 height="75vh"
+                sx={{
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        borderBottom: "none",
+                        fontSize: "14px"
+                        ,
+                        fontWeight: "bold",
+                    },
+                }}
             >
                 {openDetail && (
                     <Bill rows={selectedRow} show={true} handleClose={setOpenDetail} />
                 )}
-                <div className={style.dsdh} >
-                    <div className={style.dshd1} style={{ background: colors.primary[400], }} >
-                        <div className={style.titledsdh}>Danh sách cửa hàng</div>
-                        <div className={style.searchBar}>
-                            <input
-                                type="text"
-                                className={style.searchInput}
-                                placeholder="Tìm kiếm cửa hàng..."
-                                onChange={(e) => Searchproduct(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                </div>
+                {openAccept && (
+                    <Accept rows={selectedRow} show={true} handleClose />
+                )}
                 <DataGrid rows={rowsWithUniqueIds} columns={columns}
                     loading={isLoading}
                     initialState={{
@@ -197,4 +220,4 @@ const Acceptstore = ({ Catname }) => {
     );
 };
 
-export default Acceptstore;
+export default ManageStore;

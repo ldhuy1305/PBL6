@@ -6,7 +6,7 @@
 .product .container {
 
     display: flex;
-    height: 80%;
+    height: 330px;
     gap: 2%;
     justify-content: start;
     flex-wrap: wrap;
@@ -114,7 +114,7 @@
     height: 130px;
     width: 180px;
     border: 1px solid #e9e9e9;
-    margin: 0px 10px;
+    margin: 0px 10px 0px 0px;
     border-radius: 5px;
     align-items: center;
     cursor: pointer;
@@ -125,12 +125,20 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.pagination {
-    margin-top: 10px !important;
-}
+.pagination {}
 
 .category .imagecat {
     height: 100px;
     width: 100%;
     border-bottom: #c2c2c2;
+}
+
+.isloading {
+    border: 0.1px solid rgb(230, 230, 230);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75vh;
+    width: 100%;
+    border-radius: 5px;
 }

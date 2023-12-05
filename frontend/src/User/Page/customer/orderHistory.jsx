@@ -90,7 +90,7 @@ const OrderHistory = () => {
         }
         try {
             setIsLoading(true)
-            const response = await getOderByFilter(from, to, selectedStatus)
+            const response = await getOderByFilter(from, to, selectedStatus, page)
             console.log(response.data)
                 setItems(response.data)
         } catch (error) {
@@ -98,6 +98,9 @@ const OrderHistory = () => {
         }
         setIsLoading(false)
     }
+
+    
+
 
     const [showModal, setShowModal] = useState(false);
     const [showModal1, setShowModal1] = useState(false);
@@ -116,7 +119,7 @@ const OrderHistory = () => {
 
     const handleShowModal = async (id, storeName) => {
         console.log(storeName)
-        // setOrderId(id)
+        setOrderId(id)
         try {
             setIsLoadingModal(true)
             const response = await viewOrder(id);
@@ -144,6 +147,7 @@ const OrderHistory = () => {
         setShowModal1(false);
     };
     const handleShowModal2 = (storInfo) => {
+        console.log(storInfo)
         setStore({ ...storInfo })
         setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2
@@ -172,6 +176,27 @@ const OrderHistory = () => {
             setPage(page + 1);
         }
     };
+
+    useEffect(() => {
+        const getData = async () => {
+            const from = moment(fromDate).format('DD-MM-YYYY');
+            const to = moment(toDate).format('DD-MM-YYYY');
+            setItems([])
+            if(selectedStatus === 'All') {
+                setSelectedStatus('')
+            }
+            try {
+                setIsLoading(true)
+                const response = await getOderByFilter(from, to, selectedStatus, page)
+                console.log(response.data)
+                    setItems(response.data)
+            } catch (error) {
+                console.log("Sai:",error)
+            }
+            setIsLoading(false)
+        }
+        getData()
+    }, [page]);
 
     return (
         <div>

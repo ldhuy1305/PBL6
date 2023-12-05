@@ -14,7 +14,9 @@ const StoreDetail = () => {
     const [categories, setCategories] = useState([]);
     const location = useLocation()
     const [isLoading, setIsLoading] = useState(false)
+    const [searchKey, setSearchKey] = useState('')
     const store = location.state.store.store;
+    const [isWithinOperatingHours, setIsWithinOperatingHours] = useState(false);
     const openModal = () => {
         setShowModal(true);
     };
@@ -22,6 +24,20 @@ const StoreDetail = () => {
     const closeModal = () => {
         setShowModal(false);
     };
+
+
+    useEffect(() => {
+        const currentTime = new Date();
+        const openTime = new Date(currentTime);
+        const closeTime = new Date(currentTime);
+
+        // Set the time portion of the date objects
+        openTime.setHours(Number(store.openAt.split(':')[0]), Number(store.openAt.split(':')[1]), 0, 0);
+        closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
+
+        setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
+        console.log(openTime, currentTime, closeTime)
+    }, [store.openAt, store.closeAt]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,7 +71,6 @@ const StoreDetail = () => {
                     <div class="container">
                         <div class="detail-restaurant-img">
                             <img
-                                // src="https://images.foody.vn/res/g119/1184583/prof/s640x400/foody-upload-api-foody-mobile-37-80aba800-230914093440.jpeg"
                                 src={store.image}
                                 alt={store.name}
                                 class=""
@@ -80,7 +95,6 @@ const StoreDetail = () => {
                             </div>
                             <div class="view-more-rating">
                                 <span
-                                    // href="https://foody.vn/da-nang/sau-nuong-lau-nuong-tran-dai-nghia"
                                     rel="noopener noreferrer nofollow"
                                     target="_blank"
                                     class="number-review"
@@ -88,7 +102,9 @@ const StoreDetail = () => {
                             </div>
                             <div class="status-restaurant">
                                 <div class="opentime-status">
-                                    <span class="stt online" title={t("storeActive")}></span>
+                                    <span 
+                                    className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                    title={isWithinOperatingHours ? `${t("storeActive")}`: 'Đóng cửa'}></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>
@@ -151,11 +167,13 @@ const StoreDetail = () => {
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
-                                                <i class="fas fa-search"></i><input
+                                                <i class="fas fa-search" style={{cursor:'pointer'}} ></i>
+                                                <input
                                                     type="search"
                                                     name="searchKey"
                                                     placeholder={t("searchDish")}
-                                                    value=""
+                                                    value={searchKey}
+                                                    onChange={(e) => setSearchKey(e.target.value)}
                                                 />
                                             </p>
                                         </div>
@@ -197,6 +215,8 @@ const StoreDetail = () => {
                                                                 category={category}
                                                                 openModal={openModal}
                                                                 store={store}
+                                                                search={searchKey}
+                                                                isWithinOperatingHours={isWithinOperatingHours}
                                                             />
                                                         </Element>
                                                     ))}

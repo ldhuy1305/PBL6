@@ -99,9 +99,10 @@ const getAllCategoryByStoreId = async (id) => {
 }
 
 //Product
-const getProductByStoreId = async (storeId, catName) => {
+const getProductByStoreId = async (storeId, catName, search) => {
   const token = localStorage.getItem("token");
-  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?category.catName=${catName}&limit=10`
+  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
+  console.log(search)
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -129,7 +130,7 @@ const getFeeShip = async (idStore) => {
 
 //order
 
-const placeOrder = async (totalPrice, shipCost, coordinates) => {
+const placeOrder = async (totalPrice, shipCost, contactId) => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const cart = JSON.parse(localStorage.getItem("cart"));
@@ -142,7 +143,7 @@ const placeOrder = async (totalPrice, shipCost, coordinates) => {
   }));
   const orderData = {
     cart: products, 
-    coordinates: coordinates,
+    contact: contactId,
     totalPrice: totalPrice,
     shipCost: shipCost,
   };
@@ -164,7 +165,7 @@ const getAllOderByUserId = async () => {
   const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
   const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice`, {
+    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice&page=1`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -175,13 +176,14 @@ const getAllOderByUserId = async () => {
   }
 }
 
-const getOderByFilter = async (fromDate, toDate, status) => {
+const getOderByFilter = async (fromDate, toDate, status, page) => {
   if (status === 'All') {
     status = ''
   }
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
-  const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=1&start=${fromDate}&end=${toDate}`
+  const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=${page}&start=${fromDate}&end=${toDate}`
+  console.log(api)
   try {
     const response = await axios.get(api, {
       headers: {
@@ -243,9 +245,57 @@ const addRatingForStore = async (id, ratingData) => {
         ContentType: 'multipart/form-data',
       }
     });
-    return response.data
+    // return response.data
   } catch (error) {
     console.log('đánh giá thất bại:', error)
+  }
+}
+
+const updateRatingForStore = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.patch(`https://falth-api.vercel.app/api/rating/${id}`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    // return response.data
+  } catch (error) {
+    console.log('Chỉnh sửa đánh giá thất bại:', error)
+  }
+}
+
+const getRatingOfProduct = async (productID) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `https://falth-api.vercel.app/api/product/${productID}/rating`
+    console.log(api)
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const addRatingForProduct = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`https://falth-api.vercel.app/api/product/${id}/rating`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    console.log(response)
+    // return response.data
+  } catch (error) {
+    console.log('Đánh giá thất bại:', error)
   }
 }
 
@@ -284,5 +334,8 @@ export {
   getOderByFilter,
   getRatingOfStore,
   addRatingForStore, 
+  updateRatingForStore,
+  getRatingOfProduct,
+  addRatingForProduct,
   deleteRating
 }

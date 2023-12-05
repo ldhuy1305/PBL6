@@ -40,6 +40,9 @@ router
 router.route("/:email").post(shipperController.verifiedSignUp);
 router.route("/:id/lat/:lat/lng/:lng").post(shipperController.setCoordinates);
 router.route("/:id/find-orders").get(shipperController.findOrdersNearByShipper);
+router.route("/:id/daily").get(shipperController.getOrdersDaily);
+router.route("/:id/weekly").get(shipperController.getOrdersWeekly);
+router.route("/:id/monthly").get(shipperController.getOrdersMonthly);
 
 // POST /tour/234fad4/reviews
 // GET /tour/234fad4/reviews

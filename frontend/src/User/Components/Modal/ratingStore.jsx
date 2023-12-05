@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
+import { updateRatingForStore } from "../../services/userServices";
 const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
     const { t } = useTranslation();
 
@@ -52,6 +53,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
         });
     };
 
+    const [dels, setDels] = useState([]);
     const handleSubmit = async () => {
         const res = new FormData();
         res.append('number', formData.number);
@@ -60,7 +62,9 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
         // Append each image to the FormData
         if (formData.images && formData.images.length > 0) {
             formData.images.forEach((image, index) => {
-                res.append(`images`, image); // assuming 'images' is an array of files
+                if (image instanceof File) {
+                    res.append(`images`, image);
+                }// assuming 'images' is an array of files
             });
         }
         if (formData.number === '') {
@@ -68,30 +72,55 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            try {
-                setIsLoading(true);
-                const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
+            if (!rating) {
+                try {
+                    setIsLoading(true);
+                    const response = await axios.post(`https://falth-api.vercel.app/api/product/${store._id}/rating`, res, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         ContentType: 'multipart/form-data',
                     }
                 });
-                setNotify("Đánh giá thành công!")
-                setOpenNotify(true)
-                handleClose()
-            } catch (error) {
-                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
-                setOpenNotify(true)
-                handleClose()
-            } finally {
-                setIsLoading(false);
+                    setNotify("Đánh giá thành công!")
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                    setOpenNotify(true)
+                    handleClose()
+                } finally {
+                    setIsLoading(false);
+                }
+                setFormData({
+                    number: '',
+                    content: '',
+                    images: [],
+                });
+            } else {
+                try {
+                    setIsLoading(true);
+                    res.append('dels', dels);
+                    console.log(dels, formData)
+                    const response = await updateRatingForStore(rating._id, res)
+                    setNotify("Chỉnh sửa đánh giá thành công!")
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setNotify("Chỉnh sửa đánh giá thất bại!")
+                    setOpenNotify(true)
+                    handleClose()
+                } finally {
+                    setIsLoading(false);
+                }
+                setFormData({
+                    number: '',
+                    content: '',
+                    images: [],
+                });
+                setDels([]);
             }
-            setFormData({
-                number: '',
-                content: '',
-                images: [],
-            });
         }
+
 
     };
 
@@ -160,8 +189,8 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={ava}
-                                                                alt=""
+                                                                src={store.image}
+                                                                alt={store.image}
                                                             />
                                                             <div class="shipper-name" style={{ margin: '0' }}>{store.name}</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
@@ -209,7 +238,13 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                                                                             <span class="btn-delete-tag" style={{ top: '5px', right: '5px' }}
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
-                                                                                    newImages.splice(index, 1);
+                                                                                    const [deletedImage] = newImages.splice(index, 1);
+                                                                                    console.log(deletedImage)
+                                                                                    if (!(deletedImage instanceof File)) {
+                                                                                        
+    setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
+}
+
                                                                                     setFormData({ ...formData, images: newImages });
                                                                                 }}>x</span>
                                                                         </div>

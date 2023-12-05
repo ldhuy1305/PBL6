@@ -16,18 +16,17 @@ process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice, coordinates } = req.body;
+    const { shipCost, cart, totalPrice, contact } = req.body;
     const order = await Order.create({
       user: userId,
       store: storeId,
       cart,
       totalPrice,
       shipCost,
-      userLocation: { type: "Point", coordinates: coordinates.reverse() },
+      contact,
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-    console.log(order.userLocation);
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();
@@ -97,14 +96,113 @@ class orderController {
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const order = await Order.findById(req.params.id).populate({
-      path: "cart.product",
-      select: "name",
-    });
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    console.log(req.params.id);
+    const order = await Order.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "store",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $lookup: {
+          from: "contacts",
+          localField: "contact",
+          foreignField: "_id",
+          as: "contact",
+        },
+      },
+      {
+        $unwind: "$contact",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "cart.product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $addFields: {
+          "cart.product.name": "$product.name",
+          "cart.product._id": "$product._id",
+          "cart.product.images": "$product.images",
+        },
+      },
+      {
+        $project: {
+          storeLocation: {
+            coordinates: { $reverseArray: "$storeLocation.coordinates" },
+          },
+          shipCost: 1,
+          totalPrice: 1,
+          status: 1,
+          user: {
+            email: 1,
+            firstName: 1,
+            lastName: 1,
+          },
+          store: {
+            _id: 1,
+            name: 1,
+            address: 1,
+            image: 1,
+          },
+          cart: 1,
+          contact: 1,
+          dateOrdered: 1,
+          depreciationShip: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$shipCost",
+              else: {
+                $multiply: ["$shipCost", process.env.percentShipper / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$shipCost", 1 - process.env.percentStore / 100],
+              },
+            },
+          },
+        },
+      },
+    ]);
+    if (order[0] == null)
+      return next(new appError("Không tìm thấy đơn hàng"), 404);
     res.status(200).json({
       status: "success",
-      data: order,
+      data: order[0],
     });
   });
   // refuse order when time out

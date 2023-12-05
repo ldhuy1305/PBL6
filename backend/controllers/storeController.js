@@ -165,18 +165,45 @@ class storeController {
     });
   });
   updateStore = catchAsync(async (req, res, next) => {
-    const store = await Store.findOne({ ownerId: req.params.ownerId });
-    store.phoneNumber = req.body.phoneNumber;
-    store.address = req.body.address;
-    store.name = req.body.name;
-    store.openAt = req.body.openAt;
-    store.closeAt = req.body.closeAt;
-    store.description = req.body.description;
-    await store.save();
-    console.log(store);
-    if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
+    let body = req.body;
+    if (req.body.del) {
+      let del = req.body.del;
+      let parts = del.split("/");
+      let id =
+        parts.slice(parts.length - 2, parts.length - 1).join("/") +
+        "/" +
+        parts[parts.length - 1].split(".")[0];
+      cloudinary.uploader.destroy(id);
+    }
+    if (req.files.image) {
+      body = {
+        ...body,
+        image: req.files.image[0]?.path,
+      };
+    }
+    const store = await Store.findOneAndUpdate(
+      { ownerId: req.params.ownerId },
+      body,
+      {
+        new: true,
+      }
+    )
+      .then()
+      .catch((err) => {
+        if (req.files) {
+          Object.keys(req.files).forEach((key) => {
+            req.files[key].forEach((file) =>
+              cloudinary.uploader.destroy(file.filename)
+            );
+          });
+        }
+        console.log(err.message);
+        next(new appError(err.message, 404));
+      });
+
+    if (!store) return next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
-      status: "success",
+      message: "success",
       data: store,
     });
   });
@@ -216,7 +243,7 @@ class storeController {
   viewOrder = catchAsync(async (req, res, next) => {});
   rejectOrder = catchAsync(async (req, res, next) => {});
   acceptOrder = catchAsync(async (req, res, next) => {});
-  intersect = function (a, b) {
+  intersect = function(a, b) {
     var setB = new Set(b);
     return [...new Set(a)].filter((x) => setB.has(x));
   };

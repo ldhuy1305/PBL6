@@ -166,11 +166,11 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
 
     return (
         <div>
-            <div className={`ant-drawer ant-drawer-right ant-drawer-open DrawerWrapper___3chn_ DrawerWrapper--custom`}>
-                <div className="ant-drawer-mask" onClick={handleClose}></div>
+            <div className={`ant-drawer ant-drawer-right ant-drawer-open DrawerWrapper___3chn_ DrawerWrapper--custom`} style={{zIndex:'100000'}}>
+                <div className="ant-drawer-mask" onClick={handleClose} ></div>
 
                 <div className="ant-drawer-content-wrapper" style={{ width: '256px' }}>
-                    <div className="ant-drawer-content">
+                    <div className="ant-drawer-content" >
                         <div className="ant-drawer-wrapper-body" style={{ overflow: 'auto', height: '100%' }}>
                             {cart.products.length > 0 ? (
                                 <div class="ant-drawer-body">
