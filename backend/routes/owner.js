@@ -14,6 +14,9 @@ router.route("/").post(
   // ownerController.createStore,
   authController.sendEmailVerify
 );
+router.get("/store/:storeId/export-product", ownerController.exportProduct);
+router.get("/store/:storeId/export-order", ownerController.exportOrder);
+
 router.post("/:email", ownerController.verifiedSignUp);
 router.use(authController.protect, authController.restrict("Owner"));
 router.get("/:id/best-seller", ownerController.getBestSeller);

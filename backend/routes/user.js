@@ -67,4 +67,5 @@ router.get(
   authController.restrict("User"),
   userController.getInfoCart
 );
+
 module.exports = router;
