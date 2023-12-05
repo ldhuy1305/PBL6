@@ -7,14 +7,13 @@ const ownerController = require("../controllers/ownerController");
 const userController = require("../controllers/userController");
 const storeController = require("../controllers/storeController");
 
+router.use(authController.protect, authController.restrict("Admin"));
 //Export
 router.get("/shipper/export", adminController.exportShippers);
 router.get("/user/export", adminController.exportUsers);
 router.get("/product/export", adminController.exportAllProducts);
 router.get("/store/export", adminController.exportStores);
 router.get("/owner/export", adminController.exportOwners);
-
-router.use(authController.protect, authController.restrict("Admin"));
 router.get("/", adminController.getListAllAdmin);
 // Manage Shipper
 router.get("/shipper/approve", adminController.getListShipperAppove);

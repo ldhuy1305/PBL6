@@ -3,12 +3,15 @@ const Contact = require("../models/contact");
 const Store = require("../models/store");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
 const ApiFeatures = require("../utils/ApiFeatures");
+const cloudinary = require("cloudinary").v2;
+const fileUploader = require("../utils/uploadImage");
+
 class userController {
+  updatePhoto = fileUploader.single("photo");
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
@@ -144,6 +147,36 @@ class userController {
       status: "success",
       data,
     });
+  });
+
+  updateUserPhoto = catchAsync(async (req, res, next) => {
+    const user = await User.findById({ _id: req.params.id });
+    if (!user) {
+      return next(new appError("No document found with that ID", 404));
+    }
+    const body = {
+      photo: req.file ? req.file.path : user.photo,
+    };
+    try {
+      const doc = await User.findByIdAndUpdate({ _id: req.params.id }, body, {
+        new: true,
+        runValidators: true,
+      });
+      let parts = user.photo.split("/");
+      let id =
+        parts.slice(parts.length - 2, parts.length - 1).join("/") +
+        "/" +
+        parts[parts.length - 1].split(".")[0];
+      cloudinary.uploader.destroy(id);
+      res.status(200).json({
+        data: doc,
+      });
+    } catch (err) {
+      if (req.file) {
+        cloudinary.uploader.destroy(req.file.filename);
+      }
+      next(err);
+    }
   });
 }
 
