@@ -7,19 +7,16 @@ import Listorder from './page/Listorder/Listorder';
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Category from './page/Category/Category';
-import Login from './login';
 import Info from './page/Info/Info';
-import axios from 'axios';
 import Formadd from './page/Product/Formadd';
 import Formedit from './page/Product/Formedit';
 import Detailorder from './page/Feedback/Detailorder';
 import { ToastContainer } from 'react-toastify';
 import Logout from './page/Logout/logout';
 import 'react-toastify/dist/ReactToastify.css';
-
 import Statistics from './page/Statistics/Statistics';
-
 import './Store.css'
+import Feedback from './page/Feedback/Feedback';
 
 const Store = () => {
   const [theme, colorMode] = useMode();
@@ -47,6 +44,7 @@ const Store = () => {
               <Route path='/info' element={<Info />} />
               <Route path='/category' element={<Category />} />
               <Route path="/detailorder" element={<Detailorder />} />
+              <Route path="/feedback" element={<Feedback />} />
               <Route path="/logout" element={<Logout />} />
             </Routes>
             <ToastContainer />

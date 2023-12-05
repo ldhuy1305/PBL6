@@ -5,8 +5,9 @@ import * as yup from "yup";
 import { useTheme, Box } from "@mui/material";
 import { tokens } from "../../theme";
 import Loading from '../../components/Loading/Loading'
-import Notify from '../../../Components/Notify/Notify';
 import Header2 from '../../components/Header/Header2'
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const UserProfile = () => {
@@ -18,6 +19,7 @@ const UserProfile = () => {
     const [closingHours, setClosingHours] = useState('');
     const [password, setPassword] = useState('');
     const [newpassword, setnewPassword] = useState('');
+    const [identifynewpassword, setidentifynewPassword] = useState('');
     const [isPasswordChangeVisible, setPasswordChangeVisible] = useState(false);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -30,58 +32,133 @@ const UserProfile = () => {
     const [openNotify, setOpenNotify] = useState(null)
     const [error, setError] = useState(false)
     const [message, setMessage] = useState("")
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+    const history = useNavigate();
+    const redirectToEditProductPage = () => {
+        history('/store/Logout');
+    };
     const phoneRegExp =
         /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
     const checkoutSchema = yup.object().shape({
-        name: yup.string().required("Tên là bắt buộc"),
-        address: yup.string().required("Địa chỉ là bắt buộc"),
+        name: yup.string().required("Tên là bắt buộc").matches(/\S+/, "Tên không được chứa chỉ ký tự trắng"),
+        address: yup.string().required("Địa chỉ là bắt buộc").matches(/\S+/, "Địa chỉ không được chứa chỉ ký tự trắng"),
         phoneNumber: yup.string().required("Số điện thoại là bắt buộc").matches(phoneRegExp, "Số điện thoại không hợp lệ"),
         openingHours: yup.string().required("Giờ mở cửa là bắt buộc"),
         closingHours: yup.string().required("Giờ đóng cửa là bắt buộc"),
+        description: yup.string().required("Mô tả là bắt buộc").matches(/\S+/, "Mô tả không được chứa chỉ ký tự trắng"),
+        newpassword: yup.string().required("Mật khẩu là bắt buộc").matches(passwordRegex, "Mật khẩu không hợp lệ"),
+        identifynewpassword: yup.string().required("Mật khẩu là bắt buộc").matches(new RegExp(newpassword), "Mật khẩu xác nhận chưa đúng")
     });
+
+    const checkoutSchema1 = yup.object().shape({
+        name: yup.string().required("Tên là bắt buộc").matches(/\S+/, "Tên không được chứa chỉ ký tự trắng"),
+        address: yup.string().required("Địa chỉ là bắt buộc").matches(/\S+/, "Địa chỉ không được chứa chỉ ký tự trắng"),
+        phoneNumber: yup.string().required("Số điện thoại là bắt buộc").matches(phoneRegExp, "Số điện thoại không hợp lệ"),
+        openingHours: yup.string().required("Giờ mở cửa là bắt buộc"),
+        closingHours: yup.string().required("Giờ đóng cửa là bắt buộc"),
+        description: yup.string().required("Mô tả là bắt buộc").matches(/\S+/, "Mô tả không được chứa chỉ ký tự trắng"),
+
+    });
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        checkoutSchema.validate({
-            name: name,
-            address: address,
-            phoneNumber: phoneNumber,
-            openingHours: openingHours,
-            closingHours: closingHours,
-        })
-            .then(valid => {
-                let formData = new FormData()
-                console.log(img)
-                formData.append("image", img);
-                formData.append("name", name);
-                formData.append("address", address);
-                formData.append("phoneNumber", phoneNumber);
-                formData.append("openAt", openingHours);
-                formData.append("closeAt", closingHours);
-                formData.append("description", description);
-                if (isPasswordChangeVisible) {
-                    formData.append("password", password);
-                    formData.append("newPassword", newpassword);
-                    UpdateStore(formData);
-                } else {
-                    UpdateStore(formData);
-                }
+        if (isPasswordChangeVisible) {
+            checkoutSchema.validate({
+                name: name,
+                address: address,
+                phoneNumber: phoneNumber,
+                openingHours: openingHours,
+                closingHours: closingHours,
+                description: description,
+                newpassword: newpassword,
+                identifynewpassword: identifynewpassword,
             })
-            .catch(errors => {
-                console.log(errors);
-                setError(false);
-                setMessage(errors.errors[0]);
-                setOpenNotify(true);
-            });
+                .then(valid => {
+                    let formData = new FormData();
+                    formData.append("name", name);
+                    formData.append("address", address);
+                    formData.append("phoneNumber", phoneNumber);
+                    formData.append("openAt", openingHours);
+                    formData.append("closeAt", closingHours);
+                    formData.append("description", description);
+                    if (img) {
+                        formData.append("image", img);
+                        formData.append("Del", data.image);
+                    }
+                    let datapass = {
+                        oldPass: password,
+                        newPass: newpassword,
+                        confirmedPass: identifynewpassword
+                    };
+                    UpdateStore(formData, datapass);
+                })
+                .catch(errors => {
+                    setMessage(errors.errors[0]);
+                    setOpenNotify(true);
+                });
+        } else {
+            checkoutSchema1.validate({
+                name: name,
+                address: address,
+                phoneNumber: phoneNumber,
+                openingHours: openingHours,
+                closingHours: closingHours,
+                description: description,
+            })
+                .then(valid => {
+                    let formData = new FormData();
+                    formData.append("name", name);
+                    formData.append("address", address);
+                    formData.append("phoneNumber", phoneNumber);
+                    formData.append("openAt", openingHours);
+                    formData.append("closeAt", closingHours);
+                    formData.append("description", description);
+                    if (img) {
+                        formData.append("image", img);
+                        formData.append("Del", data.image);
+                    }
+                    UpdateStore(formData);
+                })
+                .catch(errors => {
+                    setMessage(errors.errors[0]);
+                    setOpenNotify(true);
+                });
+        }
     };
 
-
-    const getdatainfostore = async (json) => {
+    const changepassword = async (dataf) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/store/owner/${_id}`, json
-                , {
+            const response = await axios.post(`https://falth-api.vercel.app/api/user/change-pass/${_id}`, dataf,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            redirectToEditProductPage();
+        } catch (error) {
+            console.log(error);
+            notify("error", "Không thể đổi mật khẩu");
+        }
+    }
+    const getdatainfostore = async () => {
+
+        try {
+            setIsLoading(true);
+            const response = await axios.get(`https://falth-api.vercel.app/api/store/owner/${_id}`,
+                {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -92,19 +169,17 @@ const UserProfile = () => {
             setData(responseData);
             console.log(responseData);
             setInfostore();
+            setIsLoading(false);
         } catch (error) {
-            console.log(error);
-        }
-        finally {
-            setTimeout(() => { setIsLoading(false) }, 3000)
-
+            setMessage(error);
+            setOpenNotify(true);
+            setIsLoading(false);
         }
 
     }
 
     const setInfostore = async () => {
-        console.log(data);
-        console.log(data.openAt);
+
         setimgLink(data.image);
         setName(data.name);
         setAddress(data.address);
@@ -112,13 +187,11 @@ const UserProfile = () => {
         setOpeningHours(data.openAt);
         setPhoneNumber(data.phoneNumber);
         setDiscription(data.description);
+
     }
     const [description, setDiscription] = useState("");
     useEffect(() => {
         getdatainfostore();
-        console.log(data.openAt);
-        console.log(data);
-
     }, []);
     useEffect(() => {
         setInfostore();
@@ -126,17 +199,21 @@ const UserProfile = () => {
 
 
 
-    const UpdateStore = async (formData) => {
+    const UpdateStore = async (formData, datapass) => {
         try {
-            const response = await axios.put(`https://falth-api.vercel.app/api/store/${_id}`, formData
+            await axios.put(`https://falth-api.vercel.app/api/store/${_id}`, formData
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
-            setIsLoading(true);
+            if (datapass) {
+                await changepassword(datapass);
+            }
             getdatainfostore();
+            setInfostore();
+            notify("success", "Cập nhật thành công");
         } catch (error) {
             console.log(error);
         }
@@ -174,12 +251,15 @@ const UserProfile = () => {
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
+    const handleidentifynewPasswordChange = (event) => {
+        setidentifynewPassword(event.target.value);
+    };
     const handleDiscriptionChange = (event) => {
         setDiscription(event.target.value);
     };
 
     return (
-        <Box m="0px 20px" position='relative'>
+        <Box m="0px 20px" position='relative' onClick={() => setOpenNotify(false)}>
             <Header2 title=" Thông tin cửa hàng" />
             <Box
                 m="0 0 0 0"
@@ -263,6 +343,7 @@ const UserProfile = () => {
                                         <div className="col-91">
                                             <div className="input-group11">
                                                 <input
+                                                    required
                                                     name="phoneNumber"
                                                     placeholder="Số điện thoại"
                                                     type="text"
@@ -277,10 +358,9 @@ const UserProfile = () => {
                                         <div className="col-3_11">Mô tả</div>
                                         <div className="col-91">
                                             <div className="input-group11">
-                                                <input
-                                                    name="discription"
+                                                <textarea
+                                                    name="description"
                                                     placeholder="Mô tả"
-                                                    type="text"
                                                     className="form-control1"
                                                     value={description}
                                                     onChange={handleDiscriptionChange}
@@ -350,6 +430,21 @@ const UserProfile = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="form-group11">
+                                                <div className="col-3_11">Xác nhận mật khẩu</div>
+                                                <div className="col-91">
+                                                    <div className="input-group11">
+                                                        <input
+                                                            name="identifynewPassword"
+                                                            placeholder="Mật khẩu mới"
+                                                            type="password"
+                                                            className="form-control1"
+                                                            value={identifynewpassword}
+                                                            onChange={handleidentifynewPasswordChange}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </>
                                     ) : (
                                         <>
@@ -366,21 +461,18 @@ const UserProfile = () => {
                                             </div>
                                         </>
                                     )}
+                                    {
+                                        openNotify && (
+                                            <div className="form-group111" >
+                                                <span>{message}</span>
+                                            </div>
+                                        )
+                                    }
                                     <div className="row11">
                                         <div className="col-3_11">
                                             <button onClick={handleSubmit} className="btn11 btn-blue-4 btn-block">Lưu thay đổi</button>
                                         </div>
                                     </div>
-                                    {
-                                        openNotify && (
-                                            <div className="form-container"
-                                                style={{ position: "absolute", zIndex: 1000, width: "40%", top: '30%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
-                                                <Box m="20px" >
-                                                    <Notify error={error} message={message} setOpenNotify={setOpenNotify} />
-                                                </Box>
-                                            </div>
-                                        )
-                                    }
                                 </form>
                             </div>
                             <div className="user-profile-update1">

@@ -81,11 +81,11 @@ const Product = () => {
             setIsLoadingbutton(false);
         }
     };
-    const priceRegExp = /^\d+(\.\d{1,2}0{3})?$/;
+    const priceRegExp = /^[1-9]\d*000$/;
 
 
     const schema = yup.object().shape({
-        name: yup.string().required("Tên là bắt buộc"),
+        name: yup.string().required("Tên là bắt buộc").min(1, "Tên không được để trống"),
         price: yup.string().required("Giá tiền là bắt buộc").matches(priceRegExp, "Giá tiền không hợp lệ"),
         description: yup.string().required("Mô tả là bắt buộc"),
     });

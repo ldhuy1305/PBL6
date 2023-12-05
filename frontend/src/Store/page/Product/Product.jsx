@@ -10,6 +10,7 @@ import Notify from '../../../Components/Notify/Notify';
 import style from './Product.module.css'
 import Header2 from "../../components/Header/Header";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 
@@ -35,6 +36,16 @@ const Product = ({ Catname }) => {
         history('/store/Formedit', { state: id });
     };
     const formRef = useRef();
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
 
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
@@ -239,12 +250,12 @@ const Product = ({ Catname }) => {
                         <div ref={formRef} className="form-container"
                             style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
                             <Box m="20px" >
-                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenNotify={setOpenNotify} />
+                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenNotify={notify} />
                             </Box>
                         </div>
                     )
                 }
-                {
+                {/* {
                     openNotify && (
                         <div ref={formRef} className="form-container"
                             style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
@@ -254,7 +265,7 @@ const Product = ({ Catname }) => {
                         </div>
 
                     )
-                }
+                } */}
 
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{

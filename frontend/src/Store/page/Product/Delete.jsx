@@ -19,12 +19,12 @@ function Delete({ selectedRow, setOpenDelete, setError, fetchData, setMessage, s
             setMessage("Xóa thành công");
             fetchData();
             setOpenDelete(false);
-            setOpenNotify(true);
+            setOpenNotify("success", "Cập nhật thành công");
         } catch (error) {
             console.log(error);
             setError(false);
             setMessage(error.message);
-            setOpenNotify(true);
+            setOpenNotify("success", error.message);
         }
     };
 

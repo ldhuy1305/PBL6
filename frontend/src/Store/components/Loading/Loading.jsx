@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import './Loading.css';
+import * as React from 'react';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
-const Spinner = () => {
+export default function SimpleBackdrop() {
     return (
-        <div className="spinner"></div>
+        <div>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={true}
+            >
+                <CircularProgress color="inherit" size="50px" />
+            </Backdrop>
+        </div>
     );
 }
-export default Spinner;

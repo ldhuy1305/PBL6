@@ -1,11 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Image.css';
 
 function Image({ images, setImages, setDeletedImageUrls }) {
   const fileInputRef = useRef(null);
   const [imgDelete, setDelete] = useState([]);
-
+  useEffect(() => {
+    setDeletedImageUrls([]);
+  }, []);
   const selectFiles = () => {
     fileInputRef.current.click();
     console.log(images);
