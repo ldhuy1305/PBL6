@@ -87,7 +87,10 @@ class orderController {
     }
     if (!transaction) await Transaction.create(vnp_Params);
     let order = await Order.findById(vnp_Params.vnp_TxnRef);
-    if (order.status == "Pending") order.status = "Waiting";
+    if (order.status == "Pending") {
+      order.status = "Waiting";
+      order.dateCheckout = new Date(Date.now() + 7 * 60 * 60 * 1000);
+    }
     await order.save();
     res.status(200).json({
       status: "success",
@@ -215,6 +218,7 @@ class orderController {
         let t = (Date.now() - order.createdAt) / 60000;
         if (order.status == "Waiting" && t > 30) {
           order.status = "Refused";
+          order.dateRefused = new Date(Date.now() + 7 * 60 * 60 * 1000);
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
@@ -230,6 +234,7 @@ class orderController {
     if (order.status != "Waiting")
       return next(new appError("Không thể huỷ đơn hàng!", 404));
     order.status = "Cancelled";
+    order.dateCancelled = new Date(Date.now() + 7 * 60 * 60 * 1000);
     await this.refundOrder(req, order._id, next);
     await order.save();
     res.status(200).json({ status: "success", data: order });
@@ -248,20 +253,23 @@ class orderController {
 
     switch (order.status) {
       case "Waiting":
-        // when shipper take order
+        // when shipper confirmed order and store prepare
         order.shipper = shipperId;
         order.status = "Preparing";
+        order.datePrepared = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper has confirmed the delivery";
         break;
       case "Preparing":
         // when shipper delivery order
         order.status = "Delivering";
+        order.dateDeliveried = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper is delivering the order";
         break;
 
       case "Delivering":
         // when shipper deliveried
         order.status = "Finished";
+        order.dateDeliveried = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper has successfully delivered the order";
         break;
     }

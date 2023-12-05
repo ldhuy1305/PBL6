@@ -58,6 +58,24 @@ const orderSchema = new Schema(
     dateOrdered: {
       type: Date,
     },
+    dateCancelled: {
+      type: Date,
+    },
+    dateCheckout: {
+      type: Date,
+    },
+    datePrepared: {
+      type: Date,
+    },
+    dateDeliveried: {
+      type: Date,
+    },
+    dateFinished: {
+      type: Date,
+    },
+    dateRefused: {
+      type: Date,
+    },
     storeLocation: {
       type: {
         type: String,
