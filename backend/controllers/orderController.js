@@ -147,6 +147,8 @@ class orderController {
       {
         $addFields: {
           "cart.product.name": "$product.name",
+          "cart.product._id": "$product._id",
+          "cart.product.images": "$product.images",
         },
       },
       {
@@ -163,8 +165,10 @@ class orderController {
             lastName: 1,
           },
           store: {
+            _id: 1,
             name: 1,
             address: 1,
+            image: 1,
           },
           cart: 1,
           contact: 1,
