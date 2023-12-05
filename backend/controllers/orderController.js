@@ -219,7 +219,7 @@ class orderController {
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
-        if (order.status != "Pending" && t > 30)
+        if (order.status == "Pending" && t > 30)
           await Order.findByIdAndDelete(order._id);
       }
     }
