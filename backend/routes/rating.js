@@ -16,8 +16,8 @@ router
   .route("/:id")
   .get(ratingController.getRatingById)
   .patch(
-    // authController.protect,
-    // authController.restrict("User"),
+    authController.protect,
+    authController.restrict("User"),
     ratingController.updatePhoto,
     ratingController.updateRating
   )
