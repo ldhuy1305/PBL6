@@ -29,35 +29,44 @@ function useLocationSelect() {
     }
   };
 
-  const handleCityChange2 = (selectedCityName) => {
-    if (selectedCityName !== "") {
-      const selectedCity = cities.find((city) => city.Name.includes(selectedCityName));
-      console.log(selectedCity)
-      setDistricts(selectedCity.Districts);
+  const handleCityChange2 = async (selectedCityName) => {
+  if (selectedCityName !== "") {
+    let selectedCity;
+    if (cities.length > 0) {
+      selectedCity = cities.find((city) => city.Name.includes(selectedCityName));
     } else {
-      setDistricts([]);
+      try {
+        const response = await axios.get("https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json");
+        selectedCity = response.data.find((city) => city.Name.includes(selectedCityName));
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
     }
-  };
+    setDistricts(selectedCity.Districts);
+  } else {
+    setDistricts([]);
+  }
+};
 
-  const handleDistrictChange = (e) => {
-    const selectedDistrictId = e.target.value;
-    // Tìm phường/xã dựa trên quận/huyện được chọn
-    const selectedDistrict = districts.find((district) => district.Name === selectedDistrictId);
-    if (selectedDistrict) {
-      setWards(selectedDistrict.Wards);
-    } else {
-      setWards([]);
-    }
-  };
+const handleDistrictChange = (e) => {
+  const selectedDistrictId = e.target.value;
+  // Tìm phường/xã dựa trên quận/huyện được chọn
+  const selectedDistrict = districts.find((district) => district.Name === selectedDistrictId);
+  if (selectedDistrict) {
+    setWards(selectedDistrict.Wards);
+  } else {
+    setWards([]);
+  }
+};
 
-  return {
-    cities,
-    districts,
-    wards,
-    handleCityChange,
-    handleDistrictChange,
-    handleCityChange2
-  };
+return {
+  cities,
+  districts,
+  wards,
+  handleCityChange,
+  handleDistrictChange,
+  handleCityChange2
+};
 }
 
 export default useLocationSelect;

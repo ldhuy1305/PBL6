@@ -82,7 +82,7 @@ const SignUpCustomer = () => {
             setError(t("error13"));
          } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
             setError(t("error9"))
-        } else if (formData.detailAddress === '' || formData.ward === ""  || formData.district === "" || formData.city === "") {
+        } else if (formData.ward === ""  || formData.district === "" || formData.city === "") {
             setError("Vui lòng nhập đầy đủ thông tin địa chỉ")
         } else {
             try {

@@ -26,7 +26,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
                 // setIsLoading(true)
                 const data = await getRatingOfProduct(dish._id)
                 setRatings({ ...data.data })
-                // console.log(data);  fd
+                console.log(dish); 
             } catch (error) {
                 console.error("Lỗi khi lấy thông tin đánh giá:", error);
             }
@@ -92,7 +92,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
                                         style={{ height: '80%', width: '80px' }}
                                     ></img>
                                 ) : (
-                                    dish.isOutOfOrder ? (
+                                    dish.isOutofOrder ? (
                                         <img
                                             src={soldout}
                                             alt="Hết hàng"

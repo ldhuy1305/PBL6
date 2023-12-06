@@ -4,15 +4,15 @@ import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
-import { addRatingForProduct } from "../../services/userServices";
 import axios from "axios";
-const RatingProduct = ({ show, handleClose, product}) => {
+import { updateRatingForStore } from "../../services/userServices";
+const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
-        number: '',
-        content: '',
-        images: []
+        number: rating && rating.number ? rating.number : '',
+        content: rating && rating.content ? rating.content : '',
+        images: rating && rating.images ? [...rating.images] : [],
     });
 
     const [openNotify, setOpenNotify] = useState(false)
@@ -20,22 +20,24 @@ const RatingProduct = ({ show, handleClose, product}) => {
     const [notify, setNotify] = useState('')
 
     const handleCloseRating = () => {
-        console.log(product)
         handleClose()
         setFormData({
-            nnumber: '',
-            content: '',
-            images: []
+            number: rating && rating.number ? rating.number : '',
+            content: rating && rating.content ? rating.content : '',
+            images: rating && rating.images ? [...rating.images] : [],
         });
     }
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
+        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
         const name = e.target.name;
         const files = e.target.files;
+
+        // Convert fileList to array
         const imagesArray = Array.from(files);
 
         setFormData({
@@ -51,6 +53,7 @@ const RatingProduct = ({ show, handleClose, product}) => {
         });
     };
 
+    const [dels, setDels] = useState([]);
     const handleSubmit = async () => {
         const res = new FormData();
         res.append('number', formData.number);
@@ -59,7 +62,9 @@ const RatingProduct = ({ show, handleClose, product}) => {
         // Append each image to the FormData
         if (formData.images && formData.images.length > 0) {
             formData.images.forEach((image, index) => {
-                res.append(`images`, image); // assuming 'images' is an array of files
+                if (image instanceof File) {
+                    res.append(`images`, image);
+                }// assuming 'images' is an array of files
             });
         }
         if (formData.number === '') {
@@ -67,31 +72,75 @@ const RatingProduct = ({ show, handleClose, product}) => {
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            console.log(product)
-            try {
-                setIsLoading(true);
-                const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        ContentType: 'multipart/form-data',
-                    }
+            if (!rating) {
+                try {
+
+                    setIsLoading(true);
+                    console.log(store)
+                    const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            ContentType: 'multipart/form-data',
+                        }
+                    });
+
+                    setNotify("Đánh giá thành công!")
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                    setOpenNotify(true)
+                    handleClose()
+                } finally {
+                    setIsLoading(false);
+                }
+                setFormData({
+                    number: '',
+                    content: '',
+                    images: [],
                 });
-                setNotify("Đánh giá thành công!")
-                setOpenNotify(true)
-                handleClose()
-            } catch (error) {
-                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho sản phẩm này rồi!")
-                setOpenNotify(true)
-                handleClose()
-            } finally {
-                setIsLoading(false);
+            } else {
+                try {
+                    setIsLoading(true);
+                    res.append('dels', dels);
+                    const response = await axios.patch(
+                        `https://falth-api.vercel.app/api/rating/${rating._id}`,
+                        res, // Truyền dữ liệu trực tiếp vào đây, không cần đặt trong một đối tượng
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data', // Sửa 'ContentType' thành 'Content-Type'
+                          },
+                        }
+                      );
+                      const updated = response.data.data
+                      console.log(response.data.data)
+                      const updatedRatings = Object.values(ratings).map((oldRating) =>
+                      oldRating._id === rating._id ? updated : oldRating
+                    );
+                    console.log(updatedRatings)
+                    setRatings(updatedRatings);
+                    setNotify("Chỉnh sửa đánh giá thành công!")
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    console.log(error)
+                    setNotify("Chỉnh sửa đánh giá thất bại!")
+                    setOpenNotify(true)
+                    handleClose()
+                } finally {
+                    setIsLoading(false);
+                }
+                setFormData({
+                    number: '',
+                    content: '',
+                    images: [],
+                });
+                setDels([]);
+                // console.log(product)
             }
-            setFormData({
-                number: '',
-                content: '',
-                images: [],
-            });
         }
+
 
     };
 
@@ -129,7 +178,7 @@ const RatingProduct = ({ show, handleClose, product}) => {
                 <Modal.Header>
                     <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
-                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá sản phẩm</div>
+                    <div class="modal-header" style={{ color: 'white' }}>Cập nhật đánh giá</div>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="modal-dialog modal-noti" role="document">
@@ -160,13 +209,13 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={product.images[0]}
-                                                                alt=""
+                                                                src={store ? store.image : product.images[0]}
+                                                                alt='avatar'
                                                             />
-                                                            <div class="shipper-name" style={{ margin: '0' }}>{product.name}</div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{store ? store.name :  product.name }</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
                                                                 <div className="shopee-rating-stars__stars">
-                                                                    {renderStars(product.ratingsAverage)}
+                                                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
                                                                 </div>
                                                             </div>
                                                             <div >
@@ -209,7 +258,13 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                                             <span class="btn-delete-tag" style={{ top: '5px', right: '5px' }}
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
-                                                                                    newImages.splice(index, 1);
+                                                                                    const [deletedImage] = newImages.splice(index, 1);
+                                                                                    console.log(deletedImage)
+                                                                                    if (!(deletedImage instanceof File)) {
+
+                                                                                        setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
+                                                                                    }
+
                                                                                     setFormData({ ...formData, images: newImages });
                                                                                 }}>x</span>
                                                                         </div>
@@ -232,7 +287,8 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
+                                                            
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Cập nhật đánh giá</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -252,4 +308,4 @@ const RatingProduct = ({ show, handleClose, product}) => {
 
     )
 }
-export default RatingProduct
+export default UpdateRatingModal

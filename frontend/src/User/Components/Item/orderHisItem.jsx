@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 import LoadingModal from "../Loading/Loading";
-import { getStoreById } from "../../services/userServices";
+import { getStoreById, cancelOrder } from "../../services/userServices";
 import { useNavigate } from "react-router-dom";
+import CancelModal from "../Modal/cancelModal";
+import Notify from "../Notify.jsx/Notify";
 const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const formatteOrderTime = moment.utc(item.dateOrdered).format('DD/MM/YYYY HH:mm');
+    const [orderItem, setOrderItem] = useState(item);
     // const localFormattedDate = moment(item.dateOrdered).local().format('DD/MM/YYYY HH:mm');
     const handleStore = async () => {
 
@@ -23,6 +26,43 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
             setIsLoading(false);
         }
     }
+    const [openNotify, setOpenNotify] = useState(false)
+    const [message, setMessage] = useState('')
+    const [show, setShow] = useState(false)
+    const handleClose = () => {
+        setShow(false)
+    }
+    const handleCancel = async () => {
+        if(item.status !== 'Waiting') {
+            setMessage('Đơn hàng không thể hủy!')
+            setOpenNotify(true)
+        } else {
+            setShow(true)
+        }
+    }
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Pending':
+                return 'orange';
+            case 'Cancelled':
+                return 'gray'; // Replace with your desired color for Cancelled
+            case 'Waiting':
+                return 'blue'; // Replace with your desired color for Waiting
+            case 'Preparing':
+                return 'purple'; // Replace with your desired color for Preparing
+            case 'Ready':
+                return 'green'; // Replace with your desired color for Ready
+            case 'Delivering':
+                return 'cyan'; // Replace with your desired color for Delivering
+            case 'Finished':
+                return '#6cc942';
+            case 'Refused':
+                return 'red';
+            default:
+                return 'black';
+        }
+    };
     return (
         <div>
             <div class="history-table-row">
@@ -39,35 +79,28 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                         rel="noopener noreferrer"
                     ><div class="text-body">
                             <strong class="d-block text-truncate"
-                            >{item.store.name}</strong><span class="d-block text-truncate"
-                            >{item.store.address}</span>
+                            >{orderItem.store.name}</strong><span class="d-block text-truncate"
+                            >{orderItem.store.address}</span>
                         </div></a>
                 </div>
                 <div className="history-table-cell history-table-col5">
-                    {item.shipper ? (
-                        <strong className="d-block text-truncate">{item.shipper}</strong>
+                    {orderItem.shipper ? (
+                        <strong className="d-block text-truncate">{orderItem.shipper}</strong>
                     ) : (
                         <span></span>
                     )}
                 </div>
                 <div class="history-table-cell history-table-col6">
-                    <div style={{ fontWeight: 'bold' }}><span>{item.totalPrice.toLocaleString('vi-VN')}đ</span></div>
+                    <div style={{ fontWeight: 'bold' }}><span>{orderItem.totalPrice.toLocaleString('vi-VN')}đ</span></div>
                     {/* <div style={{ color: 'green', fontWeight: 'bold' }}>
                         Thanh toán trực tuyến
                     </div> */}
                 </div>
                 <div class="history-table-cell history-table-col7">
-                    <div class="font-weight-bold history-table-status" style={{
-                        color:
-                            item.status === 'Finished'
-                                ? '#6cc942' // Màu xanh cho trạng thái complete
-                                : item.status === 'Pending'
-                                    ? 'orange' // Màu vàng cho trạng thái pending
-                                    : item.status === 'Refused'
-                                        ? 'red' // Màu đỏ cho trạng thái reject
-                                        : 'black' // Màu mặc định nếu không phù hợp với các trạng thái trên
-                    }}>
-                        {item.status}
+                    <div class="font-weight-bold history-table-status" 
+                    style={{ color: getStatusColor(orderItem.status) }}
+                    >
+                        {orderItem.status}
                     </div>
                 </div>
                 <div class="history-table-cell history-table-col8">
@@ -79,6 +112,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                     <button
                         class="font-weight-bold history-table-status gray pointer"
                         style={{ backgroundColor: '#e81f1b', color: 'white' }}
+                        onClick={handleCancel}
                     >
                         {t('cancel')}
                     </button>
@@ -92,6 +126,8 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 </div>
             </div>
             {isLoading && (<LoadingModal/>)}
+            <CancelModal show={show} handleClose={handleClose} orderItem={orderItem} setOrderItem={setOrderItem}/>
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify}/>)}
         </div>
     )
 }
