@@ -272,7 +272,7 @@ class orderController {
       case "Delivering":
         // when shipper deliveried
         order.status = "Finished";
-        order.dateDeliveried = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        order.dateFinished = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper has successfully delivered the order";
         break;
     }
