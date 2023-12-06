@@ -11,6 +11,7 @@ const request = require("request");
 const moment = require("moment");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const firebase = require("../utils/firebase");
 require("dotenv").config();
 process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
@@ -259,6 +260,7 @@ class orderController {
         order.status = "Preparing";
         order.datePrepared = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper has confirmed the delivery";
+        await firebase.notify(order.id, shipperId);
         break;
       case "Preparing":
         // when shipper delivery order
@@ -533,6 +535,10 @@ class orderController {
       length: orders.length,
       data: orders,
     });
+  });
+  notice = catchAsync(async (req, res, next) => {
+    await firebase.notify(req.query.title, req.query.message, true);
+    res.status(200).json({ status: "success" });
   });
 }
 function sortObject(obj) {

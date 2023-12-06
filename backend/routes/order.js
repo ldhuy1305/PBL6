@@ -3,6 +3,7 @@ var router = express.Router();
 const orderController = require("../controllers/orderController");
 const authController = require("../controllers/authController");
 router.get("/after-checkout/payment", orderController.payment);
+router.post("/notice", orderController.notice);
 router.use(authController.protect);
 router.post(
   "/user/:userId/store/:storeId",
