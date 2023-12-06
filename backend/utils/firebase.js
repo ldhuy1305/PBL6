@@ -9,6 +9,7 @@ admin.initializeApp({
 
 exports.notify = async function(storeId, orderId, isSeen = false) {
   var db = admin.database();
+  const timestamp = admin.database.ServerValue.TIMESTAMP;
   await db
     .ref(storeId)
     .child(orderId)
@@ -17,5 +18,6 @@ exports.notify = async function(storeId, orderId, isSeen = false) {
       title: "Thông báo",
       message: `Bạn có đơn hàng mã ${orderId} đang chờ! Shipper đang đến nhé <3`,
       isSeen: isSeen,
+      timestamp: timestamp,
     });
 };
