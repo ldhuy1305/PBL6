@@ -154,6 +154,7 @@ class orderController {
           "cart.product.name": "$product.name",
           "cart.product._id": "$product._id",
           "cart.product.images": "$product.images",
+          "cart.product.ratingsAverage": "$product.ratingsAverage",
         },
       },
       {
@@ -277,6 +278,7 @@ class orderController {
     return res.status(200).json({
       success: "success",
       message,
+      data: order,
     });
   });
   async refundOrder(req, id, next) {
@@ -518,7 +520,7 @@ class orderController {
       Order.find(obj).populate({
         path: "store",
         select:
-          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",
+          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -createdAt -updatedAt -__v",
       }),
       req.query
     )
