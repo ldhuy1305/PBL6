@@ -278,6 +278,7 @@ class orderController {
     return res.status(200).json({
       success: "success",
       message,
+      data: order,
     });
   });
   async refundOrder(req, id, next) {
