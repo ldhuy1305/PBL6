@@ -33,7 +33,7 @@ router.put(
 );
 router.put(
   "/:id/shipper/:shipperId",
-  authController.restrict("User"),
+  authController.restrict("Shipper"),
   orderController.changeStatus
 );
 module.exports = router;
