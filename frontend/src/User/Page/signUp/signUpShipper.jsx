@@ -7,7 +7,7 @@ import LoadingModal from '../../Components/Loading/Loading';
 import axios from 'axios';
 const SignUpShipper = () => {
     const [isLoading, setIsLoading] = useState(false)
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const {
         cities,
@@ -15,11 +15,11 @@ const SignUpShipper = () => {
         wards,
         handleCityChange,
         handleDistrictChange,
-      } = useLocationSelect();
-      const handleNav = ({ nav }) => {
+    } = useLocationSelect();
+    const handleNav = ({ nav }) => {
         navigate(`/${nav}`);
-      };
-      const [formData, setFormData] = useState({
+    };
+    const [formData, setFormData] = useState({
         email: '',
         password: '',
         passwordConfirm: '',
@@ -33,10 +33,10 @@ const SignUpShipper = () => {
         frontImageCCCD: null,
         behindImageCCCD: null,
         licenseImage: null,
-        vehicleNumber:'',
-        vehicleType:'',
-        vehicleLicense: '',
-        licenseNumber:'',
+        vehicleNumber: '',
+        vehicleType: '',
+        vehicleLicense: null,
+        licenseNumber: '',
     });
 
     const handleChangeCity = (e) => {
@@ -45,7 +45,7 @@ const SignUpShipper = () => {
         setFormData({
             ...formData,
             [name]: value,
-          });
+        });
     }
     const handleChangeDictrict = (e) => {
         handleDistrictChange(e);
@@ -53,69 +53,73 @@ const SignUpShipper = () => {
         setFormData({
             ...formData,
             [name]: value,
-          });
+        });
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-            setFormData({
-              ...formData,
-              [name]: value,
-            });
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
     };
 
     const handleChangeImg = (e) => {
         const name = e.target.name;
-        const value = e.target.files[0]; 
-      
+        const value = e.target.files[0];
+
         setFormData({
-          ...formData,
-          [name]: value,
+            ...formData,
+            [name]: value,
         });
-      };
+    };
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const handleSubmit = async (e) => {
         e.preventDefault();
         const address = `${formData.detailAddress}, ${formData.ward}, ${formData.district}, ${formData.city}`;
-        const registrationData = {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            password: formData.password,
-            passwordConfirm: formData.passwordConfirm,
-            address: address,
-            phoneNumber: formData.phoneNumber,
-            frontImageCCCD: formData.frontImageCCCD.name,
-            behindImageCCCD: formData.behindImageCCCD.name,
-            licenseImage: formData.licenseImage.name,
-            vehicleNumber:formData.vehicleNumber,
-            vehicleType:formData.vehicleType,
-            vehicleLicense: formData.vehicleLicense,
-            licenseNumber:formData.licenseNumber,
-        };
-            console.log(registrationData)
-        
-        if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(registrationData.email)) {
+        const registrationData = new FormData();
+        registrationData.append('firstName', formData.firstName);
+        registrationData.append('lastName', formData.lastName);
+        registrationData.append('email', formData.email);
+        registrationData.append('password', formData.password);
+        registrationData.append('passwordConfirm', formData.passwordConfirm);
+        registrationData.append('address', address);
+        registrationData.append('phoneNumber', formData.phoneNumber);
+        registrationData.append('frontImageCCCD', formData.frontImageCCCD);
+        registrationData.append('behindImageCCCD', formData.behindImageCCCD);
+        registrationData.append('licenseImage', formData.licenseImage);
+        registrationData.append('vehicleNumber', formData.vehicleNumber);
+        registrationData.append('vehicleType', formData.vehicleType);
+        registrationData.append('vehicleLicense', formData.vehicleLicense);
+        registrationData.append('licenseNumber', formData.licenseNumber);
+        console.log(formData)
+        if (!/^[^.].{5,29}@gmail\.com$/.test(formData.email)) {
             setError(t("error8"))
-        } else if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(registrationData.password)) {
+        } else if (!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(formData.password)) {
             setError(t("error5"))
-        }else if(registrationData.password !== registrationData.passwordConfirm) {
+        } else if (formData.password !== formData.passwordConfirm) {
             setError(t("error6"))
-        } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(formData.firstName) || !/^[\p{L} ']+$/u.test(formData.lastName)) {
+            setError(t("error13"));
+         } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
         } else {
             try {
                 setIsLoading(true)
                 console.log(registrationData)
 
-              const response = await axios.post('https://falth-api.vercel.app/api/shipper', registrationData);
-              console.log('Đăng ký thành công', response.data);
-              setError('')
-              setSuccess('Đã nhận được thông tin! Mời bạn xác nhận email')
-                navigate("/verify", { state: { action: "verifyShipper", email: registrationData.email } });
+                const response = await axios.post('https://falth-api.vercel.app/api/shipper', registrationData, {
+                    headers: {
+                        ContentType: 'multipart/form-data',
+                    }
+                });
+                console.log('Đăng ký thành công', response.data);
+                setError('')
+                setSuccess('Đã nhận được thông tin! Mời bạn xác nhận email')
+                navigate("/verify", { state: { action: "verifyShipper", email: formData.email } });
             } catch (error) {
-              setError('Địa chỉ email đã tồn tại');
+                setError('Địa chỉ email đã tồn tại');
             }
             setIsLoading(false)
         }
@@ -129,41 +133,41 @@ const SignUpShipper = () => {
                         <div class="card-body_su">
                             <h2 class="title_su">{t("signupShipper")}</h2>
                             <div>
-                            <div class="container-navigate">
-                                <button class="btn_su btn--radius btn--red" onClick={() => handleNav({ nav: "signUpCustomer" })}>{t("customer")}</button>
-                                    <button class="btn_su btn--radius btn--red" style={{marginLeft:'20px'}} onClick={() => handleNav({ nav: "signUpShipper" })}>{t("shipper")}</button>
-                                    <button class="btn_su btn--radius btn--red" style={{marginLeft:'20px'}} onClick={() => handleNav({ nav: "signUpOwner" })}>{t("owner")}</button>
+                                <div class="container-navigate">
+                                    <button class="btn_su btn--radius btn--red" onClick={() => handleNav({ nav: "signUpCustomer" })}>{t("customer")}</button>
+                                    <button class="btn_su btn--radius btn--red" style={{ marginLeft: '20px' }} onClick={() => handleNav({ nav: "signUpShipper" })}>{t("shipper")}</button>
+                                    <button class="btn_su btn--radius btn--red" style={{ marginLeft: '20px' }} onClick={() => handleNav({ nav: "signUpOwner" })}>{t("owner")}</button>
                                 </div>
                             </div>
                             <form method="POST" onSubmit={handleSubmit} encType="multipart/form-data">
                                 <div class="input-group_su">
-                                    <input style={{border:'none'}}class="input--style-2" type="text" placeholder="Email" name="email" required value={formData.email} onChange={handleChange}/>
+                                    <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder="Email" name="email" required value={formData.email} onChange={handleChange} />
                                 </div>
                                 <div class="input-group_su">
-                                    <input style={{border:'none'}}class="input--style-2" type="password" placeholder={t("signupPass")} name="password" required value={formData.password} onChange={handleChange}/>
+                                    <input style={{ border: 'none' }} class="input--style-2" type="password" placeholder={t("signupPass")} name="password" required value={formData.password} onChange={handleChange} />
                                 </div>
                                 <div class="input-group_su">
-                                    <input style={{border:'none'}}class="input--style-2" type="password" placeholder={t("confirmPass")} name="passwordConfirm" required value={formData.passwordConfirm} onChange={handleChange}/>
+                                    <input style={{ border: 'none' }} class="input--style-2" type="password" placeholder={t("confirmPass")} name="passwordConfirm" required value={formData.passwordConfirm} onChange={handleChange} />
                                 </div>
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("firstName")} name="firstName" required value={formData.firstName} onChange={handleChange}/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("firstName")} name="firstName" required value={formData.firstName} onChange={handleChange} />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("lastName")} name="lastName" required value={formData.lastName} onChange={handleChange}/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("lastName")} name="lastName" required value={formData.lastName} onChange={handleChange} />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="input-group_su">
-                                    <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("phoneNumber")} name="phoneNumber" required value={formData.phoneNumber} onChange={handleChange} maxLength={10}/>
+                                    <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("phoneNumber")} name="phoneNumber" required value={formData.phoneNumber} onChange={handleChange} maxLength={10} />
                                 </div>
-                               
-                                
+
+
                                 <div class="row_su row-space">
-                                <div class="col-3_su">
+                                    <div class="col-3_su">
                                         <div class="input-group_su">
                                             <div class="rs-select2 js-select-simple select--no-search">
                                                 <select onChange={handleChangeCity} name="city" class="form-select form-select-sm" id="city" aria-label=".form-select-sm" required value={formData.city}>
@@ -211,42 +215,29 @@ const SignUpShipper = () => {
                                 </div>
 
                                 <div class="input-group_su">
-                                    <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("address")} name="detailAddress" value={formData.detailAddress} onChange={handleChange}/>
+                                    <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("address")} name="detailAddress" value={formData.detailAddress} onChange={handleChange} />
                                 </div>
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("licenseId")} name="licenseNumber" value={formData.licenseNumber} onChange={handleChange}/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("licenseId")} name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} required />
                                         </div>
                                     </div>
-                                    <div class="col-2_su">
+                                    {/* <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder="Mã giấy đăng kí xe" name="vehicleLicense" value={formData.vehicleLicense} onChange={handleChange}/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder="Mã giấy đăng kí xe" name="vehicleLicense" value={formData.vehicleLicense} onChange={handleChange} required />
                                         </div>
-                                    </div>                                   
+                                    </div> */}
                                 </div>
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("vehicleNumber")} name="vehicleNumber" value={formData.vehicleNumber} onChange={handleChange}/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("vehicleNumber")} name="vehicleNumber" value={formData.vehicleNumber} onChange={handleChange} required />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" placeholder={t("vehicleType")} name="vehicleType" value={formData.vehicleType} onChange={handleChange}/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row_su row-space">
-                                    <div class="col-2_su">
-                                        <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" name="class" accept="image/*" placeholder={t("frontCCCD")} readonly/>
-                                        </div>
-                                    </div>
-                                    <div class="col-2_su">
-                                        <div class="input-group_su" >
-                                            <input style={{border:'none'}}class="input--style-2" type="file" name="frontImageCCCD" accept="image/*" onChange={handleChangeImg} required/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("vehicleType")} name="vehicleType" value={formData.vehicleType} onChange={handleChange} required />
                                         </div>
                                     </div>
                                 </div>
@@ -254,24 +245,50 @@ const SignUpShipper = () => {
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("behindCCCD")} readonly />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="class" accept="image/*" placeholder={t("frontCCCD")} readonly />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su" >
-                                            <input style={{border:'none'}}class="input--style-2" type="file" name="behindImageCCCD" accept="image/*" onChange={handleChangeImg} required/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="frontImageCCCD" accept="image/*" onChange={handleChangeImg} required />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row_su row-space">
+                                    <div class="col-2_su">
+                                        <div class="input-group_su">
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("behindCCCD")} readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-2_su">
+                                        <div class="input-group_su" >
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="behindImageCCCD" accept="image/*" onChange={handleChangeImg} required />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{border:'none'}}class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("licenseImage")} readonly />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("licenseImage")} readonly />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su" >
-                                            <input style={{border:'none'}}class="input--style-2" type="file" name="licenseImage" accept="image/*" onChange={handleChangeImg} required/>
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="licenseImage" accept="image/*" onChange={handleChangeImg} required />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row_su row-space">
+                                    <div class="col-2_su">
+                                        <div class="input-group_su">
+                                            <input style={{ border: 'none' }} class="input--style-2" type="text" name="image" accept="image/*" placeholder={t("vehicleLicense")} readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-2_su">
+                                        <div class="input-group_su" >
+                                            <input style={{ border: 'none' }} class="input--style-2" type="file" name="vehicleLicense" accept="image/*" onChange={handleChangeImg} required />
                                         </div>
                                     </div>
                                 </div>
@@ -285,7 +302,7 @@ const SignUpShipper = () => {
                     </div>
                 </div>
             </div>
-
+            {isLoading && (<LoadingModal/>)}
         </div>
     )
 }

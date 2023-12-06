@@ -16310,7 +16310,7 @@ th {
 }
 .shopee-rating-stars__star-wrapper>.shopee-rating-stars__lit {
   overflow: hidden;
-  position: absolute;
+  /* position: absolute; */
   height: 100%;
   left: 0;
   top: 0;

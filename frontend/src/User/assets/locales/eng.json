@@ -94,6 +94,8 @@
   "description": "Description of the store",
   "licence": "Business license:",
   "storeImage": "Image of the store: ",
+  "bankName": "Bank name: ",
+  "bankNumber": "Account number: ",
 
   "infoNav1" : "Account Management",
   "infoNav2" : "Order management",

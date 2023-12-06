@@ -1,13 +1,29 @@
 var express = require("express");
-var router = express.Router();
+const router = express.Router({ mergeParams: true });
 const ratingController = require("../controllers/ratingController");
+const authController = require("../controllers/authController");
+
 router
-  .route("/user/:userID/product/:productId")
-  .post(ratingController.updatePhoto, ratingController.ratingForProduct);
+  .route("/")
+  .post(
+    authController.protect,
+    authController.restrict("User"),
+    ratingController.updatePhoto,
+    ratingController.ratingForShipper
+  )
+  .get(ratingController.getAllRatings);
 router
-  .route("/user/:userID/shipper/:shipperId")
-  .post(ratingController.updatePhoto, ratingController.ratingForShipper);
-router
-  .route("/user/:userID/store/:storeId")
-  .post(ratingController.updatePhoto, ratingController.ratingForStore);
+  .route("/:id")
+  .get(ratingController.getRatingById)
+  .patch(
+    authController.protect,
+    authController.restrict("User"),
+    ratingController.updatePhoto,
+    ratingController.updateRating
+  )
+  .delete(
+    authController.protect,
+    authController.restrict("User", "Admin"),
+    ratingController.deleteRating
+  );
 module.exports = router;

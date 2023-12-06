@@ -71,19 +71,23 @@ const SignUpCustomer = () => {
           address: address,
           phoneNumber: formData.phoneNumber,
         };
-        // console.log(registrationData)
-        if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(registrationData.email)) {
+        console.log(registrationData)
+        if(!/^[^.].{5,29}@gmail\.com$/.test(registrationData.email)) {
             setError(t("error8"))
         } else if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(registrationData.password.trim())) {
             setError(t("error5"))
-        }else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
+        } else if(registrationData.password.trim() !== registrationData.passwordConfirm.trim()) {
             setError(t("error6"))
-        } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(registrationData.firstName) || !/^[\p{L} ']+$/u.test(registrationData.lastName)) {
+            setError(t("error13"));
+         } else if (!/^\d{10}$/.test(registrationData.phoneNumber)) {
             setError(t("error9"))
+        } else if (formData.detailAddress === '' || formData.ward === ""  || formData.district === "" || formData.city === "") {
+            setError("Vui lòng nhập đầy đủ thông tin địa chỉ")
         } else {
             try {
                 setIsLoading(true)
-              // Gọi API đăng ký người dùng
+              console.log('đăng kí')
               const response = await axios.post('https://falth-api.vercel.app/api/user', registrationData);
     
               // Xử lý phản hồi từ máy chủ, ví dụ: hiển thị thông báo thành công

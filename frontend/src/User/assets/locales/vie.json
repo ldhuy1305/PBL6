@@ -3,7 +3,7 @@
     "error2": "Vui lòng nhập mật khẩu",
     "error3": "Mật khẩu hoặc tài khoản không đúng",
     "error4": "Mã xác thực không hợp lệ hoặc đã hết hạn",
-    "error5": "Mật khẩu phải có ít nhật 8 kí tự gồm cả chữ và số",
+    "error5": "Mật khẩu phải có ít nhất 8 kí tự gồm cả chữ và số",
     "error6": "Mật khẩu và xác nhận mật khẩu không trùng khớp",
     "error7": "Đổi mật khẩu thất bại",
     "error8": "Email không hợp lệ",
@@ -92,6 +92,8 @@
     "description": "Mô tả về quán",
     "licence": "Giấy phép kinh doanh:",
     "storeImage": "Hình ảnh của quán: ",
+    "bankName": "Tên ngân hàng: ",
+    "bankNumber": "Số tài khoản: ",
 
     "infoNav1" : "Quản lý tài khoản",
     "infoNav2" : "Quản lý đơn hàng",

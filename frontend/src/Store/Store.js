@@ -1,46 +1,31 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import Sidebara from "./components/Sidebar/Sidebar";
-import Topbar from "./components/Topbar/Topbar";
-import Product from "./page/Product/Product";
-import Listorder from "./page/Listorder/Listorder";
-import { ColorModeContext, useMode } from "./theme";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import Category from "./page/Category/Category";
-import Login from "./login";
-import Info from "./page/Info/Info";
-import axios from "axios";
-import Feedback from "./page/Feedback/Feedback";
-import Statistics from "./page/Statistics/Statistics";
-import "./Store.css";
+import React, { useContext, useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Sidebara from './components/Sidebar/Sidebar';
+import Topbar from './components/Topbar/Topbar';
+import Product from './page/Product/Product';
+import Listorder from './page/Listorder/Listorder';
+import { ColorModeContext, useMode } from './theme';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import Category from './page/Category/Category';
+import Info from './page/Info/Info';
+import Formadd from './page/Product/Formadd';
+import Formedit from './page/Product/Formedit';
+import Detailorder from './page/Feedback/Detailorder';
+import { ToastContainer } from 'react-toastify';
+import Logout from './page/Logout/logout';
+import 'react-toastify/dist/ReactToastify.css';
+import Statistics from './page/Statistics/Statistics';
+import './Store.css'
+import Feedback from './page/Feedback/Feedback';
 
 const Store = () => {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-  const [Catname, setCatname] = useState([]);
-  const token = localStorage.getItem("autoken");
+  const tokenString = localStorage.getItem('user');
+  const tokenObject = JSON.parse(tokenString);
+  localStorage.setItem('_id', tokenObject._id);
 
-  const fetchCatname = async () => {
-    try {
-      const response = await axios.get(
-        "https://falth-api.vercel.app/api/category",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const responseData = response.data;
-      console.log(responseData);
-      setCatname(responseData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  useEffect(() => {
-    fetchCatname();
-  }, []);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -51,26 +36,23 @@ const Store = () => {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
-              <Route path="/" element={<Statistics Catname={Catname} />} />
-              <Route
-                path="/store/feedback"
-                element={<Feedback Catname={Catname} />}
-              />
-              <Route
-                path="/store/product"
-                element={<Product Catname={Catname} />}
-              />
-              <Route path="/store/listorder" element={<Listorder />} />
-              <Route path="/store/info" element={<Info />} />
-              <Route
-                path="/store/category"
-                element={<Category listCat={Catname} />}
-              />
+              <Route path="/" element={<Statistics />} />
+              <Route path="/Formadd" element={<Formadd />} />
+              <Route path="/Formedit" element={<Formedit />} />
+              <Route path="/product" element={<Product />} />
+              <Route path='/listorder' element={<Listorder />} />
+              <Route path='/info' element={<Info />} />
+              <Route path='/category' element={<Category />} />
+              <Route path="/detailorder" element={<Detailorder />} />
+              <Route path="/feedback" element={<Feedback />} />
+              <Route path="/logout" element={<Logout />} />
             </Routes>
+            <ToastContainer />
           </main>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
+
   );
 };
 

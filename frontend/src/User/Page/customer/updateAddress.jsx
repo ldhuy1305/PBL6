@@ -29,7 +29,6 @@ const UpdateAddress = () => {
         setPhoneNumber(phoneNumber1)
         setAction(action1)
         setIdContact(id)
-        console.log(phoneNumber, address)
         setShowModal(true);
     };
     const handleCloseModal = () => {
@@ -170,8 +169,8 @@ const UpdateAddress = () => {
                         <div class="table-account">
                             <div class="header">
                                 <div class="row">
-                                    <div class="col col-2">Name</div>
-                                    <div class="col col-5">{t("address1")}</div>
+                                    {/* <div class="col col-2">Name</div> */}
+                                    <div class="col col-7">{t("address1")}</div>
                                     <div class="col col-3">{t("phoneNumber")}</div>
                                     <div class="col col-2"></div>
                                 </div>
@@ -180,14 +179,14 @@ const UpdateAddress = () => {
                                 {contacts.map((contact) => (
                                     <div class="table-row">
                                         <div class="row">
-                                            <div class="col col-2">Home</div>
-                                            <div class="col col-5">{contact.address}</div>
+                                            {/* <div class="col col-2">Home</div> */}
+                                            <div class="col col-7">{contact.address}</div>
                                             <div class="col col-3">{contact.phoneNumber}</div>
                                             <div class="col col-2 txt-center">
                                                 <span style={{ backgroundColor: 'white' }} className="margin-05 link-button" variant="primary" onClick={() => handleShowModal(contact.address, contact.phoneNumber, 'update', contact._id)}>
-                                                {t("change")}
+                                                <i class="fa-regular fa-pen-to-square" style={{fontSize:'20px', color:'#cf2127'}}></i>
                                                 </span>
-                                                <span class="margin-05 link-button" variant="danger" onClick={() => handleShowDeleteModal(contact._id, 'contact')}>{t("delete")}</span>
+                                                <span class="margin-05 link-button" variant="danger" onClick={() => handleShowDeleteModal(contact._id, 'contact')}><i class="fa-regular fa-trash-can" style={{fontSize:'20px', color:'#cf2127'}}></i></span>
                                             </div>
                                         </div>
                                     </div>
@@ -214,7 +213,7 @@ const UpdateAddress = () => {
             </div>
 
             <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts}/>
-            <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={itemToDelete} action={actionDel} setContacts={setContacts}/>
+            <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={itemToDelete} action={actionDel} setData={setContacts}/>
                            
         </div>
     )

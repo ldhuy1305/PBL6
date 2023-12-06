@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
 import ModalUpdateAddress from "./modalUpdateAddress";
-const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedContact }) => {
+const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedContact, contacts, setContacts }) => {
     const [showModalUpdateAddress, setShowModalUpdateAddress] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
     const [action, setAction] = useState('');
     const [idContact, setIdContact] = useState('');
-    const [contacts, setContacts] = useState([]);
 
     const handleShowModal = (address1, phoneNumber1, action1, id) => {
         setAddress(address1)
         setPhoneNumber(phoneNumber1)
         setAction(action1)
         setIdContact(id)
-        // console.log(phoneNumber, address)
         setShowModal(true);
     };
     const handleCloseModal = () => {
@@ -30,7 +28,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
     };
 
     const handleConfirm = () => {
-        const selectedContact = user.contact.find((cont) => cont._id === selectedAddress);
+        const selectedContact = contacts.find((contact) => contact._id === selectedAddress);
 
         if (selectedContact) {
             setSelectedContact(selectedContact)
@@ -39,24 +37,6 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
         }
         handleClose();
     };
-
-    useEffect(() => {;
-        const fetchData = async () => {
-            try {
-                const user = localStorage.getItem("user");
-                const token = localStorage.getItem("token");
-                const userData = JSON.parse(user);
-                if (token) {
-                    setContacts(userData.contact)
-                } else {
-                    console.error("Token không tồn tại trong local storage");
-                }
-            } catch (error) {
-                console.error("Lỗi khi lấy thông tin người dùng:", error);
-            }
-        }
-        fetchData();
-    }, []);
 
     return (
         <div>

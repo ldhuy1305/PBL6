@@ -1,8 +1,8 @@
 import axios from "axios";
-
+const moment = require('moment');
 
 //Auth
-const loginAPI = (email, password) => {
+const loginAPI = async (email, password) => {
   return axios.post("https://falth-api.vercel.app/api/auth/login", { email, password });
 }
 
@@ -41,7 +41,6 @@ const addContact = async (e, formData) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Liên hệ đã được thêm', response.data);
     return response.data
   } catch (error) {
     console.error('Lỗi khi thêm liên hệ', error);
@@ -58,7 +57,6 @@ const updateContact = async (e, formData, id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Liên hệ đã được chỉnh sửa', response.data);
     return response.data
   } catch (error) {
     console.error('Lỗi khi thêm liên hệ', error);
@@ -75,7 +73,6 @@ const deleteContact = async (id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Liên hệ đã được xóa', response.data);
   } catch (error) {
     console.error('Lỗi khi xóa liên hệ', error);
   }
@@ -102,9 +99,10 @@ const getAllCategoryByStoreId = async (id) => {
 }
 
 //Product
-const getProductByStoreId = async (storeId, catName) => {
+const getProductByStoreId = async (storeId, catName, search) => {
   const token = localStorage.getItem("token");
-  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?category.catName=${catName}&limit=10`
+  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
+  console.log(search)
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -114,36 +112,47 @@ const getProductByStoreId = async (storeId, catName) => {
 }
 
 //cart
+const getFeeShip = async (idStore) => {
+  const user = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+  const userData = JSON.parse(user);
+  try {
+    const response = await axios.get(`https://falth-api.vercel.app/api/user/${userData._id}/store/${idStore}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.log('Lỗi khi lấy thông tin phí ship: ', error)
+  }
+}
 
 //order
 
-const placeOrder = async (totalPrice, shipCost, coordinates) => {
+const placeOrder = async (totalPrice, shipCost, contactId) => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const cart = JSON.parse(localStorage.getItem("cart"));
 
-  // Tạo đối tượng dữ liệu để truyền vào API
   const products = cart.products.map((product) => ({
     quantity: product.amount,
     price: product.price,
     product: product._id,
     notes: product.specialRequest
   }));
-  console.log(products)
   const orderData = {
-    cart: products, // Lấy thông tin giỏ hàng từ đối tượng cart
-    coordinates: coordinates,
+    cart: products, 
+    contact: contactId,
     totalPrice: totalPrice,
     shipCost: shipCost,
   };
-  console.log(orderData)
   try {
     const response = await axios.post(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}/store/${cart.idStore}`, orderData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Order placed successfully:");
     return response.data
   } catch (error) {
     console.error("Error placing order:", error);
@@ -153,13 +162,34 @@ const placeOrder = async (totalPrice, shipCost, coordinates) => {
 const getAllOderByUserId = async () => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
+  const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?fields=status,dateOrdered,totalPrice&sort=-createdAt`, {
+    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice&page=1`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Order placed successfully:");
+    return response.data
+  } catch (error) {
+    console.error("Error get order:", error);
+  }
+}
+
+const getOderByFilter = async (fromDate, toDate, status, page) => {
+  if (status === 'All') {
+    status = ''
+  }
+  const token = localStorage.getItem("token");
+  const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=${page}&start=${fromDate}&end=${toDate}`
+  console.log(api)
+  try {
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data
   } catch (error) {
     console.error("Error get order:", error);
@@ -174,10 +204,114 @@ const viewOrder = async (id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("Get successfully:");
     return response.data
   } catch (error) {
     console.error("Error get order:", error);
+  }
+}
+
+const createPayment = async (query) => {
+  const token = localStorage.getItem("token");
+  const api = `https://falth-api.vercel.app/api/order/after-checkout/payment${query}`;
+  console.log(api)
+  try {
+    const response = await axios.get(api , {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+//Rating 
+const getRatingOfStore = async (storeId) => {
+  try {
+    const response = await axios.get(`https://falth-api.vercel.app/api/store/${storeId}/rating`);
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const addRatingForStore = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`https://falth-api.vercel.app/api/store/${id}/rating`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    // return response.data
+  } catch (error) {
+    console.log('đánh giá thất bại:', error)
+  }
+}
+
+const updateRatingForStore = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.patch(`https://falth-api.vercel.app/api/rating/${id}`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    // return response.data
+  } catch (error) {
+    console.log('Chỉnh sửa đánh giá thất bại:', error)
+  }
+}
+
+const getRatingOfProduct = async (productID) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `https://falth-api.vercel.app/api/product/${productID}/rating`
+    console.log(api)
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const addRatingForProduct = async (id, ratingData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`https://falth-api.vercel.app/api/product/${id}/rating`, ratingData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ContentType: 'multipart/form-data',
+      }
+    });
+    console.log(response)
+    // return response.data
+  } catch (error) {
+    console.log('Đánh giá thất bại:', error)
+  }
+}
+
+const deleteRating = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `https://falth-api.vercel.app/api/rating/${id}`
+    const response = await axios.delete(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log('Xóa thành công');
+    return response.data
+  } catch (error) {
+    console.error('Lỗi khi xóa đánh giá', error);
   }
 }
 
@@ -192,7 +326,16 @@ export {
   getAllCategoryByStoreId,
   updateContact,
   getProductByStoreId,
+  getFeeShip,
   placeOrder,
-  getAllOderByUserId, 
-  viewOrder
+  getAllOderByUserId,
+  viewOrder,
+  createPayment,
+  getOderByFilter,
+  getRatingOfStore,
+  addRatingForStore, 
+  updateRatingForStore,
+  getRatingOfProduct,
+  addRatingForProduct,
+  deleteRating
 }
