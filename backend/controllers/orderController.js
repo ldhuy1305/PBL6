@@ -260,7 +260,8 @@ class orderController {
         order.status = "Preparing";
         order.datePrepared = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper has confirmed the delivery";
-        await firebase.notify(order.id, shipperId);
+        console.log(order.store);
+        await firebase.notify(`${order.store}`, `${order._id}`);
         break;
       case "Preparing":
         // when shipper delivery order

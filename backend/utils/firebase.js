@@ -1,6 +1,7 @@
-var serviceAccount = require("../key.json");
+// var serviceAccount = require("../key.json");
 var admin = require("firebase-admin");
-
+require("dotenv").config();
+var serviceAccount = JSON.parse(process.env.serviceAccount);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://api-notify-70b0b-default-rtdb.firebaseio.com",
