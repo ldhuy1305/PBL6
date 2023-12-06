@@ -78,6 +78,24 @@ const deleteContact = async (id) => {
   }
 }
 
+const updateAvatar = async (data) => {
+  try {
+    const token = localStorage.getItem("token");
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    const api = `https://falth-api.vercel.app/api/user/${decodedToken.id}/photo`
+    const response = await axios.patch(api, data, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data
+  } catch (error) {
+    console.error('Lỗi khi cập nhật ảnh đại diện', error);
+  }
+}
+
+
+
 //Info Store
 const getStoreById = async (id) => {
   const api = `https://falth-api.vercel.app/api/store/${id}`
@@ -102,7 +120,6 @@ const getAllCategoryByStoreId = async (id) => {
 const getProductByStoreId = async (storeId, catName, search) => {
   const token = localStorage.getItem("token");
   const api = `https://falth-api.vercel.app/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
-  console.log(search)
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -183,7 +200,6 @@ const getOderByFilter = async (fromDate, toDate, status, page) => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
   const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=${page}&start=${fromDate}&end=${toDate}`
-  console.log(api)
   try {
     const response = await axios.get(api, {
       headers: {
@@ -226,10 +242,30 @@ const createPayment = async (query) => {
   }
 }
 
+const cancelOrder = async (id) => {
+  const token = localStorage.getItem("token");
+  const api = `https://falth-api.vercel.app/api/order/${id}`;
+  console.log(api)
+  try {
+    const response = await axios.patch(api , {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    // console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.log("Error:", error);
+  }
+}
+
 //Rating 
 const getRatingOfStore = async (storeId) => {
+  const api = `https://falth-api.vercel.app/api/store/${storeId}/rating`
+  console.log(api)
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/store/${storeId}/rating`);
+    const response = await axios.get(api);
     return response.data
   } catch (error) {
     console.error("Error:", error);
@@ -322,6 +358,7 @@ export {
   deleteContact,
   getStoreById,
   getDefaultContact,
+  updateAvatar,
   getAllCategory,
   getAllCategoryByStoreId,
   updateContact,
@@ -332,6 +369,7 @@ export {
   viewOrder,
   createPayment,
   getOderByFilter,
+  cancelOrder,
   getRatingOfStore,
   addRatingForStore, 
   updateRatingForStore,

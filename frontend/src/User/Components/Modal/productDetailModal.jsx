@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 import { useTranslation } from "react-i18next";
 import '../../assets/css/productDetail2.css'
 import minus from '../../assets/img/minus.png'
@@ -11,6 +12,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
     const handleIncrease = () => {
+        // console.log(product)
         if (quantity < 10) {
             setQuantity(quantity + 1);
         }
@@ -32,26 +34,34 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     ];
 
     const handleSelectImage = (index) => {
-        setSelectedImage(productImages[index]);
+        setSelectedImage(product.images[index]);
         setCurrentIndex(index);
     };
 
     const handleLeftArrowClick = () => {
-        const newIndex = (currentIndex - 1 + productImages.length) % productImages.length;
-        setSelectedImage(productImages[newIndex]);
+        const newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
+        setSelectedImage(product.images[newIndex]);
         setCurrentIndex(newIndex);
     };
 
     const handleRightArrowClick = () => {
-        const newIndex = (currentIndex + 1) % productImages.length;
-        setSelectedImage(productImages[newIndex]);
+        const newIndex = (currentIndex + 1) % product.images.length;
+        setSelectedImage(product.images[newIndex]);
         setCurrentIndex(newIndex);
     };
 
     return (
         <div>
             <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
-                <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Chi tiết sản phẩm</Modal.Title>
+                <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Chi tiết sản phẩm
+                {/* <span class="close" style={{ fontSize: '24px' }} onClick={handleClose}
+                    >x</span> */}
+                    <button  onClick={handleClose} style={{backgroundColor:'#cf2127', float:'right', marginRight: '10px', padding: '3px 10px 5px 10px', borderRadius:'5px', color:'white'}}>
+      x
+    </button>
+                </Modal.Title>
+                <Modal.Header>                   
+                </Modal.Header>
                 <Modal.Body>
                     <div class="now-detail-restaurant clearfix" style={{ width: '90%', marginLeft: '5%', height: '310px' }}>
                         <div class="container" style={{ width: '100%' }}>
@@ -65,7 +75,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                     />
 
                                     <div class="LmLCVP">
-                                        {productImages.map((image, index) => (
+                                        {product.images.map((image, index) => (
                                             <div className={`lnM4pa ${index === currentIndex ? 'selected-image' : ''}`} key={index}>
                                                 <div class="OibNSJ">
                                                     <div class="_11mwwv">
@@ -154,7 +164,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                             style={{ width: '60%', marginLeft: '15%' }}
                                         ></img>
                                     ) : (
-                                        product.isOutOfOrder ? (
+                                        product.isOutofOrder ? (
                                             <img
                                                 src={soldout}
                                                 alt="Hết hàng"
@@ -199,7 +209,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                     <div class="menu-restaurant-container">
                                         <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                            <Comment store={product} ratings={ratings} idUser={idUser} setRatings={setRatings} />
+                                            <Comment product={product} ratings={ratings} idUser={idUser} setRatings={setRatings} />
 
                                         </div>
 

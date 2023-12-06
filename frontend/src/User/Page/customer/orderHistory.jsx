@@ -214,9 +214,14 @@ const OrderHistory = () => {
                                     <select value={selectedStatus}
         onChange={handleStatusChange} name="" class="form-control filter-table-input">
                                         <option value="All" selected="">All</option>
-                                        <option value="Finished">Finished</option>
                                         <option value="Pending">Pending</option>
+                                        <option value="Waiting">Waiting</option>
+                                        <option value="Preparing">Preparing</option>
+                                        <option value="Ready">Ready</option>
                                         <option value="Refused">Refused</option>
+                                        <option value="Delivering">Delivering</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Finished">Finished</option>
                                     </select>
                                 </div>
                             </div>

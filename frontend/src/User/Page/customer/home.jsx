@@ -49,7 +49,7 @@ const Home = () => {
     };
   }, [isOpen1, isOpen]);
 
-  const { selectedLocation, key, updateKey } = useCity();
+  const { selectedLocation, updateLocation,  key, updateKey } = useCity();
   const [stores, setStores] = useState({ data: [] });
 
   const handleRemove = (name) => {
@@ -66,6 +66,7 @@ const Home = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedAreas, setSelectedAreas] = useState([]);
   useEffect(() => {
+    // updateLocation('')
     const api = `https://falth-api.vercel.app/api/category`
     fetch(api)
       .then((response) => response.json())

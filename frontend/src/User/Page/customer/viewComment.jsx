@@ -31,7 +31,7 @@ const ViewComment = () => {
                 const storeData = await getStoreById(storeId)
                 setStore({...storeData.data})
                 setRatings({ ...data.data })
-                // console.log(ratings)
+                console.log(data.data)
             } catch (error) {
                 console.error("Lỗi khi lấy thông tin đánh giá:", error);
             }

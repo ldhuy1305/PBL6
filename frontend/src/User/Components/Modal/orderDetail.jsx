@@ -7,12 +7,14 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
     const [showModal, setShowModal] = useState(false)
     const [visible, setVisible] = useState(true)
     const [product, setProduct] = useState({
-        product: {name:''},
-        ratingAverage: 2
-    })
+        name:'',
+        _id:'',
+        images:[] ,
+        ratingAverage: 2     
+    });
     const handleShowModal = (product) => {
         console.log(product)
-        setProduct({ ...product })
+        setProduct({ ...product.product })
         setShowModal(true);
         setVisible(false)
         console.log("Mở modal")

@@ -5,14 +5,14 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
-import { updateRatingForStore } from "../../services/userServices";
-const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
+
+const RatingStore = ({ show, handleClose, handleReturn, store }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
-        number: rating && rating.number ? rating.number : '',
-        content: rating && rating.content ? rating.content : '',
-        images: rating && rating.images ? [...rating.images] : [],
+        number: '',
+        content: '',
+        images: []
     });
 
     const [openNotify, setOpenNotify] = useState(false)
@@ -22,9 +22,9 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
     const handleCloseRating = () => {
         handleClose()
         setFormData({
-            number: rating && rating.number ? rating.number : '',
-            content: rating && rating.content ? rating.content : '',
-            images: rating && rating.images ? [...rating.images] : [],
+            number: '',
+            content: '',
+            images: []
         });
     }
 
@@ -36,8 +36,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
     const handleChangeImg = (e) => {
         const name = e.target.name;
         const files = e.target.files;
-
-        // Convert fileList to array
         const imagesArray = Array.from(files);
 
         setFormData({
@@ -51,6 +49,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
             ...formData,
             [name]: value,
         });
+        console.log(store)
     };
 
     const [dels, setDels] = useState([]);
@@ -64,7 +63,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
             formData.images.forEach((image, index) => {
                 if (image instanceof File) {
                     res.append(`images`, image);
-                }// assuming 'images' is an array of files
+                }
             });
         }
         if (formData.number === '') {
@@ -72,53 +71,32 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            if (!rating) {
-                try {
-                    setIsLoading(true);
-                    const response = await axios.post(`https://falth-api.vercel.app/api/product/${store._id}/rating`, res, {
+            try {
+
+                setIsLoading(true);
+                console.log(store)
+                const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         ContentType: 'multipart/form-data',
                     }
                 });
-                    setNotify("Đánh giá thành công!")
-                    setOpenNotify(true)
-                    handleClose()
-                } catch (error) {
-                    setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
-                    setOpenNotify(true)
-                    handleClose()
-                } finally {
-                    setIsLoading(false);
-                }
-                setFormData({
-                    number: '',
-                    content: '',
-                    images: [],
-                });
-            } else {
-                try {
-                    setIsLoading(true);
-                    res.append('dels', dels);
-                    console.log(dels, formData)
-                    const response = await updateRatingForStore(rating._id, res)
-                    setNotify("Chỉnh sửa đánh giá thành công!")
-                    setOpenNotify(true)
-                    handleClose()
-                } catch (error) {
-                    setNotify("Chỉnh sửa đánh giá thất bại!")
-                    setOpenNotify(true)
-                    handleClose()
-                } finally {
-                    setIsLoading(false);
-                }
-                setFormData({
-                    number: '',
-                    content: '',
-                    images: [],
-                });
-                setDels([]);
+
+                setNotify("Đánh giá thành công!")
+                setOpenNotify(true)
+                handleClose()
+            } catch (error) {
+                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                setOpenNotify(true)
+                handleClose()
+            } finally {
+                setIsLoading(false);
             }
+            setFormData({
+                number: '',
+                content: '',
+                images: [],
+            });
         }
 
 
@@ -241,9 +219,9 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                                                                                     const [deletedImage] = newImages.splice(index, 1);
                                                                                     console.log(deletedImage)
                                                                                     if (!(deletedImage instanceof File)) {
-                                                                                        
-    setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
-}
+
+                                                                                        setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
+                                                                                    }
 
                                                                                     setFormData({ ...formData, images: newImages });
                                                                                 }}>x</span>
@@ -267,7 +245,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store, rating }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            {!rating && (<button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>)}
+                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
                                                             <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>
