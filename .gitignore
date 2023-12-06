@@ -2,6 +2,7 @@
 /node_modules    
 /backend/data
 /backend/.env
+/backend/key.json
 /frontend/node_modules
 
 /frontend/.pnp
