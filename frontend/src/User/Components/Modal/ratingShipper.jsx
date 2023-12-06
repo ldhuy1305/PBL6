@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
-const RatingShipper = ({ show, handleClose, handleShowRatingStore }) => {
+const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
     const {t} = useTranslation();
     const [formData, setFormData] = useState({
         rating: '',
@@ -38,7 +38,7 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore }) => {
             reviewText: '',
             selectedImages: null,
         })
-        handleShowRatingStore()
+        handleShowRatingStore(item.store)
     };
     return (
         <div>

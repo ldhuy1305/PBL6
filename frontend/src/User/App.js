@@ -16,12 +16,14 @@ import Home from './Page/customer/home'
 import OrderPage from './Page/customer/orderPage'
 import StoreDetail from './Page/customer/storeDetail'
 import ViewComment from './Page/customer/viewComment'
+// import ProductDetail from './Page/customer/productDetail'
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider} from './services/authContext'
 import { CityProvider } from './services/CityContext'
 import { LanguageProvider } from './services/languageContext'
 import { Navigate } from 'react-router-dom'
+import Policy from './Page/customer/policy'
 
 const ProtectedRoute = ({ element }) => {
   const token = localStorage.getItem("token")
@@ -63,11 +65,12 @@ const App = () => {
                 <Route path="/signin" element={<Signin />} />
                 <Route path="/signUpCustomer" element={<SignUpCustomer />} />
                 <Route path="/signUpShipper" element={<SignUpShipper />} />
-                <Route path="/signUpStore" element={<SignUpOwner />} />
+                <Route path="/signUpOwner" element={<SignUpOwner />} />
                 <Route path="/signUpStore" element={<SignUpStore />} />
                 <Route path="/forgotPass" element={<ForgotPass />} />
                 <Route path="/verify" element={<Verify />} />
                 <Route path="/resetPass" element={<ResetPass />} />
+                <Route path="/policy" element={<Policy />} />
                 <Route path="/home/storeDetail" element={<StoreDetail />}/>
                 <Route path="/home/storeComment" element={<ViewComment />}/>
                 <Route path="/user/profile" element={<ProtectedRoute element={<Profile />} />}/>

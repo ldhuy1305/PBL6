@@ -50,16 +50,18 @@ const storeSchema = new Schema(
       type: String,
       required: true,
     },
-    ratingAverage: {
+    ratingsAverage: {
+      type: Number,
+      default: 5.0,
+      min: [1, "Rating must be above 1.0"],
+
+      max: [5, "Rating must be below 5.0"],
+      set: (val) => Math.round(val * 10) / 10,
+    },
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
-    rating: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Rating",
-      },
-    ],
     image: {
       type: String,
       required: [true, "Hình ảnh cửa hàng là bắt buộc"],
@@ -74,7 +76,8 @@ const storeSchema = new Schema(
     },
   },
   {
-    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -88,5 +91,11 @@ storeSchema.pre("save", async function(next) {
     console.log(this.location);
   }
   next();
+});
+// Virtual populate
+storeSchema.virtual("ratings", {
+  ref: "Rating",
+  foreignField: "reference",
+  localField: "_id",
 });
 module.exports = mongoose.model("Store", storeSchema);

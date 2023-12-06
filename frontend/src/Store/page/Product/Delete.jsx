@@ -1,83 +1,51 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Typography, useTheme } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
-import { tokens } from "../../theme";
-import Header from "../../components/Header/Header";
-import * as yup from "yup";
-import { Formik, Form } from "formik";
-import { Button, TextField, Select, MenuItem } from "@mui/material";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 
 function Delete({ selectedRow, setOpenDelete, setError, fetchData, setMessage, setOpenNotify }) {
-    console.log(selectedRow);
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/product/store/${_id}?limit=100`;
     const handleDeleteProduct = async (id) => {
+        console.log('delete product')
         try {
             await axios.delete(`https://falth-api.vercel.app/api/product/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            // Xóa thành công
-            setError(true); // Đặt biến lỗi thành "false"
+            setError(true);
             setMessage("Xóa thành công");
             fetchData();
             setOpenDelete(false);
-            setOpenNotify(true);
+            setOpenNotify("success", "Cập nhật thành công");
         } catch (error) {
             console.log(error);
             setError(false);
             setMessage(error.message);
-            setOpenNotify(true);
+            setOpenNotify("success", error.message);
         }
     };
 
-    const [selectActive, setSelectActive] = useState(false);
-    const formRef = useRef();
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (formRef.current && !formRef.current.contains(e.target) && !selectActive) {
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [selectActive]);
     return (
         <div>
-            <Box>
-                <div>
-                    <Header title={`Bạn muốn xóa sản phẩm: ${selectedRow.name}`} subtitle={`ID: ${selectedRow._id}`} />
-                    <Formik
-                    >
-                        {({
-                            values,
-                            errors,
-                            touched,
-                            handleBlur,
-                            handleChange,
-                            handleSubmit,
-                        }) => (
-                            <Form ref={formRef}>
-                                <Box display="flex" justifyContent="center" mt="20px" gap='20px'>
-                                    <Button color="secondary" variant="contained" onClick={() => handleDeleteProduct(selectedRow._id)}>
-                                        Xóa sản phẩm
-                                    </Button>
-                                    <Button color="secondary" variant="contained" onClick={() => setOpenDelete(false)}>
-                                        Thoát
-                                    </Button>
-                                </Box>
-                            </Form>
-                        )}
-                    </Formik>
-                </div>
-            </Box>
+
+            <Modal show={true} onHide={() => setOpenDelete(false)} animation={true}>
+                <Modal.Header closeButton={() => setOpenDelete(false)}>
+                    <Modal.Title>Thông báo</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Bạn muốn xóa sản phẩm: {selectedRow.name}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setOpenDelete(false)}>
+                        Đóng
+                    </Button>
+                    <Button variant="danger" onClick={() => handleDeleteProduct(selectedRow._id)}>
+                        Xóa
+                    </Button>
+
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

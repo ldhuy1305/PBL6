@@ -1,11 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Image.css';
 
 function Image({ images, setImages, setDeletedImageUrls }) {
   const fileInputRef = useRef(null);
   const [imgDelete, setDelete] = useState([]);
-
+  useEffect(() => {
+    setDeletedImageUrls([]);
+  }, []);
   const selectFiles = () => {
     fileInputRef.current.click();
     console.log(images);
@@ -18,7 +20,7 @@ function Image({ images, setImages, setDeletedImageUrls }) {
 
     for (let i = 0; i < files.length; i++) {
       if (images.length >= maxImageCount) {
-        alert('Bạn đã chọn đủ 9 ảnh. Không thể thêm nữa.');
+        alert('Bạn đã chọn đủ 6 ảnh. Không thể thêm nữa.');
         break;
       }
 
@@ -57,7 +59,7 @@ function Image({ images, setImages, setDeletedImageUrls }) {
     <div className='card'>
       <input type='file' className='file' multiple ref={fileInputRef} onChange={onFileSelect} hidden>
       </input>
-      <div className='container'>
+      <div className='container1'>
         {images.map((image, index) => (
           <div className='image' key={index}>
             <span className='delete' onClick={() => deleteImage(index)}>

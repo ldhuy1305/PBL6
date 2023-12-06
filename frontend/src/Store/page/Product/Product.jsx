@@ -5,12 +5,12 @@ import { tokens } from "../../theme";
 import Header from "../../components/Header/Header";
 import { Button } from "@mui/material";
 import axios from 'axios';
-import Add from './Ad';
-import Update from './Update';
 import Delete from './Delete';
 import Notify from '../../../Components/Notify/Notify';
 import style from './Product.module.css'
 import Header2 from "../../components/Header/Header";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 
@@ -18,8 +18,7 @@ const Product = ({ Catname }) => {
 
 
     const [data, setData] = useState([]);
-    const [selectActive, setSelectActive] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [openEdit, setOpenEdit] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
@@ -27,27 +26,28 @@ const Product = ({ Catname }) => {
     const [openNotify, setOpenNotify] = useState(null)
     const [error, setError] = useState(false)
     const [message, setMessage] = useState("")
-    const [show, setShow] = useState(true);
 
+
+    const history = useNavigate();
+    const redirectToProductPage = () => {
+        history('/store/Formadd');
+    };
+    const redirectToEditProductPage = (id) => {
+        history('/store/Formedit', { state: id });
+    };
     const formRef = useRef();
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
 
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (formRef.current && !formRef.current.contains(e.target) && !selectActive) {
-                setOpenEdit(false);
-                setOpenDelete(false);
-                setOpenAdd(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [selectActive]);
-
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`;
     const fetchData = async () => {
@@ -63,19 +63,20 @@ const Product = ({ Catname }) => {
             setIsLoading(false);
         } catch (error) {
             console.log(error);
+            setIsLoading(false);
         }
     };
     const Searchproduct = async (name) => {
         console.log(name);
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/search?search=${name}`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?search=${name}`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
-            const responseData = response.data.data.data;
+            const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
 
@@ -90,12 +91,6 @@ const Product = ({ Catname }) => {
     useEffect(() => {
         fetchData();
     }, []);
-
-    const handleDetailClick = (row) => {
-        setSelectedRow(row);
-        setOpenEdit(true);
-        setOpenAdd(false);
-    };
 
     const handleDeleteClick = (row) => {
         setSelectedRow(row);
@@ -120,10 +115,41 @@ const Product = ({ Catname }) => {
             headerName: "Giá tiền",
             headerAlign: "center",
             align: "center",
+            flex: 1,
+        },
+        {
+            field: "isOutofOrder",
+            headerName: "Trạng thái",
+            headerAlign: "center",
+            align: "center",
+            flex: 1,
+            renderCell: (params) => {
+                let color;
+                switch (params.row.isOutofOrder) {
+                    case true:
+                        color = "#4caf4fb9";
+                        break;
+                    case false:
+                        color = "#FF5722";
+                        break;
+                    default:
+                        color = "#4caf4fb9";
+                }
+
+                return (
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                    >
+                        <div style={{ height: "10px", width: "10px", background: color, borderRadius: "30px", }}>
+                        </div >
+                    </Box>
+                );
+            },
         },
         {
             field: "Detsil",
-            headerName: "Xem Chi Tiết",
+            headerName: "Chỉnh sửa",
             headerAlign: "center",
             align: "center",
             flex: 1,
@@ -137,10 +163,10 @@ const Product = ({ Catname }) => {
                         justifyContent="center"
                         backgroundColor={colors.greenAccent[600]}
                         borderRadius="4px"
-                        onClick={() => handleDetailClick(params.row)}
+                        onClick={() => redirectToEditProductPage(params.row._id)}
                     >
                         <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Xem chi tiết
+                            Chỉnh sửa
                         </Typography>
                     </Box>
                 );
@@ -181,14 +207,14 @@ const Product = ({ Catname }) => {
     return (
         <Box m="20px" position='relative'>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Header2 title="Danh sách đơn hàng" />
+                <Header2 title="Danh sách sản phẩm" />
 
                 <Box>
                     <div className={style.searchBar}>
                         <input
                             type="text"
                             className={style.searchInput}
-                            placeholder="Tìm kiếm đơn hàng..."
+                            placeholder="Tìm kiếm sản phẩm..."
                             onChange={(e) => Searchproduct(e.target.value)}
                         />
                     </div>
@@ -201,9 +227,9 @@ const Product = ({ Catname }) => {
                     <Button
                         color="secondary"
                         variant="contained"
-                        onClick={() => { setOpenAdd(true) }}
+                        onClick={() => { redirectToProductPage() }}
                     >
-                        <i className="fa-solid fa-plus"></i> Thêm sản phẩm
+                        Thêm sản phẩm
                     </Button>
                 </Box>
             </Box>
@@ -215,51 +241,36 @@ const Product = ({ Catname }) => {
                         borderBottom: "none",
                         fontSize: "14px"
                         ,
-                        fontWeight: "500",
+                        fontWeight: "bold",
                     },
                 }}
             >
-                {openEdit && (
-
-                    <div ref={formRef} className="form-container"
-                        style={{ position: "absolute", zIndex: 1000, width: "40%", top: '-5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
-                        <Box m="20px" >
-                            <Update show={true} showClode={setOpenEdit} data={Catname} selectedRow={selectedRow} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenEdit={setOpenEdit} setOpenNotify={setOpenNotify} />
-                        </Box>
-                    </div>
-                )
-                }
-                {
-                    openAdd && (
-                        <Add data={Catname} show={true} handleClose={setOpenAdd} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenNotify={setOpenNotify} />
-                    )
-                }
-
                 {
                     openDelete && (
                         <div ref={formRef} className="form-container"
                             style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
                             <Box m="20px" >
-                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenNotify={setOpenNotify} />
+                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenNotify={notify} />
                             </Box>
                         </div>
                     )
                 }
-                {
+                {/* {
                     openNotify && (
                         <div ref={formRef} className="form-container"
-                            style={{ position: "absolute", zIndex: 1000, width: "40%", top: '30%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
+                            style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
                             <Box m="20px" >
                                 <Notify error={error} message={message} setOpenNotify={setOpenNotify} />
                             </Box>
                         </div>
+
                     )
-                }
+                } */}
 
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {
-                            pageSize: 7,
+                            pageSize: 8,
                         },
                     }} />
             </Box >

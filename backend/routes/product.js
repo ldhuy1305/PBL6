@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const productController = require("../controllers/productController");
 const authController = require("../controllers/authController");
+const ratingRoute = require("../routes/rating");
 
 router.route("/").get(productController.viewProductsByCat);
 router.route("/search").get(productController.searchProduct);
@@ -40,4 +41,6 @@ router.get(
   authController.restrict("Owner"),
   productController.getProductByCat
 );
+
+router.use("/:productId/rating", ratingRoute);
 module.exports = router;
