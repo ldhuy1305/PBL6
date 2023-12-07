@@ -106,10 +106,10 @@ function ManageShipper() {
         },
         {
             flex: 2,
-            field: "status",
+            field: "email",
             headerAlign: "center",
             align: "center",
-            headerName: "Trạng thái",
+            headerName: "Email",
         },
         {
             field: "Detail",
@@ -153,7 +153,7 @@ function ManageShipper() {
                         borderRadius="4px"
 
                     >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
+                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }} zIndex={1}>
                             Khóa tài khoản
                         </Typography>
                     </Box>

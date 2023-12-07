@@ -48,14 +48,14 @@ const Product = () => {
     const fetchCatname = async () => {
         try {
             const response = await axios.get(
-                `https://falth-api.vercel.app/api/category/owner/${_id}`,
+                `https://falth-api.vercel.app/api/category`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data;
             console.log(responseData);
             setCatname(responseData);
         } catch (error) {
@@ -114,7 +114,6 @@ const Product = () => {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-
             });
             notify("success", "Cập nhật thành công");
             fetchData();
@@ -340,7 +339,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-1"
-                                        label="Cón hàng"
+                                        label="Còn hàng"
                                         name="default-radio"
                                         onClick={() => setProductStatus(true)}
                                         defaultChecked={productStatus}

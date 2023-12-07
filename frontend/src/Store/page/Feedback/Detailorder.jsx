@@ -138,6 +138,7 @@ const Detailorder = () => {
                                     </div>
 
                                 </div>
+
                             </div>
                         </div>
                     </Box>
@@ -170,6 +171,9 @@ const Detailorder = () => {
                                             color = "#FFC107"; // Màu vàng cho trạng thái Preparing
                                             break;
                                         case "Ready":
+                                            color = "#FFC107"; // Màu vàng cho trạng thái Ready
+                                            break;
+                                        case "Pending":
                                             color = "#FFC107"; // Màu vàng cho trạng thái Ready
                                             break;
                                         case "Delivering":
@@ -214,22 +218,18 @@ const Detailorder = () => {
                             borderRadius: "10px"
                         }}> <h5>Khách hàng</h5>
                             <div className={style.infocustumer}>
-                                <h6>Thông tin liên lạc</h6>
-                                <span>
-                                    moizabdul320@gmail.com
-                                </span>
-                                <span>
-                                    03169089872
+                                <h6 >Thông tin liên lạc</h6>
+                                <span className={style.infocustumer1}>
+                                    {Order.contact.phoneNumber}
                                 </span>
                             </div>
                             <div className={style.infocustumer}>
                                 <h6>Địa chỉ</h6>
-                                <span>339 Đ. Trần Hưng Đạo, P, Sơn Trà, Đà Nẵng 550000</span>
+                                <span className={style.infocustumer1}>{Order.contact.address}</span>
                             </div>
                             <div className={style.infocustumer}>
                                 <h6>Người nhận hàng</h6>
-                                <span>Trần Hưng Đạo</span>
-                                <span>Trần Hưng Đạo</span>
+                                <span className={style.infocustumer1}>{Order.user.firstName} {Order.user.lastName}</span>
                             </div>
 
                         </div>

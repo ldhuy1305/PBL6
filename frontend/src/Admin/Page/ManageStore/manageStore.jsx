@@ -9,6 +9,11 @@ import style from './Detailstore.module.css'
 import Bill from './Detailstore';
 import Accept from '../../components/Accept/Accept';
 import { useNavigate } from 'react-router-dom';
+import HttpsIcon from '@mui/icons-material/Https';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import SearchIcon from '@mui/icons-material/Search';
+import { toast } from 'react-toastify';
+import { Paper, InputBase, IconButton, MenuItem, Select, FormControl } from "@mui/material";
 
 const ManageStore = ({ Catname }) => {
     const history = useNavigate();
@@ -22,7 +27,16 @@ const ManageStore = ({ Catname }) => {
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
     const [openAccept, SetOpenAccept] = useState(false);
-
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
     const formRef = useRef();
 
     useEffect(() => {
@@ -56,41 +70,27 @@ const ManageStore = ({ Catname }) => {
             setIsLoading(false);
         }
     };
-    const Searchproduct = async (name) => {
-        console.log(name);
+    const LockStore = async (id) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/search?search=${name}`
-                , {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+            await axios.patch(`https://falth-api.vercel.app/api/store/lock/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
-            );
-            const responseData = response.data.data.data;
-            console.log(responseData);
-            setData(responseData);
-            setIsLoading(false);
-
+            });
+            notify("success", "Thành công");
+            fetchData();
         } catch (error) {
-            console.log(error);
+            notify("error", "Thất bại");
         }
-    }
+    };
 
     useEffect(() => {
         fetchData();
     }, []);
-
-    const handleDetailClick = (row) => {
-
-        setSelectedRow(row);
-        setOpenDetail(true);
-    };
     const handleopenAcceptClick = (row) => {
         setSelectedRow(row);
         SetOpenAccept(true);
     };
-
-
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const columns = [
@@ -99,7 +99,7 @@ const ManageStore = ({ Catname }) => {
             align: "center",
         },
         {
-            flex: 1,
+            flex: 2,
             field: "name",
             headerName: "Tên",
             type: "number",
@@ -107,7 +107,7 @@ const ManageStore = ({ Catname }) => {
             align: "center",
         },
         {
-            flex: 1,
+            flex: 3,
             field: "address",
             headerName: "Địa chỉ",
             headerAlign: "center",
@@ -115,50 +115,26 @@ const ManageStore = ({ Catname }) => {
         },
         {
             field: "Detsil",
-            flex: 1,
             headerName: "Xem Chi Tiết",
             headerAlign: "center",
+            flex: 1,
             align: "center",
             renderCell: (params) => {
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-                        onClick={() => redirectToEditProductPage(params.row._id)}
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Xem chi tiết
-                        </Typography>
-                    </Box>
+                    <div>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
+                    </div>
                 );
             },
         },
         {
-            headerName: "Khóa của hàng",
+            headerName: "Khóa cửa hàng",
             flex: 1,
             headerAlign: "center",
             align: "center",
             renderCell: (params) => {
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-                        onClick={() => handleopenAcceptClick(params.row)}
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Khóa cửa hàng
-                        </Typography>
-                    </Box>
+                    <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row)}></Button>
                 );
             },
         },
@@ -168,25 +144,10 @@ const ManageStore = ({ Catname }) => {
         const uniqueId = index;
         return { ...item, id: uniqueId };
     });
-
-
     return (
         <Box m="20px" position='relative'>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-
                 <Box> <Header2 title="Danh sách cửa hàng" /></Box>
-                {/* <Box>
-                    <div className={style.searchBar}>
-                        <input
-                            type="text"
-                            className={style.searchInput}
-                            placeholder="Tìm kiếm cửa hàng"
-                            onChange={(e) => Searchproduct(e.target.value)}
-                        />
-                    </div>
-
-
-                </Box> */}
                 <Box>
                 </Box>
             </Box>
@@ -202,19 +163,53 @@ const ManageStore = ({ Catname }) => {
                     },
                 }}
             >
-                {openDetail && (
-                    <Bill rows={selectedRow} show={true} handleClose={setOpenDetail} />
-                )}
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose />
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} Status={"Khóa"} LockStore={LockStore} />
                 )}
-                <DataGrid rows={rowsWithUniqueIds} columns={columns}
-                    loading={isLoading}
-                    initialState={{
-                        pagination: {
-                            pageSize: 10,
-                        },
-                    }} />
+                <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="5px">
+                    <Box sx={{ flexBasis: '50%' }}>
+                        <Typography component="legend">Tìm kiếm</Typography>
+                        <Paper
+                            component="form"
+                            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', height: "40px" }}
+                        >
+                            <IconButton type="button" sx={{ p: '5px' }} aria-label="search">
+                                <SearchIcon />
+                            </IconButton>
+                            <InputBase
+                                sx={{ ml: 1, flex: 1 }}
+                                placeholder="Tên cửa hàng"
+                            />
+
+                        </Paper>
+
+                    </Box>
+                    <Box sx={{ flexBasis: '16%' }}>
+                        <FormControl fullWidth>
+                            <Typography component="legend">Trạng thái</Typography>
+                            <Select
+                                sx={{ alignItems: 'center', height: "40px" }}
+                                value={10}
+                                defaultChecked={true}
+                            >
+                                <MenuItem value={10}>Tất cả</MenuItem>
+                                <MenuItem value={20}>Đang mở cửa</MenuItem>
+                                <MenuItem value={30}>Đang đóng cửa</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                    </Box>
+                </Box>
+                <Box sx={{ height: "70vh", width: '100%' }}>
+                    <DataGrid rows={rowsWithUniqueIds} columns={columns}
+                        loading={isLoading}
+                        initialState={{
+                            pagination: {
+                                pageSize: 7,
+                            },
+                        }} />
+                </Box>
+
             </Box >
         </Box >
     );

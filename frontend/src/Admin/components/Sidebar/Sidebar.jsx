@@ -165,7 +165,7 @@ const Sidebara = ({ }) => {
                         />
 
                         <Item
-                            title="Logout"
+                            title="Đăng xuất"
                             to="/admin/logout"
                             icon={<LogoutIcon />}
                             selected={selected}

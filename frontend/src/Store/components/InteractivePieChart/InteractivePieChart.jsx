@@ -25,11 +25,11 @@ class ApexChart extends React.Component {
         translatedStatus = "Đang giao hàng";
         break;
       case "Waiting":
-        translatedStatus = "Chờ đợi";
+        translatedStatus = "Đợi người gia";
         break;
-        case "Pending":
-          translatedStatus = "Đang mở";
-          break;  
+      case "Pending":
+        translatedStatus = "Chờ thanh toán";
+        break;
       default:
         translatedStatus = "Không xác định";
         break;

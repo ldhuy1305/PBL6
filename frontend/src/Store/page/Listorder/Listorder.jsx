@@ -19,7 +19,7 @@ const Product = () => {
     const [isLoading, setisLoading] = useState(true)
     const history = useNavigate();
     const redirectToDetailorderPage = (id) => {
-        history('/store/detailorder', { state: id });
+        history(`/store/detailorder/${id}`, { state: id });
     };
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
@@ -103,7 +103,7 @@ const Product = () => {
         },
         {
             field: "depreciation",
-            headerName: "Hoa hồng(VNĐ)",
+            headerName: "Hoa hồng (VNĐ)",
             headerAlign: "center",
             align: "center",
             flex: 2,
@@ -139,6 +139,9 @@ const Product = () => {
                         color = "#FFC107"; // Màu vàng cho trạng thái Preparing
                         break;
                     case "Ready":
+                        color = "#FFC107"; // Màu vàng cho trạng thái Ready
+                        break;
+                    case "Pending":
                         color = "#FFC107"; // Màu vàng cho trạng thái Ready
                         break;
                     case "Delivering":
@@ -207,18 +210,6 @@ const Product = () => {
         <Box m="20px">
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Header2 title="Danh sách đơn hàng" />
-
-                {/* <Box>
-                    <div className={style.searchBar}>
-                        <input
-                            type="text"
-                            className={style.searchInput}
-                            placeholder="Tìm kiếm đơn hàng..."
-                        />
-                    </div>
-
-
-                </Box> */}
                 <Box display="flex" justifyContent="space-between" alignItems="center" gap={10}>
                     <Box>
                         <div className={style.searchBar}>

@@ -12,16 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Accept from '../../components/Accept/Acceptshiper';
 
-
-const theme = createTheme({
-    palette: {
-        type: 'dark'
-    },
-    typography: {
-        fontSize: 20
-    },
-});
-
 function ManageShipper() {
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
@@ -110,24 +100,6 @@ function ManageShipper() {
             console.log(error);
         }
     };
-    const handleDeleteClick = (id) => {
-        const confirmed = window.confirm('Bạn có muốn cấp phép hoạt động cho shipper?');
-        console.log(id)
-
-        if (confirmed) {
-            try {
-                axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    fetchData();
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     useEffect(() => {
         fetchData();
@@ -137,9 +109,6 @@ function ManageShipper() {
         const uniqueId = index;
         return { ...item, id: uniqueId };
     });
-
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
 
     const columns = [
         { field: "id", headerName: "ID" },
@@ -176,17 +145,17 @@ function ManageShipper() {
         },
         {
             flex: 2,
+            field: "email",
+            headerAlign: "center",
+            align: "center",
+            headerName: "Email",
+        },
+        {
+            flex: 2,
             field: "phoneNumber",
             headerAlign: "center",
             align: "center",
             headerName: "Số điện thoại",
-        },
-        {
-            flex: 2,
-            field: "status",
-            headerAlign: "center",
-            align: "center",
-            headerName: "Trạng thái",
         },
         {
             field: "Detdsil",
@@ -196,7 +165,7 @@ function ManageShipper() {
             align: "center",
             renderCell: (params) => (
                 <div>
-                    <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} onClick={() => redirectToEditProductPage(params.row)} >
+                    <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} onClick={() => redirectToEditProductPage(params.row._id)} >
                         <i className="fa-solid fa-magnifying-glass"></i>
                     </button>
                 </div >

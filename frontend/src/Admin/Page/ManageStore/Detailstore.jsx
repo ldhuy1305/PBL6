@@ -4,17 +4,9 @@ import Header1 from "../../components/Header/Header1";
 import axios from 'axios';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import style from './Detailstore.module.css';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-//import 'bootstrap/dist/css/bootstrap.min.css';
-import { Formik } from 'formik';
 import Loading from '../../components/Loading/Loading'
-import { toast } from 'react-toastify';
-import Spinner from 'react-bootstrap/Spinner';
-
 const Detailorder = () => {
     const location = useLocation();
     const dataFromPreviousPage = location.state;
@@ -164,29 +156,6 @@ const Detailorder = () => {
                                     </div>
                                 </div>
                             })}
-                            {/* <div className={style.infocustumer1}>
-                                <div className={style.user}>
-                                    <img height="55px" width="55px" src="https://res.cloudinary.com/drk3oaeza/image/upload/v1700584933/pbl6/f9juqmmadmqfencac2fe.jpg"
-                                        alt="" />
-                                </div>
-                                <div className={style.infocustumer}>
-                                    <h6>Địa chỉ</h6>
-                                    <span>339 Đ. Trần Hưng Đạo, P, Sơn Trà, Đà Nẵng 550000</span>
-
-                                </div>
-                            </div> */}
-                            {/* <div className={style.infocustumer1}>
-                                <div className={style.user}>
-                                    <img height="55px" width="55px" src="https://res.cloudinary.com/drk3oaeza/image/upload/v1700584933/pbl6/f9juqmmadmqfencac2fe.jpg"
-                                        alt="" />
-                                </div>
-                                <div className={style.infocustumer}>
-                                    <h6>Địa chỉ</h6>
-                                    <span>339 Đ. Trần Hưng Đạo, P, Sơn Trà, Đà Nẵng 550000</span>
-
-                                </div>
-                            </div> */}
-
                         </div>
                     </Box>
 

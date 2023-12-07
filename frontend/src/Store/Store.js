@@ -17,16 +17,68 @@ import 'react-toastify/dist/ReactToastify.css';
 import Statistics from './page/Statistics/Statistics';
 import './Store.css'
 import Feedback from './page/Feedback/Feedback';
+import { ref, onValue, child } from 'firebase/database';
+import { database } from './filebase';
+import { Notifications } from 'react-push-notification';
+import addNotification from 'react-push-notification';
+import { isEqual } from 'lodash';
+import { useParams } from 'react-router-dom';
+
 
 const Store = () => {
+  const [latestUserData, setLatestUserData] = useState();
+  const [noti, Setnoti] = useState();
+  const buttonClick = (noti) => {
+    addNotification({
+      title: noti.title,
+      subtitle: 'thông báo từ falth',
+      message: noti.message,
+      theme: 'darkblue',
+      native: true
+    });
+  };
+  useEffect(() => {
+    const dbRef = ref(database);
+    const usersRef = child(dbRef, '6555d3a0818ec600086743bf');
+    const unsubscribe = onValue(usersRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const allData = snapshot.val();
+        Setnoti(Object.keys(allData).map((key) => ({
+          id: key,
+          ...allData[key],
+        })));
+        const giaTriKhacNhau = Object.keys(allData)
+          .filter((key) => !latestUserData || !isEqual(allData[key], latestUserData[key]));
+
+        if (giaTriKhacNhau.length > 0) {
+          setLatestUserData(allData);
+          if (latestUserData) {
+            buttonClick(allData[giaTriKhacNhau]);
+          }
+        }
+      } else {
+        setLatestUserData();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [latestUserData]);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    console.log(`Loading lại trang với ID: ${id}`);
+  }, [id]);
+
+
+
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const tokenString = localStorage.getItem('user');
   const tokenObject = JSON.parse(tokenString);
   localStorage.setItem('_id', tokenObject._id);
-
-
-
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
@@ -34,7 +86,7 @@ const Store = () => {
         <div className="app">
           <Sidebara isSidebar={isSidebar} />
           <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} />
+            <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} />
             <Routes>
               <Route path="/" element={<Statistics />} />
               <Route path="/Formadd" element={<Formadd />} />
@@ -43,7 +95,7 @@ const Store = () => {
               <Route path='/listorder' element={<Listorder />} />
               <Route path='/info' element={<Info />} />
               <Route path='/category' element={<Category />} />
-              <Route path="/detailorder" element={<Detailorder />} />
+              <Route path="/detailorder/:id" element={<Detailorder />} />
               <Route path="/feedback" element={<Feedback />} />
               <Route path="/logout" element={<Logout />} />
             </Routes>

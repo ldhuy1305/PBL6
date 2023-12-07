@@ -3,27 +3,35 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 
-function Accept({ rows, show, handleClose, AcceptStore }) {
+function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore }) {
     const Acceptw = (id) => {
         handleClose(false);
-        AcceptStore(id);
+        LockStore(id);
     }
     return (
         <div>
 
             <Modal show={show} onHide={() => handleClose(false)} animation={true}>
                 <Modal.Header closeButton={() => handleClose(false)}>
-                    <Modal.Title>Cấp phép hoạt động</Modal.Title>
+                    <Modal.Title>{Status} cửa hàng</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>id: {rows._id}</Modal.Body>
-                <Modal.Footer>
+                <Modal.Body style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex" }}>
+                        <span style={{ flex: 1 }}> Tên cửa hàng:</span>
+                        <span style={{ flex: 2 }}>{rows.name}</span>
+                    </div>
+                    <div style={{ display: "flex" }}>
+                        <span style={{ flex: 1 }}> id cửa hàng:</span>
+                        <span style={{ flex: 2 }} >{rows._id}</span>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer style={{ display: 'flex', justifyContent: 'end' }}>
                     <Button variant="secondary" onClick={() => handleClose(false)}>
                         Đóng
                     </Button>
-                    <Button variant="success" onClick={() => Acceptw(rows.ownerId._id)} >
-                        Cấp phép
+                    <Button variant="success" onClick={() => Acceptw(rows._id)} >
+                        {Status}
                     </Button>
-
                 </Modal.Footer>
             </Modal>
         </div>

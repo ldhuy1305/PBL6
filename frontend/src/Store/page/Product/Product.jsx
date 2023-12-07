@@ -6,26 +6,29 @@ import Header from "../../components/Header/Header";
 import { Button } from "@mui/material";
 import axios from 'axios';
 import Delete from './Delete';
-import Notify from '../../../Components/Notify/Notify';
 import style from './Product.module.css'
 import Header2 from "../../components/Header/Header";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import Detailfeedback from './fb_product';
+
 
 
 
 const Product = ({ Catname }) => {
-
-
     const [data, setData] = useState([]);
+    const [datafb, setDatafb] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [openEdit, setOpenEdit] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [openNotify, setOpenNotify] = useState(null)
-    const [error, setError] = useState(false)
-    const [message, setMessage] = useState("")
+    const [openModal, setOpenModal] = useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
 
 
     const history = useNavigate();
@@ -87,6 +90,25 @@ const Product = ({ Catname }) => {
             setIsLoading(false);
         }
     }
+    const fb = async (id) => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${id}/rating`
+                , {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            const responseData = response.data.data;
+            console.log(responseData);
+            setDatafb(responseData);
+            handleOpenModal()
+
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         fetchData();
@@ -122,14 +144,13 @@ const Product = ({ Catname }) => {
             headerName: "Trạng thái",
             headerAlign: "center",
             align: "center",
-            flex: 1,
             renderCell: (params) => {
                 let color;
                 switch (params.row.isOutofOrder) {
-                    case true:
+                    case false:
                         color = "#4caf4fb9";
                         break;
-                    case false:
+                    case true:
                         color = "#FF5722";
                         break;
                     default:
@@ -152,50 +173,41 @@ const Product = ({ Catname }) => {
             headerName: "Chỉnh sửa",
             headerAlign: "center",
             align: "center",
-            flex: 1,
             renderCell: (params) => {
-                return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-                        onClick={() => redirectToEditProductPage(params.row._id)}
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Chỉnh sửa
-                        </Typography>
-                    </Box>
-                );
+
+                return (<div>
+                    <Button startIcon={<ModeEditIcon style={{ color: "rgb(103, 58, 183)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
+                </div >);
             },
         },
         {
             headerName: "Xóa",
-            flex: 1,
             headerAlign: "center",
             align: "center",
             renderCell: (params) => {
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-                        onClick={() => handleDeleteClick(params.row)}
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Xóa
-                        </Typography>
-                    </Box>
+                    <div>
+                        <Button startIcon={<DeleteIcon style={{ color: 'red' }} />} onClick={() => handleDeleteClick(params.row)}>
+                        </Button>
+                    </div>
                 );
+
             },
         },
+        {
+            field: 'Eyes',
+            headerName: 'Xem đánh giá',
+            sortable: false,
+            editable: false,
+            headerAlign: "center",
+            align: "center",
+            renderCell: (params) => (
+                <div>
+                    <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => fb(params.row._id)}></Button>
+                </div>
+            ),
+        },
+
     ];
 
     const rowsWithUniqueIds = data.map((item, index) => {
@@ -218,8 +230,6 @@ const Product = ({ Catname }) => {
                             onChange={(e) => Searchproduct(e.target.value)}
                         />
                     </div>
-
-
                 </Box>
                 <Box>
                 </Box>
@@ -250,23 +260,12 @@ const Product = ({ Catname }) => {
                         <div ref={formRef} className="form-container"
                             style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
                             <Box m="20px" >
-                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setError={setError} setMessage={setMessage} setOpenNotify={notify} />
+                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setOpenNotify={notify} />
                             </Box>
                         </div>
                     )
                 }
-                {/* {
-                    openNotify && (
-                        <div ref={formRef} className="form-container"
-                            style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
-                            <Box m="20px" >
-                                <Notify error={error} message={message} setOpenNotify={setOpenNotify} />
-                            </Box>
-                        </div>
-
-                    )
-                } */}
-
+                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} />
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {
@@ -277,5 +276,4 @@ const Product = ({ Catname }) => {
         </Box >
     );
 };
-
 export default Product;

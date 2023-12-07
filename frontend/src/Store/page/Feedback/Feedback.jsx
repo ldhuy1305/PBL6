@@ -87,33 +87,32 @@ const Detailfeedback = ({ open, handleClose }) => {
 };
 
 const Feedback = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [openModal, setOpenModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const [age, setAge] = useState('');
     const handleChange = (event) => {
         setAge(event.target.value);
     };
+    const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
     const columns = [
         { field: 'id', headerName: 'ID', },
-        { field: 'Nameproduct', headerName: 'Tên sản phẩm', flex: 1, },
         { field: 'NamePeople', headerName: 'Người đánh giá', flex: 1, },
         { field: 'review', headerName: 'Đánh giá', flex: 1, },
         { field: 'date', headerName: 'Ngày đánh giá', sortable: false, flex: 1, },
         {
             field: 'Rating',
             headerName: 'Số sao',
+            flex: 1,
             sortable: false,
             renderCell: (params) => (
                 <Rating
                     readOnly
-                    name="customized-icons"
-                    defaultValue={params.value}
+                    name="simple-controlled"
+                    value={params.value}
                     precision={0.5}
-                    icon={<StarIcon fontSize="inherit" />}
-                    style={{ marginTop: '10px' }}
                 />
             ),
         },
@@ -146,7 +145,7 @@ const Feedback = () => {
 
     return (
         <Box m="10px 30px 0px 30px">
-            <Header2 title={"Đánh giá cửa hàng"} />
+            <Header2 title={"Đánh giá từ khách hàng"} />
             {isLoading ? (
                 <div className={style.isloading}><Loading /></div>
             ) : (
@@ -162,7 +161,7 @@ const Feedback = () => {
                 >
                     <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="5px">
                         <Box sx={{ flexBasis: '50%' }}>
-                            <Typography component="legend">Controlled</Typography>
+                            <Typography component="legend">Tìm kiếm</Typography>
                             <Paper
                                 component="form"
                                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', height: "30px" }}
@@ -180,7 +179,7 @@ const Feedback = () => {
                         </Box>
                         <Box sx={{ flexBasis: '16%' }}>
                             <FormControl fullWidth>
-                                <Typography component="legend">Controlled</Typography>
+                                <Typography component="legend">Chọn số sao</Typography>
                                 <Select
                                     sx={{ alignItems: 'center', height: "30px" }}
                                     value={10}

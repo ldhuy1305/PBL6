@@ -13,6 +13,7 @@ import Detailstore from './Page/ManageStore/Detailstore';
 import ManageShipper from './Page/ManageShipper/ManageShipper';
 import ViewAllShipper from './Page/ManageShipper/ViewAllShipper';
 import { LanguageProvider } from './services/languageContext';
+import DetailUser from './Page/ManageUser/DetailUser';
 import ManageUser from "./Page/ManageUser/ManageUser"
 import Statistics from "./Page/Statistics/Statistics"
 import { ToastContainer } from 'react-toastify';
@@ -49,6 +50,7 @@ const App = () => {
                                 <Route path='/Detailstore' element={<Detailstore />} />
                                 <Route path='/DetailShipper' element={<DetailShipper />} />
                                 <Route path="/logout" element={<Logout />} />
+                                <Route path='/detailuser' element={<DetailUser />} />
                             </Routes>
                         </main>
                         <ToastContainer />

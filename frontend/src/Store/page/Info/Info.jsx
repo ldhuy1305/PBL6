@@ -259,32 +259,10 @@ const UserProfile = () => {
     };
 
     return (
-        <Box m="0px 20px" position='relative' onClick={() => setOpenNotify(false)}>
+        <Box m="10px 100px" position='relative' onClick={() => setOpenNotify(false)}>
             <Header2 title=" Thông tin cửa hàng" />
             <Box
                 m="0 0 0 0"
-                sx={{
-                    "& .MuiDataGrid-root": {
-                        border: "none",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        borderBottom: "none",
-                    },
-                    "& .name-column--cell": {
-                        color: colors.greenAccent[300],
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: colors.blueAccent[700],
-                        borderBottom: "none",
-                    },
-                    "& .MuiDataGrid-virtualScroller": {
-                        backgroundColor: colors.primary[400],
-                    },
-                    "& .MuiDataGrid-footerContainer": {
-                        borderTop: "none",
-                        backgroundColor: colors.blueAccent[700],
-                    },
-                }}
             >
                 <div className="now-detail-profile1" style={{
                     borderRadius: "4px",

@@ -15,15 +15,11 @@ function Delete({ selectedRow, setOpenDelete, setError, fetchData, setMessage, s
                     Authorization: `Bearer ${token}`
                 }
             });
-            setError(true);
-            setMessage("Xóa thành công");
             fetchData();
             setOpenDelete(false);
-            setOpenNotify("success", "Cập nhật thành công");
+            setOpenNotify("success", "Xóa thành công");
         } catch (error) {
             console.log(error);
-            setError(false);
-            setMessage(error.message);
             setOpenNotify("success", error.message);
         }
     };

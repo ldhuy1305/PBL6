@@ -119,7 +119,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Thông tin của hàng"
+              title="Thông tin cửa hàng"
               to="/store/info"
               icon={<PersonIcon />}
               selected={selected}
@@ -173,14 +173,14 @@ const Sidebar = () => {
               Phản hồi
             </Typography>
             <Item
-              title="Feecback"
+              title="Phản hồi"
               to="/store/feedback"
               icon={<CommentIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Logout"
+              title="Đăng xuất"
               icon={<LogoutIcon />}
               selected={selected}
               setSelected={setSelected}

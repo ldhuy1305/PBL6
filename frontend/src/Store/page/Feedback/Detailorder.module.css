@@ -65,6 +65,13 @@
     padding-bottom: 5px;
 }
 
+.infocustumer1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .Cont {
     width: 100%;
     height: 100%;
