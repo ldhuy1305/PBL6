@@ -3,7 +3,7 @@
     "error2": "Vui lòng nhập mật khẩu",
     "error3": "Mật khẩu hoặc tài khoản không đúng",
     "error4": "Mã xác thực không hợp lệ hoặc đã hết hạn",
-    "error5": "Mật khẩu phải có ít nhật 8 kí tự gồm cả chữ và số",
+    "error5": "Mật khẩu phải có ít nhất 8 kí tự gồm cả chữ và số",
     "error6": "Mật khẩu và xác nhận mật khẩu không trùng khớp",
     "error7": "Đổi mật khẩu thất bại",
     "error8": "Email không hợp lệ",
@@ -11,6 +11,9 @@
     "error10": "Địa chỉ email đã tồn tại",
     "error11": "Vui lòng nhập đầy đủ thông tin!",
     "error12": "Thay đổi thông tin thất bại",
+
+    "error13": "Tên chỉ bao gồm chữ cái và kí tự '",
+
     "success": "Đã nhận được thông tin! Mời bạn xác nhận email",
     "alert": "Đổi mật khẩu thành công mời bạn đăng nhập lại",
     "alert1": "Đăng ký chủ cửa hàng thành công! Mời bạn đăng ký thông tin cửa hàng.",

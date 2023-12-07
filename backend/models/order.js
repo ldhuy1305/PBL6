@@ -46,7 +46,6 @@ const orderSchema = new Schema(
         "Cancelled", // when user want to cancel order
         "Waiting", // when user checkout
         "Preparing", // when shipper accept order
-        "Ready", // when shipper take order
         "Delivering", // when shipper delivery order
         "Finished", // when shipper deliveried
         "Refused", // when don't find shipper
@@ -59,6 +58,24 @@ const orderSchema = new Schema(
     dateOrdered: {
       type: Date,
     },
+    dateCancelled: {
+      type: Date,
+    },
+    dateCheckout: {
+      type: Date,
+    },
+    datePrepared: {
+      type: Date,
+    },
+    dateDeliveried: {
+      type: Date,
+    },
+    dateFinished: {
+      type: Date,
+    },
+    dateRefused: {
+      type: Date,
+    },
     storeLocation: {
       type: {
         type: String,
@@ -69,15 +86,9 @@ const orderSchema = new Schema(
         index: "2dsphere",
       },
     },
-    userLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-      },
-      coordinates: {
-        type: [Number],
-        index: "2dsphere",
-      },
+    contact: {
+      type: Schema.Types.ObjectId,
+      ref: "Contact",
     },
   },
   {
@@ -93,5 +104,4 @@ orderSchema.pre("save", async function(next) {
   next();
 });
 orderSchema.index({ storeLocation: "2dsphere" });
-orderSchema.index({ userLocation: "2dsphere" });
 module.exports = mongoose.model("Order", orderSchema);

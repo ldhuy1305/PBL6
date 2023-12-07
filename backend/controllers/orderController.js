@@ -11,23 +11,23 @@ const request = require("request");
 const moment = require("moment");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const firebase = require("../utils/firebase");
 require("dotenv").config();
 process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
   placeOrder = catchAsync(async (req, res, next) => {
     const { userId, storeId } = req.params;
-    const { shipCost, cart, totalPrice, coordinates } = req.body;
+    const { shipCost, cart, totalPrice, contact } = req.body;
     const order = await Order.create({
       user: userId,
       store: storeId,
       cart,
       totalPrice,
       shipCost,
-      userLocation: { type: "Point", coordinates: coordinates.reverse() },
+      contact,
       status: "Pending",
       dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
-    console.log(order.userLocation);
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
     let date = new Date();
@@ -87,24 +87,135 @@ class orderController {
       return next(new appError("Thanh toán không thành công!"), 404);
     }
     if (!transaction) await Transaction.create(vnp_Params);
-    await Order.findByIdAndUpdate(
-      mongoose.Types.ObjectId(vnp_Params.vnp_TxnRef),
-      { status: "Waiting" }
-    );
+    let order = await Order.findById(vnp_Params.vnp_TxnRef);
+    if (order.status == "Pending") {
+      order.status = "Waiting";
+      order.dateCheckout = new Date(Date.now() + 7 * 60 * 60 * 1000);
+    }
+    await order.save();
     res.status(200).json({
       status: "success",
       data: vnp_Params,
     });
   });
   viewOrder = catchAsync(async (req, res, next) => {
-    const order = await Order.findById(req.params.id).populate({
-      path: "cart.product",
-      select: "name",
-    });
-    if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
+    console.log(req.params.id);
+    const order = await Order.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "store",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $unwind: "$store",
+      },
+      {
+        $lookup: {
+          from: "contacts",
+          localField: "contact",
+          foreignField: "_id",
+          as: "contact",
+        },
+      },
+      {
+        $unwind: "$contact",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "cart.product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $addFields: {
+          "cart.product.name": "$product.name",
+          "cart.product._id": "$product._id",
+          "cart.product.images": "$product.images",
+          "cart.product.ratingsAverage": "$product.ratingsAverage",
+        },
+      },
+      {
+        $project: {
+          storeLocation: {
+            coordinates: { $reverseArray: "$storeLocation.coordinates" },
+          },
+          shipCost: 1,
+          totalPrice: 1,
+          status: 1,
+          user: {
+            email: 1,
+            firstName: 1,
+            lastName: 1,
+          },
+          store: {
+            _id: 1,
+            name: 1,
+            address: 1,
+            image: 1,
+          },
+          cart: 1,
+          contact: 1,
+          dateOrdered: 1,
+          dateCancelled: 1,
+          dateCheckout: 1,
+          datePrepared: 1,
+          dateDeliveried: 1,
+          dateFinished: 1,
+          dateRefused: 1,
+          depreciationShip: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: "$shipCost",
+              else: {
+                $multiply: ["$shipCost", process.env.percentShipper / 100],
+              },
+            },
+          },
+          revenue: {
+            $cond: {
+              if: {
+                $in: ["$status", ["Cancelled", "Refused"]],
+              },
+              then: 0,
+              else: {
+                $multiply: ["$shipCost", 1 - process.env.percentShipper / 100],
+              },
+            },
+          },
+        },
+      },
+    ]);
+    if (order[0] == null)
+      return next(new appError("Không tìm thấy đơn hàng"), 404);
     res.status(200).json({
       status: "success",
-      data: order,
+      data: order[0],
     });
   });
   // refuse order when time out
@@ -115,9 +226,12 @@ class orderController {
         let t = (Date.now() - order.createdAt) / 60000;
         if (order.status == "Waiting" && t > 30) {
           order.status = "Refused";
+          order.dateRefused = new Date(Date.now() + 7 * 60 * 60 * 1000);
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
+        if (order.status == "Pending" && t > 30)
+          await Order.findByIdAndDelete(order._id);
       }
     }
     next();
@@ -128,41 +242,52 @@ class orderController {
     if (order.status != "Waiting")
       return next(new appError("Không thể huỷ đơn hàng!", 404));
     order.status = "Cancelled";
+    order.dateCancelled = new Date(Date.now() + 7 * 60 * 60 * 1000);
     await this.refundOrder(req, order._id, next);
     await order.save();
     res.status(200).json({ status: "success", data: order });
   });
-
+  refund = catchAsync(async (req, res, next) => {
+    await this.refundOrder(req, req.params.id, next);
+    res.status(200).json({ status: "success" });
+  });
   changeStatus = catchAsync(async (req, res, next) => {
     const { id, shipperId } = req.params;
     const order = await Order.findById(id);
     if (!order) return next(new appError("Không tìm thấy đơn hàng"), 404);
     let message;
-    // when shipper accept order
-    if (order.status == "Pending") {
-      order.shipper = shipperId;
-      order.status = "Preparing";
-      message = "Shipper đã xác nhận giao hàng";
-    }
-    // when shipper take order
-    if (order.status == "Preparing") {
-      order.status = "Ready";
-      message = "Shipper đã nhận hàng";
-    }
-    // when shipper delivery order
-    if (order.status == "Ready") {
-      order.status = "Delivering";
-      message = "Shipper đang giao hàng";
-    }
-    // when shipper deliveried
-    if (order.status == "Delivering") {
-      order.status = "Finished";
-      message = "Shipper đã giao hàng thành công";
+    if (order.shipper != shipperId && order.shipper)
+      return next(new appError("Đã xuất hiện lỗi khi giao hàng"), 404);
+
+    switch (order.status) {
+      case "Waiting":
+        // when shipper confirmed order and store prepare
+        order.shipper = shipperId;
+        order.status = "Preparing";
+        order.datePrepared = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        message = "Shipper has confirmed the delivery";
+        console.log(order.store);
+        await firebase.notify(`${order.store}`, `${order._id}`);
+        break;
+      case "Preparing":
+        // when shipper delivery order
+        order.status = "Delivering";
+        order.dateDeliveried = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        message = "Shipper is delivering the order";
+        break;
+
+      case "Delivering":
+        // when shipper deliveried
+        order.status = "Finished";
+        order.dateFinished = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        message = "Shipper has successfully delivered the order";
+        break;
     }
     await order.save();
     return res.status(200).json({
       success: "success",
       message,
+      data: order,
     });
   });
   async refundOrder(req, id, next) {
@@ -401,11 +526,17 @@ class orderController {
         status: req.query.status,
       };
     const features = new ApiFeatures(
-      Order.find(obj).populate({
-        path: "store",
-        select:
-          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -image -createdAt -updatedAt -__v",
-      }),
+      Order.find(obj)
+        .populate({
+          path: "store",
+          select:
+            "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -createdAt -updatedAt -__v",
+        })
+        .populate({
+          path: "shipper",
+          select:
+            "-status -isAccepted -ratingsAverage -ratingsQuantity -role -isVerified -__t -password -vehicleNumber -vehicleType -licenseNumber -__v -contact -defaultContact -frontImageCCCD -behindImageCCCD -licenseImage -createdAt -updatedAt -__v -rating -email -vehicleLicense -location",
+        }),
       req.query
     )
       .sort()
@@ -417,6 +548,10 @@ class orderController {
       length: orders.length,
       data: orders,
     });
+  });
+  notice = catchAsync(async (req, res, next) => {
+    await firebase.notify(req.query.title, req.query.message, true);
+    res.status(200).json({ status: "success" });
   });
 }
 function sortObject(obj) {

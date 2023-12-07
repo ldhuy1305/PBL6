@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
 import { useNavigate } from "react-router-dom";
-import { getUserInfo, getDefaultContact } from '../../services/userServices';
+import { getUserInfo, getDefaultContact, updateAvatar } from '../../services/userServices';
 import { useLogout } from '../../services/authContext';
 import { useTranslation } from 'react-i18next';
 import LoadingModal from '../../Components/Loading/Loading';
@@ -36,12 +36,18 @@ const Profile = () => {
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
+    const [photo, setPhoto] = useState()
     const [formDataInfo, setFormDataInfo] = useState({
         firstName: '',
         lastName: '',
         address: '',
         phoneNumber: '',
     });
+    const handleChangeImg = (e) => {
+        // const name = e.target.name;
+        const value = e.target.files[0];
+        setPhoto(value);
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -148,10 +154,13 @@ const Profile = () => {
         e.preventDefault();
         if(formDataInfo.firstName === '' || formDataInfo.lastName === ''|| formDataInfo.address === ''|| formDataInfo.phoneNumber === '') {
             setErrorInfo(t("error11"))
-        }else if(!/^\d{10}$/.test(formDataInfo.phoneNumber)) {
+        } else if (!/^[\p{L} ']+$/u.test(formDataInfo.firstName) || !/^[\p{L} ']+$/u.test(formDataInfo.lastName)) {
+            setErrorInfo(t("error13"));
+         } else if(!/^\d{10}$/.test(formDataInfo.phoneNumber)) {
             setErrorInfo(t("error9"))
         }else {
             setIsLoading(true)
+            setErrorInfo('')
             try {
                 const user = localStorage.getItem("user");
                 const token = localStorage.getItem("token");
@@ -185,7 +194,29 @@ const Profile = () => {
         } 
     };
 
-    
+    const handleUpdateAvatar = async (e) => {
+        e.preventDefault();
+        const registrationData = new FormData();
+        registrationData.append('photo', photo);
+        console.log(photo)
+            try {
+                setIsLoading(true)
+             const response = await updateAvatar(registrationData)
+
+              console.log('Đăng ký thành công', response.data.photo);
+              const user = JSON.parse(localStorage.getItem('user'));
+    user.photo = response.data.photo;
+    localStorage.setItem('user', JSON.stringify(user));
+              setMessage('Thay đổi ảnh đại diện thành công')
+              setImg(response.data.photo)
+            } catch (error) {
+                setMessage('Thay đổi ảnh đại diện thất bại')
+            } finally {
+                setIsLoading(false);
+                setOpenNotify(true);
+            }
+        }
+
     return (
         <div>
 
@@ -272,12 +303,13 @@ const Profile = () => {
                                             required=""
                                             style={{ display: 'none' }}
                                             accept="image/*"
+                                            onChange={handleChangeImg}
                                         />
                                         <label class="label-custom" for="validatedCustomFile">{t("upload")}</label>
                                         <span class="font-italic font13">{t("condition")}</span>
                                     </div>
                                 </div>
-                                <button class="btn btn-blue-4" type="button">{t("update")}</button>
+                                <button class="btn btn-blue-4" type="button" onClick={handleUpdateAvatar}>{t("update")}</button>
                             </div>
                         </div>
                     </div>
