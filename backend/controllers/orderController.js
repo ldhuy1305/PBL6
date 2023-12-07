@@ -151,6 +151,17 @@ class orderController {
         $unwind: "$product",
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "shipper",
+          foreignField: "_id",
+          as: "shipper",
+        },
+      },
+      {
+        $unwind: "$shipper",
+      },
+      {
         $addFields: {
           "cart.product.name": "$product.name",
           "cart.product._id": "$product._id",
@@ -176,6 +187,18 @@ class orderController {
             name: 1,
             address: 1,
             image: 1,
+          },
+          shipper: {
+            _id: 1,
+            firstName: 1,
+            lastName: 1,
+            contact: {
+              phoneNumber: 1,
+            },
+            photo: 1,
+            ratingAverage: 1,
+            vehicleNumber: 1,
+            vehicleType: 1,
           },
           cart: 1,
           contact: 1,
