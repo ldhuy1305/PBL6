@@ -180,6 +180,12 @@ class orderController {
           cart: 1,
           contact: 1,
           dateOrdered: 1,
+          dateCancelled: 1,
+          dateCheckout: 1,
+          datePrepared: 1,
+          dateDeliveried: 1,
+          dateFinished: 1,
+          dateRefused: 1,
           depreciationShip: {
             $cond: {
               if: {
@@ -520,11 +526,17 @@ class orderController {
         status: req.query.status,
       };
     const features = new ApiFeatures(
-      Order.find(obj).populate({
-        path: "store",
-        select:
-          "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -createdAt -updatedAt -__v",
-      }),
+      Order.find(obj)
+        .populate({
+          path: "store",
+          select:
+            "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -createdAt -updatedAt -__v",
+        })
+        .populate({
+          path: "shipper",
+          select:
+            "-status -isAccepted -ratingsAverage -ratingsQuantity -role -isVerified -__t -password -vehicleNumber -vehicleType -licenseNumber -__v -contact -defaultContact -frontImageCCCD -behindImageCCCD -licenseImage -createdAt -updatedAt -__v -rating -email -vehicleLicense -location",
+        }),
       req.query
     )
       .sort()
