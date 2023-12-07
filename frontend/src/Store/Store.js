@@ -19,8 +19,8 @@ import './Store.css'
 import Feedback from './page/Feedback/Feedback';
 import { ref, onValue, child } from 'firebase/database';
 import { database } from './filebase';
-import { Notifications } from 'react-push-notification';
-import addNotification from 'react-push-notification';
+// import { Notifications } from 'react-push-notification';
+// import addNotification from 'react-push-notification';
 import { isEqual } from 'lodash';
 import { useParams } from 'react-router-dom';
 
@@ -29,13 +29,13 @@ const Store = () => {
   const [latestUserData, setLatestUserData] = useState();
   const [noti, Setnoti] = useState();
   const buttonClick = (noti) => {
-    addNotification({
-      title: noti.title,
-      subtitle: 'thông báo từ falth',
-      message: noti.message,
-      theme: 'darkblue',
-      native: true
-    });
+    // addNotification({
+    //   title: noti.title,
+    //   subtitle: 'thông báo từ falth',
+    //   message: noti.message,
+    //   theme: 'darkblue',
+    //   native: true
+    // });
   };
   useEffect(() => {
     const dbRef = ref(database);
