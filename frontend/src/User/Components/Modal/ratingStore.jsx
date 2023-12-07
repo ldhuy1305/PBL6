@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";

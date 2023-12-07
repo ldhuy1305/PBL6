@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../../assets/css/pcmall.css'
 import CommentItem from "../Item/commentItem";
 
-const Comment = ({ store, ratings, idUser, setRatings, product }) => {
+const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
     // const [data, setData] = useState(store !== null ? store : product);
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, index) => {          
@@ -60,7 +60,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                         <div class="product-rating-overview__briefing">
                             <div class="product-rating-overview__score-wrapper">
                                 <span class="product-rating-overview__rating-score">
-                                {store ? store.ratingsAverage : product.ratingsAverage}
+                                {store ? store.ratingsAverage : (product ? product.ratingsAverage : shipper.ratingsAverage)}
                                 </span>
                                 <span class="product-rating-overview__rating-score-out-of">
                                     / 5
@@ -68,7 +68,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                             </div>
                             <div class="shopee-rating-stars product-rating-overview__stars">
                                 <div className="shopee-rating-stars__stars">
-                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
+                                    {renderStars(store ? store.ratingsAverage : (product ? product.ratingsAverage : shipper.ratingsAverage))}
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,6 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                     <div class="product-ratings__list" style={{ opacity: '1' }}>
                         <div class="shopee-product-comment-list">
                             {Object.values(ratings).map((rating) => (
-
                                 <CommentItem
                                     like={6}
                                     rating={rating}
@@ -122,6 +121,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                                     setRatings={setRatings}
                                     store={store ? store  : null}
                                     product={product ? product  : null}
+                                    shipper={shipper ? shipper  : null}
                                 />
                             ))}
                         </div>
