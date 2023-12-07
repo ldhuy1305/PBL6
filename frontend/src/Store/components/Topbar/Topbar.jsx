@@ -1,93 +1,103 @@
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext, useState } from "react";
 import { ColorModeContext, tokens } from '../../theme';
-import InputBase from "@mui/material/InputBase";
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchIcon from "@mui/icons-material/Search";
-import { useLang } from '../../services/languageContext';
+import { useNavigate } from 'react-router-dom';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import Badge from '@mui/material/Badge';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import style from "./Topbar.module.css";
 
-const Topbar = () => {
+const Topbar = ({ latestUserData }) => {
+    const history = useNavigate();
+    const redirectToDetailorderPage = (id) => {
+        history(`/store/detailorder/${id}`, { state: id });
+    };
+    console.log(latestUserData)
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const colorMode = useContext(ColorModeContext);
-    const [isDropdownLangOpen, setDropdownLangOpen] = useState(false);
-    // const [selectedLanguage, setSelectedLanguage] = useState('icon icon-lag-vn');
-    // const { selectedLang, updateLang } = useLang();
-    const toggleDropdownLang = () => {
-        setDropdownLangOpen(!isDropdownLangOpen);
-    };
-    const handleSelectLanguage = (iconName, lng) => {
-        // updateLang(lng)
-        // setSelectedLanguage(iconName);
-        setDropdownLangOpen(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
     };
 
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+    const numbers = [1, 2, 3, 4, 5];
+
     return (
-        <Box display="flex" justifyContent="space-between" p={2} borderBottom="0.1px solid rgb(230, 230, 230);"
-            boxShadow="0px 4px 4px rgba(0, 0, 0, 0.1)">
+        <Box display="flex" justifyContent="space-between" p={1} borderBottom="0.1px solid rgb(230, 230, 230);"
+            boxShadow="0px 1px 1px rgba(0, 0, 0, 0.1)">
             <Box
                 display="flex"
                 backgroundColor={colors.primary[400]}
                 borderRadius="3px"
             >
-                {/* <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-                <IconButton type="button" sx={{ p: 1 }}>
-                    <SearchIcon />
-                </IconButton> */}
             </Box>
 
             {/* ICONS */}
-            <Box display="flex">
-                <IconButton>
-                    <NotificationsOutlinedIcon />
+            <Box display="flex" gap="10px">
+                <IconButton onClick={handleClick}>
+                    <Badge badgeContent={10} color="error" overlap="circular">
+                        <NotificationsOutlinedIcon sx={{ fontSize: 25 }} />
+                    </Badge>
                 </IconButton>
-                <IconButton>
-                    {/* <div class="language dropdown col-auto"
-                        style={{ backgroundColor: "white", padding: '2px 5px', borderRadius: '5px', marginRight: '5px' }}
-                        aria-expanded={isDropdownLangOpen}
-                        onClick={toggleDropdownLang}>
-                        <div className='dropdown'>
-                            <div
-                                class="dropdown-toggle"
-                                role='button'
-                                id="dropdownMenuButton"
-                                data-toggle="dropdown"
-                                tabindex="0"
-                                aria-haspopup="true"
-                                aria-expanded={isDropdownLangOpen}
-                                onClick={toggleDropdownLang}
-                            >
-                                <span class={selectedLanguage}></span>
+
+                <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                >
+                    <Grid sx={{
+                        width: "360px", height: "500px",
+                        overflowy: "auto", p: "10px",
+                    }} container spacing={2}>
+                        <Grid item xs={12}>
+                            <Typography variant="h3" sx={{ fontWeight: "700" }}>Thông báo mới</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className={style.container}>
+
+                                {latestUserData && latestUserData.map((number) => (
+                                    <div className={style.notification} onClick={() => redirectToDetailorderPage(number.id)}>
+                                        <div className={style.infomative}>
+                                            <span className={style.span}>{number.title}</span>
+                                            {/* <span className={style.title}></span> */}
+                                            <span className={style.mes}>{number.message}</span>
+                                        </div>
+                                        <div className={style.seed}>
+                                            <FiberManualRecordIcon sx={{ color: "#1877F2" }} />
+                                        </div>
+                                    </div>
+                                ))}
+
+
                             </div>
-                            {isDropdownLangOpen && (
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
-                                    <button onClick={() => handleSelectLanguage('icon icon-lag-vn', 'vi')} style={{ width: '100%', textAlign: 'left' }}>
-                                        <div class="dropdown-item">
-                                            <span class="icon icon-lag-vn"></span>
-                                            <span class="language-item">Vietnamese</span>
-                                        </div>
-                                    </button>
-                                    <button onClick={() => handleSelectLanguage('icon icon-lag-en', 'en')} style={{ width: '100%' }}>
-                                        <div class="dropdown-item">
-                                            <span class="icon icon-lag-en"></span>
-                                            <span class="language-item">English</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div> */}
-                    <SettingsOutlinedIcon />
+                        </Grid>
+                    </Grid>
+                </Popover>
+                <IconButton>
+                    <SettingsOutlinedIcon sx={{ fontSize: 25 }} />
                 </IconButton>
                 <IconButton>
-                    <PersonOutlinedIcon />
+                    <PersonOutlinedIcon sx={{ fontSize: 25 }} />
                 </IconButton>
             </Box>
-        </Box>
+        </Box >
     );
 };
 

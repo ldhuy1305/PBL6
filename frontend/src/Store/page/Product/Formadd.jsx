@@ -45,14 +45,14 @@ const Product = () => {
     const fetchCatname = async () => {
         try {
             const response = await axios.get(
-                `https://falth-api.vercel.app/api/category/owner/${_id}`,
+                `https://falth-api.vercel.app/api/category`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data;
             console.log(responseData);
             setCatname(responseData);
             setIsLoading(false);

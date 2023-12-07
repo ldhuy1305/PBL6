@@ -48,14 +48,14 @@ class ApexChart extends React.Component {
             {
               title: {
                 formatter: function (val) {
-                  return val + " (mins)"
+                  return val
                 }
               }
             },
             {
               title: {
                 formatter: function (val) {
-                  return val + " per session"
+                  return val
                 }
               }
             },
