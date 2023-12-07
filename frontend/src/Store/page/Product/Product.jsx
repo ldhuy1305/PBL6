@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
-import Header from "../../components/Header/Header";
 import { Button } from "@mui/material";
 import axios from 'axios';
 import Delete from './Delete';
@@ -15,14 +14,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
 
-
-
-
-const Product = ({ Catname }) => {
+const Product = ({ }) => {
     const [data, setData] = useState([]);
     const [datafb, setDatafb] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [openEdit, setOpenEdit] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
@@ -112,7 +107,7 @@ const Product = ({ Catname }) => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    },);
 
     const handleDeleteClick = (row) => {
         setSelectedRow(row);
