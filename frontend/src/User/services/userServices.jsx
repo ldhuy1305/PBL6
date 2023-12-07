@@ -351,6 +351,25 @@ const deleteRating = async (id) => {
   }
 }
 
+//Shipper
+
+const getShipper = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `https://falth-api.vercel.app/api/shipper/${id}`
+    console.log(api)
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 export {
   loginAPI,
   getUserInfo,
@@ -375,5 +394,6 @@ export {
   updateRatingForStore,
   getRatingOfProduct,
   addRatingForProduct,
-  deleteRating
+  deleteRating, 
+  getShipper
 }

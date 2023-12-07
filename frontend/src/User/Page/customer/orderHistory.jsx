@@ -4,7 +4,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAllOderByUserId, viewOrder, createPayment, getOderByFilter } from '../../services/userServices';
+import { getAllOderByUserId, viewOrder, createPayment, getOderByFilter, getShipper } from '../../services/userServices';
 import RatingShipper from '../../Components/Modal/ratingShipper';
 import RatingStore from '../../Components/Modal/ratingStore';
 import OrderDetail from '../../Components/Modal/orderDetail';
@@ -12,6 +12,7 @@ import OrderHisItem from '../../Components/Item/orderHisItem';
 import Skeleton from '../../Components/Skeleton/skeleton'
 import LoadingModal from '../../Components/Loading/Loading';
 import moment from 'moment-timezone';
+import ShipperInfoModal from '../../Components/Modal/shipperInfo';
 const OrderHistory = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -141,7 +142,6 @@ const OrderHistory = () => {
     const handleShowModal1 = (item) => {
         setItem({ ...item })
         setShowModal1(true);
-        console.log("Mở modal")
     };
     const handleCloseModal1 = () => {
         setShowModal1(false);
@@ -197,6 +197,26 @@ const OrderHistory = () => {
         }
         getData()
     }, [page]);
+
+    const [showShipperDetailModal, setShowShipperModal] = useState(false)
+    const [shipper, setShipper] = useState({})
+    const  handleShowShipper = async (shipperID) => {
+        try {
+            setIsLoadingModal(true)
+            const response = await getShipper(shipperID)
+            console.log('Lấy thông tin thành công: ', response.data)
+            setShipper({
+                ...response
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        setIsLoadingModal(false)
+        setShowShipperModal(true)
+    }
+    const handleCloseShipper = () => {
+        setShowShipperModal(false)
+    }
 
     return (
         <div>
@@ -278,7 +298,7 @@ const OrderHistory = () => {
                                 </div>
                             ))}
                             {items.map((item, index) => (
-                                <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal1} />
+                                <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal1} handleShowShipperModal={handleShowShipper} />
                             ))}
 
                         </div>
@@ -310,6 +330,7 @@ const OrderHistory = () => {
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
             <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item} />
             <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store} />
+            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper} shipper={shipper}/>
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )

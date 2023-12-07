@@ -6,7 +6,7 @@ import { getStoreById, cancelOrder } from "../../services/userServices";
 import { useNavigate } from "react-router-dom";
 import CancelModal from "../Modal/cancelModal";
 import Notify from "../Notify.jsx/Notify";
-const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
+const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleShowShipperModal }) => {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
@@ -63,6 +63,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 return 'black';
         }
     };
+
     return (
         <div>
             <div class="history-table-row">
@@ -85,7 +86,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 </div>
                 <div className="history-table-cell history-table-col5">
                     {orderItem.shipper ? (
-                        <strong className="d-block text-truncate">{orderItem.shipper}</strong>
+                        <strong className="d-block text-truncate" style={{cursor:'pointer'}} onClick={() => handleShowShipperModal(orderItem.shipper._id)}>{orderItem.shipper.lastName + orderItem.shipper.firstName}</strong>
                     ) : (
                         <span></span>
                     )}
@@ -128,6 +129,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
             {isLoading && (<LoadingModal/>)}
             <CancelModal show={show} handleClose={handleClose} orderItem={orderItem} setOrderItem={setOrderItem}/>
             {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify}/>)}
+            
         </div>
     )
 }
