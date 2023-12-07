@@ -6,7 +6,7 @@ import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
 
-const RatingStore = ({ show, handleClose, handleReturn, store }) => {
+const RatingStore = ({ show, handleClose, store }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -245,7 +245,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
                                                             <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>

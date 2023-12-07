@@ -3,13 +3,24 @@ import Modal from 'react-bootstrap/Modal';
 import { useTranslation } from "react-i18next";
 import '../../assets/css/productDetail2.css'
 import Comment from "./comment";
+import RatingShipper from "./ratingShipper";
 const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idUser }) => {
     const { t } = useTranslation()
-
+    const [visible, setVisible] = useState(true)
+    const [showRating, setShowRating] = useState(false)
+    const handleShowRating = () => {
+        setShowRating(true)
+        setVisible(false)
+    }
+    const handleCloseRating = () => {
+        setShowRating(false)
+        setVisible(true)
+    }
     return (
         <div>
+        {visible && (
             <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
-                <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Thông tin nhân viên giao hàng
+                <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Thông Tin Nhân  Viên Giao Hàng
                     <button onClick={handleClose} style={{ backgroundColor: '#cf2127', float: 'right', marginRight: '10px', padding: '3px 10px 5px 10px', borderRadius: '5px', color: 'white' }}>
                         x
                     </button>
@@ -17,32 +28,24 @@ const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idU
                 <Modal.Header>
                 </Modal.Header>
                 <Modal.Body>
-                    <div class="now-detail-restaurant clearfix" style={{ width: '90%', marginLeft: '5%', height: '400px' }}>
+                    <div class="now-detail-restaurant clearfix" style={{ width: '90%', marginLeft: '5%', height: '450px' }}>
                         <div class="container" style={{ width: '100%' }}>
                             <div class="detail-restaurant-img" style={{ width: '40%', height: '100%' }}>
                                 <div class="img">
                                     <img src={shipper ? shipper.photo : ''} alt="" id="avatar_user" style={{ borderRadius: '50%' }} />
                                 </div>
-                                {/* <div class="img" style={{ width: 'auto' }}>
-                                    <img
-                                        src={shipper.photo}
-                                        alt={shipper.name}
-                                        class=""
-                                        style={{ height: '200px', width: '100%', marginLeft: '0' }}
-                                    />
-                                </div> */}
                             </div>
 
-                            <div class="detail-restaurant-info" style={{ width: '56%' }}>
+                            <div class="detail-restaurant-info" style={{ width: '55%' }}>
                                 <div class="product-essential-detail" style={{ width: '100%' }}>
-                                    <h1 class="name-restaurant" style={{marginBottom:'30px'}}>
+                                    <h1 class="name-restaurant" style={{ marginBottom: '30px', color:'#cf2127' }}>
                                         {shipper ? shipper.lastName + shipper.firstName : ''}
                                     </h1>
-                                    <form>                                       
+                                    <form>
                                         <div class="row form-group align-items-center">
                                             <div class="col-4 txt-bold">Email</div>
-                                            <div class="col-8">
-                                                    <div class="show-email">{shipper ? shipper.email : ''}</div>
+                                            <div class="col-7">
+                                                <div class="show-email">{shipper ? shipper.email : ''}</div>
                                             </div>
                                         </div>
                                         <div class="row form-group align-items-center">
@@ -60,11 +63,54 @@ const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idU
 
                                             </div>
                                             <div class="col-4">
-                                            {shipper ? shipper.contact[0].phoneNumber : ''}
+                                                {shipper ? shipper.contact[0].phoneNumber : ''}
                                             </div>
                                         </div>
+                                        <div class="row form-group align-items-center">
+                                            <div class="col-4 txt-bold">
+                                                Biển số xe
+                                            </div>
+                                            <div class="col-4">
+                                                {shipper ? shipper.vehicleNumber : ''}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group align-items-center">
+                                            <div class="col-4 txt-bold">
+                                                Loại xe
 
+                                            </div>
+                                            <div class="col-4">
+                                                {shipper ? shipper.vehicleType : ''}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group align-items-center">
+                                            <div class="col-4 txt-bold">
+                                                Mã giấy tờ xe
 
+                                            </div>
+                                            <div class="col-4">
+                                                {shipper ? shipper.vehicleLicense : ''}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group align-items-center">
+                                            <div class="col-4 txt-bold">
+                                                Mã GPLX
+
+                                            </div>
+                                            <div class="col-4">
+                                                {shipper ? shipper.licenseNumber : ''}
+                                            </div>
+                                        </div>
+                                        <div class="relative" style={{ cursor: 'pointer' }}>
+                                            <button
+                                                type="button"
+                                                class="btn btn-danger btn-width-long"
+                                                onClick={handleShowRating}
+
+                                            >
+                                                Đánh giá
+                                            </button>
+                                        </div>
                                     </form>
 
 
@@ -107,10 +153,10 @@ const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idU
                             </button>
                         </div>
                     </div>
-
-                    {/* </div> */}
                 </Modal.Body>
             </Modal>
+        )}
+        <RatingShipper show={showRating} handleClose={handleCloseRating} handleShowRatingStore={handleCloseRating} shipper={shipper} />
         </div>
     )
 

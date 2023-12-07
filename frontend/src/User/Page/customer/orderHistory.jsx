@@ -29,27 +29,27 @@ const OrderHistory = () => {
     const [toDate, setToDate] = useState(currentDate);
     useEffect(() => {
 
-    // Khởi tạo flatpickr cho fromDate
-    flatpickr(fromDateRef.current, {
-      dateFormat: 'd-m-Y',
-      defaultDate: oneMonthAgo,
-      onChange: function (selectedDates) {
-        const selectedDate = selectedDates[0];
-        setFromDate(selectedDate);
-        console.log('From Date Selected:', selectedDate);
-      },
-    });
+        // Khởi tạo flatpickr cho fromDate
+        flatpickr(fromDateRef.current, {
+            dateFormat: 'd-m-Y',
+            defaultDate: oneMonthAgo,
+            onChange: function (selectedDates) {
+                const selectedDate = selectedDates[0];
+                setFromDate(selectedDate);
+                console.log('From Date Selected:', selectedDate);
+            },
+        });
 
-    // Khởi tạo flatpickr cho toDate
-    flatpickr(toDateRef.current, {
-      dateFormat: 'd-m-Y',
-      defaultDate: currentDate,
-      onChange: function (selectedDates) {
-        const selectedDate = selectedDates[0];
-        setToDate(selectedDate);
-        console.log('To Date Selected:', selectedDate);
-      },
-    });
+        // Khởi tạo flatpickr cho toDate
+        flatpickr(toDateRef.current, {
+            dateFormat: 'd-m-Y',
+            defaultDate: currentDate,
+            onChange: function (selectedDates) {
+                const selectedDate = selectedDates[0];
+                setToDate(selectedDate);
+                console.log('To Date Selected:', selectedDate);
+            },
+        });
         const transaction = async () => {
             const queryString = window.location.search;
             if (queryString) {
@@ -81,26 +81,26 @@ const OrderHistory = () => {
     const handleStatusChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedStatus(selectedValue);
-      };
+    };
     const handleSearch = async () => {
         const from = moment(fromDate).format('DD-MM-YYYY');
         const to = moment(toDate).format('DD-MM-YYYY');
         setItems([])
-        if(selectedStatus === 'All') {
+        if (selectedStatus === 'All') {
             setSelectedStatus('')
         }
         try {
             setIsLoading(true)
             const response = await getOderByFilter(from, to, selectedStatus, page)
             console.log(response.data)
-                setItems(response.data)
+            setItems(response.data)
         } catch (error) {
-            console.log("Sai:",error)
+            console.log("Sai:", error)
         }
         setIsLoading(false)
     }
 
-    
+
 
 
     const [showModal, setShowModal] = useState(false);
@@ -157,11 +157,6 @@ const OrderHistory = () => {
         setShowModal2(false); // Tắt modal 2
         setShowModal1(false); // Tắt modal 1
     };
-    const handleReturnModal1 = () => {
-        setShowModal2(false); // Tắt modal 2
-        setShowModal1(true); // Tắt modal 1
-    };
-
 
     const handleBack = () => {
         navigate("/user/profile")
@@ -182,16 +177,16 @@ const OrderHistory = () => {
             const from = moment(fromDate).format('DD-MM-YYYY');
             const to = moment(toDate).format('DD-MM-YYYY');
             setItems([])
-            if(selectedStatus === 'All') {
+            if (selectedStatus === 'All') {
                 setSelectedStatus('')
             }
             try {
                 setIsLoading(true)
                 const response = await getOderByFilter(from, to, selectedStatus, page)
                 console.log(response.data)
-                    setItems(response.data)
+                setItems(response.data)
             } catch (error) {
-                console.log("Sai:",error)
+                console.log("Sai:", error)
             }
             setIsLoading(false)
         }
@@ -199,8 +194,24 @@ const OrderHistory = () => {
     }, [page]);
 
     const [showShipperDetailModal, setShowShipperModal] = useState(false)
-    const [shipper, setShipper] = useState({})
-    const  handleShowShipper = async (shipperID) => {
+    const [shipper, setShipper] = useState({
+        ratingsAverage: 1,
+        photo: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        vehicleNumber: "",
+        vehicleType: "",
+        vehicleLicense: "",
+        licenseNumber: "",
+        contact: [
+            {
+                phoneNumber: "",
+                address: ""
+            }
+        ],
+    })
+    const handleShowShipper = async (shipperID) => {
         try {
             setIsLoadingModal(true)
             const response = await getShipper(shipperID)
@@ -232,7 +243,7 @@ const OrderHistory = () => {
                                 <div class="text-nowrap">
                                     <span class="filter-table-label">{t("status")}</span>
                                     <select value={selectedStatus}
-        onChange={handleStatusChange} name="" class="form-control filter-table-input">
+                                        onChange={handleStatusChange} name="" class="form-control filter-table-input">
                                         <option value="All" selected="">All</option>
                                         <option value="Pending">Pending</option>
                                         <option value="Waiting">Waiting</option>
@@ -298,7 +309,7 @@ const OrderHistory = () => {
                                 </div>
                             ))}
                             {items.map((item, index) => (
-                                <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal1} handleShowShipperModal={handleShowShipper} />
+                                <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal2} handleShowShipperModal={handleShowShipper} />
                             ))}
 
                         </div>
@@ -329,8 +340,8 @@ const OrderHistory = () => {
 
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
             <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item} />
-            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store} />
-            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper} shipper={shipper}/>
+            <RatingStore show={showModal2} handleClose={handleCloseModal2} store={store} />
+            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper} handleShowRating={handleShowModal1} shipper={shipper} />
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )

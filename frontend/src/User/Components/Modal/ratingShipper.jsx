@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
-const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
+const RatingShipper = ({ show, handleClose, handleShowRatingStore, shipper }) => {
     const {t} = useTranslation();
     const [formData, setFormData] = useState({
         rating: '',
@@ -32,14 +32,43 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
     };
 
     const handleSubmit = () => {
-        console.log(formData);
-        setFormData({
-            rating: '',
-            reviewText: '',
-            selectedImages: null,
-        })
-        console.log(item)
-        handleShowRatingStore(item.store)
+        // console.log(formData);
+        // setFormData({
+        //     rating: '',
+        //     reviewText: '',
+        //     selectedImages: null,
+        // })
+        // console.log(item)
+        // handleShowRatingStore(item.store)
+    };
+
+    const renderStars = (rating) => {
+        return Array(5).fill(0).map((_, index) => {
+            const starValue = index + 1;
+            const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
+            const isHalfFilled = percentFilled > 0 && percentFilled < 100;
+
+            return (
+                <div className="shopee-rating-stars__star-wrapper" key={index}>
+                    <div className="shopee-rating-stars__lit" style={{ width: `${isHalfFilled ? percentFilled : percentFilled}%`, color: '#ffb500' }}>
+                        <svg
+                            enableBackground="new 0 0 15 15"
+                            viewBox="0 0 15 15"
+                            x="0"
+                            y="0"
+                            className="shopee-svg-icon shopee-rating-stars__primary-star icon-rating-solid"
+                        >
+                            <polygon
+                                points="7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeMiterlimit="10"
+                            ></polygon>
+                        </svg>
+                    </div>
+                </div>
+            );
+        });
     };
     return (
         <div>
@@ -78,16 +107,14 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={ava}
+                                                                src={shipper ? shipper.photo : ''}
                                                                 alt=""
                                                             />
-                                                            <div class="shipper-name">Tôn Long Tiến</div>
-                                                            <div class="rating-star-container">
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="101"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="102"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="103"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="104"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="105"></i>
+                                                            <div class="shipper-name">{shipper ? shipper.lastName + shipper.firstName : ''}</div>
+                                                            <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
+                                                                <div className="shopee-rating-stars__stars">
+                                                                    {renderStars(shipper ? shipper.ratingsAverage : 0)}
+                                                                </div>
                                                             </div>
                                                             <div >
                                                                 <select defaultValue="" className="custom-select" name='rating' value={formData.rating} onChange={handleChange}>
