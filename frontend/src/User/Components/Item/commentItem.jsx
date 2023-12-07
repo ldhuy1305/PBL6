@@ -5,7 +5,7 @@ import DeleteConfirmationModal from "../Modal/deleteDanger";
 import RatingStore from "../Modal/ratingStore";
 import RatingProduct from "../Modal/ratingProduct";
 import UpdateRatingModal from "../Modal/updateRating";
-const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, store, product }) => {
+const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, store, product, shipper }) => {
     const [visible, setVisible] = useState(false)
     const [link, setLink] = useState(false)
     const formattedCreateTime = moment.utc(rating.createdAt).format('DD/MM/YYYY HH:mm');
@@ -146,7 +146,7 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
                 </div>
             </div>
             <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={rating._id} action='rating' data={ratings} setData={setRatings}/>
-            <UpdateRatingModal show={showModal} handleClose={handleCloseModal} {...(store !== null ? { store } : { product })} rating={rating} ratings={ratings} setRatings={setRatings}/>
+            <UpdateRatingModal show={showModal} handleClose={handleCloseModal} {...(store !== null ? { store } : (product !== null ? { product } : {shipper}))} rating={rating} ratings={ratings} setRatings={setRatings}/>
         </div>
     )
 }

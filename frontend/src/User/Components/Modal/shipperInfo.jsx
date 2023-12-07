@@ -4,11 +4,32 @@ import { useTranslation } from "react-i18next";
 import '../../assets/css/productDetail2.css'
 import Comment from "./comment";
 import RatingShipper from "./ratingShipper";
-const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idUser }) => {
+const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
     const { t } = useTranslation()
     const [visible, setVisible] = useState(true)
     const [showRating, setShowRating] = useState(false)
+    const [ratings, setRatings] = useState([
+        {
+            "images": [],
+            "createdAt": "2023-11-21T02:45:25.379Z",
+            "_id": "655c19c52f57f84b84aa9568",
+            "image": null,
+            "number": 5,
+            "content": "đỉnh ác",
+            "reference": "654fadcef9dbb10008002b48",
+            "onModel": "Shipper",
+            "user": {
+                "photo": "https://res.cloudinary.com/drk3oaeza/image/upload/v1697438641/default_images_pbl6/bbyyaztptndruabkylii.png",
+                "_id": "655bffcd68bd05302821272b",
+                "firstName": "Anh",
+                "lastName": "Le"
+            },
+            "__v": 0,
+            "id": "655c19c52f57f84b84aa9568"
+        }
+    ])
     const handleShowRating = () => {
+        console.log(shipper)
         setShowRating(true)
         setVisible(false)
     }
@@ -131,7 +152,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idU
                                     <div class="menu-restaurant-container">
                                         <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                            {/* <Comment product={product} ratings={ratings} idUser={idUser} setRatings={setRatings} /> */}
+                                            <Comment shipper={shipper} ratings={ratings} idUser={idUser} setRatings={setRatings} />
 
                                         </div>
 
@@ -156,7 +177,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, ratings, setRatings, idU
                 </Modal.Body>
             </Modal>
         )}
-        <RatingShipper show={showRating} handleClose={handleCloseRating} handleShowRatingStore={handleCloseRating} shipper={shipper} />
+        <RatingShipper show={showRating} handleClose={handleCloseRating} shipper={shipper} setRatings={setRatings}/>
         </div>
     )
 

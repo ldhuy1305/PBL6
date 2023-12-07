@@ -5,7 +5,6 @@ import 'flatpickr/dist/flatpickr.min.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getAllOderByUserId, viewOrder, createPayment, getOderByFilter, getShipper } from '../../services/userServices';
-import RatingShipper from '../../Components/Modal/ratingShipper';
 import RatingStore from '../../Components/Modal/ratingStore';
 import OrderDetail from '../../Components/Modal/orderDetail';
 import OrderHisItem from '../../Components/Item/orderHisItem';
@@ -28,8 +27,6 @@ const OrderHistory = () => {
     const [fromDate, setFromDate] = useState(oneMonthAgo);
     const [toDate, setToDate] = useState(currentDate);
     useEffect(() => {
-
-        // Khởi tạo flatpickr cho fromDate
         flatpickr(fromDateRef.current, {
             dateFormat: 'd-m-Y',
             defaultDate: oneMonthAgo,
@@ -39,8 +36,6 @@ const OrderHistory = () => {
                 console.log('From Date Selected:', selectedDate);
             },
         });
-
-        // Khởi tạo flatpickr cho toDate
         flatpickr(toDateRef.current, {
             dateFormat: 'd-m-Y',
             defaultDate: currentDate,
@@ -104,23 +99,18 @@ const OrderHistory = () => {
 
 
     const [showModal, setShowModal] = useState(false);
-    const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
-    const [orderId, setOrderId] = useState('')
     const [storeName, setStoreName] = useState('')
     const [orderDetail, setOrderDetail] = useState({
         shipCost: '',
         cart: []
     })
-    const [item, setItem] = useState(null)
     const [store, setStore] = useState({
         name: '',
         ratingAverage: 2
     })
 
     const handleShowModal = async (id, storeName) => {
-        console.log(storeName)
-        setOrderId(id)
         try {
             setIsLoadingModal(true)
             const response = await viewOrder(id);
@@ -139,23 +129,14 @@ const OrderHistory = () => {
         setShowModal(false);
     };
 
-    const handleShowModal1 = (item) => {
-        setItem({ ...item })
-        setShowModal1(true);
-    };
-    const handleCloseModal1 = () => {
-        setShowModal1(false);
-    };
     const handleShowModal2 = (storInfo) => {
         console.log(storInfo)
         setStore({ ...storInfo })
-        setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2
     };
 
     const handleCloseModal2 = () => {
         setShowModal2(false); // Tắt modal 2
-        setShowModal1(false); // Tắt modal 1
     };
 
     const handleBack = () => {
@@ -211,7 +192,10 @@ const OrderHistory = () => {
             }
         ],
     })
+    const [userId, setUserId] = useState('')
     const handleShowShipper = async (shipperID) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setUserId(user._id)
         try {
             setIsLoadingModal(true)
             const response = await getShipper(shipperID)
@@ -339,9 +323,8 @@ const OrderHistory = () => {
             </div>
 
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
-            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item} />
             <RatingStore show={showModal2} handleClose={handleCloseModal2} store={store} />
-            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper} handleShowRating={handleShowModal1} shipper={shipper} />
+            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper}  shipper={shipper} userId={userId}/>
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )

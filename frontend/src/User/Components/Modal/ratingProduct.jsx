@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
-import { addRatingForProduct } from "../../services/userServices";
 import axios from "axios";
 const RatingProduct = ({ show, handleClose, product}) => {
     const { t } = useTranslation();
@@ -193,19 +191,11 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                                     {/* Hiển thị các ảnh đã chọn */}
                                                                     {formData.images && formData.images.map((image, index) => (
                                                                         <div key={index} style={{ position: 'relative' }}>
-                                                                            {image instanceof File ? (
                                                                                 <img
                                                                                     src={URL.createObjectURL(image)}
                                                                                     alt={`selected-${index}`}
                                                                                     style={{ width: '60px', height: '60px', margin: '10px' }}
                                                                                 />
-                                                                            ) : (
-                                                                                <img
-                                                                                    src={image} // Đặt nguồn ảnh trực tiếp nếu không phải là đối tượng File
-                                                                                    alt={`selected-${index}`}
-                                                                                    style={{ width: '60px', height: '60px', margin: '10px' }}
-                                                                                />
-                                                                            )}
                                                                             <span class="btn-delete-tag" style={{ top: '5px', right: '5px' }}
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];

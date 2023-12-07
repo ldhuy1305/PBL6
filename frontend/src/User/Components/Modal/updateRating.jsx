@@ -6,7 +6,7 @@ import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
 import { updateRatingForStore } from "../../services/userServices";
-const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product }) => {
+const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product, shipper }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -209,13 +209,13 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={store ? store.image : product.images[0]}
+                                                                src={store ? store.image : (product ? product.images[0] : shipper.photo)}
                                                                 alt='avatar'
                                                             />
-                                                            <div class="shipper-name" style={{ margin: '0' }}>{store ? store.name :  product.name }</div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{store ? store.name :  (product ? product.name : shipper.lastName+shipper.firstName) }</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
                                                                 <div className="shopee-rating-stars__stars">
-                                                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
+                                                                    {renderStars(store ? store.ratingsAverage : (product ? product.ratingsAverage : shipper.ratingsAverage))}
                                                                 </div>
                                                             </div>
                                                             <div >
