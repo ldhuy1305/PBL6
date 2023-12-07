@@ -37,8 +37,10 @@ const OrderPage = () => {
   const handleOrder = async () => {
     try {
       setIsLoading(true)
-      const response = await placeOrder(totalPayment, shipFee, selectedContact.location.coordinates);
+      const response = await placeOrder(totalPayment, shipFee, selectedContact._id);
+      console.log(selectedContact)
       localStorage.removeItem('cart');
+      console.log(response)
       const orderUrl = response.url; // Đặt tên phù hợp với trường cần lấy từ response
       window.open(orderUrl, '_blank'); // '_blank' để mở ở một tab mới
     } catch (error) {

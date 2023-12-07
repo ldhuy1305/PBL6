@@ -114,6 +114,7 @@ class ProductController {
     // let dels = product.images;
     const data = await Product.findByIdAndUpdate({ _id: req.params.id }, body, {
       new: true,
+      runValidators: true,
     })
       .then()
       .catch((err) => {

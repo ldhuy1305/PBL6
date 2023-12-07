@@ -38,6 +38,7 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
             reviewText: '',
             selectedImages: null,
         })
+        console.log(item)
         handleShowRatingStore(item.store)
     };
     return (

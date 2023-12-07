@@ -5,14 +5,14 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
-
-const RatingStore = ({ show, handleClose, handleReturn, store }) => {
+import { updateRatingForStore } from "../../services/userServices";
+const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
-        number: '',
-        content: '',
-        images: []
+        number: rating && rating.number ? rating.number : '',
+        content: rating && rating.content ? rating.content : '',
+        images: rating && rating.images ? [...rating.images] : [],
     });
 
     const [openNotify, setOpenNotify] = useState(false)
@@ -22,9 +22,9 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
     const handleCloseRating = () => {
         handleClose()
         setFormData({
-            number: '',
-            content: '',
-            images: []
+            number: rating && rating.number ? rating.number : '',
+            content: rating && rating.content ? rating.content : '',
+            images: rating && rating.images ? [...rating.images] : [],
         });
     }
 
@@ -36,6 +36,8 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
     const handleChangeImg = (e) => {
         const name = e.target.name;
         const files = e.target.files;
+
+        // Convert fileList to array
         const imagesArray = Array.from(files);
 
         setFormData({
@@ -49,7 +51,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
             ...formData,
             [name]: value,
         });
-        console.log(store)
     };
 
     const [dels, setDels] = useState([]);
@@ -63,7 +64,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
             formData.images.forEach((image, index) => {
                 if (image instanceof File) {
                     res.append(`images`, image);
-                }
+                }// assuming 'images' is an array of files
             });
         }
         if (formData.number === '') {
@@ -71,32 +72,73 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            try {
+            if (!rating) {
+                try {
 
-                setIsLoading(true);
-                console.log(store)
-                const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        ContentType: 'multipart/form-data',
-                    }
+                    setIsLoading(true);
+                    console.log(store)
+                    const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            ContentType: 'multipart/form-data',
+                        }
+                    });
+
+                    setNotify("Đánh giá thành công!")
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                    setOpenNotify(true)
+                    handleClose()
+                } finally {
+                    setIsLoading(false);
+                }
+                setFormData({
+                    number: '',
+                    content: '',
+                    images: [],
                 });
-
-                setNotify("Đánh giá thành công!")
-                setOpenNotify(true)
-                handleClose()
-            } catch (error) {
-                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
-                setOpenNotify(true)
-                handleClose()
-            } finally {
-                setIsLoading(false);
+            } else {
+                try {
+                    setIsLoading(true);
+                    res.append('dels', dels);
+                    const response = await axios.patch(
+                        `https://falth-api.vercel.app/api/rating/${rating._id}`,
+                        res, // Truyền dữ liệu trực tiếp vào đây, không cần đặt trong một đối tượng
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data', // Sửa 'ContentType' thành 'Content-Type'
+                          },
+                        }
+                      );
+                      const updated = response.data.data
+                      console.log(response.data.data)
+                      const updatedRatings = Object.values(ratings).map((oldRating) =>
+                      oldRating._id === rating._id ? updated : oldRating
+                    );
+                    console.log(updatedRatings)
+                    setRatings(updatedRatings);
+                    setNotify("Chỉnh sửa đánh giá thành công!")
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    console.log(error)
+                    setNotify("Chỉnh sửa đánh giá thất bại!")
+                    setOpenNotify(true)
+                    handleClose()
+                } finally {
+                    setIsLoading(false);
+                }
+                setFormData({
+                    number: '',
+                    content: '',
+                    images: [],
+                });
+                setDels([]);
+                // console.log(product)
             }
-            setFormData({
-                number: '',
-                content: '',
-                images: [],
-            });
         }
 
 
@@ -136,7 +178,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                 <Modal.Header>
                     <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
-                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá cửa hàng</div>
+                    <div class="modal-header" style={{ color: 'white' }}>Cập nhật đánh giá</div>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="modal-dialog modal-noti" role="document">
@@ -167,13 +209,13 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={store.image}
-                                                                alt={store.image}
+                                                                src={store ? store.image : product.images[0]}
+                                                                alt='avatar'
                                                             />
-                                                            <div class="shipper-name" style={{ margin: '0' }}>{store.name}</div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{store ? store.name :  product.name }</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
                                                                 <div className="shopee-rating-stars__stars">
-                                                                    {renderStars(store.ratingsAverage)}
+                                                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
                                                                 </div>
                                                             </div>
                                                             <div >
@@ -245,8 +287,8 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
-                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
+                                                            
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Cập nhật đánh giá</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -266,4 +308,4 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
 
     )
 }
-export default RatingStore
+export default UpdateRatingModal

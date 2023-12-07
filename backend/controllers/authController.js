@@ -234,6 +234,7 @@ exports.googleLogin = passport.authenticate("google", {
 });
 exports.googleLoginCallback = passport.authenticate("google", {
   failureRedirect: "/login",
+  successRedirect: "/",
 });
 
 exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {

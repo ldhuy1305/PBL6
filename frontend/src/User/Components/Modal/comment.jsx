@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import '../../assets/css/pcmall.css'
 import CommentItem from "../Item/commentItem";
 
-const Comment = ({ store, ratings, idUser, setRatings }) => {
+const Comment = ({ store, ratings, idUser, setRatings, product }) => {
+    // const [data, setData] = useState(store !== null ? store : product);
     const renderStars = (rating) => {
-        return Array(5).fill(0).map((_, index) => {
+        return Array(5).fill(0).map((_, index) => {          
             // const starValue = index + 1;
             const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
             const isHalfFilled = percentFilled > 0 && percentFilled < 100;
@@ -35,11 +36,13 @@ const Comment = ({ store, ratings, idUser, setRatings }) => {
 
     const handleFilterClick = (filter) => {
         setActiveFilter(filter);
+        // console.log(store, product)
     };
 
     const [page, setPage] = useState(1);
 
     const handlePageClick = (action) => {
+        // console.log(data)
         if (action === 'prev' && page > 1) {
             setPage(page - 1);
         } else if (action === 'next' && page < 5) {
@@ -56,14 +59,16 @@ const Comment = ({ store, ratings, idUser, setRatings }) => {
                     <div class="product-rating-overview">
                         <div class="product-rating-overview__briefing">
                             <div class="product-rating-overview__score-wrapper">
-                                <span class="product-rating-overview__rating-score">{store.ratingsAverage} </span>
+                                <span class="product-rating-overview__rating-score">
+                                {store ? store.ratingsAverage : product.ratingsAverage}
+                                </span>
                                 <span class="product-rating-overview__rating-score-out-of">
                                     / 5
                                 </span>
                             </div>
                             <div class="shopee-rating-stars product-rating-overview__stars">
                                 <div className="shopee-rating-stars__stars">
-                                    {renderStars(store.ratingsAverage)}
+                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
                                 </div>
                             </div>
                         </div>
@@ -113,8 +118,10 @@ const Comment = ({ store, ratings, idUser, setRatings }) => {
                                     rating={rating}
                                     renderStars={renderStars}
                                     idUser={idUser}
+                                    ratings={ratings}
                                     setRatings={setRatings}
-                                    store={store}
+                                    store={store ? store  : null}
+                                    product={product ? product  : null}
                                 />
                             ))}
                         </div>
