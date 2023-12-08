@@ -52,7 +52,6 @@ class YourChartComponent extends Component {
 
       this.setState({
         series: [{
-          name: 'PRODUCT A',
           data: data.map((item) => item[status]),
         }],
         options: {
@@ -68,7 +67,7 @@ class YourChartComponent extends Component {
 
   render() {
     return (
-      <ReactApexChart options={this.state.options} series={this.state.series} type="bar" height="100%" />
+      <ReactApexChart options={this.state.options} series={this.state.series} type="bar" height="100%" width="100%" />
     );
   }
 }

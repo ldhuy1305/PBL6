@@ -23,7 +23,7 @@ const Product = () => {
     };
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth-api.vercel.app/api/order/owner/${_id}`;
+    const api = `https://falth-api.vercel.app/api/order/owner/${_id}/?limit=100`;
     const fetchData = async () => {
         try {
             const response = await axios.get(api, {
@@ -103,7 +103,7 @@ const Product = () => {
         },
         {
             field: "depreciation",
-            headerName: "Hoa hồng (VNĐ)",
+            headerName: "Chiết khấu (VNĐ)",
             headerAlign: "center",
             align: "center",
             flex: 2,

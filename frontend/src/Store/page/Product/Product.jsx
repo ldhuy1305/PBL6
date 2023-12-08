@@ -31,7 +31,7 @@ const Product = ({ }) => {
         history('/store/Formadd');
     };
     const redirectToEditProductPage = (id) => {
-        history('/store/Formedit', { state: id });
+        history(`/store/Formedit/${id}`, { state: id });
     };
     const formRef = useRef();
     const notify = (er, message) => toast[er](message, {
@@ -77,12 +77,10 @@ const Product = ({ }) => {
             const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
+            setIsLoading(false);
 
         } catch (error) {
             console.log(error);
-        }
-        finally {
-            setIsLoading(false);
         }
     }
     const fb = async (id) => {
@@ -98,8 +96,6 @@ const Product = ({ }) => {
             console.log(responseData);
             setDatafb(responseData);
             handleOpenModal()
-
-
         } catch (error) {
             console.log(error);
         }
@@ -107,7 +103,7 @@ const Product = ({ }) => {
 
     useEffect(() => {
         fetchData();
-    },);
+    }, []);
 
     const handleDeleteClick = (row) => {
         setSelectedRow(row);

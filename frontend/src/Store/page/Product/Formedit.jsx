@@ -21,7 +21,6 @@ import { toast } from 'react-toastify';
 
 const Product = () => {
     const [productStatus, setProductStatus] = useState(true);
-
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingbutton, setIsLoadingbutton] = useState(false);
     const [images, setImages] = useState([]);
@@ -104,8 +103,7 @@ const Product = () => {
     };
     useEffect(() => {
         fetchData();
-        console.log(data.category)
-    }, []);
+    }, [dataFromPreviousPage]);
 
     const Update = async (json) => {
         try {
@@ -339,7 +337,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-1"
-                                        label="Còn hàng"
+                                        label="Hết hàng"
                                         name="default-radio"
                                         onClick={() => setProductStatus(true)}
                                         defaultChecked={productStatus}
@@ -347,7 +345,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-2"
-                                        label="Hết hàng"
+                                        label="Còn hàng"
                                         name="default-radio"
                                         onChange={() => setProductStatus(false)}
                                         defaultChecked={!productStatus}
