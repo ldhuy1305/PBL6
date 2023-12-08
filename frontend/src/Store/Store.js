@@ -23,48 +23,85 @@ import { Notifications } from './components/react-push-notification';
 import addNotification from './components/react-push-notification';
 import { isEqual } from 'lodash';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 const Store = () => {
   const [latestUserData, setLatestUserData] = useState();
   const [noti, Setnoti] = useState();
-  const buttonClick = (noti) => {
-    addNotification({
-      title: noti.title,
-      subtitle: 'thông báo từ falth',
-      message: noti.message,
-      theme: 'darkblue',
-      native: true
-    });
-  };
+  const [idsrote, Setidstore] = useState("1");
+  const token = localStorage.getItem('token');
+  const tokenString = localStorage.getItem('user');
+  const tokenObject = JSON.parse(tokenString);
+  localStorage.setItem('_id', tokenObject._id);
+  const api = `https://falth-api.vercel.app/api/store/owner/${tokenObject._id}`;
   useEffect(() => {
-    const dbRef = ref(database);
-    const usersRef = child(dbRef, '6555d3a0818ec600086743bf');
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const allData = snapshot.val();
-        Setnoti(Object.keys(allData).map((key) => ({
-          id: key,
-          ...allData[key],
-        })));
-        const giaTriKhacNhau = Object.keys(allData)
-          .filter((key) => !latestUserData || !isEqual(allData[key], latestUserData[key]));
-
-        if (giaTriKhacNhau.length > 0) {
-          setLatestUserData(allData);
-          if (latestUserData) {
-            buttonClick(allData[giaTriKhacNhau]);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(api, {
+          headers: {
+            Authorization: `Bearer ${token}`
           }
-        }
-      } else {
-        setLatestUserData();
-      }
-    });
+        });
+        const responseData = response.data.data;
+        Setidstore(responseData._id);
+        localStorage.setItem('_idstore', responseData._id);
 
-    return () => {
-      unsubscribe();
+        console.log(responseData._id);
+      } catch (error) {
+        console.error('Lỗi khi gọi API:', error);
+      }
     };
-  }, [latestUserData]);
+
+    fetchData();
+  }, [token]);
+  const buttonClick = (notif) => {
+    if (!notif.isSeen) {
+      addNotification({
+        title: notif.title,
+        subtitle: 'thông báo từ falth',
+        message: notif.message,
+        theme: 'darkblue',
+        native: true
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (idsrote !== "") {
+      const dbRef = ref(database);
+      const usersRef = child(dbRef, idsrote);
+      const unsubscribe = onValue(usersRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const allData = snapshot.val();
+          Setnoti(Object.keys(allData)
+            .map((key) => ({
+              id: key,
+              ...allData[key],
+            }))
+            .sort((a, b) => b.timestamp - a.timestamp)
+          );
+
+          const giaTriKhacNhau = Object.keys(allData)
+            .filter((key) => !latestUserData || !isEqual(allData[key], latestUserData[key]));
+
+          if (giaTriKhacNhau.length > 0) {
+            setLatestUserData(allData);
+            if (latestUserData) {
+              buttonClick(allData[giaTriKhacNhau]);
+            }
+          }
+        } else {
+          setLatestUserData();
+        }
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [latestUserData, idsrote]);
+
 
   const { id } = useParams();
 
@@ -76,9 +113,7 @@ const Store = () => {
 
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-  const tokenString = localStorage.getItem('user');
-  const tokenObject = JSON.parse(tokenString);
-  localStorage.setItem('_id', tokenObject._id);
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
@@ -90,7 +125,7 @@ const Store = () => {
             <Routes>
               <Route path="/" element={<Statistics />} />
               <Route path="/Formadd" element={<Formadd />} />
-              <Route path="/Formedit" element={<Formedit />} />
+              <Route path="/Formedit/:id" element={<Formedit />} />
               <Route path="/product" element={<Product />} />
               <Route path='/listorder' element={<Listorder />} />
               <Route path='/info' element={<Info />} />

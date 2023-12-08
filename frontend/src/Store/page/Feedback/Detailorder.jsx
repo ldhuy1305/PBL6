@@ -16,11 +16,11 @@ const Detailorder = () => {
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
     const dataFromPreviousPage = location.state;
-    console.log(dataFromPreviousPage)
 
 
     const fetchOrder = async () => {
         try {
+            setIsLoading(true);
             const response = await axios.get(
                 `https://falth-api.vercel.app/api/order/${dataFromPreviousPage}`,
                 {
@@ -32,6 +32,7 @@ const Detailorder = () => {
             const responseData = response.data.data;
             console.log(responseData);
             setOrder(responseData);
+            setIsLoading(false);
         } catch (error) {
         }
     };
@@ -44,7 +45,7 @@ const Detailorder = () => {
     };
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [dataFromPreviousPage]);
     function convertUTCtoLocalDateTime(utcDateString) {
         const utcDate = new Date(utcDateString);
         const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
@@ -195,7 +196,6 @@ const Detailorder = () => {
                                     );
                                 })()}
                             </Box>
-
                             <div className={style.infocustumer}>
                                 <span>
                                     Ngày đặt hàng: {convertUTCtoLocalDateTime(Order.dateOrdered)}
@@ -207,7 +207,7 @@ const Detailorder = () => {
                     </Box>
                     <Box
                         gridColumn="span 2"
-                        gridRow="span 7"
+                        gridRow="span 3"
                         display="flex"
 
                     >
@@ -216,20 +216,46 @@ const Detailorder = () => {
                             padding: "20px",
                             border: "0.1px solid rgb(223, 223, 223)",
                             borderRadius: "10px"
+                        }}> <h5>Người giao hàng</h5>
+                            {Order.shipper
+                                ? (
+                                    <><div className={style.infocustumer}>
+                                        <span className={style.infocustumer1}>
+                                            Thông tin liên lạc: {Order.shipper.contact[0].phoneNumber}
+                                        </span>
+                                    </div>
+                                        <div className={style.infocustumer}>
+
+                                            <span className={style.infocustumer1}>Người giao hàng: {Order.shipper.firstName} {Order.shipper.lastName}</span>
+                                        </div></>
+                                ) : (<div><div className={style.infocustumer}>
+
+                                    <span className={style.infocustumer1}>Không có người giao hàng</span>
+                                </div></div>)}
+                        </div>
+                    </Box>
+                    <Box
+                        gridColumn="span 2"
+                        gridRow="span 4"
+                        display="flex"
+
+                    >
+                        <div style={{
+                            width: "100%",
+                            padding: "10px",
+                            border: "0.1px solid rgb(223, 223, 223)",
+                            borderRadius: "10px"
                         }}> <h5>Khách hàng</h5>
                             <div className={style.infocustumer}>
-                                <h6 >Thông tin liên lạc</h6>
                                 <span className={style.infocustumer1}>
-                                    {Order.contact.phoneNumber}
+                                    Số điện thoại: {Order.contact.phoneNumber}
                                 </span>
                             </div>
                             <div className={style.infocustumer}>
-                                <h6>Địa chỉ</h6>
-                                <span className={style.infocustumer1}>{Order.contact.address}</span>
+                                <span className={style.infocustumer1}> Địa chỉ: {Order.contact.address}</span>
                             </div>
                             <div className={style.infocustumer}>
-                                <h6>Người nhận hàng</h6>
-                                <span className={style.infocustumer1}>{Order.user.firstName} {Order.user.lastName}</span>
+                                <span className={style.infocustumer1}>Người nhận hàng :{Order.user.firstName} {Order.user.lastName}</span>
                             </div>
 
                         </div>

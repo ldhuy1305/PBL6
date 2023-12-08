@@ -296,7 +296,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-1"
-                                        label="Cón hàng"
+                                        label="Hết hàng"
                                         name="default-radio"
                                         onClick={() => setProductStatus(true)}
                                         defaultChecked={productStatus}
@@ -304,7 +304,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-2"
-                                        label="Hết hàng"
+                                        label="Cón hàng"
                                         name="default-radio"
                                         onChange={() => setProductStatus(false)}
                                         defaultChecked={!productStatus}
