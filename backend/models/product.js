@@ -16,6 +16,12 @@ const productSchema = new Schema(
     name: {
       type: String,
       required: [true, "Tên sản phẩm là bắt buộc"],
+      validate: {
+        validator: function(v) {
+          return /^[\p{L}\s'-.]{6,30}$/u.test(v);
+        },
+        message: (props) => `${props.value} không hợp lệ`,
+      },
     },
     images: [
       {
@@ -27,6 +33,12 @@ const productSchema = new Schema(
       type: Number,
       required: true,
       default: 0,
+      validate: {
+        validator: function(v) {
+          return v >= 0 && Number.isInteger(v);
+        },
+        message: (props) => `${props.value} không hợp lệ.`,
+      },
     },
     ratingAverage: {
       type: Number,
@@ -35,6 +47,7 @@ const productSchema = new Schema(
     },
     description: {
       type: String,
+      maxLength: [50, "Mô tả chỉ được tối da 50 kí tự"],
     },
     isOutofOrder: {
       type: Boolean,
@@ -51,6 +64,10 @@ const productSchema = new Schema(
       type: Number,
       default: 0,
     },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -62,6 +79,12 @@ productSchema.virtual("ratings", {
   ref: "Rating",
   foreignField: "reference",
   localField: "_id",
+});
+productSchema.pre(`/^find/`, function(next) {
+  if (!this.isAvailable) {
+    this.isAvailable = true;
+  }
+  next();
 });
 
 module.exports = mongoose.model("Product", productSchema);

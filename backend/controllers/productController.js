@@ -110,7 +110,6 @@ class ProductController {
         images,
       };
     }
-    console.log(images);
     // let dels = product.images;
     const data = await Product.findByIdAndUpdate({ _id: req.params.id }, body, {
       new: true,
