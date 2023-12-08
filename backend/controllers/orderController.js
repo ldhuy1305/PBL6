@@ -159,7 +159,10 @@ class orderController {
         },
       },
       {
-        $unwind: "$shipper",
+        $unwind: {
+          path: "$shipper",
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $addFields: {
@@ -290,6 +293,7 @@ class orderController {
         order.datePrepared = new Date(Date.now() + 7 * 60 * 60 * 1000);
         message = "Shipper has confirmed the delivery";
         console.log(order.store);
+        console.log(order._id);
         await firebase.notify(`${order.store}`, `${order._id}`);
         break;
       case "Preparing":
@@ -573,7 +577,7 @@ class orderController {
     });
   });
   notice = catchAsync(async (req, res, next) => {
-    await firebase.notify(req.query.title, req.query.message, true);
+    await firebase.notify(req.params.storeId, req.params.orderId, true);
     res.status(200).json({ status: "success" });
   });
 }
