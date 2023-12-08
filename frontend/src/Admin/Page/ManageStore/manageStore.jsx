@@ -189,12 +189,11 @@ const ManageStore = ({ Catname }) => {
                             <Typography component="legend">Trạng thái</Typography>
                             <Select
                                 sx={{ alignItems: 'center', height: "40px" }}
-                                value={10}
+                                value={false}
                                 defaultChecked={true}
                             >
-                                <MenuItem value={10}>Tất cả</MenuItem>
-                                <MenuItem value={20}>Đang mở cửa</MenuItem>
-                                <MenuItem value={30}>Đang đóng cửa</MenuItem>
+                                <MenuItem value={false}>Còn hoạt động</MenuItem>
+                                <MenuItem value={true}>Đã Khóa</MenuItem>
                             </Select>
                         </FormControl>
 

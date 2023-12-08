@@ -17,7 +17,7 @@ import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 const Acceptstore = () => {
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
-        history('/admin/Detailstore', { state: id });
+        history('/admin/DetailAcceptstore', { state: id });
     };
 
     const [data, setData] = useState([]);
@@ -50,7 +50,6 @@ const Acceptstore = () => {
                 setOpenDetail(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {
@@ -98,7 +97,7 @@ const Acceptstore = () => {
     };
     const AcceptStore = async (id) => {
         try {
-            await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`, {
+            await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`,  {
                 "isAccepted": true
             }, {
                 headers: {
@@ -216,7 +215,7 @@ const Acceptstore = () => {
                 }}
             >
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptStore={AcceptStore} Status={"Cấp phép"}/>
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptStore={AcceptStore} Status={"Cấp phép"} />
                 )}
                 <DataGrid rows={rowsWithUniqueIds} columns={columns}
                     disableSelectionOnClick

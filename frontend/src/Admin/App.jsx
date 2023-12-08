@@ -10,6 +10,7 @@ import Topbar from './components/Topbar/Topbar';
 import ManageStore from './Page/ManageStore/manageStore';
 import Acceptstore from './Page/Acceptstore/Acceptstore';
 import Detailstore from './Page/ManageStore/Detailstore';
+import DetailAcceptstore from './Page/ManageStore/DetailAcceptstore';
 import ManageShipper from './Page/ManageShipper/ManageShipper';
 import ViewAllShipper from './Page/ManageShipper/ViewAllShipper';
 import { LanguageProvider } from './services/languageContext';
@@ -20,6 +21,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Logout from './Page/Logout/logout';
 import DetailShipper from './Page/ManageShipper/DetailShipper'
+import DetailAcceptShipper from './Page/ManageShipper/DetailAcceptShipper'
 
 
 const App = () => {
@@ -28,8 +30,6 @@ const App = () => {
     const tokenString = localStorage.getItem('user');
     const tokenObject = JSON.parse(tokenString);
     localStorage.setItem('_id', tokenObject._id);
-
-
 
     return (
         <LanguageProvider>
@@ -48,7 +48,9 @@ const App = () => {
                                 <Route path="/" element={<Statistics />} />
                                 <Route path='/ManageUser' element={<ManageUser />} />
                                 <Route path='/Detailstore' element={<Detailstore />} />
+                                <Route path='/DetailAcceptShipper' element={<DetailAcceptShipper />} />
                                 <Route path='/DetailShipper' element={<DetailShipper />} />
+                                <Route path='/DetailAcceptstore' element={<DetailAcceptstore />} />
                                 <Route path="/logout" element={<Logout />} />
                                 <Route path='/detailuser' element={<DetailUser />} />
                             </Routes>

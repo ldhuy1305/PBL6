@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
-import { tokens } from "../../theme";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import DetailShipper from './DetailShipper';
 import style from "./DetailShipper.module.css";
-import Notify from '../../../Components/Notify/Notify';
-import { createTheme } from '@mui/material/styles';
 import Header2 from "../../components/Header/Header";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Accept from '../../components/Accept/Acceptshiper';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Button } from "@mui/material";
+import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
 function ManageShipper() {
     const [data, setData] = useState([]);
@@ -18,15 +19,9 @@ function ManageShipper() {
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [error, setError] = useState(false)
-    const [message, setMessage] = useState("")
     const formRef = useRef();
     const [openAccept, SetOpenAccept] = useState(false);
 
-    const Showdetailshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
         autoClose: 5000,
@@ -41,9 +36,9 @@ function ManageShipper() {
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
         console.log(id);
-        history('/admin/DetailShipper', { state: id });
+        history('/admin/DetailAcceptShipper', { state: id });
     };
-    const AcceptStore = async (id) => {
+    const AcceptShipper = async (id) => {
         try {
             await axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
                 "isAccepted": true
@@ -164,40 +159,39 @@ function ManageShipper() {
             headerAlign: "center",
             align: "center",
             renderCell: (params) => (
-                <div>
-                    <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} onClick={() => redirectToEditProductPage(params.row._id)} >
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div >
+                <Button
+                    startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />}
+                    onClick={() => redirectToEditProductPage(params.row._id)}
+                ></Button>
             ),
+
         },
         {
             field: "Accept",
-            flex: 1,
             headerName: "Chấp nhận",
             headerAlign: "center",
             align: "center",
-            renderCell: (params) => (
-                <div>
-                    <button style={{ height: "40px", width: "40px", background: "#747af2", borderRadius: "20px" }} onClick={() => handleAcceptClick(params.row)}  >
-                        <i className="fa-solid fa-file"></i>
-                    </button>
-                </div>
-            ),
+            renderCell: (params) => {
+                return (
+
+                    <div>
+                        <Button startIcon={<CheckCircleOutlineSharpIcon style={{ color: "rgb(0, 139, 69)" }} />} onClick={() => handleAcceptClick(params.row)}></Button>
+                    </div >
+                );
+            },
         },
         {
             field: "Delete",
-            flex: 1,
             headerName: "Từ chối",
             headerAlign: "center",
             align: "center",
-            renderCell: (params) => (
-                <div>
-                    <button style={{ height: "40px", width: "40px", background: "#ef376e", borderRadius: "20px" }} >
-                        <i className="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            ),
+            renderCell: (params) => {
+                return (
+                    <div>
+                        <Button startIcon={<HighlightOffSharpIcon style={{ color: "rgb(253 92 99)" }} />} ></Button>
+                    </div >
+                );
+            },
         },
     ];
 
@@ -215,8 +209,6 @@ function ManageShipper() {
                         // onChange={(e) => Searchproduct(e.target.value)}
                         />
                     </div>
-
-
                 </Box>
                 <Box>
                 </Box>
@@ -237,7 +229,7 @@ function ManageShipper() {
                     <DetailShipper rows={selectedRow} show={true} handleClose={setOpenDetail} />
                 )}
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptStore={AcceptStore} />
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptShipper={AcceptShipper} />
                 )}
                 <DataGrid
 

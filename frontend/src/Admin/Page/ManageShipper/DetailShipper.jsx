@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'
 import Rating from '@mui/material/Rating';
 import Image from "../../components/Image/image"
+import StarIcon from '@mui/icons-material/Star';
 
 const DetailShipper = () => {
     const location = useLocation();
@@ -107,16 +108,14 @@ const DetailShipper = () => {
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
                                                     <span className={style.col1}>Loại xe : </span>
-                                                    <span className={style.col}>{data.vehicleType
-                                                    }</span>
+                                                    <span className={style.col}>{data.vehicleType}</span>
                                                 </div>
                                             </div>
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
                                                     <span className={style.col1}>Giấy phép xe cộ : </span>
                                                     <span className={style.col} >
-                                                        <div onClick={() => handleOpenModal(data.vehicleLicense
-                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+                                                        <div onClick={() => handleOpenModal(data.vehicleLicense)} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
 
                                                 </div>
                                             </div>
@@ -159,7 +158,9 @@ const DetailShipper = () => {
                             <Typography variant="h5">Số sao đánh giá</Typography>
                             <Rating
                                 name="simple-controlled"
-                                value={3}
+                                value={data.ratingAverage}
+                                precision={0.5}
+                                icon={<StarIcon style={{ color: 'yellow' }} />}
                             />
 
                         </div>

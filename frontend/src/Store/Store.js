@@ -24,6 +24,7 @@ import addNotification from './components/react-push-notification';
 import { isEqual } from 'lodash';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const Store = () => {
@@ -55,17 +56,42 @@ const Store = () => {
 
     fetchData();
   }, [token]);
-  const buttonClick = (notif) => {
+  const Setseen = async (id) => {
+    const token = localStorage.getItem('token');
+    const _id = localStorage.getItem('_id');
+    const _idstore = localStorage.getItem('_idstore');
+    try {
+      await axios.post(`https://falth-api.vercel.app/api/order/${id}/store/${_idstore}/notice`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const history = useNavigate();
+  const redirectToDetailorderPage = (id) => {
+    Setseen(id)
+    history(`/store/detailorder/${id}`, { state: id });
+  };
+  const buttonClick = (notif, giaTriKhacNhau) => {
     if (!notif.isSeen) {
       addNotification({
         title: notif.title,
         subtitle: 'thông báo từ falth',
         message: notif.message,
         theme: 'darkblue',
-        native: true
+        native: true,
+        onClick: () => redirectToDetailorderPage(giaTriKhacNhau)
       });
     }
   };
+
 
   useEffect(() => {
     if (idsrote !== "") {
@@ -88,7 +114,7 @@ const Store = () => {
           if (giaTriKhacNhau.length > 0) {
             setLatestUserData(allData);
             if (latestUserData) {
-              buttonClick(allData[giaTriKhacNhau]);
+              buttonClick(allData[giaTriKhacNhau], giaTriKhacNhau);
             }
           }
         } else {
@@ -121,7 +147,7 @@ const Store = () => {
         <div className="app">
           <Sidebara isSidebar={isSidebar} />
           <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} />
+            <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
             <Routes>
               <Route path="/" element={<Statistics />} />
               <Route path="/Formadd" element={<Formadd />} />

@@ -3,10 +3,10 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 
-function Accept({ rows, show, handleClose, AcceptStore }) {
+function Accept({ rows, show, handleClose, AcceptShipper }) {
     const Acceptw = (id) => {
         handleClose(false);
-        AcceptStore(id);
+        AcceptShipper(id);
     }
     return (
         <div>

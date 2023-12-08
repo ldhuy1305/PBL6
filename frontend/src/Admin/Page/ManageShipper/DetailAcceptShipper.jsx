@@ -2,41 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography } from "@mui/material";
 import Header1 from "../../components/Header/Header1";
 import axios from 'axios';
-//import 'bootstrap/dist/css/bootstrap.min.css';
-import style from './Detailstore.module.css';
+import Detailfeedback from "../../components/Image/image"
+import style from './DetailShipper.module.css';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'
 import Rating from '@mui/material/Rating';
 import Image from "../../components/Image/image"
-import StarIcon from '@mui/icons-material/Star';
 
-const Detailorder = () => {
+const DetailShipper = () => {
     const location = useLocation();
     const dataFromPreviousPage = location.state;
-    const [images, setImages] = useState([]);
     const token = localStorage.getItem('token');
-    const _id = localStorage.getItem('_id');
-    const [data, setdata] = useState([]);
     const [image, setimage] = useState("")
+    const [data, setdata] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [openModal, setOpenModal] = useState(false);
-    const handleCloseModal = () => setOpenModal(false);
     const handleOpenModal = (img) => {
         setimage(img)
         setOpenModal(true)
     };
+    const handleCloseModal = () => setOpenModal(false);
+
     const fetchData = async () => {
         try {
             const response = await axios.get(
-                `https://falth-api.vercel.app/api/admin/store/${dataFromPreviousPage}`,
+                `https://falth-api.vercel.app/api/admin/shipper/${dataFromPreviousPage}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data;
             console.log(responseData);
             setdata(responseData);
             setIsLoading(false);
@@ -53,7 +51,7 @@ const Detailorder = () => {
 
     return (
         <Box m="20px 100px">
-            <Header1 title={"Chi tiết cửa hàng"} to="/admin/Acceptstore" />
+            <Header1 title={"Chi tiết người giao hàng"} to="/admin/ViewAllShipper" />
             {isLoading ? (
                 <div className={style.isloading}><Loading /></div>
             ) : (
@@ -73,54 +71,53 @@ const Detailorder = () => {
                             <Form noValidate style={{ width: "100%", height: "100%" }}>
                                 <h5 style={{ paddingBottom: "20px" }}>Thông tin</h5>
                                 <div className={style.container}>
-                                    <div >
-                                        <div className={style.Store}>
-                                            <div className={style.Name_store}>
-                                                <div >
-                                                    <span>{data.name}</span>
-                                                </div>
-                                            </div>
-                                            <div className={style.addres_store}>
-                                                <div >
-                                                    <span>SĐT: {data.phoneNumber}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div className={style.Store}>
                                         <div >
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Họ và tên : </span>
+                                                    <span className={style.col}> {data.firstName} {data.lastName}</span>
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>email : </span>
+                                                    <span className={style.col}> {data.email}</span>
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
                                                     <span className={style.col1}>Địa chỉ : </span>
-                                                    <span className={style.col}> {data.address}</span>
+                                                    <span className={style.col}> {data.contact[0].address}</span>
                                                 </div>
                                             </div>
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
-                                                    <span className={style.col1}>Mô tả : </span>
-                                                    <span className={style.col}> {data.description}</span>
+                                                    <span className={style.col1}>Số điện thoại : </span>
+                                                    <span className={style.col}> {data.contact[0].phoneNumber}</span>
                                                 </div>
                                             </div>
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
-                                                    <span className={style.col1}>Giờ mỡ cửa : </span>
-                                                    <span className={style.col}>{data.openAt}</span>
+                                                    <span className={style.col1}>Biển số xe : </span>
+                                                    <span className={style.col}>{data.vehicleNumber
+                                                    }</span>
                                                 </div>
                                             </div>
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
-                                                    <span className={style.col1}>Giờ đóng cửa : </span>
-                                                    <span className={style.col}>{data.closeAt}</span>
+                                                    <span className={style.col1}>Loại xe : </span>
+                                                    <span className={style.col}>{data.vehicleType
+                                                    }</span>
                                                 </div>
                                             </div>
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
-                                                    <span className={style.col1}>Giấy phép đăng ký : </span>
+                                                    <span className={style.col1}>Giấy phép xe cộ : </span>
                                                     <span className={style.col} >
-                                                        <div onClick={() => handleOpenModal(data.registrationLicense
+                                                        <div onClick={() => handleOpenModal(data.vehicleLicense
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
 
-                                                        )}
-                                                            style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -129,10 +126,9 @@ const Detailorder = () => {
                             </Form>
                         </div>
                     </Box>
-                    <Image open={openModal} handleClose={handleCloseModal} img={image} />
                     <Box
                         gridColumn="span 2"
-                        gridRow="span 5"
+                        gridRow="span 6"
                         display="flex"
                     >
                         <div style={{
@@ -141,7 +137,7 @@ const Detailorder = () => {
                             <h5>Hình ảnh</h5>
                             <div className={style.bill}>
                                 <div >
-                                    <img className={style.img_bill} src={data.image} alt="" />
+                                    <img className={style.img_bill} src={data.photo} alt="" onClick={() => handleOpenModal(data.photo)} />
                                 </div>
                             </div>
                         </div>
@@ -149,7 +145,7 @@ const Detailorder = () => {
                     </Box>
                     <Box
                         gridColumn="span 2"
-                        gridRow="span 5"
+                        gridRow="span 4"
                         display="flex"
 
                     >
@@ -157,28 +153,17 @@ const Detailorder = () => {
                             width: "100%",
                             padding: "20px",
                             border: "0.1px solid rgb(223, 223, 223)",
-                            borderRadius: "10px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
+                            borderRadius: "10px"
                         }}>
                             <h5>Đánh giá từ khách hàng</h5>
-                            <div>
-                                <Typography variant="h5">Số sao đánh giá</Typography>
-                                <Rating
-                                    name="simple-controlled"
-                                    value={data.ratingsQuantity}
-                                    icon={<StarIcon style={{ color: 'yellow' }} />}
-                                /></div>
 
-                            <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>
                         </div>
                     </Box>
-
-                </Box>)
+                    <Image open={openModal} handleClose={handleCloseModal} img={image} />
+                </Box >)
             }
         </Box >
     );
 };
 
-export default Detailorder;
+export default DetailShipper;

@@ -6,16 +6,25 @@ import Button from '@mui/material/Button';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading';
 import style from './Feedback.module.css';
 import Typography from '@mui/material/Typography';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import Image from "../../components/Image/imageShow"
 
-const Detailfeedback = ({ open, handleClose }) => {
+
+const Detailfeedback = ({ open, handleClose, feedbackData, fetchFeedbackforstart }) => {
+    const [openModal, setOpenModal] = useState(false);
+    const [image, setimage] = useState("")
+    const handleOpenModal = (img) => {
+        setimage(img)
+        setOpenModal(true)
+    };
+    const handleCloseModal = () => setOpenModal(false);
     return (
         <Modal
             open={open}
@@ -40,46 +49,60 @@ const Detailfeedback = ({ open, handleClose }) => {
                     <div className={style.body}>
                         <TextField
                             fullWidth
-                            label={"Tên sản phẩm"}
-                            defaultValue="Cafe"
-                            margin="normal"
-                        />
-                        <TextField
                             label={"Người đánh giá"}
+                            defaultValue={`${feedbackData.user.firstName} ${feedbackData.user.lastName}`}
                             margin="normal"
-                            fullWidth
-                            defaultValue="Nguyễn Thanh Lịch"
                         />
                         <TextField
                             id="outlined-multiline-basic"
                             label={"Đánh giá"}
                             margin="normal"
                             multiline
-                            defaultValue={"Chuỗi cà phê nổi tiếng với độ phủ hơn 500 cửa hàng trên khắp Việt Nam Ngon nhất tại Đà Nẵng và các tỉnh thành liên quan"}
+                            defaultValue={feedbackData.content}
                             fullWidth
-                            rows={4}
+                            rows={3}
                         />
                         <Box
                             sx={{
                                 '& > legend': { mt: 2 },
                             }}
                         >
-                            <Typography component="legend">Controlled</Typography>
+                            <Typography component="legend">Số sao</Typography>
                             <Rating
+                                readOnly
                                 name="simple-controlled"
-                                value={3}
+                                value={feedbackData.number}
+                                precision={0.5}
                             />
                         </Box>
+                        <Box
+                            sx={{
+                                '& > legend': { mt: 2 },
+                            }}
+                        >
+                            <Typography component="legend">Hình ảnh</Typography>
+                            <ImageList sx={{ width: "100%", height: 150 }} cols={3} rowHeight={150}>
+                                {feedbackData.images.map((item) => (
+                                    <ImageListItem key={item} onClick={() => handleOpenModal(item
+                                    )}>
+                                        <img
+                                            srcSet={item}
+                                            src={item}
+                                            alt={item.title}
+                                            loading="lazy"
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </Box>
                     </div>
+                    <Image open={openModal} handleClose={handleCloseModal} img={image} />
                     <div className={style.poster}>
-                        <Button variant="contained" color="success">
-                            Success
-                        </Button>
-                        <Button variant="outlined" color="error">
-                            Error
+
+                        <Button variant="outlined" color="error" onClick={() => handleClose()}>
+                            Thoát
                         </Button>
                     </div>
-
                 </div>
             </Box>
         </Modal >
@@ -88,22 +111,81 @@ const Detailfeedback = ({ open, handleClose }) => {
 
 const Feedback = () => {
     const [isLoading, setIsLoading] = useState(false);
-
-    const [age, setAge] = useState('');
+    const [feedbackList, setFeedbackList] = useState([]);
+    const [age, setAge] = useState(0);
     const handleChange = (event) => {
         setAge(event.target.value);
+        if (event.target.value !== 0) {
+            fetchFeedbackforstart(event.target.value);
+        }
+        else {
+            fetchFeedback()
+        }
     };
     const [openModal, setOpenModal] = useState(false);
-    const handleOpenModal = () => setOpenModal(true);
+    const [selectedFeedback, setSelectedFeedback] = useState(null);
+
+    const handleOpenModal = (feedbackData) => {
+        setSelectedFeedback(feedbackData);
+        setOpenModal(true);
+    };
+
     const handleCloseModal = () => setOpenModal(false);
 
+    const token = localStorage.getItem('token');
+    const _id = localStorage.getItem('_id');
+
+    const fetchFeedback = async () => {
+        try {
+            setIsLoading(true);
+            const response = await axios.get(
+                `https://falth-api.vercel.app/api/product/654f31ad08fec2000835bbfc/rating`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            const responseData = response.data.data;
+            console.log(responseData);
+            setFeedbackList(responseData);
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    };
+    const fetchFeedbackforstart = async (id) => {
+        try {
+            setIsLoading(true);
+            const response = await axios.get(
+                `https://falth-api.vercel.app/api/product/654f31ad08fec2000835bbfc/rating?number=${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            const responseData = response.data.data;
+            console.log(responseData);
+            setFeedbackList(responseData);
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    };
+    const feedbackListWithStt = feedbackList.map((feedback, index) => ({
+        ...feedback,
+        ID: index + 1,
+    }));
+
     const columns = [
-        { field: 'id', headerName: 'ID', },
-        { field: 'NamePeople', headerName: 'Người đánh giá', flex: 1, },
-        { field: 'review', headerName: 'Đánh giá', flex: 1, },
-        { field: 'date', headerName: 'Ngày đánh giá', sortable: false, flex: 1, },
+        { field: 'ID', headerName: 'Stt' },
+        { field: '_id', headerName: 'ID đánh giá', flex: 1 },
+        { field: 'user', headerName: 'Người đánh giá', flex: 1, renderCell: (params) => (`${params.value.firstName} ${params.value.lastName}`) },
+        { field: 'content', headerName: 'Đánh giá', flex: 1 },
+        { field: 'createdAt', headerName: 'Ngày đánh giá', sortable: false, flex: 1 },
         {
-            field: 'Rating',
+            field: 'number',
             headerName: 'Số sao',
             flex: 1,
             sortable: false,
@@ -117,31 +199,23 @@ const Feedback = () => {
             ),
         },
         {
-            field: 'Eyes',
-            headerName: 'Đánh giá',
+            field: 'eyse',
+            headerName: 'Xem',
             sortable: false,
             editable: false,
-            renderCell: () => (
+            renderCell: (params) => (
                 <div>
-                    <Button startIcon={<RemoveRedEyeIcon />} onClick={handleOpenModal}></Button>
+                    <IconButton onClick={() => handleOpenModal(params.row)} aria-label="Xem">
+                        <RemoveRedEyeIcon />
+                    </IconButton>
                 </div>
             ),
         },
     ];
 
-    const rows = [
-        { id: 1, Nameproduct: 'Sản phẩm 1', NamePeople: 'Người đánh giá 1', review: 'Đánh giá 1', date: '01/01/2023', Rating: 4.5 },
-        { id: 2, Nameproduct: 'Sản phẩm 2', NamePeople: 'Người đánh giá 2', review: 'Đánh giá 2', date: '02/01/2023', Rating: 3 },
-        { id: 3, Nameproduct: 'Sản phẩm 3', NamePeople: 'Người đánh giá 3', review: 'Đánh giá 3', date: '03/01/2023', Rating: 5 },
-        { id: 4, Nameproduct: 'Sản phẩm 4', NamePeople: 'Người đánh giá 4', review: 'Đánh giá 4', date: '04/01/2023', Rating: 2.5 },
-        { id: 5, Nameproduct: 'Sản phẩm 5', NamePeople: 'Người đánh giá 5', review: 'Đánh giá 5', date: '05/01/2023', Rating: 4 },
-        { id: 6, Nameproduct: 'Sản phẩm 6', NamePeople: 'Người đánh giá 6', review: 'Đánh giá 6', date: '06/01/2023', Rating: 3.5 },
-        { id: 7, Nameproduct: 'Sản phẩm 7', NamePeople: 'Người đánh giá 7', review: 'Đánh giá 7', date: '07/01/2023', Rating: 2 },
-        { id: 8, Nameproduct: 'Sản phẩm 8', NamePeople: 'Người đánh giá 8', review: 'Đánh giá 8', date: '08/01/2023', Rating: 4 },
-        { id: 9, Nameproduct: 'Sản phẩm 9', NamePeople: 'Người đánh giá 9', review: 'Đánh giá 9', date: '09/01/2023', Rating: 3 },
-        { id: 10, Nameproduct: 'Sản phẩm 10', NamePeople: 'Người đánh giá 10', review: 'Đánh giá 10', date: '10/01/2023', Rating: 5 },
-    ];
-
+    useEffect(() => {
+        fetchFeedback();
+    }, []);
 
     return (
         <Box m="10px 30px 0px 30px">
@@ -173,43 +247,42 @@ const Feedback = () => {
                                     sx={{ ml: 1, flex: 1 }}
                                     placeholder="Tên sản phẩm"
                                 />
-
                             </Paper>
-
                         </Box>
                         <Box sx={{ flexBasis: '16%' }}>
                             <FormControl fullWidth>
                                 <Typography component="legend">Chọn số sao</Typography>
                                 <Select
                                     sx={{ alignItems: 'center', height: "30px" }}
-                                    value={10}
+                                    value={age}
                                     onChange={handleChange}
                                     defaultChecked={true}
                                 >
-                                    <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem>
+                                    <MenuItem value={0}>Tất cả</MenuItem>
+                                    <MenuItem value={1}>1</MenuItem>
+                                    <MenuItem value={2}>2</MenuItem>
+                                    <MenuItem value={3}>3</MenuItem>
+                                    <MenuItem value={4}>4</MenuItem>
+                                    <MenuItem value={5}>5</MenuItem>
                                 </Select>
                             </FormControl>
-
                         </Box>
                     </Box>
-
                     <Box sx={{ height: "70vh", width: '100%' }}>
                         <DataGrid
-                            rows={rows}
+                            rows={feedbackListWithStt}
                             columns={columns}
                             loading={isLoading}
                             editable={false}
                             pageSize={8}
                         />
                     </Box>
-
-                    <Detailfeedback open={openModal} handleClose={handleCloseModal} />
-                </Box >
-            )
-            }
-        </Box >
+                    {selectedFeedback && (
+                        <Detailfeedback open={openModal} handleClose={handleCloseModal} feedbackData={selectedFeedback} fetchFeedbackforstart={fetchFeedbackforstart} />
+                    )}
+                </Box>
+            )}
+        </Box>
     );
 };
 

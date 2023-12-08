@@ -6,7 +6,13 @@ import axios from 'axios';
 function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore }) {
     const Acceptw = (id) => {
         handleClose(false);
-        LockStore(id);
+        if (AcceptStore) {
+            AcceptStore(id);
+        }
+        if (LockStore) {
+            LockStore(id);
+        }
+
     }
     return (
         <div>
@@ -29,7 +35,7 @@ function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore }) {
                     <Button variant="secondary" onClick={() => handleClose(false)}>
                         Đóng
                     </Button>
-                    <Button variant="success" onClick={() => Acceptw(rows._id)} >
+                    <Button variant="success" onClick={() => Acceptw(rows.ownerId._id)} >
                         {Status}
                     </Button>
                 </Modal.Footer>
