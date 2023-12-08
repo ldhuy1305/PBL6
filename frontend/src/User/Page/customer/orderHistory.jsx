@@ -130,7 +130,6 @@ const OrderHistory = () => {
     };
 
     const handleShowModal2 = (storInfo) => {
-        console.log(storInfo)
         setStore({ ...storInfo })
         setShowModal2(true); // Hiển thị modal 2
     };
@@ -192,8 +191,11 @@ const OrderHistory = () => {
             }
         ],
     })
+    const [ratings, setRatings] = useState([])
     const [userId, setUserId] = useState('')
-    const handleShowShipper = async (shipperID) => {
+    const [orderStatus, setOrderStatus] = useState('')
+    const handleShowShipper = async (shipperID, orderStatus) => {
+        setOrderStatus(orderStatus)
         const user = JSON.parse(localStorage.getItem('user'));
         setUserId(user._id)
         try {
@@ -202,6 +204,9 @@ const OrderHistory = () => {
             console.log('Lấy thông tin thành công: ', response.data)
             setShipper({
                 ...response
+            })
+            setRatings({
+                ...response.ratings
             })
         } catch (error) {
             console.log(error)
@@ -228,15 +233,15 @@ const OrderHistory = () => {
                                     <span class="filter-table-label">{t("status")}</span>
                                     <select value={selectedStatus}
                                         onChange={handleStatusChange} name="" class="form-control filter-table-input">
-                                        <option value="All" selected="">All</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Waiting">Waiting</option>
-                                        <option value="Preparing">Preparing</option>
-                                        <option value="Ready">Ready</option>
-                                        <option value="Refused">Refused</option>
-                                        <option value="Delivering">Delivering</option>
-                                        <option value="Cancelled">Cancelled</option>
-                                        <option value="Finished">Finished</option>
+                                        <option value="All" selected="">Tất cả</option>
+                                        <option value="Pending">Đang xử lý</option>
+                                        <option value="Waiting">Đang chờ nhận đơn</option>
+                                        <option value="Preparing">Đang chuẩn bị</option>
+                                        <option value="Ready">Đã sẵn sàng</option>
+                                        <option value="Refused">Từ chối</option>
+                                        <option value="Delivering">Đang giao</option>
+                                        <option value="Cancelled">Đã hủy</option>
+                                        <option value="Finished">Đã hoàn thành</option>
                                     </select>
                                 </div>
                             </div>
@@ -277,7 +282,7 @@ const OrderHistory = () => {
                                 <div class="history-table-cell history-table-col6">
                                     {t("total")}
                                 </div>
-                                <div class="history-table-cell history-table-col7">
+                                <div class="history-table-cell history-table-col7" style={{textAlign:'center'}}>
                                     {t("status")}
                                 </div>
                                 <div class="history-table-cell history-table-col8">
@@ -324,7 +329,7 @@ const OrderHistory = () => {
 
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
             <RatingStore show={showModal2} handleClose={handleCloseModal2} store={store} />
-            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper}  shipper={shipper} userId={userId}/>
+            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper}  shipper={shipper} idUser={userId} ratings={ratings} setRatings={setRatings} orderStatus={orderStatus}/>
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )

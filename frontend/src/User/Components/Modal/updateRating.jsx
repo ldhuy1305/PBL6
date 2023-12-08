@@ -174,14 +174,21 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
     };
     return (
         <div>
-            <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg">
-                <Modal.Header>
-                    <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
-                    >x</span>
+            <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg" >
+            
+            <Modal.Title style={{ textAlign: 'center', margin: '10px 0 10px 0', color:'white', fontSize:'1.25rem', fontWeight:'700' }}>Cập nhật đánh giá
+                    <button onClick={handleClose} style={{ backgroundColor: '#cf2127', float: 'right', marginRight: '10px', padding: '3px 10px 5px 10px', borderRadius: '5px', color: 'white', fontWeight:'700' }}>
+                        x
+                    </button>
+                </Modal.Title>
+                {/* <Modal.Header>
                     <div class="modal-header" style={{ color: 'white' }}>Cập nhật đánh giá</div>
-                </Modal.Header>
-                <Modal.Body>
-                    <div class="modal-dialog modal-noti" role="document">
+                    <button onClick={handleCloseRating} style={{ backgroundColor: '#cf2127', float: 'right', borderRadius: '5px', color: 'white' }}>
+                        x
+                    </button>
+                </Modal.Header> */}
+                <Modal.Body >
+                    <div class="modal-dialog modal-noti" role="document" >
                         <div class="modal-content">
 
                             <div class="modal-body">
@@ -299,7 +306,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                             </div>
                         </div>
                     </div>
-                    <div class="modal-backdrop fade under-modal"></div>
+                    <div class="modal-backdrop fade under-modal show"></div>
                 </Modal.Body>
             </Modal>
             {openNotify && (<Notify message={notify} setOpenNotify={setOpenNotify} handleClose={handleCloseNotify} />)}

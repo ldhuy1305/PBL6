@@ -40,7 +40,7 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
 
     const [showModal, setShowModal] = useState(false);
 
-    const handleShowModal = (action) => {
+    const handleShowModal = () => {
         setShowModal(true)
     };
 
@@ -64,7 +64,7 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
                 <div class="shopee-product-rating__main">
                     <div
                         class="shopee-product-rating__author-name"
-                    >{rating.user.firstName}{rating.user.lastName}</div>
+                    >{rating.user.firstName} {rating.user.lastName}</div>
                     <div class="repeat-purchase-con">
                         {renderStars(rating.number)}
                     </div>
@@ -134,7 +134,7 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
                             <div className="shopee-product-rating__like-count">
                                 {likeCount}
                             </div>
-                            {idUser === rating.user._id && (
+                            {((rating.user._id === null && idUser === rating.user) || (idUser === rating.user._id)) && (
                                 <div style={{ display: 'flex', marginLeft: '20px' }}>
                                     <button onClick={handleShowModal}><i class="fa-regular fa-pen-to-square" style={{ fontSize: '20px', color: '#cf2127', marginLeft: '20px' }}></i></button>
                                     <button onClick={handleShowDeleteModal}><i class="fa-regular fa-trash-can" style={{ fontSize: '20px', color: '#cf2127', marginLeft: '20px' }}></i></button>

@@ -64,6 +64,37 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleS
         }
     };
 
+    const getStatus = (status) => {
+        switch (status) {
+            case 'Pending':
+                return 'Đang xử lý';
+            case 'Cancelled':
+                return 'Đã hủy'; // Replace with your desired color for Cancelled
+            case 'Waiting':
+                return 'Đang chờ nhận đơn'; // Replace with your desired color for Waiting
+            case 'Preparing':
+                return 'Đang chuẩn bị'; // Replace with your desired color for Preparing
+            case 'Ready':
+                return 'Đã sẵn sàng'; // Replace with your desired color for Ready
+            case 'Delivering':
+                return 'Đang giao'; // Replace with your desired color for Delivering
+            case 'Finished':
+                return 'Đã hoàn thành';
+            case 'Refused':
+                return 'Từ chối';
+            default:
+                return '';
+        }
+    };
+
+    const handleShowModalRatingStore = () => {
+        if(item.status !== 'Finished') {
+            setMessage('Đơn hàng chưa được hoàn thành, không thể đánh giá!');
+            setOpenNotify(true)
+        } else {
+            handleShowRating(item.store)
+        }
+    }
     return (
         <div>
             <div class="history-table-row">
@@ -86,7 +117,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleS
                 </div>
                 <div className="history-table-cell history-table-col5">
                     {orderItem.shipper ? (
-                        <strong className="d-block text-truncate" style={{cursor:'pointer'}} onClick={() => handleShowShipperModal(orderItem.shipper._id)}>{orderItem.shipper.lastName + orderItem.shipper.firstName}</strong>
+                        <strong className="d-block text-truncate" style={{cursor:'pointer'}} onClick={() => handleShowShipperModal(orderItem.shipper._id, orderItem.status)}>{orderItem.shipper.lastName + " " + orderItem.shipper.firstName}</strong>
                     ) : (
                         <span></span>
                     )}
@@ -101,7 +132,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleS
                     <div class="font-weight-bold history-table-status" 
                     style={{ color: getStatusColor(orderItem.status) }}
                     >
-                        {orderItem.status}
+                        {getStatus(orderItem.status)}
                     </div>
                 </div>
                 <div class="history-table-cell history-table-col8">
@@ -120,7 +151,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleS
                     <button
                         class="font-weight-bold history-table-status gray pointer"
                         style={{ backgroundColor: '#0288d1', color: 'white' }}
-                        onClick={() => handleShowRating(item.store)}
+                        onClick={handleShowModalRatingStore}
                     >
                         {t('rating')}
                     </button>

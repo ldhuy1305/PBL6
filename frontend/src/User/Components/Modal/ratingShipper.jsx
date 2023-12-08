@@ -5,7 +5,7 @@ import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
 
-const RatingShipper = ({ show, handleClose, shipper }) => {
+const RatingShipper = ({ show, handleClose, shipper, ratings, setRatings }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -55,16 +55,11 @@ const RatingShipper = ({ show, handleClose, shipper }) => {
         const res = new FormData();
         res.append('number', formData.number);
         res.append('content', formData.content);
-
-        // Append each image to the FormData
         if (formData.images && formData.images.length > 0) {
             formData.images.forEach((image) => {
-                // if (image instanceof File) {
                     res.append(`images`, image);
-                // }
             });
         }
-        console.log(formData)
         if (formData.number === '') {
             setNotify("Mời bạn chọn số sao để đánh giá")
             setOpenNotify(true)
@@ -78,7 +73,10 @@ const RatingShipper = ({ show, handleClose, shipper }) => {
                         Authorization: `Bearer ${token}`,
                         ContentType: 'multipart/form-data',
                     }
-                });               
+                }); 
+                // setRatings([...ratings, response.data]) 
+                setRatings((prevRatings) => [response.data, ...prevRatings]);
+                // console.log(response)             
                 setNotify("Đánh giá thành công!")
                 setOpenNotify(true)
                 handleClose()
