@@ -9,7 +9,6 @@ import { useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'
 import Rating from '@mui/material/Rating';
 import Image from "../../components/Image/image"
-import StarIcon from '@mui/icons-material/Star';
 
 const Detailorder = () => {
     const location = useLocation();
@@ -121,6 +120,7 @@ const Detailorder = () => {
 
                                                         )}
                                                             style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -157,21 +157,14 @@ const Detailorder = () => {
                             width: "100%",
                             padding: "20px",
                             border: "0.1px solid rgb(223, 223, 223)",
-                            borderRadius: "10px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
+                            borderRadius: "10px"
                         }}>
-                            <h5>Đánh giá từ khách hàng</h5>
-                            <div>
-                                <Typography variant="h5">Số sao đánh giá</Typography>
-                                <Rating
-                                    name="simple-controlled"
-                                    value={data.ratingsQuantity}
-                                    icon={<StarIcon style={{ color: 'yellow' }} />}
-                                /></div>
+                            <h5>Thông tin người đăng kí</h5>
+                            {/* <Typography variant="h5">Tên người đăng ký</Typography>
+                            <span>{data.ownerId.firstName} {data.ownerId.lastName}</span>
+                            <Typography variant="h5">Số sao đánh giá</Typography>
+                            <span>{data.ownerId}</span> */}
 
-                            <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>
                         </div>
                     </Box>
 

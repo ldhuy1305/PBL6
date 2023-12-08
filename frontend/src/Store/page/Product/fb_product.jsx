@@ -116,7 +116,6 @@ const Detailfeedback = ({ open, handleClose, datafb }) => {
                                         <Box display="flex" paddingTop="5px" gap="5px">
                                             {item.images.map(item =>
                                                 (<img className={style.fb_img} src={item} />)
-
                                             )}
 
                                         </Box>

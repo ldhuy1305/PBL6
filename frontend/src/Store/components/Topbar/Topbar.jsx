@@ -13,7 +13,7 @@ import Grid from '@mui/material/Grid';
 import style from "./Topbar.module.css";
 import axios from "axios"
 
-const Topbar = ({ latestUserData }) => {
+const Topbar = ({ latestUserData, Setseen }) => {
     const history = useNavigate();
     const redirectToDetailorderPage = (id) => {
         Setseen(id)
@@ -24,29 +24,12 @@ const Topbar = ({ latestUserData }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [count, SetCount] = useState(1)
+    const [count, SetCount] = useState(0)
     useEffect(() => {
         if (latestUserData) {
             SetCount(latestUserData.filter((doiTuong) => !doiTuong.isSeen).length);
         }
     }, [latestUserData])
-    const Setseen = async (id) => {
-        const token = localStorage.getItem('token');
-        const _id = localStorage.getItem('_id');
-        const _idstore = localStorage.getItem('_idstore');
-        try {
-            await axios.post(`https://falth-api.vercel.app/api/order/${id}/store/${_idstore}/notice`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     const handleClick = (event) => {
 

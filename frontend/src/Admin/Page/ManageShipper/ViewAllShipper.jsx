@@ -2,12 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import { tokens } from "../../theme";
-import { Box, Typography, responsiveFontSizes, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import DetailShipper from './DetailShipper';
 import style from "./DetailShipper.module.css";
-import Notify from '../../../Components/Notify/Notify';
 import Header2 from "../../components/Header/Header";
 import { useNavigate } from 'react-router-dom';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Button } from "@mui/material";
+import HttpsIcon from '@mui/icons-material/Https';
 
 function ManageShipper() {
     const [data, setData] = useState([]);
@@ -84,7 +86,7 @@ function ManageShipper() {
                 <img
                     src={params.value}
                     alt="Hình ảnh"
-                    style={{ width: "50px", height: "50px" }}
+                    style={{ width: "50px", height: "50px", borderRadius: "50px" }}
                 />
             ),
         },
@@ -113,50 +115,27 @@ function ManageShipper() {
         },
         {
             field: "Detail",
-            flex: 2,
+            flex: 1,
             headerName: "Xem Chi Tiết",
             headerAlign: "center",
             align: "center",
             renderCell: (params) => {
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-                        onClick={() => redirectToEditProductPage(params.row._id)}
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Xem chi tiết
-                        </Typography>
-                    </Box>
+                    <div>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
+                    </div >
                 );
             },
         },
         {
             headerName: "Khóa tài khoản",
-            flex: 2,
             headerAlign: "center",
             align: "center",
+            flex: 1,
             renderCell: (params) => {
+                // onClick={() => handleopenAcceptClick(params.row)}
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }} zIndex={1}>
-                            Khóa tài khoản
-                        </Typography>
-                    </Box>
+                    <Button startIcon={<HttpsIcon />} ></Button>
                 );
             },
         },

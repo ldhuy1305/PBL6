@@ -47,17 +47,19 @@ const Detailorder = () => {
         fetchData();
     }, [dataFromPreviousPage]);
     function convertUTCtoLocalDateTime(utcDateString) {
-        const utcDate = new Date(utcDateString);
-        const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-        const day = localDate.getDate();
-        const month = localDate.getMonth() + 1;
-        const year = localDate.getFullYear();
-        const hours = localDate.getHours();
-        const minutes = localDate.getMinutes();
-        const seconds = localDate.getSeconds();
-        const formattedDateTime = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${hours}:${minutes}:${seconds}`;
+        const time = "2023-12-08T13:06:10.725Z";
 
-        return formattedDateTime;
+        const formattedDateTime = new Date(time).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'UTC', // Ensure the date is formatted in UTC
+        }).replace(/(\d+)\/(\d+)\/(\d+), (\d+:\d+:\d+)/, '$4 $2/$1/$3');
+        return formattedDateTime
+
     }
 
 
@@ -196,9 +198,12 @@ const Detailorder = () => {
                                     );
                                 })()}
                             </Box>
-                            <div className={style.infocustumer}>
+                            <div className={style.infocustumer12}>
                                 <span>
-                                    Ngày đặt hàng: {convertUTCtoLocalDateTime(Order.dateOrdered)}
+                                    Ngày đặt hàng:
+                                </span>
+                                <span>
+                                    {convertUTCtoLocalDateTime(Order.dateOrdered)}
                                 </span>
 
                             </div>
