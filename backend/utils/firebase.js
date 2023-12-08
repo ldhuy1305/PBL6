@@ -10,14 +10,21 @@ admin.initializeApp({
 exports.notify = async function(storeId, orderId, isSeen = false) {
   var db = admin.database();
   const timestamp = admin.database.ServerValue.TIMESTAMP;
-  await db
-    .ref(storeId)
-    .child(orderId)
-    .set({
-      // id : orderId,
-      title: "Thông báo",
-      message: `Bạn có đơn hàng mã ${orderId} đang chờ! Shipper đang đến nhé <3`,
-      isSeen: isSeen,
-      timestamp: timestamp,
-    });
+  if (isSeen == true) {
+    await db
+      .ref(storeId)
+      .child(orderId)
+      .update({
+        isSeen: isSeen,
+      });
+  } else
+    await db
+      .ref(storeId)
+      .child(orderId)
+      .set({
+        title: "Thông báo",
+        message: `Bạn có đơn hàng mã ${orderId} đang chờ! Shipper đang đến nhé <3`,
+        isSeen: isSeen,
+        timestamp: timestamp,
+      });
 };
