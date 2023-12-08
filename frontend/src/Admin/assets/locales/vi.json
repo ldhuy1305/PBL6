@@ -132,5 +132,9 @@
     "store": "Quán ăn",
     "ratingInFALTH": "đánh giá trên FALTH",
     "menu": "Thực đơn",
-    "searchDish": "Tìm món"
+    "searchDish": "Tìm món", 
+
+    "specialRequest" : "Yêu cầu đặc biệt",
+  "optional" : "không bắt buộc",
+  "confirm" : "Xác nhận"
 }

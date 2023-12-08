@@ -57,7 +57,7 @@ const Profile = () => {
                 const defaultContactId = userData.defaultContact;
                 const defaultContact = userData.contact.find(contact => contact._id === defaultContactId);
                 if (token) {
-                    setUserName(userData.firstName + " " + userData.lastName)
+                    setUserName(`${userData.firstName} ${userData.lastName}`)
                     setFirstName(userData.firstName)
                     setLastName(userData.lastName)
                     setEmail(userData.email)

@@ -106,7 +106,7 @@ const Header = () => {
                     if (savedUser) {
                         const user = (JSON.parse(savedUser));
                         // console.log(user.firstName + user.lastName);
-                        setUserName(user.firstName + " " + user.lastName)
+                        setUserName(`${user.firstName} ${user.lastName}`)
                         setImg(user.photo)
                     }
                 } else {

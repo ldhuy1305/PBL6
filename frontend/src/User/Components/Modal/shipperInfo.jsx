@@ -4,35 +4,24 @@ import { useTranslation } from "react-i18next";
 import '../../assets/css/productDetail2.css'
 import Comment from "./comment";
 import RatingShipper from "./ratingShipper";
-const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
+import Notify from "../Notify.jsx/Notify";
+const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRatings, orderStatus }) => {
     const { t } = useTranslation()
     const [visible, setVisible] = useState(true)
     const [showRating, setShowRating] = useState(false)
-    const [ratings, setRatings] = useState([
-        {
-            "images": [],
-            "createdAt": "2023-11-21T02:45:25.379Z",
-            "_id": "655c19c52f57f84b84aa9568",
-            "image": null,
-            "number": 5,
-            "content": "đỉnh ác",
-            "reference": "654fadcef9dbb10008002b48",
-            "onModel": "Shipper",
-            "user": {
-                "photo": "https://res.cloudinary.com/drk3oaeza/image/upload/v1697438641/default_images_pbl6/bbyyaztptndruabkylii.png",
-                "_id": "655bffcd68bd05302821272b",
-                "firstName": "Anh",
-                "lastName": "Le"
-            },
-            "__v": 0,
-            "id": "655c19c52f57f84b84aa9568"
-        }
-    ])
+    const [openNotify, setOpenNotify] = useState(false)
+    const [message, setMessage] = useState('')
     const handleShowRating = () => {
-        console.log(shipper)
-        setShowRating(true)
-        setVisible(false)
+        console.log(orderStatus)
+        if(orderStatus !== 'Finished') {
+            setMessage('Đơn hàng chưa được hoàn thành, không thể đánh giá!');
+            setOpenNotify(true)
+        } else {
+            setShowRating(true)
+            setVisible(false)
+        }        
     }
+    
     const handleCloseRating = () => {
         setShowRating(false)
         setVisible(true)
@@ -49,7 +38,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
                 <Modal.Header>
                 </Modal.Header>
                 <Modal.Body>
-                    <div class="now-detail-restaurant clearfix" style={{ width: '90%', marginLeft: '5%', height: '450px' }}>
+                    <div class="now-detail-restaurant clearfix" style={{ width: '90%', marginLeft: '5%', height: '400px' }}>
                         <div class="container" style={{ width: '100%' }}>
                             <div class="detail-restaurant-img" style={{ width: '40%', height: '100%' }}>
                                 <div class="img">
@@ -60,7 +49,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
                             <div class="detail-restaurant-info" style={{ width: '55%' }}>
                                 <div class="product-essential-detail" style={{ width: '100%' }}>
                                     <h1 class="name-restaurant" style={{ marginBottom: '30px', color:'#cf2127' }}>
-                                        {shipper ? shipper.lastName + shipper.firstName : ''}
+                                        {shipper ? shipper.lastName + " " + shipper.firstName : ''}
                                     </h1>
                                     <form>
                                         <div class="row form-group align-items-center">
@@ -104,7 +93,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
                                                 {shipper ? shipper.vehicleType : ''}
                                             </div>
                                         </div>
-                                        <div class="row form-group align-items-center">
+                                        {/* <div class="row form-group align-items-center">
                                             <div class="col-4 txt-bold">
                                                 Mã giấy tờ xe
 
@@ -121,7 +110,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
                                             <div class="col-4">
                                                 {shipper ? shipper.licenseNumber : ''}
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div class="relative" style={{ cursor: 'pointer' }}>
                                             <button
                                                 type="button"
@@ -177,7 +166,8 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser }) => {
                 </Modal.Body>
             </Modal>
         )}
-        <RatingShipper show={showRating} handleClose={handleCloseRating} shipper={shipper} setRatings={setRatings}/>
+        <RatingShipper show={showRating} handleClose={handleCloseRating} shipper={shipper} ratings={ratings} setRatings={setRatings}/>
+        {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify}/>)}
         </div>
     )
 

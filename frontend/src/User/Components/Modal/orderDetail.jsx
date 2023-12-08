@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import { useTranslation } from "react-i18next";
 import RatingProduct from "./ratingProduct";
+import Notify from "../Notify.jsx/Notify";
 const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false)
@@ -23,6 +24,17 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
         setShowModal(false);
         setVisible(true)
     };
+
+    const [openNotify, setOpenNotify] = useState(false)
+    const [message, setMessage] = useState('')
+    const handleShowModalRatingProduct = (product) => {
+        if(orderDetail.status !== 'Finished') {
+            setMessage('Đơn hàng chưa được hoàn thành, không thể đánh giá!');
+            setOpenNotify(true)
+        } else {
+            handleShowModal(product)
+        }
+    }
     return (
         <div>
             {visible && (
@@ -76,7 +88,7 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                                         <button
                                                             class="font-weight-bold history-table-status gray pointer"
                                                             style={{ backgroundColor: '#0288d1', color: 'white' }}
-                                                            onClick={() => handleShowModal(dish)}
+                                                            onClick={() => handleShowModalRatingProduct(dish)}
 
                                                         >
                                                             {t('rating')}
@@ -113,6 +125,7 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                 </Modal>
             )}
             <RatingProduct show={showModal} handleClose={handleCloseModal} product={product} />
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify}/>)}
         </div>
     )
 

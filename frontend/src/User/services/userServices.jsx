@@ -261,8 +261,14 @@ const cancelOrder = async (id) => {
 }
 
 //Rating 
-const getRatingOfStore = async (storeId) => {
-  const api = `https://falth-api.vercel.app/api/store/${storeId}/rating`
+const getRatingOfStore = async (storeId, number) => {
+  let api;
+  console.log(storeId, number)
+  if (number) {
+    api = `https://falth-api.vercel.app/api/store/${storeId}/rating/?number=${number}`
+  } else {
+    api = `https://falth-api.vercel.app/api/store/${storeId}/rating`
+  }
   console.log(api)
   try {
     const response = await axios.get(api);
@@ -302,10 +308,15 @@ const updateRatingForStore = async (id, ratingData) => {
   }
 }
 
-const getRatingOfProduct = async (productID) => {
+const getRatingOfProduct = async (productID, number) => {
   try {
     const token = localStorage.getItem("token");
-    const api = `https://falth-api.vercel.app/api/product/${productID}/rating`
+    let api;
+  if (number) {
+    api = `https://falth-api.vercel.app/api/product/${productID}/rating/?number=${number}`
+  } else {
+    api = `https://falth-api.vercel.app/api/product/${productID}/rating`
+  }
     console.log(api)
     const response = await axios.get(api, {
       headers: {
@@ -348,6 +359,28 @@ const deleteRating = async (id) => {
     return response.data
   } catch (error) {
     console.error('Lỗi khi xóa đánh giá', error);
+  }
+}
+
+const getRatingOfShipper = async (shipperID, number) => {
+  try {
+    const token = localStorage.getItem("token");
+    let api;
+  if (number) {
+    api = `https://falth-api.vercel.app/api/shipper/${shipperID}/rating/?number=${number}`
+  } else {
+    api = `https://falth-api.vercel.app/api/shipper/${shipperID}/rating`
+  }
+    console.log(api)
+    const response = await axios.get(api, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
   }
 }
 
@@ -395,5 +428,6 @@ export {
   getRatingOfProduct,
   addRatingForProduct,
   deleteRating, 
+  getRatingOfShipper,
   getShipper
 }
