@@ -47,7 +47,7 @@ const productSchema = new Schema(
     },
     description: {
       type: String,
-      maxLength: [50, "Mô tả chỉ được tối da 50 kí tự"],
+      maxLength: [200, "Mô tả chỉ được tối da 50 kí tự"],
     },
     isOutofOrder: {
       type: Boolean,
