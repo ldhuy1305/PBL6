@@ -117,7 +117,7 @@ class ProductController {
     })
       .then()
       .catch((err) => {
-        urls = req.files.map((image) => image.path);
+        // urls = req.files.map((image) => image.path);
         next(err);
       });
 
