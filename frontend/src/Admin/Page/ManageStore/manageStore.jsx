@@ -14,6 +14,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import SearchIcon from '@mui/icons-material/Search';
 import { toast } from 'react-toastify';
 import { Paper, InputBase, IconButton, MenuItem, Select, FormControl } from "@mui/material";
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 const ManageStore = ({ Catname }) => {
     const history = useNavigate();
@@ -27,6 +28,7 @@ const ManageStore = ({ Catname }) => {
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
     const [openAccept, SetOpenAccept] = useState(false);
+    const [status, setStatus] = useState(false)
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
         autoClose: 5000,
@@ -37,6 +39,10 @@ const ManageStore = ({ Catname }) => {
         progress: undefined,
         theme: "light",
     });
+    const handChangestatus = (e) => {
+        setStatus(e);
+        fetchData(e);
+    }
     const formRef = useRef();
 
     useEffect(() => {
@@ -55,9 +61,9 @@ const ManageStore = ({ Catname }) => {
 
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const fetchData = async () => {
+    const fetchData = async (status) => {
         try {
-            const response = await axios.get("https://falth-api.vercel.app/api/admin/store?isLocked=false", {
+            const response = await axios.get(`https://falth-api.vercel.app/api/admin/store?isLocked=${status}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -78,14 +84,14 @@ const ManageStore = ({ Catname }) => {
                 }
             });
             notify("success", "Thành công");
-            fetchData();
+            fetchData(false);
         } catch (error) {
             notify("error", "Thất bại");
         }
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(false);
     }, []);
     const handleopenAcceptClick = (row) => {
         setSelectedRow(row);
@@ -128,14 +134,22 @@ const ManageStore = ({ Catname }) => {
             },
         },
         {
+
             headerName: "Khóa cửa hàng",
             flex: 1,
             headerAlign: "center",
             align: "center",
             renderCell: (params) => {
                 return (
-                    <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row)}></Button>
+                    <div>
+                        {params.row.isLocked ? (
+                            <Button startIcon={<LockOpenIcon />} onClick={() => handleopenAcceptClick(params.row)}></Button>
+                        ) : (
+                            <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row)}></Button>
+                        )}
+                    </div>
                 );
+
             },
         },
     ];
@@ -168,7 +182,7 @@ const ManageStore = ({ Catname }) => {
                 )}
                 <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="5px">
                     <Box sx={{ flexBasis: '50%' }}>
-                        <Typography component="legend">Tìm kiếm</Typography>
+                        {/* <Typography component="legend">Tìm kiếm</Typography>
                         <Paper
                             component="form"
                             sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', height: "40px" }}
@@ -181,7 +195,7 @@ const ManageStore = ({ Catname }) => {
                                 placeholder="Tên cửa hàng"
                             />
 
-                        </Paper>
+                        </Paper> */}
 
                     </Box>
                     <Box sx={{ flexBasis: '16%' }}>
@@ -189,8 +203,9 @@ const ManageStore = ({ Catname }) => {
                             <Typography component="legend">Trạng thái</Typography>
                             <Select
                                 sx={{ alignItems: 'center', height: "40px" }}
-                                value={false}
+                                value={status}
                                 defaultChecked={true}
+                                onChange={(e) => handChangestatus(e.target.value)}
                             >
                                 <MenuItem value={false}>Còn hoạt động</MenuItem>
                                 <MenuItem value={true}>Đã Khóa</MenuItem>

@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const Product = () => {
-    const [productStatus, setProductStatus] = useState(true);
+    const [productStatus, setProductStatus] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingbutton, setIsLoadingbutton] = useState(false);
     const history = useNavigate();

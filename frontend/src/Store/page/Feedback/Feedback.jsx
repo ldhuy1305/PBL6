@@ -235,7 +235,7 @@ const Feedback = () => {
                 >
                     <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="5px">
                         <Box sx={{ flexBasis: '50%' }}>
-                            <Typography component="legend">Tìm kiếm</Typography>
+                            {/* <Typography component="legend">Tìm kiếm</Typography>
                             <Paper
                                 component="form"
                                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', height: "30px" }}
@@ -247,7 +247,7 @@ const Feedback = () => {
                                     sx={{ ml: 1, flex: 1 }}
                                     placeholder="Tên sản phẩm"
                                 />
-                            </Paper>
+                            </Paper> */}
                         </Box>
                         <Box sx={{ flexBasis: '16%' }}>
                             <FormControl fullWidth>

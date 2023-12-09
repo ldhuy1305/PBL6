@@ -72,7 +72,7 @@ const Product = () => {
     }, []);
     const setEndDateSr = (e) => {
         if (e < startDate) { setStartDate(e) }
-        console.log(e);
+        setEndDate(e)
     }
     const setStartDateSr = (e) => {
         if (e > endDate) { setEndDate(e) }

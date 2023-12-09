@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, Typography, } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import { Button } from "@mui/material";
@@ -13,6 +13,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
+import { MenuItem, FormControl, Select } from "@mui/material";
 
 const Product = ({ }) => {
     const [data, setData] = useState([]);
@@ -24,6 +25,11 @@ const Product = ({ }) => {
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
+    const [status, setStatus] = useState(false)
+    const handChangestatus = (e) => {
+        setStatus(e);
+        fetchData(e);
+    }
 
 
     const history = useNavigate();
@@ -96,6 +102,22 @@ const Product = ({ }) => {
             console.log(responseData);
             setDatafb(responseData);
             handleOpenModal()
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleStatus = async (status) => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${status}/rating`
+                , {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            const responseData = response.data.data;
+            console.log(responseData);
+            setData(responseData);
         } catch (error) {
             console.log(error);
         }
@@ -223,6 +245,17 @@ const Product = ({ }) => {
                     </div>
                 </Box>
                 <Box>
+                    <FormControl sx={{ width: "150px" }}>
+                        <Select
+                            sx={{ alignItems: 'center', height: "36px" }}
+                            value={status}
+                            defaultChecked={true}
+                            onChange={(e) => handChangestatus(e.target.value)}
+                        >
+                            <MenuItem value={false}>Đã ẩn</MenuItem>
+                            <MenuItem value={true}>Còn mở bán</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box>
                     <Button
