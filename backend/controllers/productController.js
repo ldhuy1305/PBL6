@@ -69,7 +69,7 @@ class ProductController {
       if (req.files) {
         req.files.forEach((file) => cloudinary.uploader.destroy(file.filename));
       }
-      next(new appError("Xuất hiện lỗi", 404));
+      next(new appError(err.message, 404));
     }
   });
   viewProduct = handleController.getOne(Product);
