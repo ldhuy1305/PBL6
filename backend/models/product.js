@@ -18,7 +18,7 @@ const productSchema = new Schema(
       required: [true, "Tên sản phẩm là bắt buộc"],
       validate: {
         validator: function(v) {
-          return /^(?=.*[\p{L}])[\p{L}\d\s'-.]{6,30}$/u.test(v);
+          return /^(?=.*[\p{L}])[\p{L}\d\s'-.]{6,50}$/u.test(v);
         },
         message: (props) => `${props.value} không hợp lệ`,
       },
