@@ -98,7 +98,7 @@ class ProductController {
     let product = await Product.findById({ _id: req.params.id });
     if (!product) return next(new appError("Không thể tìm thấy sản phẩm", 404));
     let images = [...product.images];
-    let dels = [req.body.dels];
+    let dels = req.body.dels;
     // fillter exits image
     if (req.body.dels) {
       images = images.filter((el) => !dels.includes(el));
