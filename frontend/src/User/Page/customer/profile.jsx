@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
 import { useNavigate } from "react-router-dom";
-import { getUserInfo, getDefaultContact, updateAvatar } from '../../services/userServices';
+import { updateAvatar } from '../../services/userServices';
 import { useLogout } from '../../services/authContext';
 import { useTranslation } from 'react-i18next';
 import LoadingModal from '../../Components/Loading/Loading';
@@ -18,17 +18,10 @@ const Profile = () => {
         localStorage.removeItem('user')
         navigate("/")
     }
-    // const [showChangePassword, setShowChangePassword] = useState(false);
-
-    // const handleToggleChangePassword = () => {
-    //     setShowChangePassword(!showChangePassword);
-    // };
     const navigate = useNavigate();
     const handleNav = ({ nav }) => {
         navigate(`/${nav}`);
     };
-    // const [userName, setUserName] = useState("");
-    // const [img, setImg] = useState("")
     const { userName, setUserName, img, setImg } = useAuth()
 
     const [firstName, setFirstName] = useState("");
@@ -44,7 +37,6 @@ const Profile = () => {
         phoneNumber: '',
     });
     const handleChangeImg = (e) => {
-        // const name = e.target.name;
         const value = e.target.files[0];
         setPhoto(value);
     };
@@ -57,7 +49,7 @@ const Profile = () => {
                 const defaultContactId = userData.defaultContact;
                 const defaultContact = userData.contact.find(contact => contact._id === defaultContactId);
                 if (token) {
-                    setUserName(`${userData.firstName} ${userData.lastName}`)
+                    setUserName(`${userData.lastName} ${userData.firstName}`)
                     setFirstName(userData.firstName)
                     setLastName(userData.lastName)
                     setEmail(userData.email)
@@ -178,7 +170,7 @@ const Profile = () => {
                     const defaultContact = userData.contact.find(contact => contact._id === defaultContactId);
                     defaultContact.address = formDataInfo.address;
                     defaultContact.phoneNumber = formDataInfo.phoneNumber;
-                    setUserName(formDataInfo.firstName + " " + formDataInfo.lastName)
+                    setUserName(formDataInfo.lastName + " " + formDataInfo.firstName)
                     localStorage.setItem("user", JSON.stringify(userData));
                     setMessage(t("alert2"))
                     // alert(t("alert2"));

@@ -302,12 +302,6 @@ const Home = () => {
             onClick={() => setPage(4)}><button class="" >4</button></li>
           <li className={`${page === 5 ? 'active' : ''}`}
             onClick={() => setPage(5)}><button class="" >5</button></li>
-          {/* <li className={`${page === 6 ? 'active' : ''}`}
-            onClick={() => setPage(6)}><button class="" >6</button></li>
-          <li className={`${page === 7 ? 'active' : ''}`}
-            onClick={() => setPage(7)}><button class="" >7</button></li>
-          <li className={`${page === 8 ? 'active' : ''}`}
-            onClick={() => setPage(8)}><button class="" >8</button></li> */}
           <li class="" onClick={() => handlePageClick('next')}>
             <button class="no_hover"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
           </li>

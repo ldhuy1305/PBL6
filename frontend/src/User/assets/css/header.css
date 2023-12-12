@@ -11380,8 +11380,14 @@ button.close {
   display: flex;
 }
 
-.now-list-restaurant .content-promotion .fas {
-  color: #f4d516;
+.now-list-restaurant .content-promotion .online {
+  /* background-color: #6cc942; */
+  color: #329900;
+}
+
+.now-list-restaurant .content-promotion .offline {
+  /* background-color: #6d6f71; */
+  color: #6d6f71;
 }
 
 .opening-hours {
@@ -20447,6 +20453,11 @@ button.history-table-status.gray {
 .now-list-restaurant .content-promotion .fas {
   padding-right: 5px;
 }
+
+.now-list-restaurant .content-promotion .star{
+  color: #ffdb00;
+}
+
 
 .now-branch .banner-brand {
   position: relative;
