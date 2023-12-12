@@ -61,7 +61,7 @@ const StoreDetail = () => {
     };
 
     const handleComment = () => {
-            navigate("/home/storeComment", { state: { store: { store } } });
+            navigate("/home/storeComment", { state: { store: { store },  isWithinOperatingHours: isWithinOperatingHours} });
     }
 
     return (
@@ -104,7 +104,7 @@ const StoreDetail = () => {
                                 <div class="opentime-status">
                                     <span 
                                     className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
-                    title={isWithinOperatingHours ? `${t("storeActive")}`: 'Đóng cửa'}></span>
+                    title={isWithinOperatingHours ? `${t("storeActive")}`: `${t("storeClose")}`}></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>

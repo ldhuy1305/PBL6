@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../../assets/css/header.css'
 
 import logo from '../../assets/img/logo.png'
-import emptycart from '../../assets/img/no_cart.png'
-import dishincart from '../../assets/img/food.jpg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHistory, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
@@ -106,7 +104,7 @@ const Header = () => {
                     if (savedUser) {
                         const user = (JSON.parse(savedUser));
                         // console.log(user.firstName + user.lastName);
-                        setUserName(`${user.firstName} ${user.lastName}`)
+                        setUserName(`${user.lastName} ${user.firstName}`)
                         setImg(user.photo)
                     }
                 } else {

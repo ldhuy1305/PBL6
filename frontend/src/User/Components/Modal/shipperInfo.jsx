@@ -93,24 +93,6 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                                 {shipper ? shipper.vehicleType : ''}
                                             </div>
                                         </div>
-                                        {/* <div class="row form-group align-items-center">
-                                            <div class="col-4 txt-bold">
-                                                Mã giấy tờ xe
-
-                                            </div>
-                                            <div class="col-4">
-                                                {shipper ? shipper.vehicleLicense : ''}
-                                            </div>
-                                        </div>
-                                        <div class="row form-group align-items-center">
-                                            <div class="col-4 txt-bold">
-                                                Mã GPLX
-
-                                            </div>
-                                            <div class="col-4">
-                                                {shipper ? shipper.licenseNumber : ''}
-                                            </div>
-                                        </div> */}
                                         <div class="relative" style={{ cursor: 'pointer' }}>
                                             <button
                                                 type="button"
