@@ -10,7 +10,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
 
-const Product = () => {
+const Product = ({ setSelected }) => {
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const [data, setData] = useState([]);
     const [row, setRow] = useState([]);
@@ -69,6 +69,9 @@ const Product = () => {
     };
     useEffect(() => {
         fetchData();
+    }, []);
+    useEffect(() => {
+        setSelected("Danh sách Đơn hàng");
     }, []);
     const setEndDateSr = (e) => {
         if (e < startDate) { setStartDate(e) }
@@ -238,6 +241,7 @@ const Product = () => {
                             color="secondary"
                             variant="contained"
                             onClick={() => { Search() }}
+                            height="33px"
                         >
                             Tìm kiếm
                         </Button>

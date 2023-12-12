@@ -15,7 +15,10 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
 import { MenuItem, FormControl, Select } from "@mui/material";
 
-const Product = ({ }) => {
+const Product = ({setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách Sản phẩm");
+    }, []);
     const [data, setData] = useState([]);
     const [datafb, setDatafb] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +29,7 @@ const Product = ({ }) => {
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
     const [status, setStatus] = useState(false)
+    const [nameproduct, Setnameproduct] = useState("")
     const handChangestatus = (e) => {
         setStatus(e);
         fetchData(e);
@@ -89,15 +93,16 @@ const Product = ({ }) => {
             console.log(error);
         }
     }
-    const fb = async (id) => {
+    const fb = async (row) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/${id}/rating`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${row._id}/rating`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
+            Setnameproduct(row.name)
             const responseData = response.data.data;
             console.log(responseData);
             setDatafb(responseData);
@@ -216,7 +221,7 @@ const Product = ({ }) => {
             align: "center",
             renderCell: (params) => (
                 <div>
-                    <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => fb(params.row._id)}></Button>
+                    <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => fb(params.row)}></Button>
                 </div>
             ),
         },
@@ -289,7 +294,7 @@ const Product = ({ }) => {
                         </div>
                     )
                 }
-                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} />
+                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} />
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {

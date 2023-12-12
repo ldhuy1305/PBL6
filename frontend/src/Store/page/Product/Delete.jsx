@@ -32,7 +32,7 @@ function Delete({ selectedRow, setOpenDelete, setError, fetchData, setMessage, s
                     <Modal.Title>Thông báo</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>Bạn muốn xóa sản phẩm: {selectedRow.name}</Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer style={{ display: "flex", justifyContent: "end" }}>
                     <Button variant="secondary" onClick={() => setOpenDelete(false)}>
                         Đóng
                     </Button>

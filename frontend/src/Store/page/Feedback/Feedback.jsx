@@ -109,7 +109,10 @@ const Detailfeedback = ({ open, handleClose, feedbackData, fetchFeedbackforstart
     );
 };
 
-const Feedback = () => {
+const Feedback = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Phản hồi");
+    }, []);
     const [isLoading, setIsLoading] = useState(false);
     const [feedbackList, setFeedbackList] = useState([]);
     const [age, setAge] = useState(0);

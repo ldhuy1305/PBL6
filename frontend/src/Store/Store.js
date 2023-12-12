@@ -25,6 +25,7 @@ import { isEqual } from 'lodash';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 
 const Store = () => {
@@ -139,26 +140,29 @@ const Store = () => {
 
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-
+  const [selected, setSelected] = useState("Thống kê");
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <Helmet>
+          <title>{selected}</title>
+        </Helmet>
         <div className="app">
-          <Sidebara isSidebar={isSidebar} />
+          <Sidebara isSidebar={isSidebar} selected={selected} setSelected={setSelected} />
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
             <Routes>
-              <Route path="/" element={<Statistics />} />
-              <Route path="/Formadd" element={<Formadd />} />
-              <Route path="/Formedit/:id" element={<Formedit />} />
-              <Route path="/product" element={<Product />} />
-              <Route path='/listorder' element={<Listorder />} />
-              <Route path='/info' element={<Info />} />
-              <Route path='/category' element={<Category />} />
-              <Route path="/detailorder/:id" element={<Detailorder />} />
-              <Route path="/feedback" element={<Feedback />} />
-              <Route path="/logout" element={<Logout />} />
+              <Route path="/" element={<Statistics setSelected={setSelected}/>} />
+              <Route path="/Formadd" element={<Formadd setSelected={setSelected} />} />
+              <Route path="/Formedit/:id" element={<Formedit setSelected={setSelected} />} />
+              <Route path="/product" element={<Product setSelected={setSelected} />} />
+              <Route path='/listorder' element={<Listorder setSelected={setSelected} />} />
+              <Route path='/info' element={<Info setSelected={setSelected} />} />
+              <Route path='/category' element={<Category setSelected={setSelected} />} />
+              <Route path="/detailorder/:id" element={<Detailorder setSelected={setSelected} />} />
+              <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
+              <Route path="/logout" element={<Logout setSelected={setSelected} />} />
             </Routes>
             <ToastContainer />
           </main>

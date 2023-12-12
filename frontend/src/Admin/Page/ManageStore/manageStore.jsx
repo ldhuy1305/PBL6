@@ -29,6 +29,7 @@ const ManageStore = ({ Catname }) => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [openAccept, SetOpenAccept] = useState(false);
     const [status, setStatus] = useState(false)
+    const [isLocked, SetisLocked] = useState(false)
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
         autoClose: 5000,
@@ -76,9 +77,11 @@ const ManageStore = ({ Catname }) => {
             setIsLoading(false);
         }
     };
-    const LockStore = async (id) => {
+    const LockStore = async (id, status) => {
         try {
             await axios.patch(`https://falth-api.vercel.app/api/store/lock/${id}`, {
+                "isLocked": status
+            }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -93,7 +96,8 @@ const ManageStore = ({ Catname }) => {
     useEffect(() => {
         fetchData(false);
     }, []);
-    const handleopenAcceptClick = (row) => {
+    const handleopenAcceptClick = (row, status) => {
+        SetisLocked(status)
         setSelectedRow(row);
         SetOpenAccept(true);
     };
@@ -143,9 +147,9 @@ const ManageStore = ({ Catname }) => {
                 return (
                     <div>
                         {params.row.isLocked ? (
-                            <Button startIcon={<LockOpenIcon />} onClick={() => handleopenAcceptClick(params.row)}></Button>
+                            <Button startIcon={<LockOpenIcon />} onClick={() => handleopenAcceptClick(params.row, true)}></Button>
                         ) : (
-                            <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row)}></Button>
+                            <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row, false)}></Button>
                         )}
                     </div>
                 );
@@ -178,7 +182,7 @@ const ManageStore = ({ Catname }) => {
                 }}
             >
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} Status={"Khóa"} LockStore={LockStore} />
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} Status={"Khóa"} LockStore={LockStore} isLocked={isLocked} />
                 )}
                 <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="5px">
                     <Box sx={{ flexBasis: '50%' }}>

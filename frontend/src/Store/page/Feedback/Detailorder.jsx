@@ -231,7 +231,7 @@ const Detailorder = () => {
                                     </div>
                                         <div className={style.infocustumer}>
 
-                                            <span className={style.infocustumer1}>Người giao hàng: {Order.shipper.lastName} {Order.shipper.firstName}</span>
+                                            <span className={style.infocustumer1}>Người giao hàng: {Order.shipper.firstName} {Order.shipper.lastName}</span>
                                         </div></>
                                 ) : (<div><div className={style.infocustumer}>
 
@@ -260,7 +260,7 @@ const Detailorder = () => {
                                 <span className={style.infocustumer1}> Địa chỉ: {Order.contact.address}</span>
                             </div>
                             <div className={style.infocustumer}>
-                                <span className={style.infocustumer1}>Người nhận hàng :{Order.user.lastName} {Order.user.firstName}</span>
+                                <span className={style.infocustumer1}>Người nhận hàng : {Order.user.firstName} {Order.user.lastName}</span>
                             </div>
 
                         </div>

@@ -53,7 +53,7 @@ const Detailorder = () => {
 
     return (
         <Box m="20px 100px">
-            <Header1 title={"Chi tiết cửa hàng"} to="/admin/Acceptstore" />
+            <Header1 title={"Chi tiết cửa hàng"} to="/admin/ManageStore" />
             {isLoading ? (
                 <div className={style.isloading}><Loading /></div>
             ) : (
@@ -118,7 +118,6 @@ const Detailorder = () => {
                                                     <span className={style.col1}>Giấy phép đăng ký : </span>
                                                     <span className={style.col} >
                                                         <div onClick={() => handleOpenModal(data.registrationLicense
-
                                                         )}
                                                             style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
                                                 </div>
@@ -168,7 +167,9 @@ const Detailorder = () => {
                                 <Rating
                                     name="simple-controlled"
                                     value={data.ratingsQuantity}
-                                    icon={<StarIcon style={{ color: 'yellow' }} />}
+                                    icon={<StarIcon style={{ color: '#FFD700' }} />
+                                    }
+                                    readOnly="true"
                                 /></div>
 
                             <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>

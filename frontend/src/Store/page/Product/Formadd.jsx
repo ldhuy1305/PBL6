@@ -18,7 +18,8 @@ import Spinner from 'react-bootstrap/Spinner';
 import { useNavigate } from 'react-router-dom';
 
 
-const Product = () => {
+const Product = ({ setSelected }) => {
+
     const [productStatus, setProductStatus] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingbutton, setIsLoadingbutton] = useState(false);
@@ -63,6 +64,9 @@ const Product = () => {
     };
     useEffect(() => {
         fetchCatname();
+    }, []);
+    useEffect(() => {
+        setSelected("Thêm sản phẩm");
     }, []);
 
     const Addproduct = async (formData) => {

@@ -96,10 +96,10 @@ const Topbar = ({ latestUserData, Setseen }) => {
                         </Grid>
                     </Grid>
                 </Popover>
-
+{/* 
                 <IconButton>
                     <SettingsOutlinedIcon sx={{ fontSize: 25 }} />
-                </IconButton>
+                </IconButton> */}
 
                 <IconButton>
                     <PersonOutlinedIcon sx={{ fontSize: 25 }} />
