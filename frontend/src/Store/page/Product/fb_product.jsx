@@ -8,7 +8,7 @@ import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
 import Avatar from '@mui/material/Avatar';
 import Pagination from '@mui/material/Pagination';
-const Detailfeedback = ({ open, handleClose, datafb }) => {
+const Detailfeedback = ({ open, handleClose, datafb, name }) => {
     console.log(datafb);
     const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,8 +29,22 @@ const Detailfeedback = ({ open, handleClose, datafb }) => {
         } else {
             setAverage(0);
         }
-    }, []);
+    }, [datafb]);
+    function convertUTCtoLocalDateTime(utcDateString) {
+        const time = utcDateString;
 
+        const formattedDateTime = new Date(time).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'UTC', // Ensure the date is formatted in UTC
+        }).replace(/(\d+)\/(\d+)\/(\d+), (\d+:\d+:\d+)/, '$4 $2/$1/$3');
+        return formattedDateTime
+
+    }
     return (
         <Modal
             open={open}
@@ -51,7 +65,7 @@ const Detailfeedback = ({ open, handleClose, datafb }) => {
             }}>
                 <div className={style.header}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" >
-                        <Header2 title={"Đánh giá cửa hàng"} />
+                        <Header2 title={`Đánh giá sản phẩm : ${name}`} />
                         <Button startIcon={<CloseIcon />} onClick={handleClose}></Button>
                     </Box>
                 </div>
@@ -61,7 +75,6 @@ const Detailfeedback = ({ open, handleClose, datafb }) => {
                             <Box sx={{
                                 display: "flex",
                             }}>
-
                                 <Box
                                     sx={{
                                         '& > legend': { mt: 2 },
@@ -71,8 +84,10 @@ const Detailfeedback = ({ open, handleClose, datafb }) => {
                                 >
                                     <Typography variant="h4">{average} trên 5</Typography>
                                     <Rating
+                                        readOnly
                                         name="simple-controlled"
                                         value={average}
+                                        precision={0.5}
                                     />
                                 </Box>
                                 <Box
@@ -109,9 +124,11 @@ const Detailfeedback = ({ open, handleClose, datafb }) => {
                                         <Typography variant="h5">{item.user.firstName} {item.user.lastName}</Typography>
                                         <Rating
                                             name="simple-controlled"
+                                            readOnly
                                             value={item.number}
+                                            precision={0.5}
                                         />
-                                        <Typography variant="h6">{item.createdAt}</Typography>
+                                        <Typography variant="h6">{convertUTCtoLocalDateTime(item.createdAt)}</Typography>
                                         <Typography variant="h4">{item.content}</Typography>
                                         <Box display="flex" paddingTop="5px" gap="5px">
                                             {item.images.map(item =>

@@ -10,8 +10,10 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 
-const UserProfile = () => {
-
+const UserProfile = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Thông tin cửa hàng");
+    }, []);
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');

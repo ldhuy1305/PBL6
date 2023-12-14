@@ -22,6 +22,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Logout from './Page/Logout/logout';
 import DetailShipper from './Page/ManageShipper/DetailShipper'
 import DetailAcceptShipper from './Page/ManageShipper/DetailAcceptShipper'
+import { Helmet } from 'react-helmet';
 
 
 const App = () => {
@@ -36,6 +37,9 @@ const App = () => {
             <ColorModeContext.Provider value={colorMode}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
+                    <Helmet>
+                        <title>Quản lý hệ thống</title>
+                    </Helmet>
                     <div className="app">
                         <Sidebara isSidebar={isSidebar} />
                         <main className="content">

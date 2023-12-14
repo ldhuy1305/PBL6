@@ -13,8 +13,7 @@ import { Formik } from 'formik';
 import Loading from '../../components/Loading/Loading'
 import style from './Formedit.module.css';
 import { useLocation } from 'react-router-dom';
-
-import Spinner from 'react-bootstrap/Spinner';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 
@@ -33,6 +32,7 @@ const Product = () => {
     const dataFromPreviousPage = location.state;
     const [data, setData] = useState([]);
     const [Catname, setCatname] = useState([]);
+    const history = useNavigate();
 
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
@@ -114,7 +114,7 @@ const Product = () => {
                 }
             });
             notify("success", "Cập nhật thành công");
-            fetchData();
+            history('/store/product');
         } catch (error) {
             notify("error", "Cập nhật thất bại");
             setIsLoadingbutton(false);

@@ -4,9 +4,13 @@ import { tokens } from "../../theme";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
 import Header2 from '../../components/Header/Header2';
+import Addcategory from './Addcategory';
 import style from './category.css';
 
-const Category = () => {
+const Category = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh mục");
+    }, []);
     const [isLoading, setIsLoading] = useState(true);
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -16,6 +20,9 @@ const Category = () => {
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/category/store/${_id}`;
     const [data, setData] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
 
     const itemsPerPage = 4;
     const [totalPages, setTotalPages] = useState(1);
@@ -41,15 +48,16 @@ const Category = () => {
     }, [api, token]);
     const fetchProductList = async (Name) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product?catName=${Name}`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?category.catName=${Name}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const responseData = response.data.data.data;
+            const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
             setTotalPages(Math.ceil(responseData.length / itemsPerPage));
+            setCurrentPage(1);
         } catch (error) {
             console.log(error);
         }
@@ -68,6 +76,18 @@ const Category = () => {
             console.log(error);
         }
     };
+    const add = async (dataform) => {
+        try {
+            await axios.get(`https://falth-api.vercel.app/api/category/owner/${_id}`, dataform, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
 
 
     const handlePageChange = (page) => {
@@ -98,9 +118,13 @@ const Category = () => {
                                             }} src={value.photo} alt="" />
                                         </div>
 
-                                        <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px", justifyContent: "" }}>{value.catName}</span>
+                                        <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px" }}>{value.catName}</span>
                                     </div>
                                 ))}
+                                <div className='category' onClick={() => handleOpenModal()}>
+                                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", width: "100%" }}><i style={{ fontSize: "50px", color: "gray" }} class="fa-solid fa-plus"></i>
+                                        <span>Thêm danh mục</span></div>
+                                </div>
                             </div>
                             <div className="container">
                                 {data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item, index) => (
@@ -113,14 +137,8 @@ const Category = () => {
                                             <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                                 <p style={{ display: "inline" }}>{item.description}</p>
                                             </div>
-
-                                            <div className="rating">
-                                                {[...Array(item.ratingAverage)].map((rating, index) => (
-                                                    <i key={index} className="fa-solid fa-star" style={{ fontSize: '14px', color: "gold" }}></i>
-                                                ))}
-
-                                            </div>
                                             <h4>{item.price}</h4>
+                                            <h4>Danh mục : {item.category.catName}</h4>
                                         </div>
                                     </div>
                                 ))}
@@ -150,6 +168,7 @@ const Category = () => {
                     }
                 </div >
             </Box >
+            <Addcategory open={openModal} handleClose={handleCloseModal} add={add} />
         </Box >
     );
 };

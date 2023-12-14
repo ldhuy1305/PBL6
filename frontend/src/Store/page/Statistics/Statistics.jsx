@@ -9,7 +9,7 @@ import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
 import { useNavigate } from 'react-router-dom';
 
-const Product = () => {
+const Product = ({ setSelected }) => {
     const history = useNavigate();
     const redirectToProductPage = () => {
         history('/store/product');
@@ -132,7 +132,9 @@ const Product = () => {
     const fetchSelectLinechart = (e) => {
         setdatarevenue(e)
     }
-
+    useEffect(() => {
+        setSelected("Thống kê");
+    }, []);
 
     useEffect(() => {
         fetchData();

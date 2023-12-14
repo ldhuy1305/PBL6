@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, Typography, } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import { Button } from "@mui/material";
@@ -13,8 +13,12 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
+import { MenuItem, FormControl, Select } from "@mui/material";
 
-const Product = ({ }) => {
+const Product = ({setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách Sản phẩm");
+    }, []);
     const [data, setData] = useState([]);
     const [datafb, setDatafb] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +28,12 @@ const Product = ({ }) => {
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
+    const [status, setStatus] = useState(false)
+    const [nameproduct, Setnameproduct] = useState("")
+    const handChangestatus = (e) => {
+        setStatus(e);
+        fetchData(e);
+    }
 
 
     const history = useNavigate();
@@ -83,9 +93,27 @@ const Product = ({ }) => {
             console.log(error);
         }
     }
-    const fb = async (id) => {
+    const fb = async (row) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/${id}/rating`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${row._id}/rating`
+                , {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            Setnameproduct(row.name)
+            const responseData = response.data.data;
+            console.log(responseData);
+            setDatafb(responseData);
+            handleOpenModal()
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleStatus = async (status) => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${status}/rating`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -94,8 +122,7 @@ const Product = ({ }) => {
             );
             const responseData = response.data.data;
             console.log(responseData);
-            setDatafb(responseData);
-            handleOpenModal()
+            setData(responseData);
         } catch (error) {
             console.log(error);
         }
@@ -194,7 +221,7 @@ const Product = ({ }) => {
             align: "center",
             renderCell: (params) => (
                 <div>
-                    <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => fb(params.row._id)}></Button>
+                    <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => fb(params.row)}></Button>
                 </div>
             ),
         },
@@ -223,6 +250,17 @@ const Product = ({ }) => {
                     </div>
                 </Box>
                 <Box>
+                    <FormControl sx={{ width: "150px" }}>
+                        <Select
+                            sx={{ alignItems: 'center', height: "36px" }}
+                            value={status}
+                            defaultChecked={true}
+                            onChange={(e) => handChangestatus(e.target.value)}
+                        >
+                            <MenuItem value={false}>Đã ẩn</MenuItem>
+                            <MenuItem value={true}>Còn mở bán</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box>
                     <Button
@@ -256,7 +294,7 @@ const Product = ({ }) => {
                         </div>
                     )
                 }
-                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} />
+                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} />
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {

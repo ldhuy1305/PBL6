@@ -3,16 +3,15 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 
-function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore }) {
+function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore, isLocked }) {
     const Acceptw = (id) => {
         handleClose(false);
         if (AcceptStore) {
             AcceptStore(id);
         }
         if (LockStore) {
-            LockStore(id);
+            LockStore(id, isLocked);
         }
-
     }
     return (
         <div>
@@ -35,7 +34,7 @@ function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore }) {
                     <Button variant="secondary" onClick={() => handleClose(false)}>
                         Đóng
                     </Button>
-                    <Button variant="success" onClick={() => Acceptw(rows.ownerId._id)} >
+                    <Button variant="success" onClick={() => Acceptw(rows.ownerId)} >
                         {Status}
                     </Button>
                 </Modal.Footer>

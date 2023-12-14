@@ -47,7 +47,7 @@ const Detailorder = () => {
         fetchData();
     }, [dataFromPreviousPage]);
     function convertUTCtoLocalDateTime(utcDateString) {
-        const time = "2023-12-08T13:06:10.725Z";
+        const time = utcDateString;
 
         const formattedDateTime = new Date(time).toLocaleString('en-US', {
             year: 'numeric',
@@ -260,7 +260,7 @@ const Detailorder = () => {
                                 <span className={style.infocustumer1}> Địa chỉ: {Order.contact.address}</span>
                             </div>
                             <div className={style.infocustumer}>
-                                <span className={style.infocustumer1}>Người nhận hàng :{Order.user.firstName} {Order.user.lastName}</span>
+                                <span className={style.infocustumer1}>Người nhận hàng : {Order.user.firstName} {Order.user.lastName}</span>
                             </div>
 
                         </div>

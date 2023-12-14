@@ -24,7 +24,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
             style={{
                 color: colors.grey[100],
             }}
-            onClick={() => setSelected(title)}
+            onClick={() => { title !== "Đăng xuất" ? setSelected(title) : setSelected("Falth") }}
             icon={icon}
         >
             <Typography>{title}</Typography>
@@ -78,7 +78,7 @@ const Sidebara = ({ }) => {
                                 ml="15px"
                             >
                                 <Typography variant="h3" color={colors.grey[100]}>
-                                    Cửa hàng
+                                    Quản lý hệ thống
                                 </Typography>
                                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                                     <ArrowBackIcon />
