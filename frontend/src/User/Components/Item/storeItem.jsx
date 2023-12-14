@@ -18,7 +18,6 @@ const StoreItem = ({ like, store }) => {
         closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
 
         setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
-        console.log(openTime, currentTime, closeTime)
     }, [store.openAt, store.closeAt]);
     return (
         <div class="item-restaurant" onClick={handleStore}>

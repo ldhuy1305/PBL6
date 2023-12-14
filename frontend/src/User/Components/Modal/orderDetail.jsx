@@ -3,15 +3,18 @@ import Modal from 'react-bootstrap/Modal';
 import { useTranslation } from "react-i18next";
 import RatingProduct from "./ratingProduct";
 import Notify from "../Notify.jsx/Notify";
+import StepOrder from "../Item/stepOrder";
+import "../../assets/css/stepOrder.css"
+import moment from 'moment-timezone';
 const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false)
     const [visible, setVisible] = useState(true)
     const [product, setProduct] = useState({
-        name:'',
-        _id:'',
-        images:[] ,
-        ratingAverage: 2     
+        name: '',
+        _id: '',
+        images: [],
+        ratingAverage: 2
     });
     const handleShowModal = (product) => {
         console.log(product)
@@ -28,7 +31,7 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
     const [openNotify, setOpenNotify] = useState(false)
     const [message, setMessage] = useState('')
     const handleShowModalRatingProduct = (product) => {
-        if(orderDetail.status !== 'Finished') {
+        if (orderDetail.status !== 'Finished') {
             setMessage('Đơn hàng chưa được hoàn thành, không thể đánh giá!');
             setOpenNotify(true)
         } else {
@@ -37,6 +40,7 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
     }
     return (
         <div>
+
             {visible && (
                 <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
                     <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Chi tiết đơn hàng</Modal.Title>
@@ -49,6 +53,30 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                             Đơn của bạn tại&nbsp;<strong>{storeName}</strong>
                                         </div>
                                     </div>
+
+                                    {(orderDetail.status === 'Cancelled') ? (
+
+                                        <div class="z8GWA3">
+                                            <div class="OlNNjU">
+                                                <div class="psdeAM">
+                                                    <div class="LrjR+B">Đã hủy đơn hàng</div>
+                                                    <div class="qS3A+k">vào {moment.utc(orderDetail.dateCancelled).format('HH:mm DD/MM/YYYY')}.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (orderDetail.status === 'Refused' ? (
+                                        <div class="z8GWA3">
+                                            <div class="OlNNjU">
+                                                <div class="psdeAM">
+                                                    <div class="LrjR+B">Đơn hàng đã bị từ chối</div>
+                                                    <div class="qS3A+k">vào {moment.utc(orderDetail.dateRefused).format('HH:mm DD/MM/YYYY')}.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <StepOrder orderDetail={orderDetail}/>
+                                    ))}
+
                                     <div class="history-table history-customer-order">
                                         <div class="history-table-row history-table-heading">
                                             <div class="history-table-cell history-table-col2">món</div>
@@ -81,7 +109,6 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                                     </div>
 
                                                     <div class="history-table-cell history-table-col7">
-                                                        {/* <strong class="text-danger">{}</strong> */}
                                                         {(dish.quantity * dish.price).toLocaleString('vi-VN')}đ
                                                     </div>
                                                     <div class="history-table-cell history-table-col7">
@@ -125,7 +152,7 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                 </Modal>
             )}
             <RatingProduct show={showModal} handleClose={handleCloseModal} product={product} />
-            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify}/>)}
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify} />)}
         </div>
     )
 
