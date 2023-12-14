@@ -47,11 +47,30 @@ const addContact = async (e, formData) => {
   }
 };
 
-const updateContact = async (e, formData, id) => {
+const updateDefaultContact = async (e, id) => {
   e.preventDefault();
   try {
     const token = localStorage.getItem("token");
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    await axios.post(`https://falth-api.vercel.app/api/user/set-default-contact/${decodedToken.id}/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  } catch (error) {
+
+    console.error('Lỗi khi set defaultContact', error);
+  }
+}
+
+const updateContact = async (e, formData, id, isChecked) => {
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem("token");
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    if(isChecked) {
+      
+    }
     const response = await axios.patch(`https://falth-api.vercel.app/api/user/${decodedToken.id}/contact/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -229,7 +248,6 @@ const viewOrder = async (id) => {
 const createPayment = async (query) => {
   const token = localStorage.getItem("token");
   const api = `https://falth-api.vercel.app/api/order/after-checkout/payment${query}`;
-  console.log(api)
   try {
     const response = await axios.get(api , {
       headers: {
@@ -245,15 +263,12 @@ const createPayment = async (query) => {
 const cancelOrder = async (id) => {
   const token = localStorage.getItem("token");
   const api = `https://falth-api.vercel.app/api/order/${id}`;
-  console.log(api)
   try {
     const response = await axios.patch(api , {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    
-    // console.log(response.data)
     return response.data
   } catch (error) {
     console.log("Error:", error);
@@ -263,13 +278,11 @@ const cancelOrder = async (id) => {
 //Rating 
 const getRatingOfStore = async (storeId, number) => {
   let api;
-  console.log(storeId, number)
   if (number) {
     api = `https://falth-api.vercel.app/api/store/${storeId}/rating/?number=${number}`
   } else {
     api = `https://falth-api.vercel.app/api/store/${storeId}/rating`
   }
-  console.log(api)
   try {
     const response = await axios.get(api);
     return response.data
@@ -317,13 +330,11 @@ const getRatingOfProduct = async (productID, number) => {
   } else {
     api = `https://falth-api.vercel.app/api/product/${productID}/rating`
   }
-    console.log(api)
     const response = await axios.get(api, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(response.data)
     return response.data
   } catch (error) {
     console.error("Error:", error);
@@ -339,8 +350,6 @@ const addRatingForProduct = async (id, ratingData) => {
         ContentType: 'multipart/form-data',
       }
     });
-    console.log(response)
-    // return response.data
   } catch (error) {
     console.log('Đánh giá thất bại:', error)
   }
@@ -355,7 +364,6 @@ const deleteRating = async (id) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('Xóa thành công');
     return response.data
   } catch (error) {
     console.error('Lỗi khi xóa đánh giá', error);
@@ -371,13 +379,11 @@ const getRatingOfShipper = async (shipperID, number) => {
   } else {
     api = `https://falth-api.vercel.app/api/shipper/${shipperID}/rating`
   }
-    console.log(api)
     const response = await axios.get(api, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(response.data)
     return response.data
   } catch (error) {
     console.error("Error:", error);
@@ -390,13 +396,11 @@ const getShipper = async (id) => {
   try {
     const token = localStorage.getItem("token");
     const api = `https://falth-api.vercel.app/api/shipper/${id}`
-    console.log(api)
     const response = await axios.get(api, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(response.data)
     return response.data
   } catch (error) {
     console.error("Error:", error);
@@ -413,6 +417,7 @@ export {
   updateAvatar,
   getAllCategory,
   getAllCategoryByStoreId,
+  updateDefaultContact,
   updateContact,
   getProductByStoreId,
   getFeeShip,

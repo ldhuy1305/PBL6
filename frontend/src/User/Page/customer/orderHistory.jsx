@@ -237,7 +237,6 @@ const OrderHistory = () => {
                                         <option value="Pending">Đang xử lý</option>
                                         <option value="Waiting">Đang chờ nhận đơn</option>
                                         <option value="Preparing">Đang chuẩn bị</option>
-                                        <option value="Ready">Đã sẵn sàng</option>
                                         <option value="Refused">Từ chối</option>
                                         <option value="Delivering">Đang giao</option>
                                         <option value="Cancelled">Đã hủy</option>

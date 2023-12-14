@@ -80,7 +80,6 @@ const Home = () => {
 
   useEffect(() => {
     setSelectedAreas([]);
-    console.log(selectedLocation)
     handleCityChange2(selectedLocation);
   }, [selectedLocation]);
 
@@ -114,7 +113,6 @@ const Home = () => {
   ? selectedAreas.map(area => area.length < 8 ? area : area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
   : ''; 
   const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
-    console.log(api)
     fetch(api)
       .then((response) => response.json())
       .then((data) => {
@@ -148,7 +146,6 @@ const Home = () => {
   ? selectedAreas.map(area => area.length < 8 ? area : area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
   : '';
   const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=${page}&search=${key}`
-    console.log(api)
     fetch(api)
       .then((response) => response.json())
       .then((data) => {

@@ -103,9 +103,7 @@ const Profile = () => {
                         newPass: formData.newPass,
                         confirmedPass: formData.confirmedPass
                     };
-                    console.log(changePasswordData)
                     const decodedToken = JSON.parse(atob(token.split(".")[1]));
-                    console.log(decodedToken.id)
                     const response = await axios.post(`https://falth-api.vercel.app/api/user/change-pass/${decodedToken.id}`, changePasswordData, {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -157,7 +155,6 @@ const Profile = () => {
                 const user = localStorage.getItem("user");
                 const token = localStorage.getItem("token");
                 const userData = JSON.parse(user);
-                console.log(formDataInfo)
                 if (token) {
                     const response = await axios.patch(`https://falth-api.vercel.app/api/user/${userData._id}`, formDataInfo, {
                         headers: {
@@ -190,12 +187,9 @@ const Profile = () => {
         e.preventDefault();
         const registrationData = new FormData();
         registrationData.append('photo', photo);
-        console.log(photo)
             try {
                 setIsLoading(true)
              const response = await updateAvatar(registrationData)
-
-              console.log('Đăng ký thành công', response.data.photo);
               const user = JSON.parse(localStorage.getItem('user'));
     user.photo = response.data.photo;
     localStorage.setItem('user', JSON.stringify(user));
