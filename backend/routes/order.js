@@ -26,6 +26,12 @@ router.get(
   orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByUserId
 );
+router.get(
+  "/shipper/:shipperId",
+  authController.restrict("Shipper"),
+  orderController.refuseOrderWhenTimeOut,
+  orderController.getOrdersByUserId
+);
 router.put(
   "/:id/cancel",
   authController.restrict("User"),

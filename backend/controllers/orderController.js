@@ -3,6 +3,7 @@ const Order = require("../models/order");
 const Transaction = require("../models/transaction");
 const Store = require("../models/store");
 const User = require("../models/userModel");
+const Shipper = require("../models/shipper");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
 const appError = require("../utils/appError");
@@ -542,6 +543,64 @@ class orderController {
         .toDate(); // 7 + 24 hours
     let obj = {
       user: req.params.userId,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
+        status: req.query.status,
+      };
+    const features = new ApiFeatures(
+      Order.find(obj)
+        .populate({
+          path: "store",
+          select:
+            "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -createdAt -updatedAt -__v",
+        })
+        .populate({
+          path: "shipper",
+          select:
+            "-status -isAccepted -ratingsAverage -ratingsQuantity -role -isVerified -__t -password -vehicleNumber -vehicleType -licenseNumber -__v -contact -defaultContact -frontImageCCCD -behindImageCCCD -licenseImage -createdAt -updatedAt -__v -rating -email -vehicleLicense -location",
+        }),
+      req.query
+    )
+      .sort()
+      .limitFields()
+      .paginate();
+    const orders = await features.query;
+    res.status(200).json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  });
+  getOrdersByUserId = catchAsync(async (req, res, next) => {
+    const shipper = await Shipper.findById(req.params.shipperId);
+    if (!shipper) return next(new appError("Không tìm thấy người dùng"), 404);
+    let start, end;
+    if (!req.query.start)
+      start = moment()
+        .subtract(30, "days")
+        .add(7, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(7, "hours")
+        .toDate();
+
+    if (!req.query.end)
+      end = moment()
+        .add(7, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // 7 + 24 hours
+    let obj = {
+      shipper: req.params.shipperId,
       dateOrdered: {
         $gte: start,
         $lt: end,
