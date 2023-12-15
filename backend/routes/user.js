@@ -20,7 +20,7 @@ router
 router
   .route("/:id")
   .get(
-    authController.restrict("User"),
+    authController.restrict("User", "Owner", "Shipper"),
     contactController.getAllContact,
     userController.getUserById
   )
