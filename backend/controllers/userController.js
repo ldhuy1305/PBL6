@@ -3,12 +3,15 @@ const Contact = require("../models/contact");
 const Store = require("../models/store");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
 const ApiFeatures = require("../utils/ApiFeatures");
+const cloudinary = require("cloudinary").v2;
+const fileUploader = require("../utils/uploadImage");
+
 class userController {
+  updatePhoto = fileUploader.single("photo");
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
@@ -34,16 +37,14 @@ class userController {
   deleteUser = handleController.delOne(User);
   updateUser = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id).populate("contact");
-    let contact = user.contact.find(
+    let index = user.contact.findIndex(
       (el) => el._id.toString() === user.defaultContact.toString()
     );
-    contact.address = req.body.address ? req.body.address : contact.address;
-    contact.phoneNumber = req.body.phoneNumber
-      ? req.body.phoneNumber
-      : contact.phoneNumber;
+
     user.markModified("contact");
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
+    user.contact[index] = req.body.contact;
     await user.save({ validateBeforeSave: false });
     res.status(200).json({
       status: "success",
@@ -106,13 +107,13 @@ class userController {
     const { userId, storeId } = req.params;
     let user = await User.findById(userId);
 
-    user = await user.populate("contactId").execPopulate();
     const store = await Store.findById(storeId);
 
     const storeCoordinates = {
       latitude: store.location.coordinates[0],
       longitude: store.location.coordinates[1],
     };
+    console.log(store);
     const data = user.contact.map(function(contact) {
       console.log(contact);
       const contactCoordinates = {
@@ -146,6 +147,36 @@ class userController {
       status: "success",
       data,
     });
+  });
+
+  updateUserPhoto = catchAsync(async (req, res, next) => {
+    const user = await User.findById({ _id: req.params.id });
+    if (!user) {
+      return next(new appError("No document found with that ID", 404));
+    }
+    const body = {
+      photo: req.file ? req.file.path : user.photo,
+    };
+    try {
+      const doc = await User.findByIdAndUpdate({ _id: req.params.id }, body, {
+        new: true,
+        runValidators: true,
+      });
+      let parts = user.photo.split("/");
+      let id =
+        parts.slice(parts.length - 2, parts.length - 1).join("/") +
+        "/" +
+        parts[parts.length - 1].split(".")[0];
+      cloudinary.uploader.destroy(id);
+      res.status(200).json({
+        data: doc,
+      });
+    } catch (err) {
+      if (req.file) {
+        cloudinary.uploader.destroy(req.file.filename);
+      }
+      next(err);
+    }
   });
 }
 

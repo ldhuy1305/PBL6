@@ -31,17 +31,22 @@ class contactController {
   updateContact = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId).populate("contact");
     if (!user) return next(new appError("Người dùng không được tìm thấy", 404));
-    let contact = user.contact.find((el) => el.id === req.params.contactId);
+
+    let contact = await Contact.findById(req.params.contactId);
+    if (!contact)
+      return next(new appError("Không tìm thấy địa chỉ liên lạc", 404));
     contact.address = req.body.address ? req.body.address : contact.address;
     contact.phoneNumber = req.body.phoneNumber
       ? req.body.phoneNumber
       : contact.phoneNumber;
+    await contact.save();
+    let index = user.contact.findIndex(
+      (el) => el._id.toString() === req.params.contactId.toString()
+    );
+    user.contact[index] = contact;
+
     user.markModified("contact");
     await user.save({ validateBeforeSave: false });
-
-    contact = await Contact.findByIdAndUpdate(req.params.contactId, req.body);
-    if (!contact)
-      return next(new appError("Không tìm thấy địa chỉ liên lạc", 404));
 
     res.status(200).send({
       status: "success",

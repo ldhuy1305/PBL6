@@ -17,13 +17,34 @@ router.get(
 router.get(
   "/owner/:ownerId",
   authController.restrict("Owner"),
-  orderController.cancelOrderWhenTimeOut,
+  orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByOwnerId
 );
 router.get(
   "/user/:userId",
   authController.restrict("User"),
-  orderController.cancelOrderWhenTimeOut,
+  orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByUserId
+);
+router.get(
+  "/shipper/:shipperId",
+  authController.restrict("Shipper"),
+  orderController.refuseOrderWhenTimeOut,
+  orderController.getOrdersByUserId
+);
+router.put(
+  "/:id/cancel",
+  authController.restrict("User"),
+  orderController.cancelOrder
+);
+router.put(
+  "/:id/shipper/:shipperId",
+  authController.restrict("Shipper"),
+  orderController.changeStatus
+);
+router.post(
+  "/:orderId/store/:storeId/notice",
+  authController.restrict("Owner"),
+  orderController.notice
 );
 module.exports = router;

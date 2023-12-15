@@ -1,6 +1,7 @@
 const { promisify } = require("util");
 const User = require("../models/userModel");
-
+const Shipper = require("../models/shipper");
+const Owner = require("../models/owner");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const jwtToken = require("../utils/jwtToken");
@@ -23,6 +24,16 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   if (!(await user.isCorrectPassword(user.password, password))) {
     return next(new appError("Mật khẩu không hợp lệ", 401));
+  }
+  if (user.role == "Shipper") {
+    const shipper = await Shipper.findOne({ email }).select("+password");
+    if (shipper.status === "Chờ phê duyệt")
+      return next(new appError("Người giao hàng chờ phê duyệt!", 401));
+  }
+  if (user.role == "Owner") {
+    const owner = await Owner.findOne({ email }).select("+password");
+    if (owner.isAccepted === false)
+      return next(new appError("Chủ cửa hàng chờ phê duyệt!", 401));
   }
   jwtToken.generateAndSendJWTToken(user, 200, res, req);
 });
@@ -50,6 +61,7 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         body = {
           ...body,
           licenseImage: req.files.licenseImage[0]?.path,
+          vehicleLicense: req.files.vehicleLicense[0]?.path,
         };
       }
     }
@@ -222,6 +234,7 @@ exports.googleLogin = passport.authenticate("google", {
 });
 exports.googleLoginCallback = passport.authenticate("google", {
   failureRedirect: "/login",
+  successRedirect: "/",
 });
 
 exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {
