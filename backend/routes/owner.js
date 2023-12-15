@@ -17,6 +17,10 @@ router.route("/").post(
 
 router.post("/:email", ownerController.verifiedSignUp);
 router.use(authController.protect, authController.restrict("Owner"));
+router
+  .route("/:id")
+  .get(contactController.getAllContact, ownerController.getOwnerById)
+  .patch(contactController.updateDefaultContact, ownerController.updateOwner);
 router.get("/store/:storeId/export-product", ownerController.exportProduct);
 router.get("/store/:storeId/export-order", ownerController.exportOrder);
 router.get("/:id/best-seller", ownerController.getBestSeller);

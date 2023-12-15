@@ -24,6 +24,21 @@ exports.uploadOwnerImages = fileUploader.fields([
   { name: "frontImageCCCD", maxCount: 1 },
   { name: "behindImageCCCD", maxCount: 1 },
 ]);
+exports.updateOwner = catchAsync(async (req, res, next) => {
+  const owner = await Owner.findById(req.params.id).populate("contact");
+  owner.firstName = req.body.firstName;
+  owner.lastName = req.body.lastName;
+  owner.bankNumber = req.body.bankNumber;
+  owner.bankName = req.body.bankName;
+  owner.contact[0] = req.body.contact;
+  await owner.save({ validateBeforeSave: false });
+  res.status(200).json({
+    status: "success",
+    data: owner,
+  });
+});
+exports.getOwnerById = handleController.getOne(Owner);
+
 exports.getOrdersDaily = catchAsync(async (req, res, next) => {
   const store = await Store.findOne({ ownerId: req.params.id });
   if (!store) return next(appError("Không tìm thấy cửa hàng", 404));
