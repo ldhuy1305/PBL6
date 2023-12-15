@@ -17,12 +17,15 @@ class contactController {
   updateDefaultContact = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
     if (!user) return next(new appError("Người dùng không được tìm thấy", 404));
-    const contact = await Contact.findByIdAndUpdate(
-      user.defaultContact,
-      req.body
-    );
+    const contact = await Contact.findById(user.defaultContact);
     if (!contact)
       return next(new appError("Không tìm thấy địa chỉ liên lạc", 404));
+    contact.address = req.body.address ? req.body.address : contact.address;
+    contact.phoneNumber = req.body.phoneNumber
+      ? req.body.phoneNumber
+      : contact.phoneNumber;
+    await contact.save();
+    req.body.contact = contact;
     next();
   });
   updateContact = catchAsync(async (req, res, next) => {
