@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
@@ -240,7 +239,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn. Đánh giá và bình luận của bạn sẽ được giữ dưới chế độ ẩn danh."
+                                                                placeholder="Chia sẻ đánh giá của bạn."
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
