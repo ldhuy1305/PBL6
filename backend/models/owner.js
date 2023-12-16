@@ -12,12 +12,12 @@ const ownerSchema = new mongoose.Schema({
   frontImageCCCD: {
     type: String,
     required: [true, "Phía trước CCCD là bắt buộc"],
-    select: false,
+    // select: false,
   },
   behindImageCCCD: {
     type: String,
     required: [true, "Phía sau CCCD là bắt buộc"],
-    select: false,
+    // select: false,
   },
   isAccepted: {
     type: Boolean,

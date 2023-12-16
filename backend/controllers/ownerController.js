@@ -23,20 +23,48 @@ exports.verifiedSignUp = authController.verifiedSignUp(Owner);
 exports.uploadOwnerImages = fileUploader.fields([
   { name: "frontImageCCCD", maxCount: 1 },
   { name: "behindImageCCCD", maxCount: 1 },
+  { name: "photo", maxCount: 1 },
 ]);
-exports.updateOwner = catchAsync(async (req, res, next) => {
-  const owner = await Owner.findById(req.params.id).populate("contact");
-  owner.firstName = req.body.firstName;
-  owner.lastName = req.body.lastName;
-  owner.bankNumber = req.body.bankNumber;
-  owner.bankName = req.body.bankName;
-  owner.contact[0] = req.body.contact;
-  await owner.save({ validateBeforeSave: false });
-  res.status(200).json({
-    status: "success",
-    data: owner,
-  });
-});
+exports.updatePhoto = fileUploader.single("photo");
+exports.updateOwner = async (req, res, next) => {
+  try {
+    let obj = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      bankNumber: req.body.bankNumber,
+      bankName: req.body.bankName,
+      "contact.0": req.body.contact,
+    };
+    if (req.files.photo) {
+      obj = {
+        ...obj,
+        photo: req.files.photo[0]?.path,
+      };
+    }
+    let owner = await Owner.findByIdAndUpdate(req.params.id, obj, {
+      new: true,
+    })
+      .populate("contact")
+      .select("+frontImageCCCD +behindImageCCCD");
+    if (req.body.del) {
+      let del = req.body.del;
+      let parts = del.split("/");
+      let id =
+        parts.slice(parts.length - 2, parts.length - 1).join("/") +
+        "/" +
+        parts[parts.length - 1].split(".")[0];
+      console.log(id);
+      await cloudinary.uploader.destroy(id);
+    }
+    res.status(200).json({
+      status: "success",
+      data: owner,
+    });
+  } catch (err) {
+    cloudinary.uploader.destroy(req.files.photo[0].filename);
+    next(new appError(err.message, 404));
+  }
+};
 exports.getOwnerById = handleController.getOne(Owner);
 
 exports.getOrdersDaily = catchAsync(async (req, res, next) => {
