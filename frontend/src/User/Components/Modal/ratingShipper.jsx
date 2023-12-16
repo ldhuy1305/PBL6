@@ -187,7 +187,7 @@ const RatingShipper = ({ show, handleClose, shipper, ratings, setRatings }) => {
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn. Đánh giá và bình luận của bạn sẽ được giữ dưới chế độ ẩn danh."
+                                                                placeholder="Chia sẻ đánh giá của bạn."
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
