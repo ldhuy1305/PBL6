@@ -30,7 +30,7 @@ router.get(
   "/shipper/:shipperId",
   authController.restrict("Shipper"),
   orderController.refuseOrderWhenTimeOut,
-  orderController.getOrdersByUserId
+  orderController.getOrdersByShipperId
 );
 router.put(
   "/:id/cancel",

@@ -577,7 +577,7 @@ class orderController {
       data: orders,
     });
   });
-  getOrdersByUserId = catchAsync(async (req, res, next) => {
+  getOrdersByShipperId = catchAsync(async (req, res, next) => {
     const shipper = await Shipper.findById(req.params.shipperId);
     if (!shipper) return next(new appError("Không tìm thấy người dùng"), 404);
     let start, end;
