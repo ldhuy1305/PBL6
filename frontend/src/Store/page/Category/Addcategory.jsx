@@ -6,11 +6,13 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import style from './Feedback.module.css';
 import Typography from '@mui/material/Typography';
-import Image from "../../components/Image/imageShow"
+import Image from "../../components/Image/imageShow";
 
-const Addcategory = ({ open, handleClose }) => {
+const Addcategory = ({ open, handleClose, add }) => {
     const [openModal, setOpenModal] = useState(false);
     const [image, setimage] = useState("");
+    const [img, setimg] = useState([]);
+    const [categoryName, setCategoryName] = useState("");
     const inputRef = useRef(null);
 
     const handleImageClick = () => {
@@ -20,6 +22,7 @@ const Addcategory = ({ open, handleClose }) => {
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
+            setimg(selectedFile)
             const imageUrl = URL.createObjectURL(selectedFile);
             setimage(imageUrl);
         }
@@ -28,6 +31,18 @@ const Addcategory = ({ open, handleClose }) => {
     const handleCloseModal = () => {
         setimage("");
         setOpenModal(false);
+    };
+
+    const handleSave = () => {
+        if (categoryName && image) {
+            let formData = new FormData();
+            formData.append('catName', categoryName);
+            formData.append('photo', img);
+            add(formData);
+            handleClose();
+        } else {
+            alert("Vui lòng chọn tên danh mục và hình ảnh");
+        }
     };
 
     return (
@@ -57,7 +72,8 @@ const Addcategory = ({ open, handleClose }) => {
                             label={"Tên danh mục"}
                             margin="normal"
                             multiline
-                            defaultValue=""
+                            value={categoryName}
+                            onChange={(e) => setCategoryName(e.target.value)}
                             fullWidth
                         />
                         <Box
@@ -83,13 +99,13 @@ const Addcategory = ({ open, handleClose }) => {
                                 <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", height: "250px", width: "100%", border: "0.1px dashed #6990f2", justifyContent: "center", alignItems: "center" }} onClick={handleImageClick}>
                                     <i className='fas fa-cloud-upload-alt' style={{ fontSize: "40px" }}></i>
                                     <span>Chọn ảnh</span>
-                                </div>  
+                                </div>
                             )}
                         </Box>
                     </div>
                     <Image open={openModal} handleClose={handleCloseModal} img={image} />
                     <div className={style.poster}>
-                        <Button variant="outlined" color="success" onClick={() => handleClose()}>
+                        <Button variant="outlined" color="success" onClick={handleSave}>
                             Lưu
                         </Button>
                         <Button variant="outlined" color="error" onClick={() => handleClose()}>

@@ -70,7 +70,7 @@ const DetailShipper = () => {
                     >
                         <div style={{ width: "100%", height: "100%", padding: "20px", gap: "40px", border: " 0.1px solid rgb(223, 223, 223)", borderRadius: "10px" }}>
                             <Form noValidate style={{ width: "100%", height: "100%" }}>
-                                <h5 style={{ paddingBottom: "20px" }}>Thông tin</h5>
+                                <h5 >Thông tin</h5>
                                 <div className={style.container}>
                                     <div className={style.Store}>
                                         <div >
@@ -116,6 +116,32 @@ const DetailShipper = () => {
                                                     <span className={style.col1}>Giấy phép xe cộ : </span>
                                                     <span className={style.col} >
                                                         <div onClick={() => handleOpenModal(data.vehicleLicense)} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Giấy phép lái xe : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.licenseImage
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Mặt trước CCCD : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.frontImageCCCD
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Mặt sau CCCD : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.behindImageCCCD
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
 
                                                 </div>
                                             </div>

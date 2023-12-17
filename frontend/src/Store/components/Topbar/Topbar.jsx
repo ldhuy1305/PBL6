@@ -2,8 +2,6 @@ import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { ColorModeContext, tokens } from '../../theme';
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import { useNavigate } from 'react-router-dom';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import Badge from '@mui/material/Badge';
@@ -12,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import style from "./Topbar.module.css";
 import axios from "axios"
+import Tooltip from '@mui/material/Tooltip';
+import Avatar from '@mui/material/Avatar';
 
 const Topbar = ({ latestUserData, Setseen }) => {
     const history = useNavigate();
@@ -24,7 +24,8 @@ const Topbar = ({ latestUserData, Setseen }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [count, SetCount] = useState(0)
+    const [count, SetCount] = useState(0);
+    const Imgowner = localStorage.getItem('_img');
     useEffect(() => {
         if (latestUserData) {
             SetCount(latestUserData.filter((doiTuong) => !doiTuong.isSeen).length);
@@ -37,6 +38,9 @@ const Topbar = ({ latestUserData, Setseen }) => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const Ownerprofile = () => {
+        history(`/store/OwnerProfile`);
     };
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
@@ -51,11 +55,14 @@ const Topbar = ({ latestUserData, Setseen }) => {
             >
             </Box>
             <Box display="flex" gap="10px">
-                <IconButton onClick={handleClick}>
-                    <Badge badgeContent={count} color="error" overlap="circular">
-                        <NotificationsOutlinedIcon sx={{ fontSize: 25 }} />
-                    </Badge>
-                </IconButton>
+                <Tooltip title="Thông báo">
+                    <IconButton onClick={handleClick}>
+                        <Badge badgeContent={count} color="error" overlap="circular">
+                            <NotificationsOutlinedIcon sx={{ fontSize: 25 }} />
+                        </Badge>
+                    </IconButton>
+                </Tooltip>
+
                 <Popover
                     id={id}
                     open={open}
@@ -96,14 +103,16 @@ const Topbar = ({ latestUserData, Setseen }) => {
                         </Grid>
                     </Grid>
                 </Popover>
-{/* 
+                {/* 
                 <IconButton>
                     <SettingsOutlinedIcon sx={{ fontSize: 25 }} />
                 </IconButton> */}
+                <Tooltip title="Thông tin cá nhân">
+                    <IconButton onClick={() => Ownerprofile()}>
+                        <Avatar src={Imgowner} sx={{ width: 25, height: 25 }} />
+                    </IconButton>
+                </Tooltip>
 
-                <IconButton>
-                    <PersonOutlinedIcon sx={{ fontSize: 25 }} />
-                </IconButton>
             </Box>
         </Box>
     );

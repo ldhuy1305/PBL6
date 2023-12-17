@@ -15,10 +15,11 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
 import { MenuItem, FormControl, Select } from "@mui/material";
 
-const Product = ({setSelected }) => {
+const Product = ({ setSelected }) => {
     useEffect(() => {
         setSelected("Danh sách Sản phẩm");
     }, []);
+    const [idproduct, setIdproduct] = useState("");
     const [data, setData] = useState([]);
     const [datafb, setDatafb] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -95,6 +96,7 @@ const Product = ({setSelected }) => {
     }
     const fb = async (row) => {
         try {
+            setIdproduct(row._id)
             const response = await axios.get(`https://falth-api.vercel.app/api/product/${row._id}/rating`
                 , {
                     headers: {
@@ -123,6 +125,22 @@ const Product = ({setSelected }) => {
             const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const Fbnumber = async (number) => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${idproduct}/rating?number=${number}`
+                , {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            const responseData = response.data.data;
+            console.log(responseData);
+            setDatafb(responseData);
         } catch (error) {
             console.log(error);
         }
@@ -294,7 +312,7 @@ const Product = ({setSelected }) => {
                         </div>
                     )
                 }
-                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} />
+                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} />
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {

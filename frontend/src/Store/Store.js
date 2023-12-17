@@ -26,7 +26,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-
+import OwnerProfile from './page/Info/OwnerProfile'
 
 const Store = () => {
   const [latestUserData, setLatestUserData] = useState();
@@ -36,6 +36,7 @@ const Store = () => {
   const tokenString = localStorage.getItem('user');
   const tokenObject = JSON.parse(tokenString);
   localStorage.setItem('_id', tokenObject._id);
+  localStorage.setItem('_img', tokenObject.photo);
   const api = `https://falth-api.vercel.app/api/store/owner/${tokenObject._id}`;
   useEffect(() => {
     const fetchData = async () => {
@@ -153,7 +154,7 @@ const Store = () => {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
             <Routes>
-              <Route path="/" element={<Statistics setSelected={setSelected}/>} />
+              <Route path="/" element={<Statistics setSelected={setSelected} />} />
               <Route path="/Formadd" element={<Formadd setSelected={setSelected} />} />
               <Route path="/Formedit/:id" element={<Formedit setSelected={setSelected} />} />
               <Route path="/product" element={<Product setSelected={setSelected} />} />
@@ -163,6 +164,7 @@ const Store = () => {
               <Route path="/detailorder/:id" element={<Detailorder setSelected={setSelected} />} />
               <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
               <Route path="/logout" element={<Logout setSelected={setSelected} />} />
+              <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
             </Routes>
             <ToastContainer />
           </main>

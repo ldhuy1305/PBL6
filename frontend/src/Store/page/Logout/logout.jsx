@@ -10,6 +10,8 @@ function Logout({ setSelected }) {
             localStorage.removeItem('token');
             localStorage.removeItem('_id');
             localStorage.removeItem('user');
+            localStorage.removeItem('_idstore');
+            localStorage.removeItem('_img');
             history('/');
         } catch (error) {
             console.log('Lỗi Đăng xuất:', error);

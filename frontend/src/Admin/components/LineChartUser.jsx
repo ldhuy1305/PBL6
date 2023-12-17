@@ -10,7 +10,7 @@ class ApexChart extends React.Component {
 
       series: [
         {
-          name: "Người dùng",
+          name: "Khách hàng",
           data: data.map((item) => item.numUsers),
         },
         {

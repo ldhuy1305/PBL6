@@ -125,41 +125,7 @@ const Statistics = () => {
                     gap="5px"
                 >
 
-                    {/* <Box
-                        gridColumn="span 2"
-                        gridRow="span 4"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <div className={style.box}>
-                            <div className={style.box1}>
-                                <div className={style.container}>
-                                    <div className={style.top}>
-                                        <div className={style.icon}>
-                                            <i class="fa-solid fa-truck-fast"></i>
-                                        </div>
-
-                                    </div>
-                                    <div className={style.center}>
-                                        <span>Người giao hàng</span>
-                                    </div>
-                                    <div className={style.botton}>
-                                        <span>{dataorder.numShippers} người</span>
-                                    </div>
-                                </div>
-                                <div className={style.view} onClick={() => redirectToManageShipperPage()}>
-                                    <div className={style.tittle}>
-                                        <span>Xem chi tiết</span>
-                                    </div>
-                                    <div className={style.rightContent}>
-                                        <i class="fa-solid fa-right-long"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </Box> */}
+                    
                     <Box
                         gridColumn="span 12"
                         gridRow="span 7"
@@ -172,7 +138,7 @@ const Statistics = () => {
                                 <div className={style.container}>
                                     <div className={style.top}>
                                         <div className={style.tranding}>
-                                            <span>Thông kê người dùng</span>
+                                            <span>Thống kê người dùng</span>
                                         </div>
                                     </div>
                                 </div>
@@ -186,100 +152,7 @@ const Statistics = () => {
                         </div>
 
                     </Box>
-                    {/* <Box
-                        gridColumn="span 2"
-                        display="flex"
-                        gridRow="span 4"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <div className={style.box}>
-                            <div className={style.box1}>
-                                <div className={style.container}>
-                                    <div className={style.top}>
-                                        <div className={style.icon}>
-                                            <i class="fa-solid fa-user"></i>
-                                        </div>
-
-                                    </div>
-                                    <div className={style.center}>
-                                        <span>Người dùng</span>
-                                    </div>
-                                    <div className={style.botton}>
-                                        <span>{dataorder.numUsers} người</span>
-                                    </div>
-                                </div>
-                                <div className={style.view} onClick={() => redirectToManageUserPage()}>
-                                    <div className={style.tittle}>
-                                        <span>Xem chi tiết</span>
-                                    </div>
-                                    <div className={style.rightContent}>
-                                        <i class="fa-solid fa-right-long"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </Box>
-                    <Box
-                        gridColumn="span 2"
-                        gridRow="span 4"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <div className={style.box}>
-                            <div className={style.box1}>
-                                <div className={style.container}>
-                                    <div className={style.top}>
-                                        <div className={style.icon}>
-                                            <i class="fa-solid fa-store"></i>
-                                        </div>
-
-                                    </div>
-                                    <div className={style.center}>
-                                        <span>Cửa hàng</span>
-                                    </div>
-                                    <div className={style.botton}>
-                                        <span>{dataorder.numOwners} cửa hàng </span>
-                                    </div>
-                                </div>
-                                <div className={style.view} onClick={() => redirectToManageStorePage()}>
-                                    <div className={style.tittle}>
-                                        <span>Xem chi tiết</span>
-                                    </div>
-                                    <div className={style.rightContent}>
-                                        <i class="fa-solid fa-right-long"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </Box>
-                    <Box
-                        gridColumn="span 4"
-                        gridRow="span 10"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <div className={style.box}>
-                            <div className={style.box1}>
-                                <div className={style.top}>
-                                    <div className={style.tranding}>
-                                        <span>Biểu đồ số lượng đơn hàng</span>
-                                    </div>
-                                    <div className={style.rightContent1}>
-                                        <span>...</span>
-                                    </div>
-                                </div>
-                                <div className={style.InteractivePieChart}>
-                                    <ApexChart data={datachart} />
-                                </div>
-                            </div>
-                        </div>
-
-                    </Box>  */}
+                
                     <Box
                         gridColumn="span 12"
                         // backgroundColor={colors.primary[400]}
@@ -293,7 +166,7 @@ const Statistics = () => {
                                 <div className={style.container}>
                                     <div className={style.top}>
                                         <div className={style.tranding}>
-                                            <span>Thông kê doanh thu</span>
+                                            <span>Thống kê doanh thu</span>
                                         </div>
                                     </div>
                                 </div>

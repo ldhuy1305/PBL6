@@ -22,12 +22,27 @@ const DetailShipper = () => {
         setimage(img)
         setOpenModal(true)
     };
+    function convertUTCtoLocalDateTime(utcDateString) {
+        const time = utcDateString;
+
+        const formattedDateTime = new Date(time).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'UTC', // Ensure the date is formatted in UTC
+        }).replace(/(\d+)\/(\d+)\/(\d+), (\d+:\d+:\d+)/, '$4 $2/$1/$3');
+        return formattedDateTime
+
+    }
     const handleCloseModal = () => setOpenModal(false);
 
     const fetchData = async () => {
         try {
             const response = await axios.get(
-                `https://falth-api.vercel.app/api/admin/shipper/${dataFromPreviousPage}`,
+                `https://falth-api.vercel.app/api/shipper/${dataFromPreviousPage}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -60,14 +75,13 @@ const DetailShipper = () => {
                     gridTemplateColumns="repeat(6, 1fr)"
                     gridAutoRows="5vh"
                     gap="20px"
-                    mt="30px"
                 >
                     <Box
                         gridColumn="span 4"
                         display="flex"
                         gridRow="span 10"
                     >
-                        <div style={{ width: "100%", height: "100%", padding: "20px", gap: "40px", border: " 0.1px solid rgb(223, 223, 223)", borderRadius: "10px" }}>
+                        <div style={{ display: "flex", width: "100%", height: "100%", padding: "20px", gap: "20px", border: " 0.1px solid rgb(223, 223, 223)", borderRadius: "10px" }}>
                             <Form noValidate style={{ width: "100%", height: "100%" }}>
                                 <h5 style={{ paddingBottom: "20px" }}>Thông tin</h5>
                                 <div className={style.container}>
@@ -120,6 +134,7 @@ const DetailShipper = () => {
 
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div >
                                 </div>
@@ -155,8 +170,33 @@ const DetailShipper = () => {
                             border: "0.1px solid rgb(223, 223, 223)",
                             borderRadius: "10px"
                         }}>
-                            <h5>Đánh giá từ khách hàng</h5>
+                            <div className={style.bill_time} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col1}>Giấy phép lái xe : </span>
+                                    <span className={style.col} >
+                                        <div onClick={() => handleOpenModal(data.licenseImage
+                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
 
+                                </div>
+                            </div>
+                            <div className={style.bill_time} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col1}>Mặt trước CCCD : </span>
+                                    <span className={style.col} >
+                                        <div onClick={() => handleOpenModal(data.frontImageCCCD
+                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
+                                </div>
+                            </div>
+                            <div className={style.bill_time} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col1}>Mặt sau CCCD : </span>
+                                    <span className={style.col} >
+                                        <div onClick={() => handleOpenModal(data.behindImageCCCD
+                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
+                                </div>
+                            </div>
                         </div>
                     </Box>
                     <Image open={openModal} handleClose={handleCloseModal} img={image} />
