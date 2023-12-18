@@ -10,8 +10,12 @@ import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { Button } from "@mui/material";
 import HttpsIcon from '@mui/icons-material/Https';
+import Accept from '../../components/Accept/Acceptshiper';
 
-function ManageShipper() {
+function ManageShipper({ setSelected }) {
+    useEffect(() => {
+        setSelected("Danh sách Shipper");
+    }, []);
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -20,11 +24,13 @@ function ManageShipper() {
     const [error, setError] = useState(false)
     const [message, setMessage] = useState("")
     const formRef = useRef();
+    const [openAccept, SetOpenAccept] = useState(false);
 
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
         history('/admin/DetailShipper', { state: id });
     };
+
 
 
     useEffect(() => {
@@ -40,6 +46,13 @@ function ManageShipper() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [selectActive]);
+    const handleopenAcceptClick = (row, status, mes) => {
+        setSelectedRow(row);
+        SetOpenAccept(true);
+    };
+    const LockShipper = async () => {
+
+    }
 
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
@@ -135,7 +148,7 @@ function ManageShipper() {
             renderCell: (params) => {
                 // onClick={() => handleopenAcceptClick(params.row)}
                 return (
-                    <Button startIcon={<HttpsIcon />} ></Button>
+                    <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row, false, "Khóa")}></Button>
                 );
             },
         },
@@ -146,7 +159,7 @@ function ManageShipper() {
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Header2 title="Danh sách cửa người giao hàng" />
 
-                <Box>
+                {/* <Box>
                     <div className={style.searchBar}>
                         <input
                             type="text"
@@ -157,7 +170,7 @@ function ManageShipper() {
                     </div>
 
 
-                </Box>
+                </Box> */}
                 <Box>
                 </Box>
             </Box>
@@ -173,9 +186,8 @@ function ManageShipper() {
                     },
                 }}
             >
-                {openDetail && (
-
-                    <DetailShipper rows={selectedRow} show={true} handleClose={setOpenDetail} />
+                {openAccept && (
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} LockShipper={LockShipper} Status={"Khóa"}/>
                 )}
                 <DataGrid
                     rows={rowsWithUniqueIds}

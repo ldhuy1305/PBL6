@@ -5,12 +5,14 @@ import { tokens } from "../../theme";
 import axios from 'axios';
 import Header2 from "../../components/Header/Header2";
 import { useNavigate } from 'react-router-dom';
-const ManageUser = ({ Catname }) => {
+const ManageUser = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách người dùng");
+    }, []);
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(true);
-    const [selectedRow, setSelectedRow] = useState(null);
     const formRef = useRef();
     const history = useNavigate();
     const redirectToEditProductPage = (row) => {

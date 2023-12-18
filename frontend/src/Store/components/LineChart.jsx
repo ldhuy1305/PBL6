@@ -7,7 +7,7 @@ class YourChartComponent extends Component {
     const { data, status } = props;
     this.state = {
       series: [{
-        name: 'PRODUCT A',
+        name: 'Giá trị',
         data: data.map((item) => item[status]),
       }],
       options: {

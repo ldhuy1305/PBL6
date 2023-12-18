@@ -8,7 +8,7 @@ import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
 import Avatar from '@mui/material/Avatar';
 import Pagination from '@mui/material/Pagination';
-const Detailfeedback = ({ open, handleClose, datafb, name }) => {
+const Detailfeedback = ({ open, handleClose, datafb, name, Fbnumber, fb }) => {
     console.log(datafb);
     const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,7 +29,7 @@ const Detailfeedback = ({ open, handleClose, datafb, name }) => {
         } else {
             setAverage(0);
         }
-    }, [datafb]);
+    }, [name]);
     function convertUTCtoLocalDateTime(utcDateString) {
         const time = utcDateString;
 
@@ -98,47 +98,52 @@ const Detailfeedback = ({ open, handleClose, datafb, name }) => {
                                         display: "flex",
                                     }}
                                 >
-                                    <Button>Tất cả</Button>
-                                    <Button>1 sao</Button>
-                                    <Button>2 sao</Button>
-                                    <Button>3 sao</Button>
-                                    <Button>4 sao</Button>
-                                    <Button>5 sao</Button>
+                                    <Button onClick={() => Fbnumber('')}>Tất cả</Button>
+                                    <Button onClick={() => Fbnumber(`number=1`)}>1 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=2`)}>2 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=3`)}>3 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=4`)}>4 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=5`)}>5 sao</Button>
 
 
                                 </Box>
                             </Box>
                         </div>
                         <div className={style.bot_fb}>
-                            {currentItems.map(item => (
-                                <Box sx={{ display: 'flex', gap: "10px", borderBottom: " 0.1px solid #ccc", pb: "20px", mb: "30px" }}>
-                                    <Box>
-                                        <Avatar alt="Remy Sharp" src={item.user.photo} />
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            '& > legend': { mt: 2 },
-                                            width: "80%"
-                                        }}
-                                    >
-                                        <Typography variant="h5">{item.user.firstName} {item.user.lastName}</Typography>
-                                        <Rating
-                                            name="simple-controlled"
-                                            readOnly
-                                            value={item.number}
-                                            precision={0.5}
-                                        />
-                                        <Typography variant="h6">{convertUTCtoLocalDateTime(item.createdAt)}</Typography>
-                                        <Typography variant="h4">{item.content}</Typography>
-                                        <Box display="flex" paddingTop="5px" gap="5px">
-                                            {item.images.map(item =>
-                                                (<img className={style.fb_img} src={item} />)
-                                            )}
-
+                            {datafb.length === 0 ? (
+                                <Typography variant="h5" color="textSecondary">
+                                    Chưa có đánh giá nào.
+                                </Typography>
+                            ) : (
+                                currentItems.map(item => (
+                                    <Box key={item.id} sx={{ display: 'flex', gap: "10px", borderBottom: " 0.1px solid #ccc", pb: "20px", mb: "30px" }}>
+                                        <Box>
+                                            <Avatar alt="Remy Sharp" src={item.user.photo} />
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                '& > legend': { mt: 2 },
+                                                width: "80%"
+                                            }}
+                                        >
+                                            <Typography variant="h5">{item.user.firstName} {item.user.lastName}</Typography>
+                                            <Rating
+                                                name="simple-controlled"
+                                                readOnly
+                                                value={item.number}
+                                                precision={0.5}
+                                            />
+                                            <Typography variant="h6">{convertUTCtoLocalDateTime(item.createdAt)}</Typography>
+                                            <Typography variant="h4">{item.content}</Typography>
+                                            <Box display="flex" paddingTop="5px" gap="5px">
+                                                {item.images.map((image, index) => (
+                                                    <img key={index} className={style.fb_img} src={image} alt={`Review ${index + 1}`} />
+                                                ))}
+                                            </Box>
                                         </Box>
                                     </Box>
-                                </Box>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                     <div className={style.poster}>

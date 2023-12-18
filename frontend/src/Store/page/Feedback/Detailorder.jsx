@@ -10,9 +10,7 @@ import style from './Detailorder.module.css';
 
 const Detailorder = () => {
     const token = localStorage.getItem('token');
-    const _id = localStorage.getItem('_id');
     const [Order, setOrder] = useState([]);
-    const [tatol, settatol] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
     const dataFromPreviousPage = location.state;

@@ -7,16 +7,9 @@ import ApexChart from "../../components/InteractivePieChart/InteractivePieChart"
 import Header2 from "../../components/Header/Header";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
-import { useNavigate } from 'react-router-dom';
 
 const Product = ({ setSelected }) => {
-    const history = useNavigate();
-    const redirectToProductPage = () => {
-        history('/store/product');
-    };
-    const redirectToOrderPage = () => {
-        history('/store/listorder');
-    }
+
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [dataorder, setDataorder] = useState([]);
@@ -38,7 +31,6 @@ const Product = ({ setSelected }) => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const responseData = response.data.data[0];
             console.log(response.data.data);
             setDataorder(response.data.data[0]);
         } catch (error) {
@@ -259,8 +251,8 @@ const Product = ({ setSelected }) => {
                                             <span>Sản phẩm bán chạy nhất</span>
                                         </div>
                                     </div>
-                                    <div>
-                                        {databestseller.slice(0, 3).map((value, index) => (
+                                    <div className={style.Containertoppd}>
+                                        {databestseller.map((value, index) => (
                                             <div className={style.producttop} key={index}>
                                                 <div className={style.img}>
                                                     <img src={value.images[0]} alt="" />

@@ -6,11 +6,22 @@ import Loading from '../../components/Loading/Loading'
 import Header2 from '../../components/Header/Header2';
 import Addcategory from './Addcategory';
 import style from './category.css';
+import { toast } from 'react-toastify';
 
 const Category = ({ setSelected }) => {
     useEffect(() => {
         setSelected("Danh mục");
     }, []);
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
     const [isLoading, setIsLoading] = useState(true);
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -28,24 +39,24 @@ const Category = ({ setSelected }) => {
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const responseData = response.data.data;
-                setData(responseData);
-                setTotalPages(Math.ceil(responseData.length / itemsPerPage));
-                setIsLoading(false);
-            } catch (error) {
-                console.log(error);
-            }
-        };
         fetchData();
         fetchCatList();
     }, [api, token]);
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const responseData = response.data.data;
+            setData(responseData);
+            setTotalPages(Math.ceil(responseData.length / itemsPerPage));
+            setIsLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const fetchProductList = async (Name) => {
         try {
             const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?category.catName=${Name}`, {
@@ -75,21 +86,22 @@ const Category = ({ setSelected }) => {
         } catch (error) {
             console.log(error);
         }
-    };
+    }
     const add = async (dataform) => {
         try {
-            await axios.get(`https://falth-api.vercel.app/api/category/owner/${_id}`, dataform, {
+            await axios.post(`https://falth-api.vercel.app/api/category`, dataform, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
+            notify("success", "Thêm thành công");
+            fetchData();
+            fetchCatList();
         } catch (error) {
+            notify("error", "Thêm thất bại");
             console.log(error);
         }
     };
-
-
-
     const handlePageChange = (page) => {
         const clampedPage = Math.max(1, Math.min(page, totalPages));
         setCurrentPage(clampedPage);

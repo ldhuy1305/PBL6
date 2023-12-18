@@ -10,16 +10,19 @@ import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
 
 
-const Detailorder = () => {
+const Detailorder = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách người dùng");
+    }, []);
     const location = useLocation();
     const row = location.state;
     console.log(location.state);
     const selectedContact = row.contact.find(contact => contact._id === row.defaultContact);
-    const fullname = `${row.firstName} ${row.lastName}`;
+    const fullname = `${row.lastName} ${row.firstName}`;
 
     const [isLoading, setIsLoading] = useState(false);
     return (
-        <Box m="20px 100px">
+        <Box m="20px 300px">
             <Header1 title={"Chi tiết người dùng"} to="/admin/ManageUser" />
             {isLoading ? (
                 <div className={style.isloading}><Loading /></div>
@@ -30,11 +33,14 @@ const Detailorder = () => {
                     gridAutoRows="5vh"
                     gap="5px"
                     mt="30px"
-                    // sx={{ display: "flex", justifyContent: "center", }}
-
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
                 >
                     <Box
-                        gridColumn="span 3"
+                        gridColumn="span 6"
                         gridRow="span 13"
                         display="flex"
                     >
