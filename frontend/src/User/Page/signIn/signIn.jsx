@@ -15,7 +15,7 @@ const Signin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(""); // Initialize navigate
-    const { setIsLoggedIn} = useAuth();
+    const { setIsLoggedIn } = useAuth();
     const [loadingAPI, setLoadingAPI] = useState(false);
     const { setUserName } = useAuth()
     const { setImg } = useAuth()
@@ -34,7 +34,9 @@ const Signin = () => {
             try {
                 setLoadingAPI(true)
                 let res = await loginAPI(email, password);
-
+                if (res.data.data.user.role === 'Shipper') {
+                    setError(t("Chỉ có thể truy cập tài khoản shipper trên APP"));
+                } else {
                     localStorage.setItem("token", res.data.token);
                     localStorage.setItem('user', JSON.stringify(res.data.data.user));
                     setIsLoggedIn(true);
@@ -42,8 +44,8 @@ const Signin = () => {
                     // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
                     setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
                     setImg(res.data.data.user.photo)
-                    if(res.data.data.user.role === 'User') {
-                        if(his) {
+                    if (res.data.data.user.role === 'User') {
+                        if (his) {
                             const user = localStorage.getItem("user");
                             const userData = JSON.parse(user);
                             const cart = localStorage.getItem("cart");
@@ -59,10 +61,10 @@ const Signin = () => {
                         navigate("/store");
                     } else if (res.data.data.user.role === 'Admin') {
                         navigate("/admin");
-                    } else if (res.data.data.user.role === 'Shipper') {
-                        setError(t("Chỉ có thể truy cập tài khoản shipper trên APP"));
                     }
-                
+                }
+
+
                 // window.location.reload()
             } catch (error) {
                 setError(t("error3"));
@@ -118,9 +120,9 @@ const Signin = () => {
                         />
                         <div class="item plus">
 
-                        <a style={{color:'white'}} href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow">
-                            <i class="fab fa-brands fa-google-plus-g"></i>Google
-                        </a>
+                            <a style={{ color: 'white' }} href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow">
+                                <i class="fab fa-brands fa-google-plus-g"></i>Google
+                            </a>
                         </div>
                     </form>
                 </div>
