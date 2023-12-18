@@ -153,8 +153,6 @@ const Product = () => {
             Update(formData);
         }
     };
-
-
     return (
         <Box m="20px 100px">
             <Header1 title={"Cập nhật sản phẩm"} to="/store/product" />

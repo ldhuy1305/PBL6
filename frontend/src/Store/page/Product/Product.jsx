@@ -29,11 +29,11 @@ const Product = ({ setSelected }) => {
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
-    const [status, setStatus] = useState(false)
+    const [status, setStatus] = useState(true)
     const [nameproduct, Setnameproduct] = useState("")
     const handChangestatus = (e) => {
         setStatus(e);
-        fetchData(e);
+        handleStatus(e);
     }
 
 
@@ -115,7 +115,7 @@ const Product = ({ setSelected }) => {
     }
     const handleStatus = async (status) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/${status}/rating`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100&isAvailable=${status}`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -217,7 +217,7 @@ const Product = ({ setSelected }) => {
             },
         },
         {
-            headerName: "Xóa",
+            headerName: "Ẩn sản phẩm",
             headerAlign: "center",
             align: "center",
             renderCell: (params) => {
@@ -307,12 +307,12 @@ const Product = ({ setSelected }) => {
                         <div ref={formRef} className="form-container"
                             style={{ position: "absolute", zIndex: 1000, width: "40%", top: '5%', right: '30%', background: colors.primary[400], border: colors.primary[900] }}>
                             <Box m="20px" >
-                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={fetchData} setOpenNotify={notify} />
+                                <Delete selectedRow={selectedRow} setOpenDelete={setOpenDelete} fetchData={handleStatus} setOpenNotify={notify} Status={!status} />
                             </Box>
                         </div>
                     )
                 }
-                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} fb={fb()}/>
+                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} fb={fb()} />
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {
