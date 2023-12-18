@@ -13,7 +13,10 @@ import { Button } from "@mui/material";
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
-function ManageShipper() {
+function ManageShipper({ setSelected }) {
+    useEffect(() => {
+        setSelected("Cấp phép Shipper");
+    }, []);
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -146,13 +149,6 @@ function ManageShipper() {
             headerName: "Email",
         },
         {
-            flex: 2,
-            field: "phoneNumber",
-            headerAlign: "center",
-            align: "center",
-            headerName: "Số điện thoại",
-        },
-        {
             field: "Detdsil",
             flex: 1,
             headerName: "Xem",
@@ -200,7 +196,7 @@ function ManageShipper() {
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Header2 title="Danh sách người giao hàng chờ xác nhận" />
 
-                <Box>
+                {/* <Box>
                     <div className={style.searchBar}>
                         <input
                             type="text"
@@ -209,7 +205,7 @@ function ManageShipper() {
                         // onChange={(e) => Searchproduct(e.target.value)}
                         />
                     </div>
-                </Box>
+                </Box> */}
                 <Box>
                 </Box>
             </Box>
@@ -229,7 +225,7 @@ function ManageShipper() {
                     <DetailShipper rows={selectedRow} show={true} handleClose={setOpenDetail} />
                 )}
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptShipper={AcceptShipper} />
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptShipper={AcceptShipper} Status={"Cấp phép"} />
                 )}
                 <DataGrid
 

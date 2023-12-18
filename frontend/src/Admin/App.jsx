@@ -31,6 +31,7 @@ const App = () => {
     const tokenString = localStorage.getItem('user');
     const tokenObject = JSON.parse(tokenString);
     localStorage.setItem('_id', tokenObject._id);
+    const [selected, setSelected] = useState("Thống kê");
 
     return (
         <LanguageProvider>
@@ -38,25 +39,25 @@ const App = () => {
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
                     <Helmet>
-                        <title>Quản lý hệ thống</title>
+                        <title>{selected}</title>
                     </Helmet>
                     <div className="app">
-                        <Sidebara isSidebar={isSidebar} />
+                        <Sidebara isSidebar={isSidebar} selected={selected} setSelected={setSelected} />
                         <main className="content">
                             <Topbar setIsSidebar={setIsSidebar} />
                             <Routes>
-                                <Route path="/ManageStore" element={<ManageStore />} />
-                                <Route path="/Acceptstore" element={<Acceptstore />} />
-                                <Route path="/ViewAllShipper" element={<ViewAllShipper />} />
-                                <Route path="/ManageShipper" element={<ManageShipper />} />
-                                <Route path="/" element={<Statistics />} />
-                                <Route path='/ManageUser' element={<ManageUser />} />
-                                <Route path='/Detailstore' element={<Detailstore />} />
-                                <Route path='/DetailAcceptShipper' element={<DetailAcceptShipper />} />
-                                <Route path='/DetailShipper' element={<DetailShipper />} />
-                                <Route path='/DetailAcceptstore' element={<DetailAcceptstore />} />
+                                <Route path="/ManageStore" element={<ManageStore setSelected={setSelected} />} />
+                                <Route path="/Acceptstore" element={<Acceptstore setSelected={setSelected} />} />
+                                <Route path="/ViewAllShipper" element={<ViewAllShipper setSelected={setSelected} />} />
+                                <Route path="/ManageShipper" element={<ManageShipper setSelected={setSelected} />} />
+                                <Route path="/" element={<Statistics setSelected={setSelected} />} />
+                                <Route path='/ManageUser' element={<ManageUser setSelected={setSelected} />} />
+                                <Route path='/Detailstore' element={<Detailstore setSelected={setSelected} />} />
+                                <Route path='/DetailAcceptShipper' element={<DetailAcceptShipper setSelected={setSelected} />} />
+                                <Route path='/DetailShipper' element={<DetailShipper setSelected={setSelected} />} />
+                                <Route path='/DetailAcceptstore' element={<DetailAcceptstore setSelected={setSelected} />} />
                                 <Route path="/logout" element={<Logout />} />
-                                <Route path='/detailuser' element={<DetailUser />} />
+                                <Route path='/detailuser' element={<DetailUser setSelected={setSelected} />} />
                             </Routes>
                         </main>
                         <ToastContainer />

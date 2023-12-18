@@ -11,7 +11,10 @@ import Rating from '@mui/material/Rating';
 import Image from "../../components/Image/image"
 import StarIcon from '@mui/icons-material/Star';
 
-const Detailorder = () => {
+const Detailorder = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách cửa hàng");
+    }, []);
     const location = useLocation();
     const dataFromPreviousPage = location.state;
     const [images, setImages] = useState([]);

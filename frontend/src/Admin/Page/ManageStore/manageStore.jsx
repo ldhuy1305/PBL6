@@ -11,17 +11,19 @@ import Accept from '../../components/Accept/Accept';
 import { useNavigate } from 'react-router-dom';
 import HttpsIcon from '@mui/icons-material/Https';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import SearchIcon from '@mui/icons-material/Search';
 import { toast } from 'react-toastify';
-import { Paper, InputBase, IconButton, MenuItem, Select, FormControl } from "@mui/material";
+import { MenuItem, Select, FormControl } from "@mui/material";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 
-const ManageStore = ({ Catname }) => {
+const ManageStore = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách cửa hàng");
+    }, []);
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
         history('/admin/Detailstore', { state: id });
     };
-
+    const [mes, setMes] = useState("")
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -87,22 +89,21 @@ const ManageStore = ({ Catname }) => {
                 }
             });
             notify("success", "Thành công");
-            fetchData(false);
+            fetchData(status);
         } catch (error) {
             notify("error", "Thất bại");
         }
     };
 
     useEffect(() => {
-        fetchData(false);
+        fetchData(status);
     }, []);
-    const handleopenAcceptClick = (row, status) => {
+    const handleopenAcceptClick = (row, status, mes) => {
+        setMes(mes)
         SetisLocked(status)
         setSelectedRow(row);
         SetOpenAccept(true);
     };
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
     const columns = [
         {
             field: "id", headerName: "ID", headerAlign: "center",
@@ -138,7 +139,6 @@ const ManageStore = ({ Catname }) => {
             },
         },
         {
-
             headerName: "Khóa cửa hàng",
             flex: 1,
             headerAlign: "center",
@@ -147,15 +147,15 @@ const ManageStore = ({ Catname }) => {
                 return (
                     <div>
                         {params.row.isLocked ? (
-                            <Button startIcon={<LockOpenIcon />} onClick={() => handleopenAcceptClick(params.row, true)}></Button>
+                            <Button startIcon={<LockOpenIcon />} onClick={() => handleopenAcceptClick(params.row, true, "Mở Khóa")}></Button>
                         ) : (
-                            <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row, false)}></Button>
+                            <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row, false, "Khóa")}></Button>
                         )}
                     </div>
                 );
-
             },
         },
+
     ];
 
     const rowsWithUniqueIds = data.map((item, index) => {
@@ -182,9 +182,24 @@ const ManageStore = ({ Catname }) => {
                 }}
             >
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} Status={"Khóa"} LockStore={LockStore} isLocked={isLocked} />
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} Status={mes} LockStore={LockStore} isLocked={isLocked} />
                 )}
                 <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="5px">
+                    <Box sx={{ flexBasis: '16%' }}>
+                        <FormControl fullWidth>
+                            <Typography component="legend">Trạng thái</Typography>
+                            <Select
+                                sx={{ alignItems: 'center', height: "40px" }}
+                                value={status}
+                                defaultChecked={true}
+                                onChange={(e) => handChangestatus(e.target.value)}
+                            >
+                                <MenuItem value={false}>Còn hoạt động</MenuItem>
+                                <MenuItem value={true}>Đã Khóa</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                    </Box>
                     <Box sx={{ flexBasis: '50%' }}>
                         {/* <Typography component="legend">Tìm kiếm</Typography>
                         <Paper
@@ -202,21 +217,7 @@ const ManageStore = ({ Catname }) => {
                         </Paper> */}
 
                     </Box>
-                    <Box sx={{ flexBasis: '16%' }}>
-                        <FormControl fullWidth>
-                            <Typography component="legend">Trạng thái</Typography>
-                            <Select
-                                sx={{ alignItems: 'center', height: "40px" }}
-                                value={status}
-                                defaultChecked={true}
-                                onChange={(e) => handChangestatus(e.target.value)}
-                            >
-                                <MenuItem value={false}>Còn hoạt động</MenuItem>
-                                <MenuItem value={true}>Đã Khóa</MenuItem>
-                            </Select>
-                        </FormControl>
 
-                    </Box>
                 </Box>
                 <Box sx={{ height: "70vh", width: '100%' }}>
                     <DataGrid rows={rowsWithUniqueIds} columns={columns}
@@ -232,5 +233,4 @@ const ManageStore = ({ Catname }) => {
         </Box >
     );
 };
-
 export default ManageStore;

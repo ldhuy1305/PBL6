@@ -8,7 +8,7 @@ import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
 import Avatar from '@mui/material/Avatar';
 import Pagination from '@mui/material/Pagination';
-const Detailfeedback = ({ open, handleClose, datafb, name, Fbnumber }) => {
+const Detailfeedback = ({ open, handleClose, datafb, name, Fbnumber, fb }) => {
     console.log(datafb);
     const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
@@ -98,12 +98,12 @@ const Detailfeedback = ({ open, handleClose, datafb, name, Fbnumber }) => {
                                         display: "flex",
                                     }}
                                 >
-                                    <Button>Tất cả</Button>
-                                    <Button onClick={() => Fbnumber(1)}>1 sao</Button>
-                                    <Button onClick={() => Fbnumber(2)}>2 sao</Button>
-                                    <Button onClick={() => Fbnumber(3)}>3 sao</Button>
-                                    <Button onClick={() => Fbnumber(4)}>4 sao</Button>
-                                    <Button onClick={() => Fbnumber(5)}>5 sao</Button>
+                                    <Button onClick={() => Fbnumber('')}>Tất cả</Button>
+                                    <Button onClick={() => Fbnumber(`number=1`)}>1 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=2`)}>2 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=3`)}>3 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=4`)}>4 sao</Button>
+                                    <Button onClick={() => Fbnumber(`number=5`)}>5 sao</Button>
 
 
                                 </Box>

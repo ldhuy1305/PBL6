@@ -24,7 +24,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       style={{
         color: colors.grey[100],
       }}
-      onClick={() => { title !== "Đăng xuất" ? setSelected(title) : setSelected("Falth") }}
+      onClick={() => { title !== "Đăng xuất" ? setSelected(title) : setSelected("FALTH's FoodDelivery") }}
       icon={icon}
     >
       <Typography>{title}</Typography>

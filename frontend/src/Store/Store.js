@@ -49,7 +49,6 @@ const Store = () => {
         const responseData = response.data.data;
         Setidstore(responseData._id);
         localStorage.setItem('_idstore', responseData._id);
-
         console.log(responseData._id);
       } catch (error) {
         console.error('Lỗi khi gọi API:', error);

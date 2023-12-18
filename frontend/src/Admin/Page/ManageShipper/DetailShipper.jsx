@@ -12,6 +12,7 @@ import Image from "../../components/Image/image"
 import StarIcon from '@mui/icons-material/Star';
 
 const DetailShipper = () => {
+
     const location = useLocation();
     const dataFromPreviousPage = location.state;
     const token = localStorage.getItem('token');
@@ -185,9 +186,11 @@ const DetailShipper = () => {
                             <Rating
                                 name="simple-controlled"
                                 value={data.ratingAverage}
+                                readOnly={true}
                                 precision={0.5}
                                 icon={<StarIcon style={{ color: 'yellow' }} />}
                             />
+                            <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>
 
                         </div>
                     </Box>

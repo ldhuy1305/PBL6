@@ -131,7 +131,7 @@ const Product = ({ setSelected }) => {
     }
     const Fbnumber = async (number) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/${idproduct}/rating?number=${number}`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/${idproduct}/rating?${number}`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -312,7 +312,7 @@ const Product = ({ setSelected }) => {
                         </div>
                     )
                 }
-                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} />
+                <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} fb={fb()}/>
                 <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                     initialState={{
                         pagination: {

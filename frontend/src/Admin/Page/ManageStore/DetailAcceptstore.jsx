@@ -10,12 +10,13 @@ import Loading from '../../components/Loading/Loading'
 import Rating from '@mui/material/Rating';
 import Image from "../../components/Image/image"
 
-const Detailorder = () => {
+const Detailorder = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Cấp phép cửa hàng");
+    }, []);
     const location = useLocation();
     const dataFromPreviousPage = location.state;
-    const [images, setImages] = useState([]);
     const token = localStorage.getItem('token');
-    const _id = localStorage.getItem('_id');
     const [data, setdata] = useState([]);
     const [image, setimage] = useState("")
     const [isLoading, setIsLoading] = useState(true);

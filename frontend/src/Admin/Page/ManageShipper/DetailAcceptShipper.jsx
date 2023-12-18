@@ -22,6 +22,7 @@ const DetailShipper = () => {
         setimage(img)
         setOpenModal(true)
     };
+
     function convertUTCtoLocalDateTime(utcDateString) {
         const time = utcDateString;
 
@@ -66,7 +67,7 @@ const DetailShipper = () => {
 
     return (
         <Box m="20px 100px">
-            <Header1 title={"Chi tiết người giao hàng"} to="/admin/ViewAllShipper" />
+            <Header1 title={"Chi tiết người giao hàng"} to="/admin/ManageShipper" />
             {isLoading ? (
                 <div className={style.isloading}><Loading /></div>
             ) : (

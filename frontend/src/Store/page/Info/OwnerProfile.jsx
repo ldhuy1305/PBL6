@@ -1,13 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import style from './Info.css'
 import axios from 'axios';
 import * as yup from "yup";
-import { useTheme, Box } from "@mui/material";
-import { tokens } from "../../theme";
+import {  Box } from "@mui/material";
 import Loading from '../../components/Loading/Loading'
 import Header2 from '../../components/Header/Header2'
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 
 
 

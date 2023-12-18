@@ -10,22 +10,13 @@ import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
 import { useNavigate } from 'react-router-dom';
 
-const Statistics = () => {
-    const history = useNavigate();
-    const redirectToManageStorePage = () => {
-        history('/admin');
-    };
-    const redirectToManageUserPage = () => {
-        history('/admin/ManageUser');
-    };
-    const redirectToManageShipperPage = () => {
-        history('/admin/ManageUser');
-    };
+const Statistics = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Thống kê");
+    }, []);
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [dataorder, setDataorder] = useState([]);
-    const [datachart, setDatachart] = useState([]);
-    const [databestseller, setDatabestseller] = useState([]);
     const [dataLineChart, setDataLineChart] = useState([]);
     const token = localStorage.getItem('token');
     const [isLoading, setIsLoading] = useState(true);
@@ -125,7 +116,7 @@ const Statistics = () => {
                     gap="5px"
                 >
 
-                    
+
                     <Box
                         gridColumn="span 12"
                         gridRow="span 7"
@@ -152,7 +143,7 @@ const Statistics = () => {
                         </div>
 
                     </Box>
-                
+
                     <Box
                         gridColumn="span 12"
                         // backgroundColor={colors.primary[400]}

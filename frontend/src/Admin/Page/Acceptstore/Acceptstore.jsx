@@ -14,11 +14,14 @@ import { useNavigate } from 'react-router-dom';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
-const Acceptstore = () => {
+const Acceptstore = ({ setSelected }) => {
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
         history('/admin/DetailAcceptstore', { state: id });
     };
+    useEffect(() => {
+        setSelected("Cấp phép cửa hàng");
+    }, []);
 
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);

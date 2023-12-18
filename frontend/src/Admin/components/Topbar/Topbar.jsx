@@ -7,8 +7,6 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 const Topbar = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-
-
     return (
         <Box display="flex" justifyContent="space-between" p={2} style={{ boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', }}>
             <Box
@@ -18,13 +16,10 @@ const Topbar = () => {
 
             >
             </Box>
-
-            {/* ICONS */}
             <Box display="flex">
                 <IconButton>
                     <NotificationsOutlinedIcon />
                 </IconButton>
-
                 <IconButton>
                     <PersonOutlinedIcon />
                 </IconButton>
