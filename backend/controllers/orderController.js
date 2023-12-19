@@ -142,17 +142,6 @@ class orderController {
       },
       {
         $lookup: {
-          from: "products",
-          localField: "cart.product",
-          foreignField: "_id",
-          as: "product",
-        },
-      },
-      {
-        $unwind: "$product",
-      },
-      {
-        $lookup: {
           from: "users",
           localField: "shipper",
           foreignField: "_id",
@@ -166,6 +155,18 @@ class orderController {
         },
       },
       {
+        $unwind: "$cart",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "cart.product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
         $addFields: {
           "cart.product.name": "$product.name",
           "cart.product._id": "$product._id",
@@ -174,7 +175,27 @@ class orderController {
         },
       },
       {
+        $group: {
+          _id: "$_id",
+          cart: { $push: "$cart" },
+          storeLocation: { $first: "$storeLocation" },
+          shipCost: { $first: "$shipCost" },
+          totalPrice: { $first: "$totalPrice" },
+          status: { $first: "$status" },
+          user: { $first: "$user" },
+          store: { $first: "$store" },
+          contact: { $first: "$contact" },
+          dateOrdered: { $first: "$dateOrdered" },
+          dateCheckout: { $first: "$dateCheckout" },
+          datePrepared: { $first: "$datePrepared" },
+          shipper: { $first: "$shipper" },
+          dateDeliveried: { $first: "$dateDeliveried" },
+          dateFinished: { $first: "$dateFinished" },
+        },
+      },
+      {
         $project: {
+          product: 1,
           storeLocation: {
             coordinates: { $reverseArray: "$storeLocation.coordinates" },
           },
@@ -203,6 +224,14 @@ class orderController {
             ratingAverage: 1,
             vehicleNumber: 1,
             vehicleType: 1,
+          },
+          cart: {
+            quantity: 1,
+            _id: 1,
+            images: 1,
+            price: 1,
+            name: 1,
+            ratingsAverage: 1,
           },
           cart: 1,
           contact: 1,
@@ -242,7 +271,7 @@ class orderController {
       return next(new appError("Không tìm thấy đơn hàng"), 404);
     res.status(200).json({
       status: "success",
-      data: order[0],
+      data: order,
     });
   });
   // refuse order when time out
