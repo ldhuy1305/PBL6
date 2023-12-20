@@ -13,8 +13,9 @@ module.exports = class Email {
   constructor(user, token, url) {
     this.to = user.email;
     this.firstName = user.firstName;
-    this.from = ` hong anh le`;
-    (this.url = url), (this.token = token);
+    this.from = `FALTH`;
+    this.url = url;
+    this.token = token;
   }
 
   async newTransport() {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mapUtils = require("../utils/mapUtils");
 
 const storeSchema = new Schema(
   {
@@ -30,7 +31,7 @@ const storeSchema = new Schema(
       },
       coordinates: {
         type: [Number],
-        index: "2dshpere",
+        index: "2dsphere",
       },
     },
     openAt: {
@@ -49,16 +50,18 @@ const storeSchema = new Schema(
       type: String,
       required: true,
     },
-    ratingAverage: {
+    ratingsAverage: {
+      type: Number,
+      default: 5.0,
+      min: [1, "Rating must be above 1.0"],
+
+      max: [5, "Rating must be below 5.0"],
+      set: (val) => Math.round(val * 10) / 10,
+    },
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
-    rating: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Rating",
-      },
-    ],
     image: {
       type: String,
       required: [true, "Hình ảnh cửa hàng là bắt buộc"],
@@ -73,16 +76,26 @@ const storeSchema = new Schema(
     },
   },
   {
-    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
-storeSchema.pre("save", async (next) => {
-  const loc = await mapUtils.getGeoCode(this.address);
-  this.location = {
-    type: "Point",
-    coordinates: [loc[0].latitude, loc[0].longitude],
-  };
+storeSchema.pre("save", async function(next) {
+  if (this.isNew || this.isModified("address")) {
+    const loc = await mapUtils.getGeoCode(this.address);
+    this.location = {
+      type: "Point",
+      coordinates: [loc[0].latitude, loc[0].longitude],
+    };
+    console.log(this.location);
+  }
   next();
+});
+// Virtual populate
+storeSchema.virtual("ratings", {
+  ref: "Rating",
+  foreignField: "reference",
+  localField: "_id",
 });
 module.exports = mongoose.model("Store", storeSchema);

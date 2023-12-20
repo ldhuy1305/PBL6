@@ -17,7 +17,7 @@ class ProductController {
     )
       .filter()
       .search()
-      // .sort()
+      .sort()
       // .limitFields()
       .paginate();
     const products = await features.query;
@@ -36,6 +36,7 @@ class ProductController {
     )
       .filter()
       .search()
+      .sort()
       .paginate();
     const products = await features.query;
     res.status(200).json({
@@ -69,7 +70,7 @@ class ProductController {
       if (req.files) {
         req.files.forEach((file) => cloudinary.uploader.destroy(file.filename));
       }
-      next(new appError("Xuất hiện lỗi", 404));
+      next(new appError(err.message, 404));
     }
   });
   viewProduct = handleController.getOne(Product);
@@ -97,11 +98,10 @@ class ProductController {
     let body = req.body;
     let product = await Product.findById({ _id: req.params.id });
     if (!product) return next(new appError("Không thể tìm thấy sản phẩm", 404));
-    let images = product.images;
-
+    let images = [...product.images];
+    let dels = req.body.dels;
     // fillter exits image
     if (req.body.dels) {
-      const dels = [req.body.dels];
       images = images.filter((el) => !dels.includes(el));
     }
     if (req.files) {
@@ -111,25 +111,28 @@ class ProductController {
         images,
       };
     }
-    // let urls = product.images;
+    // let dels = product.images;
     const data = await Product.findByIdAndUpdate({ _id: req.params.id }, body, {
       new: true,
+      runValidators: true,
     })
       .then()
       .catch((err) => {
-        urls = req.files.map((image) => image.path);
+        // urls = req.files.map((image) => image.path);
         next(err);
       });
 
     // delete images
     if (req.body.dels) {
-      let urls = [req.body.dels];
-      for (let i = 0; i < urls.length; i++) {
-        let parts = urls[i].split("/");
+      // let urls = [...req.body.dels];
+      // console.log(urls);
+      for (let i = 0; i < dels.length; i++) {
+        let parts = dels[i].split("/");
         let id =
           parts.slice(parts.length - 2, parts.length - 1).join("/") +
           "/" +
           parts[parts.length - 1].split(".")[0];
+        console.log(id);
         cloudinary.uploader.destroy(id);
       }
     }
@@ -143,7 +146,9 @@ class ProductController {
     const obj = {
       "category.catName": req.query.catName,
     };
-    const features = new ApiFeatures(Product.find(obj), req.query).paginate();
+    const features = new ApiFeatures(Product.find(obj), req.query)
+      .sort()
+      .paginate();
     const products = await features.query;
 
     res.status(200).json({
@@ -183,14 +188,42 @@ class ProductController {
     });
   });
   searchProduct = catchAsync(async (req, res, next) => {
-    const products = await Product.find({
-      name: { $regex: req.query.search, $options: "i" },
-    }).sort("-ratingAverage");
+    // const products = await Product.find({
+    //   name: { $regex: req.query.search, $options: "i" },
+    // }).sort("-ratingAverage");
+    const products = await Product.aggregate([
+      {
+        $match: {
+          name: { $regex: req.query.search, $options: "i" },
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      { $unwind: "$store" },
+      {
+        $project: {
+          name: 1,
+          ratingsAverage: 1,
+          store: {
+            _id: 1,
+            name: 1,
+            address: 1,
+          },
+        },
+      },
+      {
+        $sort: { ratingsAverage: -1 },
+      },
+    ]);
     res.status(200).json({
       status: "success",
-      data: {
-        data: products,
-      },
+      data: products,
     });
   });
   recommendProduct = catchAsync(async (req, res, next) => {});

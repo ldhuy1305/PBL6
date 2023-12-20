@@ -92,7 +92,7 @@ const userSchema = new Schema(
           },
           coordinates: {
             type: [Number],
-            index: "2dshpere",
+            index: "2dsphere",
           },
         },
       },
@@ -136,11 +136,6 @@ userSchema.pre("save", async function(next) {
   next();
 });
 
-userSchema.pre(/^find/, function(next) {
-  this.select("-__t -__v");
-  next();
-});
-
 userSchema.methods.isCorrectPassword = async function(
   userPassword,
   candidatePassword
@@ -158,7 +153,7 @@ userSchema.methods.createSignUpToken = function() {
 
   this.signUpToken = resetTokenHex;
 
-  this.signUpExpires = new Date(Date.now() + 30 * 1000);
+  this.signUpExpires = new Date(Date.now() + 30 * 1000 * 1000);
   return resetToken;
 };
 

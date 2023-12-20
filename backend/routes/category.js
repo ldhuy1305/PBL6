@@ -7,12 +7,11 @@ router
   .get(categoryController.getAllCategory)
   .post(
     authController.protect,
-    authController.restrict("Owner"),
+    authController.restrict("Admin", "Owner"),
     categoryController.uploadCategoryImage,
     categoryController.addCategory
   );
-router
-  .route("/store/:id")
-  .get(authController.protect, categoryController.getAllCategoryByStore);
+router.route("/store/:id").get(categoryController.getAllCategoryByStoreId);
+router.route("/owner/:id").get(categoryController.getAllCategoryByOwnerId);
 
 module.exports = router;
