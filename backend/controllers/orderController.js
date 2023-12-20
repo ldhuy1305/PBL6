@@ -271,7 +271,7 @@ class orderController {
       return next(new appError("Không tìm thấy đơn hàng"), 404);
     res.status(200).json({
       status: "success",
-      data: order,
+      data: order[0],
     });
   });
   // refuse order when time out
