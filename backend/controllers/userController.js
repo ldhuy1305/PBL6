@@ -7,7 +7,7 @@ const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
-
+require("dotenv").config();
 class userController {
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
@@ -99,7 +99,7 @@ class userController {
       latitude: store.location.coordinates[0],
       longitude: store.location.coordinates[1],
     };
-    const data = user.contact.map(function(contact) {
+    const data = user.contact.map(function (contact) {
       console.log(contact);
       const contactCoordinates = {
         latitude: contact.location.coordinates[0],
@@ -110,14 +110,14 @@ class userController {
         contactCoordinates
       );
 
-      const prepareTime = 10; // time expected for preparing
+      const prepareTime = process.env.prepareTime; // time expected for preparing
       distance = (distance / 1000).toFixed(1);
       let deliveryTime = Math.round((distance / 40) * 60 + prepareTime); // 40 is deliverySpeed -- duration = distance / deliverySpeed
 
       //totalPrice
       let shipCost;
-      const baseFee = 16000;
-      const feePerKm = 5000;
+      const baseFee = process.env.baseFee;
+      const feePerKm = process.env.feePerKm;
       distance > 3
         ? (shipCost = baseFee + Math.ceil(distance - 3) * feePerKm)
         : (shipCost = baseFee);
