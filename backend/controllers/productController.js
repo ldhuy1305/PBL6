@@ -17,7 +17,7 @@ class ProductController {
     )
       .filter()
       .search()
-      // .sort()
+      .sort()
       // .limitFields()
       .paginate();
     const products = await features.query;
@@ -36,6 +36,7 @@ class ProductController {
     )
       .filter()
       .search()
+      .sort()
       .paginate();
     const products = await features.query;
     res.status(200).json({
@@ -145,7 +146,9 @@ class ProductController {
     const obj = {
       "category.catName": req.query.catName,
     };
-    const features = new ApiFeatures(Product.find(obj), req.query).paginate();
+    const features = new ApiFeatures(Product.find(obj), req.query)
+      .sort()
+      .paginate();
     const products = await features.query;
 
     res.status(200).json({
@@ -185,14 +188,42 @@ class ProductController {
     });
   });
   searchProduct = catchAsync(async (req, res, next) => {
-    const products = await Product.find({
-      name: { $regex: req.query.search, $options: "i" },
-    }).sort("-ratingAverage");
+    // const products = await Product.find({
+    //   name: { $regex: req.query.search, $options: "i" },
+    // }).sort("-ratingAverage");
+    const products = await Product.aggregate([
+      {
+        $match: {
+          name: { $regex: req.query.search, $options: "i" },
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      { $unwind: "$store" },
+      {
+        $project: {
+          name: 1,
+          ratingsAverage: 1,
+          store: {
+            _id: 1,
+            name: 1,
+            address: 1,
+          },
+        },
+      },
+      {
+        $sort: { ratingsAverage: -1 },
+      },
+    ]);
     res.status(200).json({
       status: "success",
-      data: {
-        data: products,
-      },
+      data: products,
     });
   });
   recommendProduct = catchAsync(async (req, res, next) => {});
