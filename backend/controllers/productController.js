@@ -188,14 +188,39 @@ class ProductController {
     });
   });
   searchProduct = catchAsync(async (req, res, next) => {
-    // const products = await Product.find({
-    //   name: { $regex: req.query.search, $options: "i" },
-    // }).sort("-ratingAverage");
+    const page = +req.query.page || 1;
+    const limit = +req.query.limit || 10;
+    // obj of product for match
+    let objProduct = {
+      isAvailable: true,
+      name: { $regex: req.query.search, $options: "i" },
+    };
+
+    if (req.query.catName) {
+      const cats = req.query.catName.split(",");
+      objProduct = {
+        ...objProduct,
+        "category.catName": { $in: cats },
+      };
+    }
+    // obj of store for match
+    let objStore = {
+      "store.isLocked": false,
+    };
+    if (req.query.city)
+      objStore = {
+        ...objStore,
+        "store.address": { $regex: new RegExp(req.query.city, "i") },
+      };
+
+    if (req.query.district) {
+      let district = req.query.district.split(",");
+      district = district.map((dis) => new RegExp(dis, "i"));
+      objStore = { ...objStore, "store.address": { $in: district } };
+    }
     const products = await Product.aggregate([
       {
-        $match: {
-          name: { $regex: req.query.search, $options: "i" },
-        },
+        $match: objProduct,
       },
       {
         $lookup: {
@@ -206,6 +231,9 @@ class ProductController {
         },
       },
       { $unwind: "$store" },
+      {
+        $match: objStore,
+      },
       {
         $project: {
           name: 1,
@@ -220,9 +248,17 @@ class ProductController {
       {
         $sort: { ratingsAverage: -1 },
       },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
     ]);
+
     res.status(200).json({
       status: "success",
+      length: products.length,
       data: products,
     });
   });
