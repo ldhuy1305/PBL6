@@ -29,7 +29,6 @@ const RatingShipper = ({ show, handleClose, shipper, ratings, setRatings }) => {
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
@@ -74,9 +73,7 @@ const RatingShipper = ({ show, handleClose, shipper, ratings, setRatings }) => {
                         ContentType: 'multipart/form-data',
                     }
                 }); 
-                // setRatings([...ratings, response.data]) 
-                setRatings((prevRatings) => [response.data, ...prevRatings]);
-                // console.log(response)             
+                setRatings((prevRatings) => [response.data, ...prevRatings]);            
                 setNotify("Đánh giá thành công!")
                 setOpenNotify(true)
                 handleClose()

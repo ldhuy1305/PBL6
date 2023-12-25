@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import DeleteConfirmationModal from '../../Components/Modal/deleteDanger';
 import ModalUpdateAddress from '../../Components/Modal/modalUpdateAddress';
 import { useNavigate } from "react-router-dom";
-import { getUserInfo } from '../../services/userServices';
 import { useLogout } from '../../services/authContext';
 import { useTranslation } from 'react-i18next';
 import Notify from '../../Components/Notify.jsx/Notify';
@@ -78,7 +77,6 @@ const UpdateAddress = () => {
                 const token = localStorage.getItem("token");
                 const userData = JSON.parse(user);
                 if (token) {
-                    // const userData = await getUserInfo(token);
                     setUserName(userData.firstName + " " + userData.lastName)
                     setImg(userData.photo)
                     setContacts(userData.contact)

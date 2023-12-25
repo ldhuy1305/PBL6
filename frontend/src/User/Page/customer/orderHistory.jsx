@@ -33,7 +33,6 @@ const OrderHistory = () => {
             onChange: function (selectedDates) {
                 const selectedDate = selectedDates[0];
                 setFromDate(selectedDate);
-                console.log('From Date Selected:', selectedDate);
             },
         });
         flatpickr(toDateRef.current, {
@@ -42,27 +41,22 @@ const OrderHistory = () => {
             onChange: function (selectedDates) {
                 const selectedDate = selectedDates[0];
                 setToDate(selectedDate);
-                console.log('To Date Selected:', selectedDate);
             },
         });
         const transaction = async () => {
             const queryString = window.location.search;
             if (queryString) {
-                console.log('Trang có query parameters:', queryString);
                 try {
                     const response = await createPayment(queryString);
                 } catch (error) {
                     console.log(error)
                 }
-            } else {
-                console.log('Trang không có query parameters');
             }
         }
         const getOrder = async () => {
             try {
                 setIsLoading(true)
                 const response1 = await getAllOderByUserId()
-                console.log(response1.data)
                 setItems(response1.data)
             } catch (error) {
 
@@ -87,7 +81,6 @@ const OrderHistory = () => {
         try {
             setIsLoading(true)
             const response = await getOderByFilter(from, to, selectedStatus, page)
-            console.log(response.data)
             setItems(response.data)
         } catch (error) {
             console.log("Sai:", error)
@@ -114,7 +107,6 @@ const OrderHistory = () => {
         try {
             setIsLoadingModal(true)
             const response = await viewOrder(id);
-            console.log('Lấy thông tin thành công: ', response.data)
             setOrderDetail({
                 ...response.data
             })
@@ -163,7 +155,6 @@ const OrderHistory = () => {
             try {
                 setIsLoading(true)
                 const response = await getOderByFilter(from, to, selectedStatus, page)
-                console.log(response.data)
                 setItems(response.data)
             } catch (error) {
                 console.log("Sai:", error)
@@ -201,7 +192,6 @@ const OrderHistory = () => {
         try {
             setIsLoadingModal(true)
             const response = await getShipper(shipperID)
-            console.log('Lấy thông tin thành công: ', response.data)
             setShipper({
                 ...response
             })

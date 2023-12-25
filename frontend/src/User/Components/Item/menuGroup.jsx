@@ -11,19 +11,6 @@ const MenuGroup = ({ category, openModal, store, search, isWithinOperatingHours 
         openModal()
     }
     const [dishes, setDishes] = useState([])
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setIsLoading(true)
-                const products = await getProductByStoreId(store._id, category.catName, '')
-                setDishes(products.data.data)
-            } catch (error) {
-                console.log("Lỗi khi lấy thông tin món ăn", error)
-            }
-            setIsLoading(false)
-        }
-        fetchData();
-    }, [])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,7 +24,7 @@ const MenuGroup = ({ category, openModal, store, search, isWithinOperatingHours 
             setIsLoading(false)
         }
         fetchData();
-    }, [search])
+    }, [search, category])
 
 
 

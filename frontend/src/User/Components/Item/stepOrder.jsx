@@ -4,7 +4,6 @@ import moment from 'moment-timezone';
 const StepOrder = ({orderDetail}) => {
     const countStep = () => {
         const count = ['dateOrdered', 'dateCheckout', 'datePrepared', 'dateDeliveried', 'dateFinished'].filter(field => orderDetail[field]).length;
-        console.log(count)
         return count;
     }
     return (

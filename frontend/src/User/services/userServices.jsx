@@ -1,16 +1,16 @@
 import axios from "axios";
 const moment = require('moment');
-
+const url = "https://falth-api.vercel.app";
 //Auth
 const loginAPI = async (email, password) => {
-  return axios.post("https://falth-api.vercel.app/api/auth/login", { email, password });
+  return axios.post(`${url}/api/auth/login`, { email, password });
 }
 
 //Info user
 
 const getUserInfo = async (token) => {
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
-  const api = `https://falth-api.vercel.app/api/user/${decodedToken.id}`
+  const api = `${url}/api/user/${decodedToken.id}`
 
   const response = await axios.get(api, {
     headers: {
@@ -22,7 +22,7 @@ const getUserInfo = async (token) => {
 
 const getDefaultContact = async (token) => {
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
-  const api = `https://falth-api.vercel.app/api/user/get-default-contact/${decodedToken.id}`
+  const api = `${url}/api/user/get-default-contact/${decodedToken.id}`
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -36,7 +36,7 @@ const addContact = async (e, formData) => {
   try {
     const token = localStorage.getItem("token");
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    const response = await axios.put(`https://falth-api.vercel.app/api/user/add-contact/${decodedToken.id}`, formData, {
+    const response = await axios.put(`${url}/api/user/add-contact/${decodedToken.id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -52,7 +52,7 @@ const updateDefaultContact = async (e, id) => {
   try {
     const token = localStorage.getItem("token");
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    await axios.post(`https://falth-api.vercel.app/api/user/set-default-contact/${decodedToken.id}/${id}`, {}, {
+    await axios.post(`${url}/api/user/set-default-contact/${decodedToken.id}/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -71,7 +71,7 @@ const updateContact = async (e, formData, id, isChecked) => {
     if(isChecked) {
       
     }
-    const response = await axios.patch(`https://falth-api.vercel.app/api/user/${decodedToken.id}/contact/${id}`, formData, {
+    const response = await axios.patch(`${url}/api/user/${decodedToken.id}/contact/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -86,7 +86,7 @@ const deleteContact = async (id) => {
   try {
     const token = localStorage.getItem("token");
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    const api = `https://falth-api.vercel.app/api/user/del-contact/${decodedToken.id}/${id}`
+    const api = `${url}/api/user/del-contact/${decodedToken.id}/${id}`
     const response = await axios.delete(api, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -101,7 +101,7 @@ const updateAvatar = async (data) => {
   try {
     const token = localStorage.getItem("token");
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    const api = `https://falth-api.vercel.app/api/user/${decodedToken.id}/photo`
+    const api = `${url}/api/user/${decodedToken.id}/photo`
     const response = await axios.patch(api, data, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -117,20 +117,20 @@ const updateAvatar = async (data) => {
 
 //Info Store
 const getStoreById = async (id) => {
-  const api = `https://falth-api.vercel.app/api/store/${id}`
+  const api = `${url}/api/store/${id}`
   const response = await axios.get(api);
   return response.data;
 }
 
 //Category
 const getAllCategory = async () => {
-  const api = `https://falth-api.vercel.app/api/category`
+  const api = `${url}/api/category`
   const response = await axios.get(api);
   return response.data;
 }
 
 const getAllCategoryByStoreId = async (id) => {
-  const api = `https://falth-api.vercel.app/api/category/store/${id}`
+  const api = `${url}/api/category/store/${id}`
   const response = await axios.get(api);
   return response.data;
 }
@@ -138,7 +138,7 @@ const getAllCategoryByStoreId = async (id) => {
 //Product
 const getProductByStoreId = async (storeId, catName, search) => {
   const token = localStorage.getItem("token");
-  const api = `https://falth-api.vercel.app/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
+  const api = `${url}/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -153,7 +153,7 @@ const getFeeShip = async (idStore) => {
   const token = localStorage.getItem("token");
   const userData = JSON.parse(user);
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/user/${userData._id}/store/${idStore}`, {
+    const response = await axios.get(`${url}/api/user/${userData._id}/store/${idStore}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -184,7 +184,7 @@ const placeOrder = async (totalPrice, shipCost, contactId) => {
     shipCost: shipCost,
   };
   try {
-    const response = await axios.post(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}/store/${cart.idStore}`, orderData, {
+    const response = await axios.post(`${url}/api/order/user/${decodedToken.id}/store/${cart.idStore}`, orderData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -201,7 +201,7 @@ const getAllOderByUserId = async () => {
   const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
   const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice&page=1`, {
+    const response = await axios.get(`${url}/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice&page=1`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -218,7 +218,7 @@ const getOderByFilter = async (fromDate, toDate, status, page) => {
   }
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
-  const api = `https://falth-api.vercel.app/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=${page}&start=${fromDate}&end=${toDate}`
+  const api = `${url}/api/order/user/${decodedToken.id}?status=${status}&fields=status,dateOrdered,totalPrice&sort=-createdAt&limit=10&page=${page}&start=${fromDate}&end=${toDate}`
   try {
     const response = await axios.get(api, {
       headers: {
@@ -234,7 +234,7 @@ const getOderByFilter = async (fromDate, toDate, status, page) => {
 const viewOrder = async (id) => {
   const token = localStorage.getItem("token");
   try {
-    const response = await axios.get(`https://falth-api.vercel.app/api/order/${id}`, {
+    const response = await axios.get(`${url}/api/order/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -247,7 +247,7 @@ const viewOrder = async (id) => {
 
 const createPayment = async (query) => {
   const token = localStorage.getItem("token");
-  const api = `https://falth-api.vercel.app/api/order/after-checkout/payment${query}`;
+  const api = `${url}/api/order/after-checkout/payment${query}`;
   try {
     const response = await axios.get(api , {
       headers: {
@@ -262,7 +262,7 @@ const createPayment = async (query) => {
 
 const cancelOrder = async (id) => {
   const token = localStorage.getItem("token");
-  const api = `https://falth-api.vercel.app/api/order/${id}`;
+  const api = `${url}/api/order/${id}`;
   try {
     const response = await axios.patch(api , {
       headers: {
@@ -279,9 +279,9 @@ const cancelOrder = async (id) => {
 const getRatingOfStore = async (storeId, number) => {
   let api;
   if (number) {
-    api = `https://falth-api.vercel.app/api/store/${storeId}/rating/?number=${number}`
+    api = `${url}/api/store/${storeId}/rating/?number=${number}`
   } else {
-    api = `https://falth-api.vercel.app/api/store/${storeId}/rating`
+    api = `${url}/api/store/${storeId}/rating`
   }
   try {
     const response = await axios.get(api);
@@ -294,7 +294,7 @@ const getRatingOfStore = async (storeId, number) => {
 const addRatingForStore = async (id, ratingData) => {
   const token = localStorage.getItem("token");
   try {
-    const response = await axios.post(`https://falth-api.vercel.app/api/store/${id}/rating`, ratingData, {
+    const response = await axios.post(`${url}/api/store/${id}/rating`, ratingData, {
       headers: {
         Authorization: `Bearer ${token}`,
         ContentType: 'multipart/form-data',
@@ -309,7 +309,7 @@ const addRatingForStore = async (id, ratingData) => {
 const updateRatingForStore = async (id, ratingData) => {
   const token = localStorage.getItem("token");
   try {
-    const response = await axios.patch(`https://falth-api.vercel.app/api/rating/${id}`, ratingData, {
+    const response = await axios.patch(`${url}/api/rating/${id}`, ratingData, {
       headers: {
         Authorization: `Bearer ${token}`,
         ContentType: 'multipart/form-data',
@@ -326,9 +326,9 @@ const getRatingOfProduct = async (productID, number) => {
     const token = localStorage.getItem("token");
     let api;
   if (number) {
-    api = `https://falth-api.vercel.app/api/product/${productID}/rating/?number=${number}`
+    api = `${url}/api/product/${productID}/rating/?number=${number}`
   } else {
-    api = `https://falth-api.vercel.app/api/product/${productID}/rating`
+    api = `${url}/api/product/${productID}/rating`
   }
     const response = await axios.get(api, {
       headers: {
@@ -344,7 +344,7 @@ const getRatingOfProduct = async (productID, number) => {
 const addRatingForProduct = async (id, ratingData) => {
   const token = localStorage.getItem("token");
   try {
-    const response = await axios.post(`https://falth-api.vercel.app/api/product/${id}/rating`, ratingData, {
+    const response = await axios.post(`${url}/api/product/${id}/rating`, ratingData, {
       headers: {
         Authorization: `Bearer ${token}`,
         ContentType: 'multipart/form-data',
@@ -358,7 +358,7 @@ const addRatingForProduct = async (id, ratingData) => {
 const deleteRating = async (id) => {
   try {
     const token = localStorage.getItem("token");
-    const api = `https://falth-api.vercel.app/api/rating/${id}`
+    const api = `${url}/api/rating/${id}`
     const response = await axios.delete(api, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -375,9 +375,9 @@ const getRatingOfShipper = async (shipperID, number) => {
     const token = localStorage.getItem("token");
     let api;
   if (number) {
-    api = `https://falth-api.vercel.app/api/shipper/${shipperID}/rating/?number=${number}`
+    api = `${url}/api/shipper/${shipperID}/rating/?number=${number}`
   } else {
-    api = `https://falth-api.vercel.app/api/shipper/${shipperID}/rating`
+    api = `${url}/api/shipper/${shipperID}/rating`
   }
     const response = await axios.get(api, {
       headers: {
@@ -395,7 +395,7 @@ const getRatingOfShipper = async (shipperID, number) => {
 const getShipper = async (id) => {
   try {
     const token = localStorage.getItem("token");
-    const api = `https://falth-api.vercel.app/api/shipper/${id}`
+    const api = `${url}/api/shipper/${id}`
     const response = await axios.get(api, {
       headers: {
         Authorization: `Bearer ${token}`

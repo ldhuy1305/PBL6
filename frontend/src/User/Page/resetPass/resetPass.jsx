@@ -26,7 +26,6 @@ const ResetPass = () => {
                     password: newPass,
                     passwordConfirm: confirm
                 };
-                console.log(resetPasswordData)
                 const response = await axios.post(`https://falth-api.vercel.app/api/auth/reset-password/${email}`, resetPasswordData)
                 navigate("/signin")
             } catch (error) {

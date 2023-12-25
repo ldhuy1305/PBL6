@@ -130,12 +130,13 @@
     "cartMess1": "Phí giao hàng sẽ được hiển thị sau khi bạn xem xét đơn hàng",
     "order": "Đặt đơn",
     "signinToOrder": "Đăng nhập để đặt đơn",
-    "store": "Quán ăn",
+    "store": "Cửa hàng",
     "ratingInFALTH": "đánh giá trên FALTH",
     "menu": "Thực đơn",
     "searchDish": "Tìm món", 
 
     "specialRequest" : "Yêu cầu đặc biệt",
   "optional" : "không bắt buộc",
-  "confirm" : "Xác nhận"
+  "confirm" : "Xác nhận", 
+  "dish" : "Món ăn"
 }

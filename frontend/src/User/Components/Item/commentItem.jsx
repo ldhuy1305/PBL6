@@ -12,7 +12,6 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
     const handleZoom = (link) => {
         setLink(link);
         setVisible(true);
-        console.log(store, product)
     }
 
     const [liked, setLiked] = useState(false);

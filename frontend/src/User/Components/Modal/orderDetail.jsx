@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import { useTranslation } from "react-i18next";
 import RatingProduct from "./ratingProduct";
@@ -17,11 +17,9 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
         ratingAverage: 2
     });
     const handleShowModal = (product) => {
-        console.log(product)
         setProduct({ ...product.product })
         setShowModal(true);
         setVisible(false)
-        console.log("Mở modal")
     };
     const handleCloseModal = () => {
         setShowModal(false);
@@ -38,6 +36,16 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
             handleShowModal(product)
         }
     }
+    const [totalGood, setTotalGood] = useState(0)
+    useEffect(() => {
+        let temp = 0; 
+    if (orderDetail && orderDetail.cart) {
+        orderDetail.cart.forEach((dish) => {
+            temp = temp + (dish.quantity * dish.price); 
+        });
+    }
+    setTotalGood(temp);
+      }, [orderDetail]);
     return (
         <div>
 
@@ -112,6 +120,8 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                                         {(dish.quantity * dish.price).toLocaleString('vi-VN')}đ
                                                     </div>
                                                     <div class="history-table-cell history-table-col7">
+                                                    {orderDetail.status === "Finished" && (
+
                                                         <button
                                                             class="font-weight-bold history-table-status gray pointer"
                                                             style={{ backgroundColor: '#0288d1', color: 'white' }}
@@ -120,6 +130,7 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                                         >
                                                             {t('rating')}
                                                         </button>
+                                                    )}
                                                     </div>
 
                                                 </div>
@@ -127,9 +138,12 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                         </div>
                                         <div class="KQyCj0" aria-live="polite">
                                             <h3 class="Tc17Ac XIEGGF BcITa9">Tổng tiền hàng</h3>
-                                            <div class="Tc17Ac mCEcIy BcITa9">{(orderDetail.totalPrice - orderDetail.shipCost).toLocaleString('vi-VN')}₫</div>
+                                            <div class="Tc17Ac mCEcIy BcITa9">{(totalGood).toLocaleString('vi-VN')}₫</div>
+                                            {/* <div class="Tc17Ac mCEcIy BcITa9">{(orderDetail.totalPrice - orderDetail.shipCost).toLocaleString('vi-VN')}₫</div> */}
                                             <h3 class="Tc17Ac XIEGGF RY9Grr">Phí vận chuyển</h3>
                                             <div class="Tc17Ac mCEcIy RY9Grr">{(orderDetail.shipCost).toLocaleString('vi-VN')}₫</div>
+                                            <h3 class="Tc17Ac XIEGGF RY9Grr2">Giảm giá</h3>
+                                            <div class="Tc17Ac mCEcIy RY9Grr2">-{(totalGood + orderDetail.shipCost - orderDetail.totalPrice).toLocaleString('vi-VN')}₫</div>
                                             <h3 class="Tc17Ac XIEGGF n3vdfL">Tổng thanh toán:</h3>
                                             <div class="Tc17Ac kC0GSn mCEcIy n3vdfL">{orderDetail && orderDetail.totalPrice ? orderDetail.totalPrice.toLocaleString('vi-VN') : 'N/A'}₫</div>
                                         </div>
