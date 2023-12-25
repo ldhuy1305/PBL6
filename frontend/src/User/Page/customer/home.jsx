@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React    , {useState, useEffect, useRef } from 'react';
 import StoreItem from '../../Components/Item/storeItem';
 import { useCity } from '../../services/CityContext';
 import { useTranslation } from 'react-i18next';
@@ -113,9 +112,11 @@ const Home = () => {
   ? selectedAreas.map(area => area.length < 8 ? area : area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
   : ''; 
   const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
-    fetch(api)
+  console.log(api)  
+  fetch(api)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data) 
         setStores(data);
         setIsLoading(false)
       })

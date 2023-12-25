@@ -11,7 +11,6 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
     const handleIncrease = () => {
-        // console.log(product)
         if (quantity < 10) {
             setQuantity(quantity + 1);
         }

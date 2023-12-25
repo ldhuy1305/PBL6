@@ -12,7 +12,6 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
     const [openNotify, setOpenNotify] = useState(false)
     const [message, setMessage] = useState('')
     const handleShowRating = () => {
-        console.log(orderStatus)
         if(orderStatus !== 'Finished') {
             setMessage('Đơn hàng chưa được hoàn thành, không thể đánh giá!');
             setOpenNotify(true)
@@ -94,6 +93,8 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                             </div>
                                         </div>
                                         <div class="relative" style={{ cursor: 'pointer' }}>
+                                        {orderStatus === "Finished" && (
+
                                             <button
                                                 type="button"
                                                 class="btn btn-danger btn-width-long"
@@ -102,6 +103,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                             >
                                                 Đánh giá
                                             </button>
+                                        )} 
                                         </div>
                                     </form>
 

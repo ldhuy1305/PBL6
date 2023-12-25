@@ -29,7 +29,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
@@ -75,7 +74,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                 try {
 
                     setIsLoading(true);
-                    console.log(store)
                     const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -113,11 +111,9 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                         }
                       );
                       const updated = response.data.data
-                      console.log(response.data.data)
                       const updatedRatings = Object.values(ratings).map((oldRating) =>
                       oldRating._id === rating._id ? updated : oldRating
                     );
-                    console.log(updatedRatings)
                     setRatings(updatedRatings);
                     setNotify("Chỉnh sửa đánh giá thành công!")
                     setOpenNotify(true)
@@ -136,7 +132,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                     images: [],
                 });
                 setDels([]);
-                // console.log(product)
             }
         }
 
@@ -265,7 +260,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
                                                                                     const [deletedImage] = newImages.splice(index, 1);
-                                                                                    console.log(deletedImage)
                                                                                     if (!(deletedImage instanceof File)) {
 
                                                                                         setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);

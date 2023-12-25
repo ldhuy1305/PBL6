@@ -29,7 +29,6 @@ const RatingStore = ({ show, handleClose, store }) => {
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
@@ -48,7 +47,6 @@ const RatingStore = ({ show, handleClose, store }) => {
             ...formData,
             [name]: value,
         });
-        console.log(store)
     };
 
     const [dels, setDels] = useState([]);
@@ -73,7 +71,6 @@ const RatingStore = ({ show, handleClose, store }) => {
             try {
 
                 setIsLoading(true);
-                console.log(store)
                 const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -216,7 +213,6 @@ const RatingStore = ({ show, handleClose, store }) => {
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
                                                                                     const [deletedImage] = newImages.splice(index, 1);
-                                                                                    console.log(deletedImage)
                                                                                     if (!(deletedImage instanceof File)) {
 
                                                                                         setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);

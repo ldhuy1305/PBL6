@@ -18,7 +18,6 @@ const RatingProduct = ({ show, handleClose, product}) => {
     const [notify, setNotify] = useState('')
 
     const handleCloseRating = () => {
-        console.log(product)
         handleClose()
         setFormData({
             nnumber: '',
@@ -65,7 +64,6 @@ const RatingProduct = ({ show, handleClose, product}) => {
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            console.log(product)
             try {
                 setIsLoading(true);
                 const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {

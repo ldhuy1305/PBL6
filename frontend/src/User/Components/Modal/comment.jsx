@@ -63,7 +63,6 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
         if (store) {
             try {
                 const response = await getRatingOfStore(store._id, number)
-                console.log(response.data);
                 setRatings(response.data)
             } catch (error) {
                 console.log(error)
@@ -71,7 +70,6 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
         } else if (product) {
             try {
                 const response = await getRatingOfProduct(product._id, number)
-                console.log(response.data);
                 setRatings(response.data)
             } catch (error) {
                 console.log(error)
@@ -79,7 +77,6 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
         } else if (shipper) {
             try {
                 const response = await getRatingOfShipper(shipper._id, number)
-                console.log(response.data);
                 setRatings(response.data)
             } catch (error) {
                 console.log(error)
@@ -90,7 +87,6 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
     const [page, setPage] = useState(1);
 
     const handlePageClick = (action) => {
-        // console.log(data)
         if (action === 'prev' && page > 1) {
             setPage(page - 1);
         } else if (action === 'next' && page < 5) {

@@ -23,8 +23,9 @@ const [productsCount, setProductsCount] = useState(0);
 const updateProductsCount = (count) => {
   setProductsCount(count);
 };
+const [selectSearch, setSelectSearch] = useState("store");
   return (
-    <CityContext.Provider value={{ selectedLocation, updateLocation, key, updateKey, cart, setCart, productsCount, setProductsCount}}>
+    <CityContext.Provider value={{ selectedLocation, updateLocation, key, updateKey, cart, setCart, productsCount, setProductsCount, selectSearch, setSelectSearch}}>
       {children}
     </CityContext.Provider>
   );
