@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import { useTranslation } from "react-i18next";
 import '../../assets/css/productDetail2.css'
 import minus from '../../assets/img/minus.png'
@@ -12,7 +11,6 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     const { t } = useTranslation()
     const [quantity, setQuantity] = useState(1)
     const handleIncrease = () => {
-        // console.log(product)
         if (quantity < 10) {
             setQuantity(quantity + 1);
         }
@@ -209,7 +207,7 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
                                     <div class="menu-restaurant-container">
                                         <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                            <Comment product={product} ratings={ratings} idUser={idUser} setRatings={setRatings} />
+                                            <Comment product={product} ratings={ratings} idUser={idUser} setRatings={setRatings}/>
 
                                         </div>
 

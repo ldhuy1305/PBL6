@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
 import { updateRatingForStore } from "../../services/userServices";
-const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product }) => {
+const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product, shipper }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -30,7 +29,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
@@ -76,7 +74,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                 try {
 
                     setIsLoading(true);
-                    console.log(store)
                     const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -114,11 +111,9 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                         }
                       );
                       const updated = response.data.data
-                      console.log(response.data.data)
                       const updatedRatings = Object.values(ratings).map((oldRating) =>
                       oldRating._id === rating._id ? updated : oldRating
                     );
-                    console.log(updatedRatings)
                     setRatings(updatedRatings);
                     setNotify("Chỉnh sửa đánh giá thành công!")
                     setOpenNotify(true)
@@ -137,7 +132,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                     images: [],
                 });
                 setDels([]);
-                // console.log(product)
             }
         }
 
@@ -174,14 +168,21 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
     };
     return (
         <div>
-            <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg">
-                <Modal.Header>
-                    <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
-                    >x</span>
+            <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg" >
+            
+            <Modal.Title style={{ textAlign: 'center', margin: '10px 0 10px 0', color:'white', fontSize:'1.25rem', fontWeight:'700' }}>Cập nhật đánh giá
+                    <button onClick={handleClose} style={{ backgroundColor: '#cf2127', float: 'right', marginRight: '10px', padding: '3px 10px 5px 10px', borderRadius: '5px', color: 'white', fontWeight:'700' }}>
+                        x
+                    </button>
+                </Modal.Title>
+                {/* <Modal.Header>
                     <div class="modal-header" style={{ color: 'white' }}>Cập nhật đánh giá</div>
-                </Modal.Header>
-                <Modal.Body>
-                    <div class="modal-dialog modal-noti" role="document">
+                    <button onClick={handleCloseRating} style={{ backgroundColor: '#cf2127', float: 'right', borderRadius: '5px', color: 'white' }}>
+                        x
+                    </button>
+                </Modal.Header> */}
+                <Modal.Body >
+                    <div class="modal-dialog modal-noti" role="document" >
                         <div class="modal-content">
 
                             <div class="modal-body">
@@ -209,13 +210,13 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={store ? store.image : product.images[0]}
+                                                                src={store ? store.image : (product ? product.images[0] : shipper.photo)}
                                                                 alt='avatar'
                                                             />
-                                                            <div class="shipper-name" style={{ margin: '0' }}>{store ? store.name :  product.name }</div>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{store ? store.name :  (product ? product.name : shipper.lastName+shipper.firstName) }</div>
                                                             <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
                                                                 <div className="shopee-rating-stars__stars">
-                                                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
+                                                                    {renderStars(store ? store.ratingsAverage : (product ? product.ratingsAverage : shipper.ratingsAverage))}
                                                                 </div>
                                                             </div>
                                                             <div >
@@ -233,7 +234,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn. Đánh giá và bình luận của bạn sẽ được giữ dưới chế độ ẩn danh."
+                                                                placeholder="Chia sẻ đánh giá của bạn."
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
@@ -259,7 +260,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
                                                                                     const [deletedImage] = newImages.splice(index, 1);
-                                                                                    console.log(deletedImage)
                                                                                     if (!(deletedImage instanceof File)) {
 
                                                                                         setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
@@ -299,7 +299,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                             </div>
                         </div>
                     </div>
-                    <div class="modal-backdrop fade under-modal"></div>
+                    <div class="modal-backdrop fade under-modal show"></div>
                 </Modal.Body>
             </Modal>
             {openNotify && (<Notify message={notify} setOpenNotify={setOpenNotify} handleClose={handleCloseNotify} />)}

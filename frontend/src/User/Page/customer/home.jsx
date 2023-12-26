@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React    , {useState, useEffect, useRef } from 'react';
 import StoreItem from '../../Components/Item/storeItem';
 import { useCity } from '../../services/CityContext';
 import { useTranslation } from 'react-i18next';
@@ -80,7 +79,6 @@ const Home = () => {
 
   useEffect(() => {
     setSelectedAreas([]);
-    console.log(selectedLocation)
     handleCityChange2(selectedLocation);
   }, [selectedLocation]);
 
@@ -111,13 +109,14 @@ const Home = () => {
     setPage(1)
     const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
     const selectedDistrict = selectedAreas.length > 0
-      ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
-      : '';
-    const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
+  ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
+  : ''; 
+  const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
     console.log(api)
     fetch(api)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data) 
         setStores(data);
         setIsLoading(false)
       })
@@ -142,9 +141,9 @@ const Home = () => {
     setStores({ data: [] })
     const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
     const selectedDistrict = selectedAreas.length > 0
-      ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
-      : '';
-    const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=${page}&search=${key}`
+  ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
+  : ''; 
+  const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=${page}&search=${key}`
     console.log(api)
     fetch(api)
       .then((response) => response.json())
@@ -220,16 +219,12 @@ const Home = () => {
 
               </div>
             </div>
-            <div class="float-right">
-              {/* <div class="result">200 Kết quả</div> */}
+            {/* <div class="float-right">
               <select class="filter-sort">
-                {/* <option value="8">Đúng nhất</option> */}
                 <option value="3">{t("homeSort")}</option>
                 <option value="36">{t("homeSort2")}</option>
-                {/* <option value="35">Bán chạy</option> */}
-                {/* <option value="37">Giao nhanh</option> */}
               </select>
-            </div>
+            </div> */}
           </div>
           <div class="tag-filter">
             {key !== "" && (
@@ -303,12 +298,6 @@ const Home = () => {
             onClick={() => setPage(4)}><button class="" >4</button></li>
           <li className={`${page === 5 ? 'active' : ''}`}
             onClick={() => setPage(5)}><button class="" >5</button></li>
-          {/* <li className={`${page === 6 ? 'active' : ''}`}
-            onClick={() => setPage(6)}><button class="" >6</button></li>
-          <li className={`${page === 7 ? 'active' : ''}`}
-            onClick={() => setPage(7)}><button class="" >7</button></li>
-          <li className={`${page === 8 ? 'active' : ''}`}
-            onClick={() => setPage(8)}><button class="" >8</button></li> */}
           <li class="" onClick={() => handlePageClick('next')}>
             <button class="no_hover"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
           </li>

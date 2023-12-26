@@ -9,12 +9,12 @@ const ViewComment = () => {
     const location = useLocation()
     const [isLoading, setIsLoading] = useState(false)
     const storeId = location.state.store.store._id;
+    const isWithinOperatingHours = location.state.isWithinOperatingHours;
     const [ratings, setRatings] = useState([])
     const [idUser, setIdUser] = useState('')
     const [store, setStore] = useState({
         name: '',
         image:'',
-
     });
     const [ratingsAverage, setRatingsAverage] = useState(0)
     useEffect(() => {
@@ -31,7 +31,6 @@ const ViewComment = () => {
                 const storeData = await getStoreById(storeId)
                 setStore({...storeData.data})
                 setRatings({ ...data.data })
-                console.log(data.data)
             } catch (error) {
                 console.error("Lỗi khi lấy thông tin đánh giá:", error);
             }
@@ -39,8 +38,7 @@ const ViewComment = () => {
         }
         fetchData();
     }, []);
-
-
+    
     return (
         <div>
             <div class="wrapper">
@@ -80,7 +78,10 @@ const ViewComment = () => {
                             </div>
                             <div class="status-restaurant">
                                 <div class="opentime-status">
-                                    <span class="stt online" title={t("storeActive")}></span>
+                                <span
+                            className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                            title={isWithinOperatingHours ? `${t("storeActive")}`: `${t("storeClose")}`}
+                        ></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>

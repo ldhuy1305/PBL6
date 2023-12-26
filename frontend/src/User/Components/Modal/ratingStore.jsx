@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
 
-const RatingStore = ({ show, handleClose, handleReturn, store }) => {
+const RatingStore = ({ show, handleClose, store }) => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
@@ -30,7 +29,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
@@ -49,7 +47,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
             ...formData,
             [name]: value,
         });
-        console.log(store)
     };
 
     const [dels, setDels] = useState([]);
@@ -74,7 +71,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
             try {
 
                 setIsLoading(true);
-                console.log(store)
                 const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -191,7 +187,7 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn. Đánh giá và bình luận của bạn sẽ được giữ dưới chế độ ẩn danh."
+                                                                placeholder="Chia sẻ đánh giá của bạn."
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
@@ -217,7 +213,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
                                                                                     const [deletedImage] = newImages.splice(index, 1);
-                                                                                    console.log(deletedImage)
                                                                                     if (!(deletedImage instanceof File)) {
 
                                                                                         setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
@@ -245,7 +240,6 @@ const RatingStore = ({ show, handleClose, handleReturn, store }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-cancel" onClick={handleReturn}>{t('back')}</button>
                                                             <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import '../../assets/css/pcmall.css'
 import CommentItem from "../Item/commentItem";
-
-const Comment = ({ store, ratings, idUser, setRatings, product }) => {
+import { getRatingOfProduct, getRatingOfShipper, getRatingOfStore } from "../../services/userServices";
+const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
     // const [data, setData] = useState(store !== null ? store : product);
     const renderStars = (rating) => {
-        return Array(5).fill(0).map((_, index) => {          
+        return Array(5).fill(0).map((_, index) => {
             // const starValue = index + 1;
             const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
             const isHalfFilled = percentFilled > 0 && percentFilled < 100;
@@ -34,15 +34,59 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
     };
     const [activeFilter, setActiveFilter] = useState('Tất cả');
 
-    const handleFilterClick = (filter) => {
+    const handleFilterClick = async (filter) => {
         setActiveFilter(filter);
-        // console.log(store, product)
+        let number
+        switch (filter) {
+            case 'Tất Cả':
+                number = null;
+                break;
+            case '1 Sao':
+                number = '1';
+                break;
+            case '2 Sao':
+                number = '2';
+                break;
+            case '3 Sao':
+                number = '3';
+                break;
+            case '4 Sao':
+                number = '4';
+                break;
+            case '5 Sao':
+                number = '5';
+                break;
+            default :
+                number = null;
+                break;
+        }
+        if (store) {
+            try {
+                const response = await getRatingOfStore(store._id, number)
+                setRatings(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+        } else if (product) {
+            try {
+                const response = await getRatingOfProduct(product._id, number)
+                setRatings(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+        } else if (shipper) {
+            try {
+                const response = await getRatingOfShipper(shipper._id, number)
+                setRatings(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
     };
 
     const [page, setPage] = useState(1);
 
     const handlePageClick = (action) => {
-        // console.log(data)
         if (action === 'prev' && page > 1) {
             setPage(page - 1);
         } else if (action === 'next' && page < 5) {
@@ -60,7 +104,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                         <div class="product-rating-overview__briefing">
                             <div class="product-rating-overview__score-wrapper">
                                 <span class="product-rating-overview__rating-score">
-                                {store ? store.ratingsAverage : product.ratingsAverage}
+                                    {store ? store.ratingsAverage : (product ? product.ratingsAverage : shipper.ratingsAverage)}
                                 </span>
                                 <span class="product-rating-overview__rating-score-out-of">
                                     / 5
@@ -68,7 +112,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                             </div>
                             <div class="shopee-rating-stars product-rating-overview__stars">
                                 <div className="shopee-rating-stars__stars">
-                                    {renderStars(store ? store.ratingsAverage : product.ratingsAverage)}
+                                    {renderStars(store ? store.ratingsAverage : (product ? product.ratingsAverage : shipper.ratingsAverage))}
                                 </div>
                             </div>
                         </div>
@@ -99,20 +143,19 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                                 className={`product-rating-overview__filter ${activeFilter === '1 Sao' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('1 Sao')}
                             >1 Sao</div>
-                            <div
+                            {/* <div
                                 className={`product-rating-overview__filter ${activeFilter === 'Có Bình luận' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('Có Bình luận')}
                             >Có Bình luận</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === 'Có hình ảnh' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('Có hình ảnh')}
-                            >Có hình ảnh</div>
+                            >Có hình ảnh</div> */}
                         </div>
                     </div>
                     <div class="product-ratings__list" style={{ opacity: '1' }}>
                         <div class="shopee-product-comment-list">
                             {Object.values(ratings).map((rating) => (
-
                                 <CommentItem
                                     like={6}
                                     rating={rating}
@@ -120,8 +163,9 @@ const Comment = ({ store, ratings, idUser, setRatings, product }) => {
                                     idUser={idUser}
                                     ratings={ratings}
                                     setRatings={setRatings}
-                                    store={store ? store  : null}
-                                    product={product ? product  : null}
+                                    store={store ? store : null}
+                                    product={product ? product : null}
+                                    shipper={shipper ? shipper : null}
                                 />
                             ))}
                         </div>

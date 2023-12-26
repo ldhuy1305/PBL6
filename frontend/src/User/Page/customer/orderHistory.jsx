@@ -4,14 +4,14 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAllOderByUserId, viewOrder, createPayment, getOderByFilter } from '../../services/userServices';
-import RatingShipper from '../../Components/Modal/ratingShipper';
+import { getAllOderByUserId, viewOrder, createPayment, getOderByFilter, getShipper } from '../../services/userServices';
 import RatingStore from '../../Components/Modal/ratingStore';
 import OrderDetail from '../../Components/Modal/orderDetail';
 import OrderHisItem from '../../Components/Item/orderHisItem';
 import Skeleton from '../../Components/Skeleton/skeleton'
 import LoadingModal from '../../Components/Loading/Loading';
 import moment from 'moment-timezone';
+import ShipperInfoModal from '../../Components/Modal/shipperInfo';
 const OrderHistory = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -27,46 +27,36 @@ const OrderHistory = () => {
     const [fromDate, setFromDate] = useState(oneMonthAgo);
     const [toDate, setToDate] = useState(currentDate);
     useEffect(() => {
-
-    // Khởi tạo flatpickr cho fromDate
-    flatpickr(fromDateRef.current, {
-      dateFormat: 'd-m-Y',
-      defaultDate: oneMonthAgo,
-      onChange: function (selectedDates) {
-        const selectedDate = selectedDates[0];
-        setFromDate(selectedDate);
-        console.log('From Date Selected:', selectedDate);
-      },
-    });
-
-    // Khởi tạo flatpickr cho toDate
-    flatpickr(toDateRef.current, {
-      dateFormat: 'd-m-Y',
-      defaultDate: currentDate,
-      onChange: function (selectedDates) {
-        const selectedDate = selectedDates[0];
-        setToDate(selectedDate);
-        console.log('To Date Selected:', selectedDate);
-      },
-    });
+        flatpickr(fromDateRef.current, {
+            dateFormat: 'd-m-Y',
+            defaultDate: oneMonthAgo,
+            onChange: function (selectedDates) {
+                const selectedDate = selectedDates[0];
+                setFromDate(selectedDate);
+            },
+        });
+        flatpickr(toDateRef.current, {
+            dateFormat: 'd-m-Y',
+            defaultDate: currentDate,
+            onChange: function (selectedDates) {
+                const selectedDate = selectedDates[0];
+                setToDate(selectedDate);
+            },
+        });
         const transaction = async () => {
             const queryString = window.location.search;
             if (queryString) {
-                console.log('Trang có query parameters:', queryString);
                 try {
                     const response = await createPayment(queryString);
                 } catch (error) {
                     console.log(error)
                 }
-            } else {
-                console.log('Trang không có query parameters');
             }
         }
         const getOrder = async () => {
             try {
                 setIsLoading(true)
                 const response1 = await getAllOderByUserId()
-                console.log(response1.data)
                 setItems(response1.data)
             } catch (error) {
 
@@ -80,50 +70,43 @@ const OrderHistory = () => {
     const handleStatusChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedStatus(selectedValue);
-      };
+    };
     const handleSearch = async () => {
         const from = moment(fromDate).format('DD-MM-YYYY');
         const to = moment(toDate).format('DD-MM-YYYY');
         setItems([])
-        if(selectedStatus === 'All') {
+        if (selectedStatus === 'All') {
             setSelectedStatus('')
         }
         try {
             setIsLoading(true)
             const response = await getOderByFilter(from, to, selectedStatus, page)
-            console.log(response.data)
-                setItems(response.data)
+            setItems(response.data)
         } catch (error) {
-            console.log("Sai:",error)
+            console.log("Sai:", error)
         }
         setIsLoading(false)
     }
 
-    
+
 
 
     const [showModal, setShowModal] = useState(false);
-    const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
-    const [orderId, setOrderId] = useState('')
     const [storeName, setStoreName] = useState('')
     const [orderDetail, setOrderDetail] = useState({
         shipCost: '',
         cart: []
     })
-    const [item, setItem] = useState(null)
     const [store, setStore] = useState({
         name: '',
         ratingAverage: 2
     })
 
     const handleShowModal = async (id, storeName) => {
-        console.log(storeName)
-        setOrderId(id)
         try {
             setIsLoadingModal(true)
             const response = await viewOrder(id);
-            console.log('Lấy thông tin thành công: ', response.data)
             setOrderDetail({
                 ...response.data
             })
@@ -138,30 +121,14 @@ const OrderHistory = () => {
         setShowModal(false);
     };
 
-    const handleShowModal1 = (item) => {
-        setItem({ ...item })
-        setShowModal1(true);
-        console.log("Mở modal")
-    };
-    const handleCloseModal1 = () => {
-        setShowModal1(false);
-    };
     const handleShowModal2 = (storInfo) => {
-        console.log(storInfo)
         setStore({ ...storInfo })
-        setShowModal1(false); // Tắt modal 1
         setShowModal2(true); // Hiển thị modal 2
     };
 
     const handleCloseModal2 = () => {
         setShowModal2(false); // Tắt modal 2
-        setShowModal1(false); // Tắt modal 1
     };
-    const handleReturnModal1 = () => {
-        setShowModal2(false); // Tắt modal 2
-        setShowModal1(true); // Tắt modal 1
-    };
-
 
     const handleBack = () => {
         navigate("/user/profile")
@@ -182,21 +149,64 @@ const OrderHistory = () => {
             const from = moment(fromDate).format('DD-MM-YYYY');
             const to = moment(toDate).format('DD-MM-YYYY');
             setItems([])
-            if(selectedStatus === 'All') {
+            if (selectedStatus === 'All') {
                 setSelectedStatus('')
             }
             try {
                 setIsLoading(true)
                 const response = await getOderByFilter(from, to, selectedStatus, page)
-                console.log(response.data)
-                    setItems(response.data)
+                setItems(response.data)
             } catch (error) {
-                console.log("Sai:",error)
+                console.log("Sai:", error)
             }
             setIsLoading(false)
         }
         getData()
     }, [page]);
+
+    const [showShipperDetailModal, setShowShipperModal] = useState(false)
+    const [shipper, setShipper] = useState({
+        ratingsAverage: 1,
+        photo: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        vehicleNumber: "",
+        vehicleType: "",
+        vehicleLicense: "",
+        licenseNumber: "",
+        contact: [
+            {
+                phoneNumber: "",
+                address: ""
+            }
+        ],
+    })
+    const [ratings, setRatings] = useState([])
+    const [userId, setUserId] = useState('')
+    const [orderStatus, setOrderStatus] = useState('')
+    const handleShowShipper = async (shipperID, orderStatus) => {
+        setOrderStatus(orderStatus)
+        const user = JSON.parse(localStorage.getItem('user'));
+        setUserId(user._id)
+        try {
+            setIsLoadingModal(true)
+            const response = await getShipper(shipperID)
+            setShipper({
+                ...response
+            })
+            setRatings({
+                ...response.ratings
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        setIsLoadingModal(false)
+        setShowShipperModal(true)
+    }
+    const handleCloseShipper = () => {
+        setShowShipperModal(false)
+    }
 
     return (
         <div>
@@ -212,16 +222,15 @@ const OrderHistory = () => {
                                 <div class="text-nowrap">
                                     <span class="filter-table-label">{t("status")}</span>
                                     <select value={selectedStatus}
-        onChange={handleStatusChange} name="" class="form-control filter-table-input">
-                                        <option value="All" selected="">All</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Waiting">Waiting</option>
-                                        <option value="Preparing">Preparing</option>
-                                        <option value="Ready">Ready</option>
-                                        <option value="Refused">Refused</option>
-                                        <option value="Delivering">Delivering</option>
-                                        <option value="Cancelled">Cancelled</option>
-                                        <option value="Finished">Finished</option>
+                                        onChange={handleStatusChange} name="" class="form-control filter-table-input">
+                                        <option value="All" selected="">Tất cả</option>
+                                        <option value="Pending">Đang xử lý</option>
+                                        <option value="Waiting">Đang chờ nhận đơn</option>
+                                        <option value="Preparing">Đang chuẩn bị</option>
+                                        <option value="Refused">Từ chối</option>
+                                        <option value="Delivering">Đang giao</option>
+                                        <option value="Cancelled">Đã hủy</option>
+                                        <option value="Finished">Đã hoàn thành</option>
                                     </select>
                                 </div>
                             </div>
@@ -262,7 +271,7 @@ const OrderHistory = () => {
                                 <div class="history-table-cell history-table-col6">
                                     {t("total")}
                                 </div>
-                                <div class="history-table-cell history-table-col7">
+                                <div class="history-table-cell history-table-col7" style={{textAlign:'center'}}>
                                     {t("status")}
                                 </div>
                                 <div class="history-table-cell history-table-col8">
@@ -278,7 +287,7 @@ const OrderHistory = () => {
                                 </div>
                             ))}
                             {items.map((item, index) => (
-                                <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal1} />
+                                <OrderHisItem item={item} index={index + 1} handleShowDetail={handleShowModal} handleShowRating={handleShowModal2} handleShowShipperModal={handleShowShipper} />
                             ))}
 
                         </div>
@@ -308,8 +317,8 @@ const OrderHistory = () => {
             </div>
 
             <OrderDetail show={showModal} handleClose={handleCloseModal} orderDetail={orderDetail} storeName={storeName} />
-            <RatingShipper show={showModal1} handleClose={handleCloseModal1} handleShowRatingStore={handleShowModal2} item={item} />
-            <RatingStore show={showModal2} handleClose={handleCloseModal2} handleReturn={handleReturnModal1} store={store} />
+            <RatingStore show={showModal2} handleClose={handleCloseModal2} store={store} />
+            <ShipperInfoModal show={showShipperDetailModal} handleClose={handleCloseShipper}  shipper={shipper} idUser={userId} ratings={ratings} setRatings={setRatings} orderStatus={orderStatus}/>
             {isLoadingModal && (<LoadingModal />)}
         </div>
     )

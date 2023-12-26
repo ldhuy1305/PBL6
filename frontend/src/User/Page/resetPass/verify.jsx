@@ -43,7 +43,6 @@ const Verify = () => {
             try {
                 // Gọi API đăng ký người dùng
                 const response = await axios.post(`https://falth-api.vercel.app/api/owner/${email}`, {signUpToken: otp});
-                console.log(response)
                 const id = response.data.doc._id
                 navigate('/signUpStore', {state: {id:id}})
             } catch (error) {

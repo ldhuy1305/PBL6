@@ -6,6 +6,7 @@ const catchAsync = require("../utils/catchAsync");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
+require("dotenv").config();
 const ApiFeatures = require("../utils/ApiFeatures");
 const cloudinary = require("cloudinary").v2;
 const fileUploader = require("../utils/uploadImage");
@@ -125,14 +126,14 @@ class userController {
         contactCoordinates
       );
 
-      const prepareTime = 10; // time expected for preparing
-      distance = (distance / 1000).toFixed(1);
+      const prepareTime = +process.env.prepareTime; // time expected for preparing
+      distance = +(distance / 1000).toFixed(1);
       let deliveryTime = Math.round((distance / 40) * 60 + prepareTime); // 40 is deliverySpeed -- duration = distance / deliverySpeed
 
       //totalPrice
       let shipCost;
-      const baseFee = 16000;
-      const feePerKm = 5000;
+      const baseFee = +process.env.baseFee;
+      const feePerKm = +process.env.feePerKm;
       distance > 3
         ? (shipCost = baseFee + Math.ceil(distance - 3) * feePerKm)
         : (shipCost = baseFee);

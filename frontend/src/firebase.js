@@ -1,18 +1,43 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
-import { getFirestore } from "firebase/firestore";
-import { getDatabase } from "firebase/database";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCm5WXRUAC2H8zWksMuRFgRkdXEyI8qupo",
-  authDomain: "api-notify-70b0b.firebaseapp.com",
-  projectId: "api-notify-70b0b",
-  storageBucket: "api-notify-70b0b.appspot.com",
-  messagingSenderId: "778661969135",
-  appId: "1:778661969135:web:e7bb463b3b6bfe76c52f1a"
+  apiKey: "AIzaSyB4mmA1ix4T9rNiy5FRB7uIIAF2dJ7IJlU",
+  authDomain: "pbl6-7b029.firebaseapp.com",
+  projectId: "pbl6-7b029",
+  storageBucket: "pbl6-7b029.appspot.com",
+  messagingSenderId: "1071831459730",
+  appId: "1:1071831459730:web:0f07d6737836dcdb85c34b",
+  measurementId: "G-41H2GC587X",
 };
-const app = initializeApp(firebaseConfig);
-export const database = getDatabase(app);
-export const auth = getAuth();
-export const storage = getStorage();
-export const db = getFirestore()
+
+const firebaseApp = initializeApp(firebaseConfig);
+const messaging = getMessaging(firebaseApp);
+
+export const fetchToken = (setTokenFound) => {
+  return getToken(messaging, {
+    vapidKey:
+      "BObLc02v28h9krcWIjMz_eESRAXLMEG4f5Ty9S1MuTT-bqkAfkGwSpRhalZDmqF_GczF6r_ZFT6xFHX7O8jphUg",
+  })
+    .then((currentToken) => {
+      if (currentToken) {
+        console.log("current token for client: ", currentToken);
+        setTokenFound(true);
+      } else {
+        console.log(
+          "No registration token available. Request permission to generate one."
+        );
+        setTokenFound(false);
+      }
+    })
+    .catch((err) => {
+      console.log("An error occurred while retrieving token. ", err);
+    });
+};
+
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    onMessage(messaging, (payload) => {
+      resolve(payload);
+    });
+  });

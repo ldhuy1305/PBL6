@@ -7,9 +7,6 @@ import MenuGroup from "../../Components/Item/menuGroup";
 import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
-import { ChatContext } from "../../../context/ChatContext";
-import { AuthContext } from "../../../context/AuthContext";
-import Chat from "../../../Store/components/Chat/Chat";
 const StoreDetail = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
@@ -39,7 +36,6 @@ const StoreDetail = () => {
         closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
 
         setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
-        console.log(openTime, currentTime, closeTime)
     }, [store.openAt, store.closeAt]);
     useEffect(() => {
 
@@ -57,6 +53,14 @@ const StoreDetail = () => {
 
         createChat(store.ownerId);
         fetchData();
+    }, [store]);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token) {
+            setIsLoggedIn(true)
+        }
     }, []);
 
     const [activeCategory, setActiveCategory] = useState('');
@@ -65,9 +69,18 @@ const StoreDetail = () => {
         setActiveCategory(categoryId);
     };
     const handleComment = () => {
-        navigate("/home/storeComment", { state: { store: { store } } });
+            navigate("/home/storeComment", { state: { store: { store } } });
     }
 
+    const discounts = [
+        { _id: "1", content: "Giảm 20k", storeId: "store1" },
+        { _id: "2", content: "Giảm 30k", storeId: "store2" },
+        { _id: "3", content: "Giảm 40k", storeId: "store3" }
+    ]
+    const [selectedDiscount, setSelectedDiscount] = useState("");
+    const handleSelectDiscount = (id) => {
+        setSelectedDiscount(id)
+    }
     return (
         <div>
             <div class="wrapper">
@@ -106,6 +119,9 @@ const StoreDetail = () => {
                             </div>
                             <div class="status-restaurant">
                                 <div class="opentime-status">
+                                    <span
+                                        className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                                        title={isWithinOperatingHours ? `${t("storeActive")}` : `${t("storeClose")}`}></span>
                                     <span
                                         className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
                                         title={isWithinOperatingHours ? `${t("storeActive")}` : 'Đóng cửa'}></span>
@@ -167,6 +183,23 @@ const StoreDetail = () => {
                                     </div>
                                 </div>
                                 <div class="menu-restaurant-detail">
+                                    <div class="promotions-order">
+                                        {discounts.map((discount) => (
+                                            <div id="promotion-item" class="promotion-item">
+                                                <div>
+                                                    <img
+                                                        src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
+                                                        alt=""
+                                                        class="icon-promotion"
+                                                    />
+                                                    <div class= 'content' style={{fontSize:'14px'}}>
+                                                        {discount.content}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                    </div>
 
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
@@ -236,11 +269,11 @@ const StoreDetail = () => {
                         </div>
 
                     </div>
+                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} />)}
 
                 </div>
 
             </div>
-            <Chat />
             {
                 showModal && (
                     <CartModal show={showModal} handleClose={closeModal} handleOpen={openModal} />

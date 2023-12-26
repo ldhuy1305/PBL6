@@ -3,7 +3,6 @@ var router = express.Router();
 const orderController = require("../controllers/orderController");
 const authController = require("../controllers/authController");
 router.get("/after-checkout/payment", orderController.payment);
-router.post("/notice", orderController.notice);
 router.use(authController.protect);
 router.post(
   "/user/:userId/store/:storeId",
@@ -27,6 +26,12 @@ router.get(
   orderController.refuseOrderWhenTimeOut,
   orderController.getOrdersByUserId
 );
+router.get(
+  "/shipper/:shipperId",
+  authController.restrict("Shipper"),
+  orderController.refuseOrderWhenTimeOut,
+  orderController.getOrdersByShipperId
+);
 router.put(
   "/:id/cancel",
   authController.restrict("User"),
@@ -36,5 +41,10 @@ router.put(
   "/:id/shipper/:shipperId",
   authController.restrict("Shipper"),
   orderController.changeStatus
+);
+router.post(
+  "/:orderId/store/:storeId/notice",
+  authController.restrict("Owner"),
+  orderController.notice
 );
 module.exports = router;

@@ -11380,8 +11380,14 @@ button.close {
   display: flex;
 }
 
-.now-list-restaurant .content-promotion .fas {
-  color: #f4d516;
+.now-list-restaurant .content-promotion .online {
+  /* background-color: #6cc942; */
+  color: #329900;
+}
+
+.now-list-restaurant .content-promotion .offline {
+  /* background-color: #6d6f71; */
+  color: #6d6f71;
 }
 
 .opening-hours {
@@ -18599,7 +18605,7 @@ span.flatpickr-weekday {
 
 .history-table-status {
   display: block;
-  width: 90px;
+  width: 100%;
   height: 26px;
   line-height: 26px;
   padding: 0 10px;
@@ -18635,7 +18641,7 @@ button.history-table-status.gray {
 }
 
 .history-customer-order .history-table-scroll {
-  height: 300px;
+  height: 200px;
   overflow-y: auto;
 }
 
@@ -20448,6 +20454,11 @@ button.history-table-status.gray {
   padding-right: 5px;
 }
 
+.now-list-restaurant .content-promotion .star{
+  color: #ffdb00;
+}
+
+
 .now-branch .banner-brand {
   position: relative;
   height: 300px;
@@ -20828,7 +20839,8 @@ button.history-table-status.gray {
   color: #464646;
   font-weight: 700;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  /* white-space: nowrap */
   overflow: hidden;
   margin-bottom: 4px;
   line-height: 33px;
@@ -21181,7 +21193,7 @@ button.history-table-status.gray {
 }
 
 .now-menu-restaurant {
-  width: 845px;
+  width: 800px;
   margin-bottom: 20px;
   min-height: 226px;
   float: left;
@@ -21230,7 +21242,7 @@ button.history-table-status.gray {
 .menu-restaurant-category {
   border: 1px solid #ebebeb;
   padding: 15px 5px 15px 15px;
-  width: 235px;
+  width: 190px;
   margin-right: 10px;
   background: #fff;
   border-radius: 4px;
@@ -24007,7 +24019,7 @@ select.required-data {
   flex: 1;
   height: 40px;
   border-radius: 3px;
-  margin-left: 54px;
+  /* margin-left: 54px; */
   background-color: white;
   display: flex;
   align-items: center;
@@ -24031,6 +24043,7 @@ select.required-data {
 }
 
 .header__search-history {
+  max-height: 300px;
   position: absolute;
   top: calc(100% + 2px);
   left: 0;
@@ -24039,7 +24052,8 @@ select.required-data {
   border-radius: 3px;
   box-shadow: 0 0 5px rgb(188, 185, 185);
   display: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 999;
 }
 
@@ -24065,7 +24079,7 @@ select.required-data {
   background-color: #fafafa;
 }
 
-.header__search-history-item a {
+.header__search-history-item button {
   text-decoration: none;
   font-size: 0.9rem;
   color: #333;
@@ -24094,7 +24108,11 @@ select.required-data {
   color: #fff;
 }
 
-.header__search-input:focus~.header__search-history {
+/* .header__search-input:focus~.header__search-history {
+  display: block;
+} */
+.header__search-input:focus~.header__search-history,
+.header__search-history:hover {
   display: block;
 }
 
@@ -24468,3 +24486,110 @@ select.required-data {
 .no_hover:hover {
   background-color: #fff !important;
 }
+
+.default_contact {
+  color: #cf2127;
+}
+
+.pqpMRq {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -12px;
+}
+
+.kbCWJr {
+  align-items: center;
+  display: flex;
+  cursor: default;
+  position: relative;
+  color: rgba(0,0,0,.54);
+  max-width: 400px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  margin-bottom: 12px;
+  margin-left: 12px;
+}
+
+input[type=checkbox], input[type=radio] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.mq9gMc {
+  opacity: 0;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+.wb33QF {
+  background: #ee4d2d;
+  border-color: #ee4d2d;
+}
+
+.ciVq4v {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,.14);
+  text-align: center;
+  box-shadow: inset 0 2px 0 0 rgba(0,0,0,.02);
+  margin-right: 8px;
+  box-sizing: initial;
+}
+
+.wb33QF:before {
+  border-color: #fff;
+}
+
+.ciVq4v:before {
+  position: absolute;
+  content: "";
+  height: 5px;
+  width: 9px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg);
+  left: 3px;
+  top: 3px;
+}
+
+.QRcode {
+  position: absolute;
+  top: 48px;
+  right: 10px;
+  width: 315px;
+  background-image: url(../img/qrcode_background.png);
+  color: #fff;
+  text-align: center;
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+}
+
+/* Tùy chỉnh giao diện của hộp chọn */
+.header__search-select {
+  padding: 5px; /* Độ dày của viền trong hộp chọn */
+  font-size: 14px; /* Kích thước chữ */
+  border: 1px solid #ccc; /* Màu viền */
+  border-radius: 5px; /* Độ cong viền */
+  background-color: #fff; /* Màu nền */
+  width: 100px; /* Độ rộng của hộp chọn */
+  outline: none; /* Loại bỏ đường viền khi hộp chọn được focus */
+  margin-left: 4px;
+}
+
+
+

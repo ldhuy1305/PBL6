@@ -45,6 +45,12 @@ const ratingSchema = new Schema(
 );
 
 ratingSchema.index({ reference: 1, user: 1 }, { unique: true });
+ratingSchema.post("save", async function() {
+  await this.populate({
+    path: "user",
+    select: "firstName lastName photo",
+  }).execPopulate();
+});
 
 ratingSchema.pre(/^find/, function(next) {
   this.populate({

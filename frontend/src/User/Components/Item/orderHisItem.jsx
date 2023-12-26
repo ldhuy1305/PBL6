@@ -6,7 +6,7 @@ import { getStoreById, cancelOrder } from "../../services/userServices";
 import { useNavigate } from "react-router-dom";
 import CancelModal from "../Modal/cancelModal";
 import Notify from "../Notify.jsx/Notify";
-const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
+const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleShowShipperModal }) => {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
@@ -33,7 +33,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
         setShow(false)
     }
     const handleCancel = async () => {
-        if(item.status !== 'Waiting') {
+        if (item.status !== 'Waiting') {
             setMessage('Đơn hàng không thể hủy!')
             setOpenNotify(true)
         } else {
@@ -63,6 +63,38 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 return 'black';
         }
     };
+
+    const getStatus = (status) => {
+        switch (status) {
+            case 'Pending':
+                return 'Đang xử lý';
+            case 'Cancelled':
+                return 'Đã hủy'; // Replace with your desired color for Cancelled
+            case 'Waiting':
+                return 'Đang chờ nhận đơn'; // Replace with your desired color for Waiting
+            case 'Preparing':
+                return 'Đang chuẩn bị'; // Replace with your desired color for Preparing
+            case 'Ready':
+                return 'Đã sẵn sàng'; // Replace with your desired color for Ready
+            case 'Delivering':
+                return 'Đang giao'; // Replace with your desired color for Delivering
+            case 'Finished':
+                return 'Đã hoàn thành';
+            case 'Refused':
+                return 'Từ chối';
+            default:
+                return '';
+        }
+    };
+
+    const handleShowModalRatingStore = () => {
+        if (item.status !== 'Finished') {
+            setMessage('Đơn hàng chưa được hoàn thành, không thể đánh giá!');
+            setOpenNotify(true)
+        } else {
+            handleShowRating(item.store)
+        }
+    }
     return (
         <div>
             <div class="history-table-row">
@@ -85,7 +117,7 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                 </div>
                 <div className="history-table-cell history-table-col5">
                     {orderItem.shipper ? (
-                        <strong className="d-block text-truncate">{orderItem.shipper}</strong>
+                        <strong className="d-block text-truncate" style={{ cursor: 'pointer' }} onClick={() => handleShowShipperModal(orderItem.shipper._id, orderItem.status)}>{orderItem.shipper.lastName + " " + orderItem.shipper.firstName}</strong>
                     ) : (
                         <span></span>
                     )}
@@ -97,10 +129,10 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                     </div> */}
                 </div>
                 <div class="history-table-cell history-table-col7">
-                    <div class="font-weight-bold history-table-status" 
-                    style={{ color: getStatusColor(orderItem.status) }}
+                    <div class="font-weight-bold history-table-status"
+                        style={{ color: getStatusColor(orderItem.status) }}
                     >
-                        {orderItem.status}
+                        {getStatus(orderItem.status)}
                     </div>
                 </div>
                 <div class="history-table-cell history-table-col8">
@@ -109,25 +141,29 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating }) => {
                     </button>
                 </div>
                 <div class="history-table-cell history-table-col8">
-                    <button
+                    {item.status === "Waiting" && (<button
                         class="font-weight-bold history-table-status gray pointer"
                         style={{ backgroundColor: '#e81f1b', color: 'white' }}
                         onClick={handleCancel}
                     >
                         {t('cancel')}
-                    </button>
-                    <button
-                        class="font-weight-bold history-table-status gray pointer"
-                        style={{ backgroundColor: '#0288d1', color: 'white' }}
-                        onClick={() => handleShowRating(item)}
-                    >
-                        {t('rating')}
-                    </button>
+                    </button>)}
+                    {item.status === "Finished" && (
+                        <button
+                            class="font-weight-bold history-table-status gray pointer"
+                            style={{ backgroundColor: '#0288d1', color: 'white' }}
+                            onClick={handleShowModalRatingStore}
+                        >
+                            {t('rating')}
+                        </button>
+                    )}
+
                 </div>
             </div>
-            {isLoading && (<LoadingModal/>)}
-            <CancelModal show={show} handleClose={handleClose} orderItem={orderItem} setOrderItem={setOrderItem}/>
-            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify}/>)}
+            {isLoading && (<LoadingModal />)}
+            <CancelModal show={show} handleClose={handleClose} orderItem={orderItem} setOrderItem={setOrderItem} />
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify} />)}
+
         </div>
     )
 }

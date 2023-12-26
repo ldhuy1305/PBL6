@@ -3,6 +3,7 @@ const Order = require("../models/order");
 const Transaction = require("../models/transaction");
 const Store = require("../models/store");
 const User = require("../models/userModel");
+const Shipper = require("../models/shipper");
 const catchAsync = require("../utils/catchAsync");
 const mapUtils = require("../utils/mapUtils");
 const appError = require("../utils/appError");
@@ -26,7 +27,7 @@ class orderController {
       shipCost,
       contact,
       status: "Pending",
-      dateOrdered: new Date(Date.now() + 7 * 60 * 60 * 1000),
+      dateOrdered: new Date(Date.now() + process.env.UTC * 60 * 60 * 1000),
     });
     process.env.TZ = "Asia/Ho_Chi_Minh";
 
@@ -90,7 +91,9 @@ class orderController {
     let order = await Order.findById(vnp_Params.vnp_TxnRef);
     if (order.status == "Pending") {
       order.status = "Waiting";
-      order.dateCheckout = new Date(Date.now() + 7 * 60 * 60 * 1000);
+      order.dateCheckout = new Date(
+        Date.now() + process.env.UTC * 60 * 60 * 1000
+      );
     }
     await order.save();
     res.status(200).json({
@@ -141,15 +144,30 @@ class orderController {
       },
       {
         $lookup: {
+          from: "users",
+          localField: "shipper",
+          foreignField: "_id",
+          as: "shipper",
+        },
+      },
+      {
+        $unwind: {
+          path: "$shipper",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: "$cart",
+      },
+      {
+        $lookup: {
           from: "products",
           localField: "cart.product",
           foreignField: "_id",
           as: "product",
         },
       },
-      {
-        $unwind: "$product",
-      },
+      { $unwind: "$product" },
       {
         $addFields: {
           "cart.product.name": "$product.name",
@@ -159,7 +177,27 @@ class orderController {
         },
       },
       {
+        $group: {
+          _id: "$_id",
+          cart: { $push: "$cart" },
+          storeLocation: { $first: "$storeLocation" },
+          shipCost: { $first: "$shipCost" },
+          totalPrice: { $first: "$totalPrice" },
+          status: { $first: "$status" },
+          user: { $first: "$user" },
+          store: { $first: "$store" },
+          contact: { $first: "$contact" },
+          dateOrdered: { $first: "$dateOrdered" },
+          dateCheckout: { $first: "$dateCheckout" },
+          datePrepared: { $first: "$datePrepared" },
+          shipper: { $first: "$shipper" },
+          dateDeliveried: { $first: "$dateDeliveried" },
+          dateFinished: { $first: "$dateFinished" },
+        },
+      },
+      {
         $project: {
+          product: 1,
           storeLocation: {
             coordinates: { $reverseArray: "$storeLocation.coordinates" },
           },
@@ -176,6 +214,26 @@ class orderController {
             name: 1,
             address: 1,
             image: 1,
+          },
+          shipper: {
+            _id: 1,
+            firstName: 1,
+            lastName: 1,
+            contact: {
+              phoneNumber: 1,
+            },
+            photo: 1,
+            ratingAverage: 1,
+            vehicleNumber: 1,
+            vehicleType: 1,
+          },
+          cart: {
+            quantity: 1,
+            _id: 1,
+            images: 1,
+            price: 1,
+            name: 1,
+            ratingsAverage: 1,
           },
           cart: 1,
           contact: 1,
@@ -224,13 +282,15 @@ class orderController {
     if (orders) {
       for (let order of orders) {
         let t = (Date.now() - order.createdAt) / 60000;
-        if (order.status == "Waiting" && t > 30) {
+        if (order.status == "Waiting" && t > process.env.time_refused) {
           order.status = "Refused";
-          order.dateRefused = new Date(Date.now() + 7 * 60 * 60 * 1000);
+          order.dateRefused = new Date(
+            Date.now() + process.env.UTC * 60 * 60 * 1000
+          );
           await this.refundOrder(req, order._id, next);
           await order.save();
         }
-        if (order.status == "Pending" && t > 30)
+        if (order.status == "Pending" && t > process.env.time_refused)
           await Order.findByIdAndDelete(order._id);
       }
     }
@@ -242,7 +302,9 @@ class orderController {
     if (order.status != "Waiting")
       return next(new appError("Không thể huỷ đơn hàng!", 404));
     order.status = "Cancelled";
-    order.dateCancelled = new Date(Date.now() + 7 * 60 * 60 * 1000);
+    order.dateCancelled = new Date(
+      Date.now() + process.env.UTC * 60 * 60 * 1000
+    );
     await this.refundOrder(req, order._id, next);
     await order.save();
     res.status(200).json({ status: "success", data: order });
@@ -264,22 +326,29 @@ class orderController {
         // when shipper confirmed order and store prepare
         order.shipper = shipperId;
         order.status = "Preparing";
-        order.datePrepared = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        order.datePrepared = new Date(
+          Date.now() + process.env.UTC * 60 * 60 * 1000
+        );
         message = "Shipper has confirmed the delivery";
         console.log(order.store);
+        console.log(order._id);
         await firebase.notify(`${order.store}`, `${order._id}`);
         break;
       case "Preparing":
         // when shipper delivery order
         order.status = "Delivering";
-        order.dateDeliveried = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        order.dateDeliveried = new Date(
+          Date.now() + process.env.UTC * 60 * 60 * 1000
+        );
         message = "Shipper is delivering the order";
         break;
 
       case "Delivering":
         // when shipper deliveried
         order.status = "Finished";
-        order.dateFinished = new Date(Date.now() + 7 * 60 * 60 * 1000);
+        order.dateFinished = new Date(
+          Date.now() + process.env.UTC * 60 * 60 * 1000
+        );
         message = "Shipper has successfully delivered the order";
         break;
     }
@@ -403,21 +472,21 @@ class orderController {
     if (!req.query.start)
       start = moment()
         .subtract(30, "days")
-        .add(7, "hours")
+        .add(process.env.UTC, "hours")
         .toDate();
     else
       start = moment(req.query.start, "DD-MM-YYYY")
-        .add(7, "hours")
+        .add(process.env.UTC, "hours")
         .toDate();
 
     if (!req.query.end)
       end = moment()
-        .add(7, "hours")
+        .add(process.env.UTC, "hours")
         .toDate();
     else
       end = moment(req.query.end, "DD-MM-YYYY")
         .add(31, "hours")
-        .toDate(); // 7 + 24 hours
+        .toDate();
     let obj = {
       store: store._id,
       dateOrdered: {
@@ -498,21 +567,21 @@ class orderController {
     if (!req.query.start)
       start = moment()
         .subtract(30, "days")
-        .add(7, "hours")
+        .add(process.env.UTC, "hours")
         .toDate();
     else
       start = moment(req.query.start, "DD-MM-YYYY")
-        .add(7, "hours")
+        .add(process.env.UTC, "hours")
         .toDate();
 
     if (!req.query.end)
       end = moment()
-        .add(7, "hours")
+        .add(process.env.UTC, "hours")
         .toDate();
     else
       end = moment(req.query.end, "DD-MM-YYYY")
         .add(31, "hours")
-        .toDate(); // 7 + 24 hours
+        .toDate(); // process.env.UTC + 24 hours
     let obj = {
       user: req.params.userId,
       dateOrdered: {
@@ -549,8 +618,66 @@ class orderController {
       data: orders,
     });
   });
+  getOrdersByShipperId = catchAsync(async (req, res, next) => {
+    const shipper = await Shipper.findById(req.params.shipperId);
+    if (!shipper) return next(new appError("Không tìm thấy người dùng"), 404);
+    let start, end;
+    if (!req.query.start)
+      start = moment()
+        .subtract(30, "days")
+        .add(process.env.UTC, "hours")
+        .toDate();
+    else
+      start = moment(req.query.start, "DD-MM-YYYY")
+        .add(process.env.UTC, "hours")
+        .toDate();
+
+    if (!req.query.end)
+      end = moment()
+        .add(process.env.UTC, "hours")
+        .toDate();
+    else
+      end = moment(req.query.end, "DD-MM-YYYY")
+        .add(31, "hours")
+        .toDate(); // process.env.UTC + 24 hours
+    let obj = {
+      shipper: req.params.shipperId,
+      dateOrdered: {
+        $gte: start,
+        $lt: end,
+      },
+    };
+    if (req.query.status)
+      obj = {
+        ...obj,
+        status: req.query.status,
+      };
+    const features = new ApiFeatures(
+      Order.find(obj)
+        .populate({
+          path: "store",
+          select:
+            "-location -rating -isLocked -openAt -closeAt -description -ownerId -registrationLicense -createdAt -updatedAt -__v",
+        })
+        .populate({
+          path: "shipper",
+          select:
+            "-status -isAccepted -ratingsAverage -ratingsQuantity -role -isVerified -__t -password -vehicleNumber -vehicleType -licenseNumber -__v -contact -defaultContact -frontImageCCCD -behindImageCCCD -licenseImage -createdAt -updatedAt -__v -rating -email -vehicleLicense -location",
+        }),
+      req.query
+    )
+      .sort()
+      .limitFields()
+      .paginate();
+    const orders = await features.query;
+    res.status(200).json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  });
   notice = catchAsync(async (req, res, next) => {
-    await firebase.notify(req.query.title, req.query.message, true);
+    await firebase.notify(req.params.storeId, req.params.orderId, true);
     res.status(200).json({ status: "success" });
   });
 }

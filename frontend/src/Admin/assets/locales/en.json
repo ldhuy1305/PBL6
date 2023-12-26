@@ -55,6 +55,7 @@
 
   "storeLike": "Like",
   "storeActive": "Open: ",
+  "storeClose": "Closed: ",
 
   "forgotTitle": "Forgot password",
   "forgotMess" : "Fill in your registration email, FALTH will send you a confirmation code to create a new password.",
@@ -147,9 +148,14 @@
   "order" : "Place order",
   "signinToOrder" : "Sign in to place an order",
 
-  "store" : "Restaurant",
+  "store" : "Store",
   "ratingInFALTH" : "rating on FALTH",
   "menu" : "Menu",
-  "searchDish" : "Search dish in menu"
+  "searchDish" : "Search dish in menu", 
+
+  "specialRequest" : "Special Request",
+  "optional" : "Optional", 
+  "confirm" : "Confirm", 
+  "dish" : "Dish"
 
 }

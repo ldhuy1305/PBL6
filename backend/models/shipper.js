@@ -7,12 +7,12 @@ const shipperSchema = new Schema(
     frontImageCCCD: {
       type: String,
       required: [true, "Phía trước CCCD là bắt buộc"],
-      select: false,
+      // select: false,
     },
     behindImageCCCD: {
       type: String,
       required: [true, "Phía sau CCCD là bắt buộc"],
-      select: false,
+      // select: false,
     },
     status: {
       type: String,
@@ -34,7 +34,7 @@ const shipperSchema = new Schema(
     licenseImage: {
       type: String,
       required: [true, "Hình ảnh giấy phép lái xe là bắt buộc"],
-      select: false,
+      // select: false,
     },
     //vehicle
     vehicleNumber: {

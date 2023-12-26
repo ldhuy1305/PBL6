@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useContext, } from 'react';
+import React, {useState, useEffect } from 'react';
 import User from './User/App';
 import Store from './Store/Store';
 import Admin from './Admin/App';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthContextProvider } from "./context/AuthContext";
-import { ChatContextProvider } from "./context/ChatContext";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   const UserRoute = ({ element, role }) => {
@@ -15,14 +13,20 @@ function App() {
       if (userData.role === role) {
         return element;
       } else {
-        if (userData.role === 'User') {
-          return (<User />)
-        }
-        else if (userData.role === 'Admin') {
-          return (<Admin />)
-        } else if (userData.role === 'Owner') {
-          return (<Store />)
-        }
+        if(userData.role === 'User') {
+              // return <Navigate to="/"/>;
+              return (<User/>)
+            }
+            else if (userData.role === 'Admin') {
+              // return <Navigate to="/admin/"/>;
+              return (<Admin/>)
+            } else if (userData.role === 'Owner') {
+              // return <Navigate to="/store/"/>;
+              return (<Store/>)
+            } 
+            // else if (userRole ==='') {
+              // return <Navigate to="/"/>;
+            // }
       }
     } else {
       return (<User />);
@@ -31,8 +35,8 @@ function App() {
 
   return (
 
-    <AuthContextProvider>
-      <ChatContextProvider>
+    // <AuthContextProvider>
+    //   <ChatContextProvider>
         <Router>
           <Routes>
             <Route path="/*" element={<UserRoute element={<User />} role="User" />} />
@@ -40,8 +44,8 @@ function App() {
             <Route path="/admin/*" element={<UserRoute element={<Admin />} role="Admin" />} />
           </Routes>
         </Router>
-      </ChatContextProvider>
-    </AuthContextProvider>
+    //   </ChatContextProvider>
+    // </AuthContextProvider>
   );
 }
 
