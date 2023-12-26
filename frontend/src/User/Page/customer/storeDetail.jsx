@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CartModal from "../../Components/Modal/cart";
 import { useLocation } from "react-router-dom";
 import { getAllCategoryByStoreId } from "../../services/userServices";
@@ -7,6 +7,9 @@ import MenuGroup from "../../Components/Item/menuGroup";
 import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
+import { ChatContext } from "../../../context/ChatContext";
+import { AuthContext } from "../../../context/AuthContext";
+import Chat from "../../../Store/components/Chat/Chat";
 const StoreDetail = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
@@ -16,30 +19,30 @@ const StoreDetail = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const store = location.state.store.store;
+    console.log(store)
     const [isWithinOperatingHours, setIsWithinOperatingHours] = useState(false);
     const openModal = () => {
         setShowModal(true);
     };
 
+    const { LoadCurr } = useContext(AuthContext);
+    const { createChat } = useContext(ChatContext);
+
     const closeModal = () => {
         setShowModal(false);
     };
-
-
     useEffect(() => {
         const currentTime = new Date();
         const openTime = new Date(currentTime);
         const closeTime = new Date(currentTime);
-
-        // Set the time portion of the date objects
         openTime.setHours(Number(store.openAt.split(':')[0]), Number(store.openAt.split(':')[1]), 0, 0);
         closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
 
         setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
         console.log(openTime, currentTime, closeTime)
     }, [store.openAt, store.closeAt]);
-
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 setIsLoading(true)
@@ -51,6 +54,8 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
+
+        createChat(store.ownerId);
         fetchData();
     }, []);
 
@@ -59,22 +64,21 @@ const StoreDetail = () => {
     const handleCategoryClick = (categoryId) => {
         setActiveCategory(categoryId);
     };
-
     const handleComment = () => {
-            navigate("/home/storeComment", { state: { store: { store } } });
+        navigate("/home/storeComment", { state: { store: { store } } });
     }
 
     return (
         <div>
             <div class="wrapper">
-                <div class="now-detail-restaurant clearfix" style={{width:'80%', marginLeft:'10%', height:'310px'}}>
+                <div class="now-detail-restaurant clearfix" style={{ width: '80%', marginLeft: '10%', height: '310px' }}>
                     <div class="container">
                         <div class="detail-restaurant-img">
                             <img
                                 src={store.image}
                                 alt={store.name}
                                 class=""
-                                style={{height:'250px', width:'100%', marginLeft:'8%'}}
+                                style={{ height: '250px', width: '100%', marginLeft: '8%' }}
                             />
                         </div>
                         <div class="detail-restaurant-info">
@@ -86,12 +90,12 @@ const StoreDetail = () => {
                             <div class="address-restaurant">
                                 {store.address}
                             </div>
-                            <div class="rating" style={{cursor:'pointer'}} onClick={handleComment}>
+                            <div class="rating" style={{ cursor: 'pointer' }} onClick={handleComment}>
                                 <span class="number-rating">{store.ratingsAverage}</span>
                                 <div class="stars">
                                     <span class=""><i class="fas fa-solid fa-star"></i></span>
                                 </div>
-                                <span style={{color:'#ee4d2d'}}>{t("ratingInFALTH")}</span>
+                                <span style={{ color: '#ee4d2d' }}>{t("ratingInFALTH")}</span>
                             </div>
                             <div class="view-more-rating">
                                 <span
@@ -102,9 +106,9 @@ const StoreDetail = () => {
                             </div>
                             <div class="status-restaurant">
                                 <div class="opentime-status">
-                                    <span 
-                                    className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
-                    title={isWithinOperatingHours ? `${t("storeActive")}`: 'Đóng cửa'}></span>
+                                    <span
+                                        className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                                        title={isWithinOperatingHours ? `${t("storeActive")}` : 'Đóng cửa'}></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>
@@ -167,7 +171,7 @@ const StoreDetail = () => {
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
-                                                <i class="fas fa-search" style={{cursor:'pointer'}} ></i>
+                                                <i class="fas fa-search" style={{ cursor: 'pointer' }} ></i>
                                                 <input
                                                     type="search"
                                                     name="searchKey"
@@ -236,6 +240,7 @@ const StoreDetail = () => {
                 </div>
 
             </div>
+            <Chat />
             {
                 showModal && (
                     <CartModal show={showModal} handleClose={closeModal} handleOpen={openModal} />

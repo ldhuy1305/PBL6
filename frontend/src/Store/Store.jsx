@@ -18,15 +18,18 @@ import Statistics from './page/Statistics/Statistics';
 import './Store.css'
 import Feedback from './page/Feedback/Feedback';
 import { ref, onValue, child } from 'firebase/database';
-import { database } from './filebase';
-import { Notifications } from './components/react-push-notification';
-import addNotification from './components/react-push-notification';
+import { database } from './firebase';
+import { Notifications } from './components/react-push-notification/dist';
+import addNotification from './components/react-push-notification/dist';
 import { isEqual } from 'lodash';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import OwnerProfile from './page/Info/OwnerProfile'
+import Chat from './components/Chat/Chat';
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Store = () => {
   const [latestUserData, setLatestUserData] = useState();
@@ -34,6 +37,7 @@ const Store = () => {
   const [idsrote, Setidstore] = useState("1");
   const token = localStorage.getItem('token');
   const tokenString = localStorage.getItem('user');
+  const [chat, SetChat] = useState(true);
   const tokenObject = JSON.parse(tokenString);
   localStorage.setItem('_id', tokenObject._id);
   localStorage.setItem('_img', tokenObject.photo);
@@ -49,6 +53,7 @@ const Store = () => {
         const responseData = response.data.data;
         Setidstore(responseData._id);
         localStorage.setItem('_idstore', responseData._id);
+        localStorage.setItem('store', JSON.stringify(responseData));
         console.log(responseData._id);
       } catch (error) {
         console.error('Lỗi khi gọi API:', error);
@@ -58,6 +63,7 @@ const Store = () => {
     fetchData();
   }, [token]);
   const Setseen = async (id) => {
+    const { currentUser } = useContext(AuthContext);
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const _idstore = localStorage.getItem('_idstore');
@@ -130,18 +136,14 @@ const Store = () => {
   }, [latestUserData, idsrote]);
 
 
-  const { id } = useParams();
-
-  useEffect(() => {
-    console.log(`Loading lại trang với ID: ${id}`);
-  }, [id]);
-
 
 
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [selected, setSelected] = useState("Thống kê");
+
   return (
+
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -164,13 +166,22 @@ const Store = () => {
               <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
               <Route path="/logout" element={<Logout setSelected={setSelected} />} />
               <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
+              <Route path="/chat" element={<Chat setSelected={setSelected} />} />
             </Routes>
             <ToastContainer />
           </main>
+          <div className="chat-container">
+            {chat ? (
+              <div className='chat-icon'>
+                <i className="fa-regular fa-message" onClick={() => SetChat(false)}></i>
+              </div>
+            ) : (
+              <Chat SetChat={SetChat} />
+            )}
+          </div>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
-
   );
 };
 
