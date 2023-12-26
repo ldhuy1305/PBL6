@@ -95,7 +95,7 @@ const OwnerProfile = ({ setSelected }) => {
     const getdatainfostore = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`https://falth-api.vercel.app/api/user/${_id}`,
+            const response = await axios.get(`https://falth-api.vercel.app/api/owner/${_id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -103,6 +103,7 @@ const OwnerProfile = ({ setSelected }) => {
                 }
             );
             const responseData = response.data;
+            console.log(responseData);
             setData(responseData);
             setInfostore();
             setIsLoading(false);
@@ -185,7 +186,7 @@ const OwnerProfile = ({ setSelected }) => {
     return (
         <Box m="10px 100px" position='relative' onClick={() => setOpenNotify(false)}>
             <Header2 title=" Thông tin cá nhân" />
-            <Box
+            {/* <Box
                 m="0 0 0 0"
             >
                 <div className="now-detail-profile1" style={{
@@ -363,7 +364,7 @@ const OwnerProfile = ({ setSelected }) => {
                         </div>
                     )}
                 </div>
-            </Box >
+            </Box > */}
         </Box >
 
     );

@@ -11,7 +11,7 @@ import {
 
 export const ChatContext = createContext();
 
-const ChatContextProvider = ({ children }) => {
+export const ChatContextProvider = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
   const INITIAL_STATE = {
     chatId: "null",

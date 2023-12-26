@@ -6,8 +6,8 @@ import {
 } from "@mui/material";
 import style from "./Chat.module.css"
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { AuthContext } from "../../../context/AuthContext";
-import { ChatContext } from "../../../context/ChatContext";
+import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
 import {
   arrayUnion,
   onSnapshot,
@@ -16,7 +16,7 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import { db, storage } from "../../../firebase";
+import { db, storage } from "../../firebase";
 import { v4 as uuid } from "uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { AuthContext } from "./AuthContext";
-import { db } from "../firebase";
+import { db } from "../Store/firebase";
 import {
   doc,
   getDoc,

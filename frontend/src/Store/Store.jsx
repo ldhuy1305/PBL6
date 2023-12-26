@@ -29,7 +29,8 @@ import { Helmet } from 'react-helmet';
 import OwnerProfile from './page/Info/OwnerProfile'
 import Chat from './components/Chat/Chat';
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContextProvider } from "./context/AuthContext";
+import { ChatContextProvider } from "./context/ChatContext";
 
 const Store = () => {
   const [latestUserData, setLatestUserData] = useState();
@@ -63,7 +64,6 @@ const Store = () => {
     fetchData();
   }, [token]);
   const Setseen = async (id) => {
-    const { currentUser } = useContext(AuthContext);
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const _idstore = localStorage.getItem('_idstore');
@@ -134,54 +134,54 @@ const Store = () => {
       };
     }
   }, [latestUserData, idsrote]);
-
-
-
-
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [selected, setSelected] = useState("Thống kê");
 
   return (
-
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Helmet>
-          <title>{selected}</title>
-        </Helmet>
-        <div className="app">
-          <Sidebara isSidebar={isSidebar} selected={selected} setSelected={setSelected} />
-          <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
-            <Routes>
-              <Route path="/" element={<Statistics setSelected={setSelected} />} />
-              <Route path="/Formadd" element={<Formadd setSelected={setSelected} />} />
-              <Route path="/Formedit/:id" element={<Formedit setSelected={setSelected} />} />
-              <Route path="/product" element={<Product setSelected={setSelected} />} />
-              <Route path='/listorder' element={<Listorder setSelected={setSelected} />} />
-              <Route path='/info' element={<Info setSelected={setSelected} />} />
-              <Route path='/category' element={<Category setSelected={setSelected} />} />
-              <Route path="/detailorder/:id" element={<Detailorder setSelected={setSelected} />} />
-              <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
-              <Route path="/logout" element={<Logout setSelected={setSelected} />} />
-              <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
-              <Route path="/chat" element={<Chat setSelected={setSelected} />} />
-            </Routes>
-            <ToastContainer />
-          </main>
-          <div className="chat-container">
-            {chat ? (
-              <div className='chat-icon'>
-                <i className="fa-regular fa-message" onClick={() => SetChat(false)}></i>
+    <AuthContextProvider>
+      <ChatContextProvider>
+        <ColorModeContext.Provider value={colorMode}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Helmet>
+              <title>{selected}</title>
+            </Helmet>
+            <div className="app">
+              <Sidebara isSidebar={isSidebar} selected={selected} setSelected={setSelected} />
+              <main className="content">
+                <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
+                <Routes>
+                  <Route path="/" element={<Statistics setSelected={setSelected} />} />
+                  <Route path="/Formadd" element={<Formadd setSelected={setSelected} />} />
+                  <Route path="/Formedit/:id" element={<Formedit setSelected={setSelected} />} />
+                  <Route path="/product" element={<Product setSelected={setSelected} />} />
+                  <Route path='/listorder' element={<Listorder setSelected={setSelected} />} />
+                  <Route path='/info' element={<Info setSelected={setSelected} />} />
+                  <Route path='/category' element={<Category setSelected={setSelected} />} />
+                  <Route path="/detailorder/:id" element={<Detailorder setSelected={setSelected} />} />
+                  <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
+                  <Route path="/logout" element={<Logout setSelected={setSelected} />} />
+                  <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
+                  <Route path="/chat" element={<Chat setSelected={setSelected} />} />
+                </Routes>
+                <ToastContainer />
+              </main>
+              <div className="chat-container">
+                {chat ? (
+                  <div className='chat-icon'>
+                    <i className="fa-regular fa-message" onClick={() => SetChat(false)}></i>
+                  </div>
+                ) : (
+                  <Chat SetChat={SetChat} />
+                )}
               </div>
-            ) : (
-              <Chat SetChat={SetChat} />
-            )}
-          </div>
-        </div>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+            </div>
+          </ThemeProvider>
+        </ColorModeContext.Provider>
+
+      </ChatContextProvider>
+    </AuthContextProvider>
   );
 };
 

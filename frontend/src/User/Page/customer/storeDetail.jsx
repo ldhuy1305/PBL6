@@ -7,6 +7,7 @@ import MenuGroup from "../../Components/Item/menuGroup";
 import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
+import ChatBox from "../../Components/Item/chatBox";
 const StoreDetail = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
@@ -21,9 +22,6 @@ const StoreDetail = () => {
     const openModal = () => {
         setShowModal(true);
     };
-
-    const { LoadCurr } = useContext(AuthContext);
-    const { createChat } = useContext(ChatContext);
 
     const closeModal = () => {
         setShowModal(false);
@@ -50,8 +48,6 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
-
-        createChat(store.ownerId);
         fetchData();
     }, [store]);
 
@@ -69,7 +65,7 @@ const StoreDetail = () => {
         setActiveCategory(categoryId);
     };
     const handleComment = () => {
-            navigate("/home/storeComment", { state: { store: { store } } });
+        navigate("/home/storeComment", { state: { store: { store }, isWithinOperatingHours: isWithinOperatingHours } });
     }
 
     const discounts = [
@@ -122,9 +118,6 @@ const StoreDetail = () => {
                                     <span
                                         className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
                                         title={isWithinOperatingHours ? `${t("storeActive")}` : `${t("storeClose")}`}></span>
-                                    <span
-                                        className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
-                                        title={isWithinOperatingHours ? `${t("storeActive")}` : 'Đóng cửa'}></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>
