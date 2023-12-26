@@ -201,7 +201,7 @@ const getAllOderByUserId = async () => {
   const startDate = moment().subtract(1, 'months').format("DD-MM-YYYY");
   const endDate = moment().format("DD-MM-YYYY");
   try {
-    const response = await axios.get(`${url}/api/order/user/${decodedToken.id}?sort=-createdAt&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice&page=1`, {
+    const response = await axios.get(`${url}/api/order/user/${decodedToken.id}?sort=-dateOrdered&start=${startDate}&end=${endDate}&fields=status,dateOrdered,totalPrice&page=1`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -407,6 +407,40 @@ const getShipper = async (id) => {
   }
 }
 
+//Voucher
+
+const getVoucherByStoreId = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `${url}/api/voucher/store/${id}`
+    const response = await axios.get(api);
+    // , {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`
+    //   }
+    // }
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const applyVoucher = async (idVoucher, idOrder) => {
+  try {
+    const token = localStorage.getItem("token");
+    const api = `${url}/api/voucher/${idVoucher}/order/${idOrder}`
+    const response = await axios.put(api, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });  
+    console.log(response); 
+    return response.data
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 export {
   loginAPI,
   getUserInfo,
@@ -434,5 +468,7 @@ export {
   addRatingForProduct,
   deleteRating, 
   getRatingOfShipper,
-  getShipper
+  getShipper,
+  getVoucherByStoreId,
+  applyVoucher
 }

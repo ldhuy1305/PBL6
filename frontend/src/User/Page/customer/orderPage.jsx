@@ -6,8 +6,9 @@ import { useLocation } from "react-router-dom";
 import { useCity } from "../../services/CityContext";
 import OrderDishItem from "../../Components/Item/orderedDishItem";
 import LoadingModal from "../../Components/Loading/Loading";
-import { placeOrder, getFeeShip } from "../../services/userServices";
+import { placeOrder, getFeeShip, getVoucherByStoreId, applyVoucher } from "../../services/userServices";
 import ModalVoucher from "../../Components/Modal/modalVoucher";
+import moment from "moment";
 const OrderPage = () => {
   const [showModalAddress, setShowModalAddress] = useState(false);
   const { cart, setCart, productsCount } = useCity();
@@ -26,12 +27,7 @@ const OrderPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState()
   const [showModalVoucher, setShowModalVoucher] = useState(false)
-  const discounts = [
-    { _id: "1", content1: 20000, content2: 2000, content3: "Noel 25.12", content4: "1", },
-    { _id: "2", content1: 30000, content2: 2000, content3: "Noel 25.12", content4: "2", },
-    { _id: "3", content1: 40000, content2: 2000, content3: "Noel 25.12", content4: "3", },
-    { _id: "4", content1: 50000, content2: 2000, content3: "Noel 25.12", content4: "4", },
-  ]
+  const [discounts, setDiscounts] = useState([])
   const [selectedVoucher, setSelectedVoucher] = useState();
   const openModalVoucher = () => {
     setShowModalVoucher(true)
@@ -54,12 +50,17 @@ const OrderPage = () => {
       localStorage.removeItem('cart');
       const orderUrl = response.url; // Đặt tên phù hợp với trường cần lấy từ response
       window.open(orderUrl, '_blank'); // '_blank' để mở ở một tab mới
+      if(selectedVoucher) {
+        await applyVoucher(selectedVoucher._id, response.data._id);
+      }
     } catch (error) {
       console.error("Error placing order:", error);
-    }
-    setIsLoading(false)
+    }finally {
+      setIsLoading(false);
+  }
 
   };
+  
   useEffect(() => {
     let tempTotal = 0;
     cart.products.forEach(product => {
@@ -71,8 +72,8 @@ const OrderPage = () => {
   }, [cart]);
 
   useEffect(() => {
-    if (selectedVoucher && selectedVoucher.content1) {
-      setTotalPayment(totalPrice + shipFee - selectedVoucher.content1);
+    if (selectedVoucher && selectedVoucher.amount) {
+      setTotalPayment(totalPrice + shipFee - selectedVoucher.amount);
     } else {
       setTotalPayment(totalPrice + shipFee);
     }
@@ -90,6 +91,20 @@ const OrderPage = () => {
     setUserName(userData.firstName + " " + userData.lastName)
     setContacts(userData.contact)
   }, []);
+
+  useEffect(() => {
+    const getVoucher = async () => {
+      try {
+        const cart = JSON.parse(localStorage.getItem("cart"))
+        const response = await getVoucherByStoreId(cart.idStore);
+        setDiscounts(response.data)
+      } catch (error) {
+        console.log("Lỗi khi lấy thông tin voucher", error)
+      }
+    }
+    getVoucher();
+  }, []);
+  
 
   useEffect(() => {
     try {
@@ -116,8 +131,7 @@ const OrderPage = () => {
 
     }
     getNewArray()
-  }, [contacts]);
-  
+  }, [contacts]); 
 
   return (
     <div>
@@ -280,15 +294,17 @@ const OrderPage = () => {
                       <div>
                         <div class="vc_MainTitle_mainTitle">
                           <div class="vc_MainTitle_text vc_MainTitle_fsvLine">
-                            Giảm {selectedVoucher.content1.toLocaleString('vi-VN')}₫
+                            Giảm {selectedVoucher.amount.toLocaleString('vi-VN')}₫
+                            {/* Giảm {selectedVoucher.amount}₫ */}
                           </div>
                         </div>
                         <div
                           class="vc_Subtitle_subTitle vc_Subtitle_oneLine"
                         >
-                          Đơn Tối Thiểu {selectedVoucher.content2.toLocaleString('vi-VN')}₫
+                          Đơn Tối Thiểu {selectedVoucher.conditions.minValues.toLocaleString('vi-VN')}₫
+                          {/* Đơn Tối Thiểu {selectedVoucher.conditions.minValues}₫ */}
                         </div>
-                        <div class="vc_Label_label">
+                        {/* <div class="vc_Label_label">
                           <div class="vc_Label_shopeeWalletLabel" data-cy="voucher_card_label">
                             <div
                               class="vc_Label_shopeeWalletLabelContent"
@@ -299,7 +315,7 @@ const OrderPage = () => {
                               {selectedVoucher.content3}
                             </div>
                           </div>
-                        </div>
+                        </div> */}
                         <div
                           class="vc_ProgressBarExpiry_progressBarExpiry"
                         >
@@ -308,7 +324,9 @@ const OrderPage = () => {
                           >
                             <span
                               class="vc_ProgressBarExpiry_isEndingSoon vc_ProgressBarExpiry_capitalize"
-                            >Sắp hết hạn: Còn {selectedVoucher.content4} giờ</span>
+                            >
+                            Hết hạn: {moment.utc(selectedVoucher.conditions.endDate).format('HH:mm DD/MM/YYYY')}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -379,7 +397,7 @@ const OrderPage = () => {
               <h3 class="Tc17Ac XIEGGF RY9Grr">Phí vận chuyển ({distance}km)</h3>
               <div class="Tc17Ac mCEcIy RY9Grr">{shipFee.toLocaleString('vi-VN')}₫</div>
               <h3 class="Tc17Ac XIEGGF RY9Grr2">Giảm giá</h3>
-              <div class="Tc17Ac mCEcIy RY9Grr2">-{selectedVoucher ? (selectedVoucher.content1).toLocaleString('vi-VN') : 0}₫</div>
+              <div class="Tc17Ac mCEcIy RY9Grr2">-{selectedVoucher ? (selectedVoucher.amount).toLocaleString('vi-VN') : 0}₫</div>
               <h3 class="Tc17Ac XIEGGF n3vdfL">Tổng thanh toán:</h3>
               <div class="Tc17Ac kC0GSn mCEcIy n3vdfL">{totalPayment.toLocaleString('vi-VN')}₫</div>
               <div class="uTFqRt">
@@ -408,7 +426,7 @@ const OrderPage = () => {
         <PickAddress show={showModalAddress} handleClose={closeModalAddress} user={user} selectedContact={selectedContact} setSelectedContact={setSelectedContact} contacts={contacts} setContacts={setContacts} />
       )}
       {isLoading && (<LoadingModal />)}
-      {showModalVoucher && (<ModalVoucher handleclose={closeModalVoucher} discounts={discounts} selectedVoucher={selectedVoucher} setSelectedVoucher={setSelectedVoucher} />)}
+      {showModalVoucher && (<ModalVoucher handleclose={closeModalVoucher} discounts={discounts} selectedVoucher={selectedVoucher} setSelectedVoucher={setSelectedVoucher} totalPrice={totalPrice}/>)}
     </div>
   )
 }
