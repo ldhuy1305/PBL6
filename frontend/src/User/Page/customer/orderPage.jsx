@@ -67,9 +67,16 @@ const OrderPage = () => {
       const productTotal = product.amount * product.price;
       tempTotal += productTotal;
     });
-
     setTotalPrice(tempTotal);
   }, [cart]);
+
+  useEffect(() => {
+    if(selectedVoucher) {
+      if(totalPrice < selectedVoucher.conditions.minValues) {
+        setSelectedVoucher(null)
+      }
+    }
+  }, [totalPrice]);
 
   useEffect(() => {
     if (selectedVoucher && selectedVoucher.amount) {
@@ -80,12 +87,13 @@ const OrderPage = () => {
   }, [totalPrice, shipFee, selectedVoucher]);
 
   const [contacts, setContacts] = useState([])
-
+  const [defaultContact, setDefaultContact] = useState("")
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userData = JSON.parse(user);
     const defaultContactId = userData.defaultContact;
     const defaultContact = userData.contact.find(contact => contact._id === defaultContactId);
+    setDefaultContact(userData.defaultContact)
     setUser(userData);
     setSelectedContact(defaultContact)
     setUserName(userData.firstName + " " + userData.lastName)
@@ -174,7 +182,9 @@ const OrderPage = () => {
                     <div class="QsWYfx">
                       {selectedContact.address}
                     </div>
-                    <div class="uk7Wpm">Mặc định</div>
+                    {(defaultContact && selectedContact._id === defaultContact) && (
+                      <div class="uk7Wpm">Mặc định</div>
+                    )}
                   </div>
                 </div>
                 <button onClick={openModalAddress} class="_3WkjWD div-style">Thay đổi</button>
@@ -423,7 +433,7 @@ const OrderPage = () => {
         </div>
       </div>
       {showModalAddress && (
-        <PickAddress show={showModalAddress} handleClose={closeModalAddress} user={user} selectedContact={selectedContact} setSelectedContact={setSelectedContact} contacts={contacts} setContacts={setContacts} />
+        <PickAddress show={showModalAddress} handleClose={closeModalAddress} user={user} selectedContact={selectedContact} setSelectedContact={setSelectedContact} contacts={contacts} setContacts={setContacts} defaultContact={defaultContact} setDefaultContact={setDefaultContact}/>
       )}
       {isLoading && (<LoadingModal />)}
       {showModalVoucher && (<ModalVoucher handleclose={closeModalVoucher} discounts={discounts} selectedVoucher={selectedVoucher} setSelectedVoucher={setSelectedVoucher} totalPrice={totalPrice}/>)}
