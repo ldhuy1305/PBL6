@@ -16,13 +16,11 @@ router
     authController.restrict("Owner"),
     voucherController.hideVoucher
   );
-router
-  .route("/:id/order/:orderId")
-  .put(
-    authController.protect,
-    authController.restrict("User"),
-    voucherController.checkUser,
-    voucherController.useVoucher
-  );
+router.route("/:id/order/:orderId").put(
+  authController.protect,
+  authController.restrict("User"),
+  // voucherController.checkUser,
+  voucherController.useVoucher
+);
 router.route("/order/:orderId").put(voucherController.refund);
 module.exports = router;
