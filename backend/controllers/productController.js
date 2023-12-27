@@ -243,7 +243,7 @@ class ProductController {
             name: 1,
             address: 1,
             ratingsAverage: 1,
-            openeAt: 1,
+            openAt: 1,
             closeAt: 1,
             image: 1,
             description: 1,
