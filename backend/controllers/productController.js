@@ -242,7 +242,13 @@ class ProductController {
             _id: 1,
             name: 1,
             address: 1,
+            ratingsAverage: 1,
+            openeAt: 1,
+            closeAt: 1,
+            image: 1,
+            description: 1,
           },
+          images: 1,
         },
       },
       {
