@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CartModal from "../../Components/Modal/cart";
 import { useLocation } from "react-router-dom";
 import { getAllCategoryByStoreId, getVoucherByStoreId } from "../../services/userServices";
@@ -8,6 +8,8 @@ import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../../Components/Item/chatBox";
+import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
 const StoreDetail = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
@@ -17,6 +19,7 @@ const StoreDetail = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const store = location.state.store.store;
+    console.log(store)
     const [isWithinOperatingHours, setIsWithinOperatingHours] = useState(false);
     const openModal = () => {
         setShowModal(true);
@@ -26,20 +29,21 @@ const StoreDetail = () => {
         setShowModal(false);
     };
 
-
+    const { currentUser } = useContext(AuthContext);
+    console.log(currentUser)
+    const { data, createChat } = useContext(ChatContext);
+    console.log(data);
     useEffect(() => {
         const currentTime = new Date();
         const openTime = new Date(currentTime);
         const closeTime = new Date(currentTime);
-
-        // Set the time portion of the date objects
         openTime.setHours(Number(store.openAt.split(':')[0]), Number(store.openAt.split(':')[1]), 0, 0);
         closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
 
         setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
     }, [store.openAt, store.closeAt]);
-
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 setIsLoading(true)
@@ -78,7 +82,6 @@ const StoreDetail = () => {
     const handleCategoryClick = (categoryId) => {
         setActiveCategory(categoryId);
     };
-
     const handleComment = () => {
         navigate("/home/storeComment", { state: { store: { store }, isWithinOperatingHours: isWithinOperatingHours } });
     }
@@ -191,8 +194,8 @@ const StoreDetail = () => {
                                                         alt=""
                                                         class="icon-promotion"
                                                     />
-                                                    <div class= 'content' style={{fontSize:'14px'}}>
-                                                        {discount.name}
+                                                    <div class='content' style={{ fontSize: '14px' }}>
+                                                        {discount.content}
                                                     </div>
                                                 </div>
                                             </div>
@@ -269,7 +272,7 @@ const StoreDetail = () => {
                         </div>
 
                     </div>
-                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} />)}
+                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} currentUser={currentUser} createChat={createChat} data={data} />)}
 
                 </div>
 

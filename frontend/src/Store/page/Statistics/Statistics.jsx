@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import style from './Statistics.module.css';
@@ -11,7 +11,6 @@ import Loading from '../../components/Loading/Loading'
 const Product = ({ setSelected }) => {
 
     const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
     const [dataorder, setDataorder] = useState([]);
     const [datachart, setDatachart] = useState([]);
     const [databestseller, setDatabestseller] = useState([]);
@@ -21,7 +20,6 @@ const Product = ({ setSelected }) => {
     const [Dataproduct, setDataproduct] = useState("");
     const [datarevenue, setdatarevenue] = useState("count");
     const [GetRevenueByCat, setGetRevenueByCat] = useState([])
-
 
     const _id = localStorage.getItem('_id');
     const fetchDataorder = async (value) => {

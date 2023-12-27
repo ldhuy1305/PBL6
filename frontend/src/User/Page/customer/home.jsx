@@ -48,7 +48,7 @@ const Home = () => {
     };
   }, [isOpen1, isOpen]);
 
-  const { selectedLocation, updateLocation,  key, updateKey } = useCity();
+  const { selectedLocation, updateLocation, key, updateKey } = useCity();
   const [stores, setStores] = useState({ data: [] });
 
   const handleRemove = (name) => {
@@ -109,11 +109,11 @@ const Home = () => {
     setPage(1)
     const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
     const selectedDistrict = selectedAreas.length > 0
-  ? selectedAreas.map(area => area.length < 8 ? area : area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
+  ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
   : ''; 
   const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
-  console.log(api)  
-  fetch(api)
+    console.log(api)
+    fetch(api)
       .then((response) => response.json())
       .then((data) => {
         console.log(data) 
@@ -124,7 +124,7 @@ const Home = () => {
         console.error('Lỗi khi gọi API', error);
         setIsLoading(false)
       });
-  }, [selectedLocation, key, selectedCategories,selectedAreas]);
+  }, [selectedLocation, key, selectedCategories, selectedAreas]);
 
   const [page, setPage] = useState(1);
 
@@ -140,13 +140,11 @@ const Home = () => {
     setIsLoading(true)
     setStores({ data: [] })
     const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
-  //   const selectedDistrict = selectedAreas.length > 0
-  // ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
-  // : ''; 
-  const selectedDistrict = selectedAreas.length > 0
-  ? selectedAreas.map(area => area.length < 8 ? area : area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
-  : '';
+    const selectedDistrict = selectedAreas.length > 0
+  ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
+  : ''; 
   const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=${page}&search=${key}`
+    console.log(api)
     fetch(api)
       .then((response) => response.json())
       .then((data) => {

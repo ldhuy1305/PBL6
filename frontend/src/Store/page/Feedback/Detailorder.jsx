@@ -27,11 +27,12 @@ const Detailorder = () => {
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data.data[0];
             console.log(responseData);
             setOrder(responseData);
             setIsLoading(false);
         } catch (error) {
+            console.error(error);
         }
     };
     const fetchData = async () => {

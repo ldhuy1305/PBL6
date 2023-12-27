@@ -103,10 +103,6 @@ const Topbar = ({ latestUserData, Setseen }) => {
                         </Grid>
                     </Grid>
                 </Popover>
-                {/* 
-                <IconButton>
-                    <SettingsOutlinedIcon sx={{ fontSize: 25 }} />
-                </IconButton> */}
                 <Tooltip title="Thông tin cá nhân">
                     <IconButton onClick={() => Ownerprofile()}>
                         <Avatar src={Imgowner} sx={{ width: 25, height: 25 }} />
