@@ -63,7 +63,7 @@ export const ChatContextProvider = ({ children }) => {
           });
           console.error("thanh cong tạo chat:");
         }
-        console.error("thanh cong tạo chat:111");
+        console.error("thanh cong tạo chat:");
         dispatch({ type: "CHANGE_USER", payload: userData });
       } catch (err) {
         console.error("Lỗi khi tạo chat:", err);

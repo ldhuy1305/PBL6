@@ -55,8 +55,8 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    LoadCurr();
-  }, []);
+    LoadCurr(); // Gọi hàm LoadCurr ở đây
+  }, []); 
 
   return (
     <AuthContext.Provider value={{ currentUser, LoadCurr }}>
