@@ -8,6 +8,8 @@ import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../../Components/Item/chatBox";
+import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
 const StoreDetail = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
@@ -26,6 +28,11 @@ const StoreDetail = () => {
     const closeModal = () => {
         setShowModal(false);
     };
+
+    const { currentUser } = useContext(AuthContext);
+    console.log(currentUser)
+    const { data, createChat } = useContext(ChatContext);
+    console.log(data);
     useEffect(() => {
         const currentTime = new Date();
         const openTime = new Date(currentTime);
@@ -185,7 +192,7 @@ const StoreDetail = () => {
                                                         alt=""
                                                         class="icon-promotion"
                                                     />
-                                                    <div class= 'content' style={{fontSize:'14px'}}>
+                                                    <div class='content' style={{ fontSize: '14px' }}>
                                                         {discount.content}
                                                     </div>
                                                 </div>
@@ -262,7 +269,7 @@ const StoreDetail = () => {
                         </div>
 
                     </div>
-                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} />)}
+                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} currentUser={currentUser} createChat={createChat} data={data} />)}
 
                 </div>
 

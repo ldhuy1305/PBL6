@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { AuthContext } from "./AuthContext";
 import { db } from "../firebase";
 import {
@@ -28,46 +28,51 @@ export const ChatContextProvider = ({ children }) => {
               ? currentUser.uid + action.payload.uid
               : action.payload.uid + currentUser.uid,
         };
-      case "CREATE_CHAT": // Chỉnh sửa action type
-        return state; // Xử lý action CREATE_CHAT nếu cần
       default:
         return state;
     }
   };
+  const createChat = async (id) => {
+    if (currentUser.uid) {
+      const userDoc = await doc(db, "users", id);
+      const userSnapshot = await getDoc(userDoc);
+      const userData = userSnapshot.data();
+      const combinedId =
+        currentUser.uid > id
+          ? currentUser.uid + id
+          : id + currentUser.uid;
+      try {
+        const res = await getDoc(doc(db, "chats", combinedId));
+        if (!res.exists()) {
+          await setDoc(doc(db, "chats", combinedId), { messages: [] });
+          await updateDoc(doc(db, "userChats", currentUser.uid), {
+            [combinedId + ".userInfo"]: {
+              uid: userData.uid,
+              displayName: userData.displayName,
+              photoURL: userData.photoURL,
+            },
+            [combinedId + ".date"]: serverTimestamp(),
+          });
+          await updateDoc(doc(db, "userChats", userData.uid), {
+            [combinedId + ".userInfo"]: {
+              uid: currentUser.uid,
+              displayName: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+            },
+            [combinedId + ".date"]: serverTimestamp(),
+          });
+          console.error("thanh cong tạo chat:");
+        }
+        console.error("thanh cong tạo chat:111");
+        dispatch({ type: "CHANGE_USER", payload: userData });
+      } catch (err) {
+        console.error("Lỗi khi tạo chat:", err);
+      }
+    }
+
+  };
 
   const [state, dispatch] = useReducer(chatReducer, INITIAL_STATE);
-
-  const createChat = async (id) => {
-    const user = doc(db, "users", id);
-    const combinedId =
-      currentUser.uid > id
-        ? currentUser.uid + id
-        : id + currentUser.uid;
-    try {
-      const res = await getDoc(doc(db, "chats", combinedId));
-      if (!res.exists()) {
-        await setDoc(doc(db, "chats", combinedId), { messages: [] });
-        await updateDoc(doc(db, "userChats", currentUser.uid), {
-          [combinedId + ".userInfo"]: {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          },
-          [combinedId + ".date"]: serverTimestamp(),
-        });
-        await updateDoc(doc(db, "userChats", user.uid), {
-          [combinedId + ".userInfo"]: {
-            uid: currentUser.uid,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-          },
-          [combinedId + ".date"]: serverTimestamp(),
-        });
-      }
-    } catch (err) {
-      console.error("Lỗi khi tạo chat:", err);
-    }
-  };
 
   return (
     <ChatContext.Provider value={{ data: state, dispatch, createChat }}>
@@ -75,5 +80,3 @@ export const ChatContextProvider = ({ children }) => {
     </ChatContext.Provider>
   );
 };
-
-export default ChatContextProvider;

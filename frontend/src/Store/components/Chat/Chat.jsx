@@ -145,7 +145,6 @@ const Message = ({ message }) => {
 
         >
           <Typography variant="body1">{message.text}</Typography>
-
           {message.img && <div className={style.img}><img src={message.img} alt="" /></div>}
 
 
@@ -225,7 +224,7 @@ const Input = () => {
     <div className={style.input}>
       <input
         type="text"
-        placeholder="Nhập tin nhắn"
+        placeholder="Gõ tin nhắn của bạn"
         onChange={(e) => setText(e.target.value)}
         value={text}
       />
@@ -237,7 +236,7 @@ const Input = () => {
           onChange={(e) => setImg(e.target.files[0])}
         />
         <label htmlFor="file">
-          <i class="fa-regular fa-image"></i>
+          <i style={{ margin: "10px", fontSize: "24px" }} class="fa-regular fa-image"></i>
         </label>
         <button onClick={handleSend}>Send</button>
       </div>

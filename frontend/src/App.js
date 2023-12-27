@@ -34,9 +34,6 @@ function App() {
   };
 
   return (
-
-    // <AuthContextProvider>
-    //   <ChatContextProvider>
         <Router>
           <Routes>
             <Route path="/*" element={<UserRoute element={<User />} role="User" />} />
@@ -44,8 +41,6 @@ function App() {
             <Route path="/admin/*" element={<UserRoute element={<Admin />} role="Admin" />} />
           </Routes>
         </Router>
-    //   </ChatContextProvider>
-    // </AuthContextProvider>
   );
 }
 

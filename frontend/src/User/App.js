@@ -85,6 +85,8 @@ const App = () => {
                 {/* <Footer /> */}
               </div>
               {/* </Router> */}
+              <div className="chat-container">
+              </div>
             </CityProvider>
           </AuthProvider>
         </LanguageProvider>

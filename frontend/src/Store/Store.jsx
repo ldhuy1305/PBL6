@@ -180,7 +180,6 @@ const Store = () => {
             </div>
           </ThemeProvider>
         </ColorModeContext.Provider>
-
       </ChatContextProvider>
     </AuthContextProvider>
   );
