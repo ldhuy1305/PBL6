@@ -70,8 +70,6 @@ const Message = ({ message }) => {
 };
 const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data }) => {
 
-
-
     {/* code của thanh lich  */ }
     const [text, setText] = useState("");
     const [img, setImg] = useState(null);
@@ -138,7 +136,6 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
 
     console.log("store", store)
     useEffect(() => {
-        console.log(store.ownerId)
         createChat(store.ownerId);
         const unSub = onSnapshot(doc(db, "chats", data.chatId), (doc) => {
             console.log("chatId", data.chatId)

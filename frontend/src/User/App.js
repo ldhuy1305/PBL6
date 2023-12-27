@@ -56,11 +56,12 @@ const App = () => {
     checkAndCreateCart();
   },);
   return (
-    <AuthContextProvider>
-      <ChatContextProvider>
-        <LanguageProvider>
-          <AuthProvider>
-            <CityProvider>
+
+    <LanguageProvider>
+      <AuthProvider>
+        <CityProvider>
+          <AuthContextProvider>
+            <ChatContextProvider>
               {/* <Router> */}
               <div className='wrapper'>
                 <Header />
@@ -87,11 +88,12 @@ const App = () => {
               {/* </Router> */}
               <div className="chat-container">
               </div>
-            </CityProvider>
-          </AuthProvider>
-        </LanguageProvider>
-      </ChatContextProvider>
-    </AuthContextProvider>
+            </ChatContextProvider>
+          </AuthContextProvider>
+        </CityProvider>
+      </AuthProvider>
+    </LanguageProvider>
+
   );
 
 }

@@ -163,7 +163,7 @@ const Store = () => {
                   <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
                   <Route path="/logout" element={<Logout setSelected={setSelected} />} />
                   <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
-                  <Route path="/Vouchoer" element={<Voucher setSelected={setSelected} />} />
+                  <Route path="/Voucher" element={<Voucher setSelected={setSelected} />} />
                   <Route path="/chat" element={<Chat setSelected={setSelected} />} />
                 </Routes>
                 <ToastContainer />

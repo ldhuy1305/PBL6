@@ -186,7 +186,7 @@ const OwnerProfile = ({ setSelected }) => {
     return (
         <Box m="10px 100px" position='relative' onClick={() => setOpenNotify(false)}>
             <Header2 title=" Thông tin cá nhân" />
-            {/* <Box
+            <Box
                 m="0 0 0 0"
             >
                 <div className="now-detail-profile1" style={{
@@ -364,7 +364,7 @@ const OwnerProfile = ({ setSelected }) => {
                         </div>
                     )}
                 </div>
-            </Box > */}
+            </Box >
         </Box >
 
     );

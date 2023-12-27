@@ -11,6 +11,8 @@ import ChatBox from "../../Components/Item/chatBox";
 import { AuthContext } from "../../context/AuthContext";
 import { ChatContext } from "../../context/ChatContext";
 const StoreDetail = () => {
+    const { currentUser, LoadCurr } = useContext(AuthContext);
+    const { data, createChat } = useContext(ChatContext);
     const navigate = useNavigate()
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false);
@@ -28,11 +30,6 @@ const StoreDetail = () => {
     const closeModal = () => {
         setShowModal(false);
     };
-
-    const { currentUser } = useContext(AuthContext);
-    console.log(currentUser)
-    const { data, createChat } = useContext(ChatContext);
-    console.log(data);
     useEffect(() => {
         const currentTime = new Date();
         const openTime = new Date(currentTime);
@@ -55,6 +52,8 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
+        LoadCurr("helo");
+        createChat(store.ownerId)
         fetchData();
     }, [store]);
 
@@ -67,14 +66,14 @@ const StoreDetail = () => {
         }
         const getVoucher = async () => {
             try {
-              const response = await getVoucherByStoreId(store._id);
-              console.log(response.data)
-              setDiscounts(response.data)
+                const response = await getVoucherByStoreId(store._id);
+                console.log(response.data)
+                setDiscounts(response.data)
             } catch (error) {
-              console.log("Lỗi khi lấy thông tin voucher", error)
+                console.log("Lỗi khi lấy thông tin voucher", error)
             }
-          }
-          getVoucher();
+        }
+        getVoucher();
     }, []);
 
     const [activeCategory, setActiveCategory] = useState('');
@@ -84,6 +83,11 @@ const StoreDetail = () => {
     };
     const handleComment = () => {
         navigate("/home/storeComment", { state: { store: { store }, isWithinOperatingHours: isWithinOperatingHours } });
+    }
+
+    const [selectedDiscount, setSelectedDiscount] = useState("");
+    const handleSelectDiscount = (id) => {
+        setSelectedDiscount(id)
     }
     return (
         <div>
@@ -184,26 +188,25 @@ const StoreDetail = () => {
                                     </div>
                                 </div>
                                 <div class="menu-restaurant-detail">
-                                {discounts.length > 0 && (
-                                    <div class="promotions-order">
-                                        {discounts.map((discount) => (
-                                            <div id="promotion-item" class="promotion-item">
-                                                <div>
-                                                    <img
-                                                        src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
-                                                        alt=""
-                                                        class="icon-promotion"
-                                                    />
-                                                    <div class='content' style={{ fontSize: '14px' }}>
-                                                        {discount.content}
+                                    {discounts.length > 0 && (
+                                        <div class="promotions-order">
+                                            {discounts.map((discount) => (
+                                                <div id="promotion-item" class="promotion-item">
+                                                    <div>
+                                                        <img
+                                                            src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
+                                                            alt=""
+                                                            class="icon-promotion"
+                                                        />
+                                                        <div class='content' style={{ fontSize: '14px' }}>
+                                                            {discount.content}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
 
-                                    </div>
-                                )}
-
+                                        </div>
+                                    )}
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
