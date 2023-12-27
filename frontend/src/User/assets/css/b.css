@@ -16462,25 +16462,7 @@ img {
   overflow-clip-margin: content-box;
   overflow: clip;
 }
-.vc_free-shipping-voucher_pc {
-  --vc-logo-size: 3.5rem;
-  --vc-expiry-font-size: 0.75rem;
-  --vc-expiry-line-height: 0.875rem;
-  --vc-expiry-margin-top: 0.25rem;
-  --vc-main-title-font-size: 0.875rem;
-  --vc-main-title-line-height: 1rem;
-  --vc-product-scope-font-size: 0.75rem;
-  --vc-product-scope-line-height: 0.875rem;
-  --vc-product-scope-padding: 0.0625rem 0.25rem;
-  --vc-icon-text-font-size: 0.75rem;
-  --vc-icon-text-line-height: 0.875rem;
-  --vc-icon-text-max-height: 1.75rem;
-  --vc-icon-text-margin-top: 0.25rem;
-  --vc-radio-button-border: 0.0625rem solid rgba(0,0,0,.14);
-  --vc-radio-button-box-shadow: var(--black2) 0 0.125rem 0 0;
-  --vc-card-width: auto;
-  margin-bottom: 15px;
-}
+
 .vc_Card_fsv {
   --vc-card-left-border-color: #00bfa5;
   --vc-card-left-fill-color: #00bfa5;
@@ -16939,4 +16921,27 @@ body .stardust-popup .stardust-popup-buttons {
 .A3W8C5 {
   display: flex;
   flex-direction: column;
+}
+
+.vc_RadioButton_radioDisabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+.vc_WarningBanner_link {
+  text-decoration: none;
+}
+.vc_WarningBanner_warningBanner {
+  align-items: center;
+  background-color: #fff8e4;
+  color: #ee4d2d;
+  display: flex;
+  font-size: var(--vc-warning-banner-font-size,.875rem);
+  height: var(--vc-warning-banner-height,2.375rem);
+  margin-top: var(--vc-warning-banner-margin-top,0);
+  padding-left: var(--vc-warning-banner-padding-left-right,.625rem);
+  padding-right: var(--vc-warning-banner-padding-left-right,.625rem);
+  padding-top: var(--vc-warning-banner-padding-top,0);
+}
+.vc_WarningBanner_info {
+  margin-right: .3125rem;
 }

@@ -33,12 +33,10 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                     setDefaultContact(response.defaultContact)
                     setMessage("Thêm địa chỉ thành công!");
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 } catch (error) {
                     setMessage("Địa chỉ không hợp lệ! Thêm địa chỉ thất bại!");
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 }
             } else {
@@ -55,12 +53,10 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                     setDefaultContact(response.data.defaultContact)
                     setMessage("Cập nhật địa chỉ thành công!");
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 } catch (error) {
                     setMessage("Địa chỉ không hợp lệ! Cập nhật địa chỉ thất bại!");
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 }
             }

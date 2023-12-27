@@ -13,6 +13,7 @@ const moment = require("moment");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const firebase = require("../utils/firebase");
+const voucherController = require("./voucherController");
 require("dotenv").config();
 process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
@@ -288,6 +289,7 @@ class orderController {
             Date.now() + process.env.UTC * 60 * 60 * 1000
           );
           await this.refundOrder(req, order._id, next);
+          await voucherController.refundVoucher(order._id);
           await order.save();
         }
         if (order.status == "Pending" && t > process.env.time_refused)

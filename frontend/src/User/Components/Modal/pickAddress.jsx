@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ModalUpdateAddress from "./modalUpdateAddress";
-const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedContact, contacts, setContacts }) => {
-    const [showModalUpdateAddress, setShowModalUpdateAddress] = useState(false);
+const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedContact, contacts, setContacts, defaultContact, setDefaultContact }) => {
+    // const [showModalUpdateAddress, setShowModalUpdateAddress] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
@@ -101,7 +101,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                                 <label class="PcodYT" htmlFor={`address-radio-${cont._id}`}>
                                                     {/* <div class="PcodYT"> */}
 
-                                                    <div role="heading" class="_7efJXB hgGPm2">
+                                                    <div class="_7efJXB hgGPm2">
                                                         <div
                                                             id="address-card_32c92423-9fcd-4034-ba8f-cd538c93f96e_header"
                                                             class="RMBiE- JZWy3M"
@@ -119,7 +119,6 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                                     </div>
                                                     <div
                                                         id="address-card_32c92423-9fcd-4034-ba8f-cd538c93f96e_content"
-                                                        role="heading"
                                                         class="_7efJXB hgGPm2"
                                                     >
                                                         <div class="RMBiE- JZWy3M">
@@ -131,7 +130,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                                         </div>
                                                         <div class="ZsWMz8 XEXjAd"></div>
                                                     </div>
-                                                    {user.defaultContact === cont._id && (
+                                                    {defaultContact === cont._id && (
                                                         <div
                                                             id="address-card_32c92423-9fcd-4034-ba8f-cd538c93f96e_badge"
                                                             role="row"
@@ -169,7 +168,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                     <div class="_4BlFzb"></div>
                 </aside>
             </div>
-            <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts}/>
+            <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts} setDefaultContact={setDefaultContact}/>
         </div>
     )
 }
