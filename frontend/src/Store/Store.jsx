@@ -4,6 +4,7 @@ import Sidebara from './components/Sidebar/Sidebar';
 import Topbar from './components/Topbar/Topbar';
 import Product from './page/Product/Product';
 import Listorder from './page/Listorder/Listorder';
+import Voucher from './page/Voucher/Voucher';
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Category from './page/Category/Category';
@@ -28,7 +29,6 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import OwnerProfile from './page/Info/OwnerProfile'
 import Chat from './components/Chat/Chat';
-import { Navigate } from "react-router-dom";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ChatContextProvider } from "./context/ChatContext";
 
@@ -163,6 +163,7 @@ const Store = () => {
                   <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
                   <Route path="/logout" element={<Logout setSelected={setSelected} />} />
                   <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
+                  <Route path="/Vouchoer" element={<Voucher setSelected={setSelected} />} />
                   <Route path="/chat" element={<Chat setSelected={setSelected} />} />
                 </Routes>
                 <ToastContainer />

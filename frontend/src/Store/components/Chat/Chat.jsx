@@ -72,7 +72,7 @@ const ChatUI = ({ SetChat }) => {
           <div className={style.messageuser}>
             <Messages />
           </div>
-          <div className={style.input}>
+          <div className={style.containerinput}>
             <Input />
           </div>
         </div>
@@ -117,7 +117,6 @@ const Message = ({ message }) => {
       sx={{
         display: "flex",
         justifyContent: isBot ? "flex-end" : "flex-start",
-
         mb: 1,
       }}
     >
@@ -137,11 +136,13 @@ const Message = ({ message }) => {
         <Paper
           variant="outlined"
           sx={{
+            backgroundColor: isBot ? "#1877f2" : null,
             p: 1,
             ml: isBot ? 1 : 0,
             mr: isBot ? 0 : 1,
             borderRadius: isBot ? "20px 20px 10px 20px" : "20px 20px 20px 10px",
           }}
+
         >
           <Typography variant="body1">{message.text}</Typography>
 
@@ -162,6 +163,10 @@ const Input = () => {
   const { data } = useContext(ChatContext);
 
   const handleSend = async () => {
+    if (text.trim() === '') {
+      console.warn("Lưu ý: Không thể gửi tin nhắn với nội dung trống.");
+      return;
+    }
     if (img) {
       const storageRef = ref(storage, uuid());
 
@@ -232,7 +237,7 @@ const Input = () => {
           onChange={(e) => setImg(e.target.files[0])}
         />
         <label htmlFor="file">
-          <img src={img} alt="" />
+          <i class="fa-regular fa-image"></i>
         </label>
         <button onClick={handleSend}>Send</button>
       </div>

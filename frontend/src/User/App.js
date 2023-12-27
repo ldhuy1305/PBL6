@@ -24,6 +24,8 @@ import { CityProvider } from './services/CityContext'
 import { LanguageProvider } from './services/languageContext'
 import { Navigate } from 'react-router-dom'
 import Policy from './Page/customer/policy'
+import { AuthContextProvider } from "./context/AuthContext";
+import { ChatContextProvider } from "./context/ChatContext";
 
 const ProtectedRoute = ({ element }) => {
   const token = localStorage.getItem("token")
@@ -54,36 +56,40 @@ const App = () => {
     checkAndCreateCart();
   },);
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <CityProvider>
-          {/* <Router> */}
-          <div className='wrapper'>
-            <Header />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/signin" element={<Signin />} />
-              <Route path="/signUpCustomer" element={<SignUpCustomer />} />
-              <Route path="/signUpShipper" element={<SignUpShipper />} />
-              <Route path="/signUpOwner" element={<SignUpOwner />} />
-              <Route path="/signUpStore" element={<SignUpStore />} />
-              <Route path="/forgotPass" element={<ForgotPass />} />
-              <Route path="/verify" element={<Verify />} />
-              <Route path="/resetPass" element={<ResetPass />} />
-              <Route path="/policy" element={<Policy />} />
-              <Route path="/home/storeDetail" element={<StoreDetail />} />
-              <Route path="/home/storeComment" element={<ViewComment />} />
-              <Route path="/user/profile" element={<ProtectedRoute element={<Profile />} />} />
-              <Route path="/user/orderHistory" element={<ProtectedRoute element={<OrderHistory />} />} />
-              <Route path="/user/updateAddress" element={<ProtectedRoute element={<UpdateAddress />} />} />
-              <Route path="/user/order" element={<ProtectedRoute element={<OrderPage />} />} />
-            </Routes>
-            {/* <Footer /> */}
-          </div>
-          {/* </Router> */}
-        </CityProvider>
-      </AuthProvider>
-    </LanguageProvider>
+    <AuthContextProvider>
+      <ChatContextProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <CityProvider>
+              {/* <Router> */}
+              <div className='wrapper'>
+                <Header />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/signin" element={<Signin />} />
+                  <Route path="/signUpCustomer" element={<SignUpCustomer />} />
+                  <Route path="/signUpShipper" element={<SignUpShipper />} />
+                  <Route path="/signUpOwner" element={<SignUpOwner />} />
+                  <Route path="/signUpStore" element={<SignUpStore />} />
+                  <Route path="/forgotPass" element={<ForgotPass />} />
+                  <Route path="/verify" element={<Verify />} />
+                  <Route path="/resetPass" element={<ResetPass />} />
+                  <Route path="/policy" element={<Policy />} />
+                  <Route path="/home/storeDetail" element={<StoreDetail />} />
+                  <Route path="/home/storeComment" element={<ViewComment />} />
+                  <Route path="/user/profile" element={<ProtectedRoute element={<Profile />} />} />
+                  <Route path="/user/orderHistory" element={<ProtectedRoute element={<OrderHistory />} />} />
+                  <Route path="/user/updateAddress" element={<ProtectedRoute element={<UpdateAddress />} />} />
+                  <Route path="/user/order" element={<ProtectedRoute element={<OrderPage />} />} />
+                </Routes>
+                {/* <Footer /> */}
+              </div>
+              {/* </Router> */}
+            </CityProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </ChatContextProvider>
+    </AuthContextProvider>
   );
 
 }

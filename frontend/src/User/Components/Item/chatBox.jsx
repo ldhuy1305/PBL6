@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import '../../assets/css/chatBox.css';
-const ChatBox = ({store, isWithinOperatingHours}) => {
+import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
+const ChatBox = ({ store, isWithinOperatingHours }) => {
+    const { currentUser } = useContext(AuthContext);
+    const { data, createChat } = useContext(ChatContext);
+    useEffect(() => {
+        createChat(store.ow)
+    }, [])
     return (
         <div class="flex flex-col justify-end h-full is-widget-right" style={{ marginTop: '71px', paddingLeft: '20px' }}>
             <div data-v-b7bd3fac="" class="w-full h-full bg-slate-25 dark:bg-slate-800" >
@@ -24,7 +31,7 @@ const ChatBox = ({store, isWithinOperatingHours}) => {
                                         class="font-medium text-base leading-4 flex items-center text-black-900"
                                     >
                                         <span class="mr-1">{store.name}</span>
-                                        <div class={`h-2 w-2 rounded-full ${isWithinOperatingHours ? 'bg-green-500' : 'bg-gray-500'}`}></div>                                      
+                                        <div class={`h-2 w-2 rounded-full ${isWithinOperatingHours ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                     </div>
                                     <div class="text-xs mt-1 leading-3 text-black-700">
                                         Thường trả lời sau vài phút
@@ -209,6 +216,17 @@ const ChatBox = ({store, isWithinOperatingHours}) => {
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+
+
+                                        {/* code của thanh lich  */}
+
+
+
+                                        {/* code của thanh lich  */}
+
 
 
                                     </div>
