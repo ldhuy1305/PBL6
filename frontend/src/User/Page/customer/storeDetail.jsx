@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import CartModal from "../../Components/Modal/cart";
 import { useLocation } from "react-router-dom";
-import { getAllCategoryByStoreId } from "../../services/userServices";
+import { getAllCategoryByStoreId, getVoucherByStoreId } from "../../services/userServices";
 import { useTranslation } from "react-i18next";
 import MenuGroup from "../../Components/Item/menuGroup";
 import { Link, Element } from "react-scroll";
@@ -31,7 +31,7 @@ const StoreDetail = () => {
 
     const { currentUser } = useContext(AuthContext);
     console.log(currentUser)
-    const { data, createChat,dis } = useContext(ChatContext);
+    const { data, createChat } = useContext(ChatContext);
     console.log(data);
     useEffect(() => {
         const currentTime = new Date();
@@ -59,11 +59,22 @@ const StoreDetail = () => {
     }, [store]);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [discounts, setDiscounts] = useState([])
     useEffect(() => {
         const token = localStorage.getItem("token")
         if (token) {
             setIsLoggedIn(true)
         }
+        const getVoucher = async () => {
+            try {
+                const response = await getVoucherByStoreId(store._id);
+                console.log(response.data)
+                setDiscounts(response.data)
+            } catch (error) {
+                console.log("Lỗi khi lấy thông tin voucher", error)
+            }
+        }
+        getVoucher();
     }, []);
 
     const [activeCategory, setActiveCategory] = useState('');
@@ -75,11 +86,6 @@ const StoreDetail = () => {
         navigate("/home/storeComment", { state: { store: { store }, isWithinOperatingHours: isWithinOperatingHours } });
     }
 
-    const discounts = [
-        { _id: "1", content: "Giảm 20k", storeId: "store1" },
-        { _id: "2", content: "Giảm 30k", storeId: "store2" },
-        { _id: "3", content: "Giảm 40k", storeId: "store3" }
-    ]
     const [selectedDiscount, setSelectedDiscount] = useState("");
     const handleSelectDiscount = (id) => {
         setSelectedDiscount(id)
@@ -183,24 +189,25 @@ const StoreDetail = () => {
                                     </div>
                                 </div>
                                 <div class="menu-restaurant-detail">
-                                    <div class="promotions-order">
-                                        {discounts.map((discount) => (
-                                            <div id="promotion-item" class="promotion-item">
-                                                <div>
-                                                    <img
-                                                        src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
-                                                        alt=""
-                                                        class="icon-promotion"
-                                                    />
-                                                    <div class='content' style={{ fontSize: '14px' }}>
-                                                        {discount.content}
+                                    {discounts.length > 0 && (
+                                        <div class="promotions-order">
+                                            {discounts.map((discount) => (
+                                                <div id="promotion-item" class="promotion-item">
+                                                    <div>
+                                                        <img
+                                                            src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
+                                                            alt=""
+                                                            class="icon-promotion"
+                                                        />
+                                                        <div class='content' style={{ fontSize: '14px' }}>
+                                                            {discount.content}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
 
-                                    </div>
-
+                                        </div>
+                                    )}
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
