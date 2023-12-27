@@ -12,6 +12,7 @@ export const AuthContextProvider = ({ children }) => {
   console.log(User);
   const LoadCurr = async () => {
     if (User) {
+      console.log('helo')
       const userDocRef = doc(db, "users", User._id);
       const unSub = onSnapshot(userDocRef, (doci) => {
         if (doci.exists()) {

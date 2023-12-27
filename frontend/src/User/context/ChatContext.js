@@ -12,7 +12,10 @@ import {
 export const ChatContext = createContext();
 
 export const ChatContextProvider = ({ children }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, LoadCurr } = useContext(AuthContext);
+  useEffect(() => {
+    LoadCurr();
+  }, [])
   const INITIAL_STATE = {
     chatId: "null",
     user: {},

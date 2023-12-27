@@ -10,8 +10,12 @@ export const AuthContextProvider = ({ children }) => {
   const User = JSON.parse(tokenString);
   const [currentUser, setCurrentUser] = useState({});
   console.log(User);
+  useEffect(() => {
+    LoadCurr();
+  }, []);
   const LoadCurr = async () => {
-    if (User) {
+    if (User !== null) {
+      console.log(User);
       const userDocRef = doc(db, "users", User._id);
       const unSub = onSnapshot(userDocRef, (doci) => {
         if (doci.exists()) {
@@ -48,16 +52,8 @@ export const AuthContextProvider = ({ children }) => {
         unSub();
       };
     }
-    else {
-      setCurrentUser({})
-    }
     console.log(currentUser);
   };
-
-  useEffect(() => {
-    LoadCurr(); // Gọi hàm LoadCurr ở đây
-  }, []); 
-
   return (
     <AuthContext.Provider value={{ currentUser, LoadCurr }}>
       {children}

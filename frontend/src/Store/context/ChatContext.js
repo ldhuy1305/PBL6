@@ -36,7 +36,6 @@ export const ChatContextProvider = ({ children }) => {
     }
   };
   const createChat = async (id) => {
-    LoadCurr();
     if (currentUser.uid) {
       const userDoc = await doc(db, "users", id);
       const userSnapshot = await getDoc(userDoc);
