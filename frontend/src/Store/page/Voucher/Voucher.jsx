@@ -20,6 +20,10 @@ const notify = (er, message) => toast[er](message, {
 });
 
 const Voucher = ({ setSelected }) => {
+  useEffect(() => {
+    setSelected("Phiếu giảm giá");
+  }, []);
+
   const [isLoading, setIsLoading] = useState(true);
   const [openVoucher, setOpenVoucher] = useState(false);
   const [modalOpen, setModalOpen] = useState(true);
