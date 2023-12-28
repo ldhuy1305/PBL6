@@ -1,6 +1,18 @@
 import axios from "axios";
 const moment = require('moment');
 const url = "https://falth-api.vercel.app";
+
+const checkStoreOpen = (openAt, closeAt)  => {
+  const currentTime = new Date();
+  const openTime = new Date(currentTime);
+  const closeTime = new Date(currentTime);
+
+  // Set the time portion of the date objects
+  openTime.setHours(Number(openAt.split(':')[0]), Number(openAt.split(':')[1]), 0, 0);
+  closeTime.setHours(Number(closeAt.split(':')[0]), Number(closeAt.split(':')[1]), 0, 0);
+  return (currentTime >= openTime && currentTime <= closeTime);
+}
+
 //Auth
 const loginAPI = async (email, password) => {
   return axios.post(`${url}/api/auth/login`, { email, password });
@@ -442,6 +454,7 @@ const applyVoucher = async (idVoucher, idOrder) => {
 }
 
 export {
+  checkStoreOpen,
   loginAPI,
   getUserInfo,
   addContact,

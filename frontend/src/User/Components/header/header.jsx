@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/header.css'
-import { getStoreById } from '../../services/userServices';
+import { getStoreById, checkStoreOpen } from '../../services/userServices';
 import logo from '../../assets/img/logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHistory, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -91,34 +91,34 @@ const Header = () => {
     };
 
     useEffect(() => {
-        if(tempKey === "") {
+        if (tempKey === "") {
             setSearchResults([])
         } else {
             let api
-            if(selectSearch === "store") {
+            if (selectSearch === "store") {
                 api = `${url}/api/store?city=${selectedLocation}&isLocked=false&search=${tempKey}&limit=100`
             } else if (selectSearch === "product") {
                 api = `${url}/api/product/search?city=${selectedLocation}&search=${tempKey}&limit=100`
             }
-        fetch(api)
-          .then((response) => response.json())
-          .then((data) => {
-            let uniqueResults 
-            if(selectSearch === "store") {
-                uniqueResults = data.data 
-            } else if (selectSearch === "product") {
-                uniqueResults = data.data
-            //     .filter((item, index, self) =>
-            //   index === self.findIndex((i) => i.store.name === item.store.name));
-            }
-          // Update the state with unique results
-          console.log(api)
-          console.log(uniqueResults)
-          setSearchResults(uniqueResults);
-          })
-          .catch((error) => {
-            console.error('Lỗi khi gọi API', error);
-          });
+            fetch(api)
+                .then((response) => response.json())
+                .then((data) => {
+                    let uniqueResults
+                    if (selectSearch === "store") {
+                        uniqueResults = data.data
+                    } else if (selectSearch === "product") {
+                        uniqueResults = data.data
+                        //     .filter((item, index, self) =>
+                        //   index === self.findIndex((i) => i.store.name === item.store.name));
+                    }
+                    // Update the state with unique results
+                    console.log(api)
+                    console.log(uniqueResults)
+                    setSearchResults(uniqueResults);
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi gọi API', error);
+                });
         }
     }, [selectedLocation, tempKey, selectSearch]);
 
@@ -241,19 +241,70 @@ const Header = () => {
                                             onChange={handleInputChange}
                                             onKeyDown={handleKeyPress}
                                         ></input>
-                                        {/* Search history */}
                                         {searchResults.length > 0 && (
-                                            <div class="header__search-history">
-                                                <h3 class="header__search-history-heading">Kết quả tìm kiếm ({searchResults.length})</h3>
-                                                <ul class="header__search-history-list">
+                                            <div class="now-idea-searching">
+                                                <div class="now-list-restaurant-row">
+                                                    <h3 class="header__search-history-heading">Kết quả tìm kiếm ({searchResults.length})</h3>
+                                                    {searchResults.map((result) => ( 
+
+                                                    <div class="item-restaurant" onClick={() => handleStore(`${selectSearch === "store" ? result._id : result.store._id}`)}>
+                                                        <div class="item-content" >
+                                                        <div class="img-restaurant">
+                                                                <img
+                                                                    src={selectSearch === "store" ? result.image : (result.images && result.images[0])}
+                                                                    alt="Cơm Gà Nam Chợ Mới - Hoàng Diệu"
+                                                                    title="Cơm Gà Nam Chợ Mới - Hoàng Diệu"
+                                                                />
+                                                            </div>
+                                                            <div class="info-restaurant">
+                                                                <div class="name-res">{result.name}</div>
+                                                                {(selectSearch === "product" && result.store) && (
+                                                                    <div class="address-res" style={{color:'black'}}>
+                                                                    {result.store.name}
+                                                                </div>
+                                                                )}
+                                                                <div class="address-res">
+                                                                    {selectSearch === "store" ? result.address : (result.store && result.store.address)}
+                                                                </div>
+                                                            </div>
+                                                            {/* {(selectSearch === "store"  && result.openAt && result.closeAt) && (
+
+                                                                <div class="opentime-status">
+                                                                    <span
+                                                                        className={`stt ${checkStoreOpen(result.openAt, result.closeAt) ? 'online' : 'offline'}`}
+                                                                        title={checkStoreOpen(result.openAt, result.closeAt) ? `${t("storeActive")}`: `${t("storeClose")}`}
+                                                                    ></span>
+                                                                </div>
+                                                            )} */}
+                                                            {((selectSearch === "store" && result.openAt && result.closeAt) || (selectSearch === "product" && result && result.store && result.store.openAt && result.store.closeAt)) && (
+    <div class="opentime-status">
+        <span
+            className={`stt ${checkStoreOpen(
+                selectSearch === "store" ? result.openAt : result.store.openAt,
+                selectSearch === "store" ? result.closeAt : result.store.closeAt
+            ) ? 'online' : 'offline'}`}
+            title={checkStoreOpen(
+                selectSearch === "store" ? result.openAt : result.store.openAt,
+                selectSearch === "store" ? result.closeAt : result.store.closeAt
+            ) ? `${t("storeActive")}`: `${t("storeClose")}`}
+        ></span>
+    </div>
+)}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    
+                                                ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                                {/* <ul class="header__search-history-list">
                                                     {searchResults.map((result) => (
                                                         <li class="header__search-history-item" onClick={() => handleStore(`${selectSearch === "store" ? result._id : result.store._id}`)}>
                                                             <button>{result.name}</button>
                                                         </li>
                                                     ))}
-                                                </ul>
-                                            </div>
-                                        )}
+                                                </ul> */}              
                                     </div>
                                     <button class="header__search-btn" onClick={handleSearch}>
                                         <i class="header__search-btn-icon fas fa-search"></i>
