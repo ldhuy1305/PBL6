@@ -54,8 +54,8 @@
   "homeKey": "Key",
 
   "storeLike": "Like",
-  "storeActive": "Open: ",
-  "storeClose": "Closed: ",
+  "storeActive": "Open",
+  "storeClose": "Closed",
 
   "forgotTitle": "Forgot password",
   "forgotMess" : "Fill in your registration email, FALTH will send you a confirmation code to create a new password.",

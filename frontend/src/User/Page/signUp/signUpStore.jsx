@@ -21,9 +21,6 @@ const SignUpStore = () => {
         handleCityChange,
         handleDistrictChange,
     } = useLocationSelect();
-    const handleNav = ({ nav }) => {
-        navigate(`/${nav}`);
-    };
     const [formData, setFormData] = useState({
         name: '',
         openAt: '',
@@ -87,7 +84,7 @@ const SignUpStore = () => {
         registrationData.append('address', address);
         registrationData.append('image', formData.image);
         registrationData.append('registrationLicense', formData.registrationLicense);
-        console.log(id, formData)
+        console.log(formData)
 
         if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
@@ -95,7 +92,6 @@ const SignUpStore = () => {
             try {
                 console.log(formData.phoneNumber)
                 setIsLoading(true)
-                // Gọi API đăng ký người dùng
                 const response = await axios.post(`https://falth-api.vercel.app/api/store/${id}`, registrationData, {
                     headers: {
                         ContentType: 'multipart/form-data',
@@ -143,12 +139,12 @@ const SignUpStore = () => {
                                 <div class="row_su row-space">
                                     <div class="col-2_su">
                                         <div class="input-group_su">
-                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("openTime")} onChange={handleChange} value={formData.openAt} name="openAt" required />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="time" placeholder={t("openTime")} onChange={handleChange} value={formData.openAt} name="openAt" required />
                                         </div>
                                     </div>
                                     <div class="col-2_su">
                                         <div class="input-group_su" >
-                                            <input style={{ border: 'none' }} class="input--style-2" type="text" placeholder={t("closeTime")} onChange={handleChange} value={formData.closeAt} name="closeAt" required />
+                                            <input style={{ border: 'none' }} class="input--style-2" type="time" placeholder={t("closeTime")} onChange={handleChange} value={formData.closeAt} name="closeAt" required />
                                         </div>
                                     </div>
                                 </div>

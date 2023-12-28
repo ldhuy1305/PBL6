@@ -15637,7 +15637,7 @@ a.text-rebranding-primary:hover {
   position: absolute;
   right: 100%;
   cursor: pointer;
-  margin-right: 72px;
+  margin-right: 50px;
   padding-left: 0;
 }
 
@@ -19649,12 +19649,18 @@ button.history-table-status.gray {
 }
 
 .now-idea-searching {
-  padding-top: 1px;
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
+  left: -92px;
+  top: calc(100% + 2px);
+  width: calc(100% + 140px);
   z-index: 9;
+  display: none;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgb(188, 185, 185);
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 300px;
 }
 
 .now-idea-searching .opentime-status {
@@ -19747,7 +19753,7 @@ button.history-table-status.gray {
   position: relative;
   overflow: hidden;
   padding-left: 10px;
-  padding-right: 95px;
+  padding-right: 70px;
 }
 
 .now-idea-searching .now-list-restaurant-row .info-restaurant .name-res {
@@ -24046,8 +24052,9 @@ select.required-data {
   max-height: 300px;
   position: absolute;
   top: calc(100% + 2px);
-  left: 0;
-  width: calc(100% - 2px);
+  left: -92px;
+  width: calc(100% + 140px);
+  /* width: calc(100% - 2px); */
   background-color: #fff;
   border-radius: 3px;
   box-shadow: 0 0 5px rgb(188, 185, 185);
@@ -24092,7 +24099,7 @@ select.required-data {
   background-color: #fd5c63;
   border: none;
   height: 34px;
-  width: 60px;
+  width: 50px;
   border-radius: 3px;
   margin-right: 3px;
   outline: none;
@@ -24111,6 +24118,11 @@ select.required-data {
 /* .header__search-input:focus~.header__search-history {
   display: block;
 } */
+.header__search-input:focus~.now-idea-searching,
+.now-idea-searching:hover {
+  display: block;
+}
+
 .header__search-input:focus~.header__search-history,
 .header__search-history:hover {
   display: block;
@@ -24586,7 +24598,7 @@ select {
   border: 1px solid #ccc; /* Màu viền */
   border-radius: 5px; /* Độ cong viền */
   background-color: #fff; /* Màu nền */
-  width: 100px; /* Độ rộng của hộp chọn */
+  width: 90px; /* Độ rộng của hộp chọn */
   outline: none; /* Loại bỏ đường viền khi hộp chọn được focus */
   margin-left: 4px;
 }
