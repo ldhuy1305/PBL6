@@ -199,6 +199,7 @@ const StoreDetail = () => {
                                                     <div class= 'content' style={{fontSize:'14px'}}>
                                                         {discount.name}
                                                     </div>
+                                                    </div>
                                                 </div>
                                             ))}
 
