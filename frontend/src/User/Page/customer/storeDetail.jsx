@@ -11,8 +11,7 @@ import ChatBox from "../../Components/Item/chatBox";
 import { AuthContext } from "../../context/AuthContext";
 import { ChatContext } from "../../context/ChatContext";
 const StoreDetail = () => {
-    const { currentUser, LoadCurr } = useContext(AuthContext);
-    const { data, createChat } = useContext(ChatContext);
+    const { data, createChat, currentUser } = useContext(ChatContext);
     const navigate = useNavigate()
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false);
@@ -52,7 +51,6 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
-        LoadCurr("helo");
         createChat(store.ownerId)
         fetchData();
     }, [store]);

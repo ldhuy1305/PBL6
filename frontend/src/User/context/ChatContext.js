@@ -1,5 +1,8 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import React, { createContext, useContext, useEffect, useReducer, useState } from "react";
+
 import { AuthContext } from "./AuthContext";
+import { onSnapshot } from "firebase/firestore";
+
 import { db } from "../firebase";
 import {
   doc,
@@ -12,10 +15,7 @@ import {
 export const ChatContext = createContext();
 
 export const ChatContextProvider = ({ children }) => {
-  const { currentUser, LoadCurr } = useContext(AuthContext);
-  useEffect(() => {
-    LoadCurr();
-  }, [])
+  const [currentUser, setCurrentUser] = useState({});
   const INITIAL_STATE = {
     chatId: "null",
     user: {},
@@ -35,8 +35,36 @@ export const ChatContextProvider = ({ children }) => {
         return state;
     }
   };
+  useEffect(() => {
+
+    const tokenString = localStorage.getItem('user');
+    console.log('user', tokenString);
+    const User = JSON.parse(tokenString);
+    if (User !== null) {
+      const userDocRef = doc(db, "users", User._id);
+      const unSub = onSnapshot(userDocRef, (doci) => {
+        if (doci.exists()) {
+          setCurrentUser(doci.data());
+          console.log("doc1", doci.data());
+        }
+      });
+
+      unSub();
+    }
+  }, [])
   const createChat = async (id) => {
-    if (currentUser.uid) {
+    const tokenString = localStorage.getItem('user');
+    console.log('user', tokenString);
+    const User = JSON.parse(tokenString);
+    console.log('user', User);
+    if (User !== null) {
+      const userDocRef = doc(db, "users", User._id);
+      await onSnapshot(userDocRef, (doci) => {
+        if (doci.exists()) {
+          setCurrentUser(doci.data());
+          console.log("doc1", doci.data());
+        }
+      })
       const userDoc = await doc(db, "users", id);
       const userSnapshot = await getDoc(userDoc);
       const userData = userSnapshot.data();
@@ -66,7 +94,6 @@ export const ChatContextProvider = ({ children }) => {
           });
           console.error("thanh cong tạo chat:");
         }
-        console.error("thanh cong tạo chat:");
         dispatch({ type: "CHANGE_USER", payload: userData });
       } catch (err) {
         console.error("Lỗi khi tạo chat:", err);
@@ -78,7 +105,7 @@ export const ChatContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(chatReducer, INITIAL_STATE);
 
   return (
-    <ChatContext.Provider value={{ data: state, dispatch, createChat }}>
+    <ChatContext.Provider value={{ data: state, dispatch, createChat, currentUser }}>
       {children}
     </ChatContext.Provider>
   );
