@@ -18,8 +18,9 @@ import Spinner from 'react-bootstrap/Spinner';
 import { useNavigate } from 'react-router-dom';
 
 
-const Product = () => {
-    const [productStatus, setProductStatus] = useState(true);
+const Product = ({ setSelected }) => {
+
+    const [productStatus, setProductStatus] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingbutton, setIsLoadingbutton] = useState(false);
     const history = useNavigate();
@@ -45,14 +46,14 @@ const Product = () => {
     const fetchCatname = async () => {
         try {
             const response = await axios.get(
-                `https://falth-api.vercel.app/api/category/owner/${_id}`,
+                `https://falth-api.vercel.app/api/category`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data;
             console.log(responseData);
             setCatname(responseData);
             setIsLoading(false);
@@ -63,6 +64,9 @@ const Product = () => {
     };
     useEffect(() => {
         fetchCatname();
+    }, []);
+    useEffect(() => {
+        setSelected("Thêm sản phẩm");
     }, []);
 
     const Addproduct = async (formData) => {
@@ -81,10 +85,11 @@ const Product = () => {
             setIsLoadingbutton(false);
         }
     };
-    const priceRegExp = /^\d+(\.\d{1,2})?$/;
+    const priceRegExp = /^[1-9]\d*000$/;
+
 
     const schema = yup.object().shape({
-        name: yup.string().required("Tên là bắt buộc"),
+        name: yup.string().required("Tên là bắt buộc").min(1, "Tên không được để trống"),
         price: yup.string().required("Giá tiền là bắt buộc").matches(priceRegExp, "Giá tiền không hợp lệ"),
         description: yup.string().required("Mô tả là bắt buộc"),
     });
@@ -141,7 +146,7 @@ const Product = () => {
                                     name: "",
                                     price: "",
                                     description: "",
-                                    category: ""
+                                    category: Catname[0].catName
 
                                 }}
                             >
@@ -295,7 +300,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-1"
-                                        label="Cón hàng"
+                                        label="Hết hàng"
                                         name="default-radio"
                                         onClick={() => setProductStatus(true)}
                                         defaultChecked={productStatus}
@@ -303,7 +308,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-2"
-                                        label="Hết hàng"
+                                        label="Cón hàng"
                                         name="default-radio"
                                         onChange={() => setProductStatus(false)}
                                         defaultChecked={!productStatus}

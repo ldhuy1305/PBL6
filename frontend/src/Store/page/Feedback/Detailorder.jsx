@@ -10,17 +10,15 @@ import style from './Detailorder.module.css';
 
 const Detailorder = () => {
     const token = localStorage.getItem('token');
-    const _id = localStorage.getItem('_id');
     const [Order, setOrder] = useState([]);
-    const [tatol, settatol] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
     const dataFromPreviousPage = location.state;
-    console.log(dataFromPreviousPage)
 
 
     const fetchOrder = async () => {
         try {
+            setIsLoading(true);
             const response = await axios.get(
                 `https://falth-api.vercel.app/api/order/${dataFromPreviousPage}`,
                 {
@@ -29,10 +27,12 @@ const Detailorder = () => {
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data.data[0];
             console.log(responseData);
             setOrder(responseData);
+            setIsLoading(false);
         } catch (error) {
+            console.error(error);
         }
     };
     const fetchData = async () => {
@@ -44,19 +44,21 @@ const Detailorder = () => {
     };
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [dataFromPreviousPage]);
     function convertUTCtoLocalDateTime(utcDateString) {
-        const utcDate = new Date(utcDateString);
-        const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-        const day = localDate.getDate();
-        const month = localDate.getMonth() + 1;
-        const year = localDate.getFullYear();
-        const hours = localDate.getHours();
-        const minutes = localDate.getMinutes();
-        const seconds = localDate.getSeconds();
-        const formattedDateTime = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${hours}:${minutes}:${seconds}`;
+        const time = utcDateString;
 
-        return formattedDateTime;
+        const formattedDateTime = new Date(time).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'UTC', // Ensure the date is formatted in UTC
+        }).replace(/(\d+)\/(\d+)\/(\d+), (\d+:\d+:\d+)/, '$4 $2/$1/$3');
+        return formattedDateTime
+
     }
 
 
@@ -138,6 +140,7 @@ const Detailorder = () => {
                                     </div>
 
                                 </div>
+
                             </div>
                         </div>
                     </Box>
@@ -172,6 +175,9 @@ const Detailorder = () => {
                                         case "Ready":
                                             color = "#FFC107"; // Màu vàng cho trạng thái Ready
                                             break;
+                                        case "Pending":
+                                            color = "#FFC107"; // Màu vàng cho trạng thái Ready
+                                            break;
                                         case "Delivering":
                                             color = "#2196F3"; // Màu xanh dương cho trạng thái Delivering
                                             break;
@@ -191,10 +197,12 @@ const Detailorder = () => {
                                     );
                                 })()}
                             </Box>
-
-                            <div className={style.infocustumer}>
+                            <div className={style.infocustumer12}>
                                 <span>
-                                    Ngày đặt hàng: {convertUTCtoLocalDateTime(Order.dateOrdered)}
+                                    Ngày đặt hàng:
+                                </span>
+                                <span>
+                                    {convertUTCtoLocalDateTime(Order.dateOrdered)}
                                 </span>
 
                             </div>
@@ -203,7 +211,7 @@ const Detailorder = () => {
                     </Box>
                     <Box
                         gridColumn="span 2"
-                        gridRow="span 7"
+                        gridRow="span 3"
                         display="flex"
 
                     >
@@ -212,24 +220,46 @@ const Detailorder = () => {
                             padding: "20px",
                             border: "0.1px solid rgb(223, 223, 223)",
                             borderRadius: "10px"
+                        }}> <h5>Người giao hàng</h5>
+                            {Order.shipper
+                                ? (
+                                    <><div className={style.infocustumer}>
+                                        <span className={style.infocustumer1}>
+                                            Thông tin liên lạc: {Order.shipper.contact[0].phoneNumber}
+                                        </span>
+                                    </div>
+                                        <div className={style.infocustumer}>
+
+                                            <span className={style.infocustumer1}>Người giao hàng: {Order.shipper.firstName} {Order.shipper.lastName}</span>
+                                        </div></>
+                                ) : (<div><div className={style.infocustumer}>
+
+                                    <span className={style.infocustumer1}>Không có người giao hàng</span>
+                                </div></div>)}
+                        </div>
+                    </Box>
+                    <Box
+                        gridColumn="span 2"
+                        gridRow="span 4"
+                        display="flex"
+
+                    >
+                        <div style={{
+                            width: "100%",
+                            padding: "10px",
+                            border: "0.1px solid rgb(223, 223, 223)",
+                            borderRadius: "10px"
                         }}> <h5>Khách hàng</h5>
                             <div className={style.infocustumer}>
-                                <h6>Thông tin liên lạc</h6>
-                                <span>
-                                    moizabdul320@gmail.com
-                                </span>
-                                <span>
-                                    03169089872
+                                <span className={style.infocustumer1}>
+                                    Số điện thoại: {Order.contact.phoneNumber}
                                 </span>
                             </div>
                             <div className={style.infocustumer}>
-                                <h6>Địa chỉ</h6>
-                                <span>339 Đ. Trần Hưng Đạo, P, Sơn Trà, Đà Nẵng 550000</span>
+                                <span className={style.infocustumer1}> Địa chỉ: {Order.contact.address}</span>
                             </div>
                             <div className={style.infocustumer}>
-                                <h6>Người nhận hàng</h6>
-                                <span>Trần Hưng Đạo</span>
-                                <span>Trần Hưng Đạo</span>
+                                <span className={style.infocustumer1}>Người nhận hàng : {Order.user.firstName} {Order.user.lastName}</span>
                             </div>
 
                         </div>

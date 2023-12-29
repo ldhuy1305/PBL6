@@ -12,7 +12,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Link } from "react-router-dom";
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { useTranslation } from 'react-i18next';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -24,7 +23,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
             style={{
                 color: colors.grey[100],
             }}
-            onClick={() => setSelected(title)}
+            onClick={() => { title !== "Đăng xuất" ? setSelected(title) : setSelected("FALTH's FoodDelivery") }}
             icon={icon}
         >
             <Typography>{title}</Typography>
@@ -33,11 +32,10 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
     );
 };
 
-const Sidebara = ({ }) => {
+const Sidebara = ({ setSelected, selected }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [selected, setSelected] = useState("Thống kê");
 
     return (
         <Box
@@ -78,7 +76,7 @@ const Sidebara = ({ }) => {
                                 ml="15px"
                             >
                                 <Typography variant="h3" color={colors.grey[100]}>
-                                    Cửa hàng
+                                    Quản lý hệ thống
                                 </Typography>
                                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                                     <ArrowBackIcon />
@@ -165,7 +163,7 @@ const Sidebara = ({ }) => {
                         />
 
                         <Item
-                            title="Logout"
+                            title="Đăng xuất"
                             to="/admin/logout"
                             icon={<LogoutIcon />}
                             selected={selected}

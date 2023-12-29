@@ -17,7 +17,7 @@ class ProductController {
     )
       .filter()
       .search()
-      // .sort()
+      .sort()
       // .limitFields()
       .paginate();
     const products = await features.query;
@@ -36,6 +36,7 @@ class ProductController {
     )
       .filter()
       .search()
+      .sort()
       .paginate();
     const products = await features.query;
     res.status(200).json({
@@ -69,7 +70,7 @@ class ProductController {
       if (req.files) {
         req.files.forEach((file) => cloudinary.uploader.destroy(file.filename));
       }
-      next(new appError("Xuất hiện lỗi", 404));
+      next(new appError(err.message, 404));
     }
   });
   viewProduct = handleController.getOne(Product);
@@ -98,7 +99,7 @@ class ProductController {
     let product = await Product.findById({ _id: req.params.id });
     if (!product) return next(new appError("Không thể tìm thấy sản phẩm", 404));
     let images = [...product.images];
-    let dels = [req.body.dels];
+    let dels = req.body.dels;
     // fillter exits image
     if (req.body.dels) {
       images = images.filter((el) => !dels.includes(el));
@@ -110,14 +111,14 @@ class ProductController {
         images,
       };
     }
-    console.log(images);
     // let dels = product.images;
     const data = await Product.findByIdAndUpdate({ _id: req.params.id }, body, {
       new: true,
+      runValidators: true,
     })
       .then()
       .catch((err) => {
-        urls = req.files.map((image) => image.path);
+        // urls = req.files.map((image) => image.path);
         next(err);
       });
 
@@ -145,7 +146,9 @@ class ProductController {
     const obj = {
       "category.catName": req.query.catName,
     };
-    const features = new ApiFeatures(Product.find(obj), req.query).paginate();
+    const features = new ApiFeatures(Product.find(obj), req.query)
+      .sort()
+      .paginate();
     const products = await features.query;
 
     res.status(200).json({
@@ -185,14 +188,84 @@ class ProductController {
     });
   });
   searchProduct = catchAsync(async (req, res, next) => {
-    const products = await Product.find({
+    const page = +req.query.page || 1;
+    const limit = +req.query.limit || 10;
+    // obj of product for match
+    let objProduct = {
+      isAvailable: true,
       name: { $regex: req.query.search, $options: "i" },
-    }).sort("-ratingAverage");
+    };
+
+    if (req.query.catName) {
+      const cats = req.query.catName.split(",");
+      objProduct = {
+        ...objProduct,
+        "category.catName": { $in: cats },
+      };
+    }
+    // obj of store for match
+    let objStore = {
+      "store.isLocked": false,
+    };
+    if (req.query.city)
+      objStore = {
+        ...objStore,
+        "store.address": { $regex: new RegExp(req.query.city, "i") },
+      };
+
+    if (req.query.district) {
+      let district = req.query.district.split(",");
+      district = district.map((dis) => new RegExp(dis, "i"));
+      objStore = { ...objStore, "store.address": { $in: district } };
+    }
+    const products = await Product.aggregate([
+      {
+        $match: objProduct,
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      { $unwind: "$store" },
+      {
+        $match: objStore,
+      },
+      {
+        $project: {
+          name: 1,
+          ratingsAverage: 1,
+          store: {
+            _id: 1,
+            name: 1,
+            address: 1,
+            ratingsAverage: 1,
+            openAt: 1,
+            closeAt: 1,
+            image: 1,
+            description: 1,
+          },
+          images: 1,
+        },
+      },
+      {
+        $sort: { ratingsAverage: -1 },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
     res.status(200).json({
       status: "success",
-      data: {
-        data: products,
-      },
+      length: products.length,
+      data: products,
     });
   });
   recommendProduct = catchAsync(async (req, res, next) => {});

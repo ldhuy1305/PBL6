@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Shipper = require("./shipper");
 const Product = require("./product");
+const moment = require("moment-timezone");
 const Store = require("./store");
 const ratingSchema = new Schema(
   {
@@ -32,7 +33,9 @@ const ratingSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now,
+      default: moment()
+        .tz("Asia/Ho_Chi_Minh")
+        .format(),
     },
   },
   {
@@ -42,6 +45,12 @@ const ratingSchema = new Schema(
 );
 
 ratingSchema.index({ reference: 1, user: 1 }, { unique: true });
+ratingSchema.post("save", async function() {
+  await this.populate({
+    path: "user",
+    select: "firstName lastName photo",
+  }).execPopulate();
+});
 
 ratingSchema.pre(/^find/, function(next) {
   this.populate({

@@ -10,7 +10,7 @@ class ApexChart extends React.Component {
 
       series: [
         {
-          name: "Người dùng",
+          name: "Khách hàng",
           data: data.map((item) => item.numUsers),
         },
         {
@@ -59,14 +59,14 @@ class ApexChart extends React.Component {
             {
               title: {
                 formatter: function (val) {
-                  return val + " (mins)"
+                  return val
                 }
               }
             },
             {
               title: {
                 formatter: function (val) {
-                  return val + " per session"
+                  return val
                 }
               }
             },

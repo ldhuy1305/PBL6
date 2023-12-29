@@ -14,14 +14,12 @@ import Loading from '../../components/Loading/Loading'
 import style from './Formedit.module.css';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import Spinner from 'react-bootstrap/Spinner';
 import { toast } from 'react-toastify';
 
 
 
 const Product = () => {
     const [productStatus, setProductStatus] = useState(true);
-
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingbutton, setIsLoadingbutton] = useState(false);
     const [images, setImages] = useState([]);
@@ -34,12 +32,8 @@ const Product = () => {
     const dataFromPreviousPage = location.state;
     const [data, setData] = useState([]);
     const [Catname, setCatname] = useState([]);
-
-
     const history = useNavigate();
-    const redirectToEditProductPage = (id) => {
-        history('/store/store/Formedit', { state: id });
-    };
+
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
         autoClose: 5000,
@@ -53,14 +47,14 @@ const Product = () => {
     const fetchCatname = async () => {
         try {
             const response = await axios.get(
-                `https://falth-api.vercel.app/api/category/owner/${_id}`,
+                `https://falth-api.vercel.app/api/category`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data;
             console.log(responseData);
             setCatname(responseData);
         } catch (error) {
@@ -109,8 +103,7 @@ const Product = () => {
     };
     useEffect(() => {
         fetchData();
-        console.log(data.category)
-    }, []);
+    }, [dataFromPreviousPage]);
 
     const Update = async (json) => {
         try {
@@ -119,16 +112,15 @@ const Product = () => {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-
             });
             notify("success", "Cập nhật thành công");
-            fetchData();
+            history('/store/product');
         } catch (error) {
             notify("error", "Cập nhật thất bại");
             setIsLoadingbutton(false);
         }
     };
-    const priceRegExp = /^\d+(\.\d{1,2})?$/;
+    const priceRegExp = /^[1-9]\d*000$/;
 
     const schema = yup.object().shape({
         name: yup.string().required("Tên là bắt buộc"),
@@ -161,8 +153,6 @@ const Product = () => {
             Update(formData);
         }
     };
-
-
     return (
         <Box m="20px 100px">
             <Header1 title={"Cập nhật sản phẩm"} to="/store/product" />
@@ -345,7 +335,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-1"
-                                        label="Cón hàng"
+                                        label="Hết hàng"
                                         name="default-radio"
                                         onClick={() => setProductStatus(true)}
                                         defaultChecked={productStatus}
@@ -353,7 +343,7 @@ const Product = () => {
                                     <Form.Check
                                         type="radio"
                                         id="default-radio-2"
-                                        label="Hết hàng"
+                                        label="Còn hàng"
                                         name="default-radio"
                                         onChange={() => setProductStatus(false)}
                                         defaultChecked={!productStatus}

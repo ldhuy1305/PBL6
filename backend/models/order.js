@@ -46,7 +46,6 @@ const orderSchema = new Schema(
         "Cancelled", // when user want to cancel order
         "Waiting", // when user checkout
         "Preparing", // when shipper accept order
-        "Ready", // when shipper take order
         "Delivering", // when shipper delivery order
         "Finished", // when shipper deliveried
         "Refused", // when don't find shipper
@@ -57,6 +56,24 @@ const orderSchema = new Schema(
       type: String,
     },
     dateOrdered: {
+      type: Date,
+    },
+    dateCancelled: {
+      type: Date,
+    },
+    dateCheckout: {
+      type: Date,
+    },
+    datePrepared: {
+      type: Date,
+    },
+    dateDeliveried: {
+      type: Date,
+    },
+    dateFinished: {
+      type: Date,
+    },
+    dateRefused: {
       type: Date,
     },
     storeLocation: {

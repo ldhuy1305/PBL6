@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CartModal from "../../Components/Modal/cart";
 import { useLocation } from "react-router-dom";
 import { getAllCategoryByStoreId, getVoucherByStoreId } from "../../services/userServices";
@@ -8,7 +8,10 @@ import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../../Components/Item/chatBox";
+import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
 const StoreDetail = () => {
+    const { data, createChat, currentUser } = useContext(ChatContext);
     const navigate = useNavigate()
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false);
@@ -17,6 +20,7 @@ const StoreDetail = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const store = location.state.store.store;
+    console.log(store)
     const [isWithinOperatingHours, setIsWithinOperatingHours] = useState(false);
     const openModal = () => {
         setShowModal(true);
@@ -25,21 +29,17 @@ const StoreDetail = () => {
     const closeModal = () => {
         setShowModal(false);
     };
-
-
     useEffect(() => {
         const currentTime = new Date();
         const openTime = new Date(currentTime);
         const closeTime = new Date(currentTime);
-
-        // Set the time portion of the date objects
         openTime.setHours(Number(store.openAt.split(':')[0]), Number(store.openAt.split(':')[1]), 0, 0);
         closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
 
         setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
     }, [store.openAt, store.closeAt]);
-
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 setIsLoading(true)
@@ -51,6 +51,7 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
+        createChat(store.ownerId)
         fetchData();
     }, [store]);
 
@@ -63,14 +64,14 @@ const StoreDetail = () => {
         }
         const getVoucher = async () => {
             try {
-              const response = await getVoucherByStoreId(store._id);
-              console.log(response.data)
-              setDiscounts(response.data)
+                const response = await getVoucherByStoreId(store._id);
+                console.log(response.data)
+                setDiscounts(response.data)
             } catch (error) {
-              console.log("Lỗi khi lấy thông tin voucher", error)
+                console.log("Lỗi khi lấy thông tin voucher", error)
             }
-          }
-          getVoucher();
+        }
+        getVoucher();
     }, []);
 
     const [activeCategory, setActiveCategory] = useState('');
@@ -78,9 +79,13 @@ const StoreDetail = () => {
     const handleCategoryClick = (categoryId) => {
         setActiveCategory(categoryId);
     };
-
     const handleComment = () => {
         navigate("/home/storeComment", { state: { store: { store }, isWithinOperatingHours: isWithinOperatingHours } });
+    }
+
+    const [selectedDiscount, setSelectedDiscount] = useState("");
+    const handleSelectDiscount = (id) => {
+        setSelectedDiscount(id)
     }
     return (
         <div>
@@ -192,15 +197,13 @@ const StoreDetail = () => {
                                                         class="icon-promotion"
                                                     />
                                                     <div class= 'content' style={{fontSize:'14px'}}>
-                                                        {discount.name}{discount.name}
+                                                        {discount.name}
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
 
-                                    </div>
-                                )}
-
+                                        </div>
+                                    )}
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
@@ -269,7 +272,7 @@ const StoreDetail = () => {
                         </div>
 
                     </div>
-                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} />)}
+                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} currentUser={currentUser} createChat={createChat} data={data} />)}
 
                 </div>
 

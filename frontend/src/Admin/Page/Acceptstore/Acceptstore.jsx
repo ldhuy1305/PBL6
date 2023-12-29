@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, Button } from "@mui/material";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import axios from 'axios';
@@ -10,12 +11,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import style from '../ManageStore/Detailstore.module.css';
 import Header2 from "../../components/Header/Header";
 import { useNavigate } from 'react-router-dom';
+import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
-const Acceptstore = () => {
+const Acceptstore = ({ setSelected }) => {
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
-        history('/admin/Detailstore', { state: id });
+        history('/admin/DetailAcceptstore', { state: id });
     };
+    useEffect(() => {
+        setSelected("Cấp phép cửa hàng");
+    }, []);
 
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
@@ -47,7 +53,6 @@ const Acceptstore = () => {
                 setOpenDetail(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {
@@ -95,7 +100,7 @@ const Acceptstore = () => {
     };
     const AcceptStore = async (id) => {
         try {
-            await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`, {
+            await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`,  {
                 "isAccepted": true
             }, {
                 headers: {
@@ -114,10 +119,6 @@ const Acceptstore = () => {
         fetchData();
     }, []);
 
-    const handleDetailClick = (row) => {
-        setSelectedRow(row);
-        setOpenDetail(true);
-    };
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -155,7 +156,7 @@ const Acceptstore = () => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} onClick={() => redirectToEditProductPage(params.row._id)}><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
                     </div >
                 );
             },
@@ -168,8 +169,9 @@ const Acceptstore = () => {
             align: "center",
             renderCell: (params) => {
                 return (
+
                     <div>
-                        <button style={{ height: "40px", width: "40px", background: "#747af2", borderRadius: "20px" }} onClick={() => handleAcceptClick(params.row)}><i class="fa-solid fa-file"></i></button>
+                        <Button startIcon={<CheckCircleOutlineSharpIcon style={{ color: "rgb(0, 139, 69)" }} />} onClick={() => handleAcceptClick(params.row)}></Button>
                     </div >
                 );
             },
@@ -184,7 +186,7 @@ const Acceptstore = () => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <button style={{ height: "40px", width: "40px", background: "#ef376e", borderRadius: "20px" }} onClick={() => handleAcceptClick()}><i className="fa-solid fa-trash-can"></i></button>
+                        <Button startIcon={<HighlightOffSharpIcon style={{ color: "rgb(253 92 99)" }} />} onClick={() => handleAcceptClick(params.row)}></Button>
                     </div >
                 );
             },
@@ -199,20 +201,7 @@ const Acceptstore = () => {
     return (
         <Box m="20px" position='relative'>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Header2 title="Danh sách cửa hàng chở xác nhận" />
-
-                {/* <Box>
-                    <div className={style.searchBar}>
-                        <input
-                            type="text"
-                            className={style.searchInput}
-                            placeholder="Tìm kiếm của hàng..."
-                            onChange={(e) => Searchproduct(e.target.value)}
-                        />
-                    </div>
-
-
-                </Box> */}
+                <Header2 title="Danh sách cửa hàng chờ xác nhận" />
                 <Box>
                 </Box>
             </Box>
@@ -228,11 +217,8 @@ const Acceptstore = () => {
                     },
                 }}
             >
-                {openDetail && (
-                    <Bill rows={selectedRow} show={true} handleClose={setOpenDetail} />
-                )}
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptStore={AcceptStore} />
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptStore={AcceptStore} Status={"Cấp phép"} />
                 )}
                 <DataGrid rows={rowsWithUniqueIds} columns={columns}
                     disableSelectionOnClick
