@@ -186,19 +186,18 @@ const StoreDetail = () => {
                                     </div>
                                 </div>
                                 <div class="menu-restaurant-detail">
-                                    {discounts.length > 0 && (
-                                        <div class="promotions-order">
-                                            {discounts.map((discount) => (
-                                                <div id="promotion-item" class="promotion-item">
-                                                    <div>
-                                                        <img
-                                                            src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
-                                                            alt=""
-                                                            class="icon-promotion"
-                                                        />
-                                                        <div class='content' style={{ fontSize: '14px' }}>
-                                                            {discount.content}
-                                                        </div>
+                                {discounts.length > 0 && (
+                                    <div class="promotions-order">
+                                        {discounts.map((discount) => (
+                                            <div id="promotion-item" class="promotion-item">
+                                                <div>
+                                                    <img
+                                                        src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
+                                                        alt=""
+                                                        class="icon-promotion"
+                                                    />
+                                                    <div class= 'content' style={{fontSize:'14px'}}>
+                                                        {discount.name}
                                                     </div>
                                                 </div>
                                             ))}
