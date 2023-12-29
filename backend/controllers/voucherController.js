@@ -1,16 +1,8 @@
-const User = require("../models/userModel");
 const Voucher = require("../models/voucher");
-const Contact = require("../models/contact");
 const Store = require("../models/store");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const handleController = require("./handleController");
 const mongoose = require("mongoose");
-const authController = require("../controllers/authController");
-const mapUtils = require("../utils/mapUtils");
-const ApiFeatures = require("../utils/ApiFeatures");
-const cloudinary = require("cloudinary").v2;
-const fileUploader = require("../utils/uploadImage");
 const moment = require("moment");
 class voucherController {
   createVoucher = catchAsync(async (req, res, next) => {
@@ -180,15 +172,17 @@ class voucherController {
     const voucher = await Voucher.findOne({
       "user.orderId": mongoose.Types.ObjectId(orderId),
     });
-    voucher.user = voucher.user.filter(
-      (el) => el.orderId.toString() != orderId
-    );
-    // voucher.expireAt = moment()
-    //   .add(7, "hours")
-    //   .add(1, "day")
-    //   .toDate();
-    await voucher.save();
-    // console.log(voucher.user);
+    if (voucher) {
+      voucher.user = voucher.user.filter(
+        (el) => el.orderId.toString() != orderId
+      );
+      // voucher.expireAt = moment()
+      //   .add(7, "hours")
+      //   .add(1, "day")
+      //   .toDate();
+      await voucher.save();
+      // console.log(voucher.user);
+    }
   }
 }
 
