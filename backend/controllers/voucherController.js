@@ -172,15 +172,17 @@ class voucherController {
     const voucher = await Voucher.findOne({
       "user.orderId": mongoose.Types.ObjectId(orderId),
     });
-    voucher.user = voucher.user.filter(
-      (el) => el.orderId.toString() != orderId
-    );
-    // voucher.expireAt = moment()
-    //   .add(7, "hours")
-    //   .add(1, "day")
-    //   .toDate();
-    await voucher.save();
-    // console.log(voucher.user);
+    if (voucher) {
+      voucher.user = voucher.user.filter(
+        (el) => el.orderId.toString() != orderId
+      );
+      // voucher.expireAt = moment()
+      //   .add(7, "hours")
+      //   .add(1, "day")
+      //   .toDate();
+      await voucher.save();
+      // console.log(voucher.user);
+    }
   }
 }
 
