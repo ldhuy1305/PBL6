@@ -25,7 +25,10 @@ class ApexChart extends React.Component {
         translatedStatus = "Đang giao hàng";
         break;
       case "Waiting":
-        translatedStatus = "Chờ đợi";
+        translatedStatus = "Đợi người gia";
+        break;
+      case "Pending":
+        translatedStatus = "Chờ thanh toán";
         break;
       default:
         translatedStatus = "Không xác định";
@@ -44,6 +47,7 @@ class ApexChart extends React.Component {
       "Ready": "#FFC107", // Màu vàng cho trạng thái Sẵn sàng
       "Delivering": "#2196F3", // Màu xanh dương cho trạng thái Đang giao hàng
       "Waiting": "#9E9E9E", // Màu xám cho trạng thái Chờ đợi
+      "Pending": "#7E9E9E", // Màu xám cho trạng thái Chờ đợi
     };
 
     return colorMap[status] || "#000000"; // Màu đen mặc định hoặc một màu khác tùy ý

@@ -4,11 +4,14 @@ const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const catchAsync = require("../utils/catchAsync");
 const Owner = require("../models/owner");
+const Product = require("../models/product");
 const fileUploader = require("../utils/uploadImage");
 const appError = require("../utils/appError");
 const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
+const { Parser } = require("json2csv");
+
 process.env.TZ = "Asia/Ho_Chi_Minh";
 moment.updateLocale("en", {
   week: {
@@ -21,6 +24,21 @@ exports.uploadOwnerImages = fileUploader.fields([
   { name: "frontImageCCCD", maxCount: 1 },
   { name: "behindImageCCCD", maxCount: 1 },
 ]);
+exports.updateOwner = catchAsync(async (req, res, next) => {
+  const owner = await Owner.findById(req.params.id).populate("contact");
+  owner.firstName = req.body.firstName;
+  owner.lastName = req.body.lastName;
+  owner.bankNumber = req.body.bankNumber;
+  owner.bankName = req.body.bankName;
+  owner.contact[0] = req.body.contact;
+  await owner.save({ validateBeforeSave: false });
+  res.status(200).json({
+    status: "success",
+    data: owner,
+  });
+});
+exports.getOwnerById = handleController.getOne(Owner);
+
 exports.getOrdersDaily = catchAsync(async (req, res, next) => {
   const store = await Store.findOne({ ownerId: req.params.id });
   if (!store) return next(appError("Không tìm thấy cửa hàng", 404));
@@ -252,9 +270,15 @@ exports.getRevenueByCat = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getOrderOneDate = async function (id, date) {
-  const startOfDay = moment(date).startOf("day").add(7, "hours").toDate();
-  const endOfDay = moment(date).endOf("day").add(7, "hours").toDate();
+exports.getOrderOneDate = async function(id, date) {
+  const startOfDay = moment(date)
+    .startOf("day")
+    .add(7, "hours")
+    .toDate();
+  const endOfDay = moment(date)
+    .endOf("day")
+    .add(7, "hours")
+    .toDate();
   const data = await Order.aggregate([
     {
       $match: {
@@ -292,7 +316,7 @@ exports.getOrderOneDate = async function (id, date) {
   ]);
   return data[0];
 };
-exports.getOrderOneWeek = async function (id, date) {
+exports.getOrderOneWeek = async function(id, date) {
   const startOfWeek = moment(date)
     .startOf("week")
     .startOf("day")
@@ -340,7 +364,7 @@ exports.getOrderOneWeek = async function (id, date) {
   ]);
   return data[0];
 };
-exports.getOrderOneMonth = async function (id, date) {
+exports.getOrderOneMonth = async function(id, date) {
   const startOfMonth = moment(date)
     .startOf("month")
     .startOf("day")
@@ -389,3 +413,105 @@ exports.getOrderOneMonth = async function (id, date) {
   ]);
   return data[0];
 };
+
+exports.exportProduct = catchAsync(async (req, res, next) => {
+  let products = [];
+
+  let productData = await Product.find({ storeId: req.params.storeId });
+  productData.forEach((product) => {
+    const {
+      id,
+      images,
+      price,
+      isOutofOrder,
+      ratingsAverage,
+      ratingsQuantity,
+      description,
+      category,
+    } = product;
+    const imageString = images.map((img) => JSON.stringify(img)).join("; ");
+    products.push({
+      id,
+      images: imageString,
+      price,
+      isOutofOrder,
+      ratingsAverage,
+      ratingsQuantity,
+      description,
+      category,
+    });
+  });
+
+  const csvFields = [
+    "Id",
+    "Images",
+    "Price",
+    "Is out of order",
+    "Ratings average",
+    "Ratings quantity",
+    "Description",
+    "Category",
+  ];
+  const csvParser = new Parser({ csvFields });
+  const csvData = csvParser.parse(products);
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=productsData.csv");
+  res.status(200).end(csvData);
+});
+
+exports.exportOrder = catchAsync(async (req, res, next) => {
+  let orders = [];
+
+  let orderData = await Order.find({});
+  console.log(orderData);
+  orderData.forEach((order) => {
+    const {
+      id,
+      storeLocation,
+      shipCost,
+      totalPrice,
+      status,
+      user,
+      store,
+      cart,
+      userLocation,
+      dateOrdered,
+    } = order;
+    const storeLocationString = JSON.stringify(storeLocation);
+    const userLocationString = userLocation
+      .map((c) => JSON.stringify(c))
+      .join("; ");
+    const cartString = cart.map((c) => JSON.stringify(c)).join("; ");
+
+    orders.push({
+      id,
+      storeLocation: storeLocationString,
+      shipCost,
+      totalPrice,
+      status,
+      user,
+      store,
+      cart: cartString,
+      userLocation: userLocationString,
+      dateOrdered,
+    });
+  });
+
+  const csvFields = [
+    "Id",
+    "Images",
+    "Price",
+    "Is out of order",
+    "Ratings average",
+    "Ratings quantity",
+    "Description",
+    "Category",
+  ];
+  const csvParser = new Parser({ csvFields });
+  const csvData = csvParser.parse(orders);
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=ordersData.csv");
+  res.status(200).end(csvData);
+});

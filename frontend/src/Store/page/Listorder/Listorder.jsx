@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header2 from "../../components/Header/Header";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import style from './Listorder.module.css'
@@ -10,7 +9,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
 
-const Product = () => {
+const Product = ({ setSelected }) => {
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const [data, setData] = useState([]);
     const [row, setRow] = useState([]);
@@ -19,11 +18,11 @@ const Product = () => {
     const [isLoading, setisLoading] = useState(true)
     const history = useNavigate();
     const redirectToDetailorderPage = (id) => {
-        history('/store/detailorder', { state: id });
+        history(`/store/detailorder/${id}`, { state: id });
     };
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth-api.vercel.app/api/order/owner/${_id}`;
+    const api = `https://falth-api.vercel.app/api/order/owner/${_id}/?limit=100`;
     const fetchData = async () => {
         try {
             const response = await axios.get(api, {
@@ -70,9 +69,12 @@ const Product = () => {
     useEffect(() => {
         fetchData();
     }, []);
+    useEffect(() => {
+        setSelected("Danh sách Đơn hàng");
+    }, []);
     const setEndDateSr = (e) => {
         if (e < startDate) { setStartDate(e) }
-        console.log(e);
+        setEndDate(e)
     }
     const setStartDateSr = (e) => {
         if (e > endDate) { setEndDate(e) }
@@ -103,7 +105,7 @@ const Product = () => {
         },
         {
             field: "depreciation",
-            headerName: "Hoa hồng(VNĐ)",
+            headerName: "Chiết khấu (VNĐ)",
             headerAlign: "center",
             align: "center",
             flex: 2,
@@ -139,6 +141,9 @@ const Product = () => {
                         color = "#FFC107"; // Màu vàng cho trạng thái Preparing
                         break;
                     case "Ready":
+                        color = "#FFC107"; // Màu vàng cho trạng thái Ready
+                        break;
+                    case "Pending":
                         color = "#FFC107"; // Màu vàng cho trạng thái Ready
                         break;
                     case "Delivering":
@@ -207,18 +212,6 @@ const Product = () => {
         <Box m="20px">
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Header2 title="Danh sách đơn hàng" />
-
-                {/* <Box>
-                    <div className={style.searchBar}>
-                        <input
-                            type="text"
-                            className={style.searchInput}
-                            placeholder="Tìm kiếm đơn hàng..."
-                        />
-                    </div>
-
-
-                </Box> */}
                 <Box display="flex" justifyContent="space-between" alignItems="center" gap={10}>
                     <Box>
                         <div className={style.searchBar}>
@@ -247,6 +240,7 @@ const Product = () => {
                             color="secondary"
                             variant="contained"
                             onClick={() => { Search() }}
+                            height="33px"
                         >
                             Tìm kiếm
                         </Button>

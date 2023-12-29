@@ -68,6 +68,16 @@
     padding-bottom: 10px;
 }
 
+.form-group111 {
+    font-size: 15px;
+    display: flex;
+    outline: none;
+    width: 80%;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(254, 191, 191);
+}
+
 .custom-file-image1 {
     display: flex;
     flex-direction: column;
@@ -97,7 +107,7 @@
 }
 
 .input-group11 input {
-    width: 50%;
+    width: 90%;
     font-size: 14px;
     padding: 0 20px;
     border: 0;
@@ -108,11 +118,23 @@
 
 }
 
+.input-group11 textarea {
+    width: 90%;
+    font-size: 14px;
+    padding: 0 20px;
+    height: 70px;
+    border: 0;
+    border: 1px solid #ededed;
+    margin: 0;
+
+
+}
+
 .change-pass1 {
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    margin-left: 100px;
+    margin-left: 150px;
     border: 0;
     border-bottom: 1px solid #4073a7;
     padding: 0

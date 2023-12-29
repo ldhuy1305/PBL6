@@ -74,6 +74,12 @@ const storeSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    vouchers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Voucher",
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },

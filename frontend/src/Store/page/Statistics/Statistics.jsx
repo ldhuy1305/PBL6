@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import style from './Statistics.module.css';
@@ -7,18 +7,10 @@ import ApexChart from "../../components/InteractivePieChart/InteractivePieChart"
 import Header2 from "../../components/Header/Header";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
-import { useNavigate } from 'react-router-dom';
 
-const Product = () => {
-    const history = useNavigate();
-    const redirectToProductPage = () => {
-        history('/store/product');
-    };
-    const redirectToOrderPage = () => {
-        history('/store/listorder');
-    }
+const Product = ({ setSelected }) => {
+
     const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
     const [dataorder, setDataorder] = useState([]);
     const [datachart, setDatachart] = useState([]);
     const [databestseller, setDatabestseller] = useState([]);
@@ -29,7 +21,6 @@ const Product = () => {
     const [datarevenue, setdatarevenue] = useState("count");
     const [GetRevenueByCat, setGetRevenueByCat] = useState([])
 
-
     const _id = localStorage.getItem('_id');
     const fetchDataorder = async (value) => {
         try {
@@ -38,7 +29,6 @@ const Product = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const responseData = response.data.data[0];
             console.log(response.data.data);
             setDataorder(response.data.data[0]);
         } catch (error) {
@@ -132,7 +122,9 @@ const Product = () => {
     const fetchSelectLinechart = (e) => {
         setdatarevenue(e)
     }
-
+    useEffect(() => {
+        setSelected("Thống kê");
+    }, []);
 
     useEffect(() => {
         fetchData();
@@ -152,84 +144,6 @@ const Product = () => {
                     gap="5px"
                 >
 
-                    {/* <Box
-                        gridColumn="span 2"
-                        display="flex"
-                        gridRow="span 4"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <div className={style.box}>
-                            <div className={style.box1}>
-                                <div className={style.container}>
-                                    <div className={style.top}>
-                                        <div className={style.icon}>
-                                            <i class="fa-solid fa-cart-shopping"></i>
-                                        </div>
-                                        <div className={style.rightContent1}>
-                                            <select name="" id="" onChange={(event) => fetchDataorder(event.target.value)}>
-
-                                                <option value="daily">Ngày</option>
-                                                <option value="weekly">Tuần</option>
-                                                <option value="monthly">Tháng</option>
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                    <div className={style.center}>
-                                        <span>Đơn hàng</span>
-                                    </div>
-                                    <div className={style.botton}>
-                                        <span>{dataorder.count} đơn</span>
-                                    </div>
-                                </div>
-                                <div className={style.view} onClick={() => redirectToOrderPage()}>
-                                    <div className={style.tittle}>
-                                        <span>Xem chi tiết</span>
-                                    </div>
-                                    <div className={style.rightContent}>
-                                        <i class="fa-solid fa-right-long"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </Box>
-                    <Box
-                        gridColumn="span 2"
-                        gridRow="span 4"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        <div className={style.box}>
-                            <div className={style.box1}>
-                                <div className={style.container}>
-                                    <div className={style.top}>
-                                        <div className={style.icon}>
-                                            <i class="fa-solid fa-cart-shopping"></i>
-                                        </div>
-
-                                    </div>
-                                    <div className={style.center}>
-                                        <span>Số lượng sản phẩm</span>
-                                    </div>
-                                    <div className={style.botton}>
-                                        <span>{Dataproduct} sản phẩm</span>
-                                    </div>
-                                </div>
-                                <div className={style.view} >
-                                    <div className={style.tittle} onClick={() => redirectToProductPage()}>
-                                        <span>Xem chi tiết</span>
-                                    </div>
-                                    <div className={style.rightContent}>
-                                        <i class="fa-solid fa-right-long"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </Box> */}
                     <Box
                         gridColumn="span 4"
                         gridRow="span 7"
@@ -268,8 +182,8 @@ const Product = () => {
                                     <div className={style.top}>
                                         <div className={style.tranding}>
                                             <select className={style.select} id="" onChange={(event) => fetchSelectLinechart(event.target.value)}>
-                                                <option value="count"><span>Thông kê đơn hàng</span></option>
-                                                <option value="revenue"><span>Thông kê doanh thu</span></option>
+                                                <option value="count"><span>Thống kê đơn hàng</span></option>
+                                                <option value="revenue"><span>Thống kê doanh thu</span></option>
                                             </select>
                                         </div>
                                         <div className={style.rightContent1}>
@@ -335,8 +249,8 @@ const Product = () => {
                                             <span>Sản phẩm bán chạy nhất</span>
                                         </div>
                                     </div>
-                                    <div>
-                                        {databestseller.slice(0, 3).map((value, index) => (
+                                    <div className={style.Containertoppd}>
+                                        {databestseller.map((value, index) => (
                                             <div className={style.producttop} key={index}>
                                                 <div className={style.img}>
                                                     <img src={value.images[0]} alt="" />

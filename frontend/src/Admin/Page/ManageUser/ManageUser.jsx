@@ -3,21 +3,21 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import axios from 'axios';
-import style from './ManageUser.module.css'
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 import Header2 from "../../components/Header/Header2";
-
-const ManageUser = ({ Catname }) => {
-
-
+import { useNavigate } from 'react-router-dom';
+const ManageUser = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh sách người dùng");
+    }, []);
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(true);
-    const [selectedRow, setSelectedRow] = useState(null);
-
     const formRef = useRef();
+    const history = useNavigate();
+    const redirectToEditProductPage = (row) => {
+        history('/admin/detailuser', { state: row });
+    };
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -60,9 +60,8 @@ const ManageUser = ({ Catname }) => {
     }, []);
 
     const handleDetailClick = (row) => {
-
-        setSelectedRow(row);
-        setOpenDetail(true);
+        console.log(row);
+        redirectToEditProductPage(row)
     };
 
 
@@ -123,19 +122,6 @@ const ManageUser = ({ Catname }) => {
     return (
         <Box m="20px" >
             <Header2 title="Danh sách người dùng" />
-            {/* <div className={style.dsdh} >
-                <div className={style.dshd1} style={{ background: colors.primary[400], }} >
-                    <div className={style.titledsdh}>Danh sách của hàng</div>
-                    <div className={style.searchBar}>
-                        <input
-                            type="text"
-                            className={style.searchInput}
-                            placeholder="Tìm kiếm cửa hàng..."
-                        />
-                    </div>
-                </div>
-
-            </div> */}
             <Box
                 display="flex"
                 height="75vh"

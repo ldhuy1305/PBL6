@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Header1 from "../../components/Header/Header1";
 import axios from 'axios';
-//import 'bootstrap/dist/css/bootstrap.min.css';
+import Detailfeedback from "../../components/Image/image"
 import style from './DetailShipper.module.css';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'
-import { toast } from 'react-toastify';
-import Spinner from 'react-bootstrap/Spinner';
+import Rating from '@mui/material/Rating';
+import Image from "../../components/Image/image"
+import StarIcon from '@mui/icons-material/Star';
 
 const DetailShipper = () => {
+
     const location = useLocation();
     const dataFromPreviousPage = location.state;
-    const [images, setImages] = useState([]);
     const token = localStorage.getItem('token');
-    const _id = localStorage.getItem('_id');
+    const [image, setimage] = useState("")
     const [data, setdata] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [openModal, setOpenModal] = useState(false);
+    const handleOpenModal = (img) => {
+        setimage(img)
+        setOpenModal(true)
+    };
+    const handleCloseModal = () => setOpenModal(false);
+
     const fetchData = async () => {
         try {
             const response = await axios.get(
@@ -63,7 +71,7 @@ const DetailShipper = () => {
                     >
                         <div style={{ width: "100%", height: "100%", padding: "20px", gap: "40px", border: " 0.1px solid rgb(223, 223, 223)", borderRadius: "10px" }}>
                             <Form noValidate style={{ width: "100%", height: "100%" }}>
-                                <h5 style={{ paddingBottom: "20px" }}>Thông tin</h5>
+                                <h5 >Thông tin</h5>
                                 <div className={style.container}>
                                     <div className={style.Store}>
                                         <div >
@@ -101,14 +109,41 @@ const DetailShipper = () => {
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
                                                     <span className={style.col1}>Loại xe : </span>
-                                                    <span className={style.col}>{data.vehicleType
-                                                    }</span>
+                                                    <span className={style.col}>{data.vehicleType}</span>
                                                 </div>
                                             </div>
                                             <div className={style.bill_time} >
                                                 <div className={style.bill_stt}>
-                                                    <span className={style.col1}>Số sao đánh giá : </span>
-                                                    <span className={style.col}>{data.ratingsQuantity}</span>
+                                                    <span className={style.col1}>Giấy phép xe cộ : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.vehicleLicense)} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Giấy phép lái xe : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.licenseImage
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Mặt trước CCCD : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.frontImageCCCD
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
+                                                </div>
+                                            </div>
+                                            <div className={style.bill_time} >
+                                                <div className={style.bill_stt}>
+                                                    <span className={style.col1}>Mặt sau CCCD : </span>
+                                                    <span className={style.col} >
+                                                        <div onClick={() => handleOpenModal(data.behindImageCCCD
+                                                        )} style={{ border: "0.1px solid gray", width: "100px", padding: " 0px 5px", borderRadius: "2px", cursor: "pointer" }}>Xem chi tiết</div></span>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -128,7 +163,7 @@ const DetailShipper = () => {
                             <h5>Hình ảnh</h5>
                             <div className={style.bill}>
                                 <div >
-                                    <img className={style.img_bill} src={data.photo} alt="" />
+                                    <img className={style.img_bill} src={data.photo} alt="" onClick={() => handleOpenModal(data.photo)} />
                                 </div>
                             </div>
                         </div>
@@ -147,12 +182,20 @@ const DetailShipper = () => {
                             borderRadius: "10px"
                         }}>
                             <h5>Đánh giá từ khách hàng</h5>
-                            <span>Chứa có đánh giá</span>
+                            <Typography variant="h5">Số sao đánh giá</Typography>
+                            <Rating
+                                name="simple-controlled"
+                                value={data.ratingAverage}
+                                readOnly={true}
+                                precision={0.5}
+                                icon={<StarIcon style={{ color: 'yellow' }} />}
+                            />
+                            <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>
 
                         </div>
                     </Box>
-
-                </Box>)
+                    <Image open={openModal} handleClose={handleCloseModal} img={image} />
+                </Box >)
             }
         </Box >
     );

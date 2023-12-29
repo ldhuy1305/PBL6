@@ -14,8 +14,8 @@ const Header = ({ title, to }) => {
         <Box m="15px 0" display="flex" alignItems="center">
             <Box
                 fontSize="20px"
-                height="40px"
-                width="40px"
+                height="35px"
+                width="35px"
                 border="0.1px solid gray"
                 borderRadius="2px"
                 display="flex"

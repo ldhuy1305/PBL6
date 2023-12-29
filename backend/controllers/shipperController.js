@@ -100,7 +100,7 @@ exports.setCoordinates = catchAsync(async (req, res, next) => {
   });
 });
 
-// find Orders near by Shipper <
+// find Orders near by Shipper < maxDistance
 exports.findOrdersNearByShipper = catchAsync(async (req, res, next) => {
   const page = +req.query.page || 1;
   const limit = +req.query.limit || 10;
@@ -114,7 +114,7 @@ exports.findOrdersNearByShipper = catchAsync(async (req, res, next) => {
           coordinates,
         },
         key: "storeLocation",
-        maxDistance: 10 * 1000,
+        maxDistance: process.env.maxDistance * 1000,
         distanceField: "dist.calculated",
         query: { status: "Waiting" },
         spherical: true,
@@ -223,9 +223,15 @@ exports.getOrdersMonthly = catchAsync(async (req, res, next) => {
     data: monthly,
   });
 });
-exports.getOrderOneDate = async function (id, date) {
-  const startOfDay = moment(date).startOf("day").add(7, "hours").toDate();
-  const endOfDay = moment(date).endOf("day").add(7, "hours").toDate();
+exports.getOrderOneDate = async function(id, date) {
+  const startOfDay = moment(date)
+    .startOf("day")
+    .add(process.env.UTC, "hours")
+    .toDate();
+  const endOfDay = moment(date)
+    .endOf("day")
+    .add(process.env.UTC, "hours")
+    .toDate();
   const data = await Order.aggregate([
     {
       $match: {
@@ -261,16 +267,16 @@ exports.getOrderOneDate = async function (id, date) {
   ]);
   return data[0];
 };
-exports.getOrderOneWeek = async function (id, date) {
+exports.getOrderOneWeek = async function(id, date) {
   const startOfWeek = moment(date)
     .startOf("week")
     .startOf("day")
-    .add(7, "hours")
+    .add(process.env.UTC, "hours")
     .toDate();
   const endOfWeek = moment(date)
     .endOf("week")
     .endOf("day")
-    .add(7, "hours")
+    .add(process.env.UTC, "hours")
     .toDate();
   const data = await Order.aggregate([
     {
@@ -307,16 +313,16 @@ exports.getOrderOneWeek = async function (id, date) {
   ]);
   return data[0];
 };
-exports.getOrderOneMonth = async function (id, date) {
+exports.getOrderOneMonth = async function(id, date) {
   const startOfMonth = moment(date)
     .startOf("month")
     .startOf("day")
-    .add(7, "hours")
+    .add(process.env.UTC, "hours")
     .toDate();
   const endOfMonth = moment(date)
     .endOf("month")
     .endOf("day")
-    .add(7, "hours")
+    .add(process.env.UTC, "hours")
     .toDate();
 
   const data = await Order.aggregate([
