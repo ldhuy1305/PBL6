@@ -16,8 +16,8 @@ import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
 const Acceptstore = ({ setSelected }) => {
     const history = useNavigate();
-    const redirectToEditProductPage = (id) => {
-        history('/admin/DetailAcceptstore', { state: id });
+    const redirectToEditProductPage = (data) => {
+        history('/admin/DetailAcceptstore', { state: data });
     };
     useEffect(() => {
         setSelected("Cấp phép cửa hàng");
@@ -156,7 +156,7 @@ const Acceptstore = ({ setSelected }) => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row)}></Button>
                     </div >
                 );
             },
