@@ -192,7 +192,7 @@ const StoreDetail = () => {
                                                         class="icon-promotion"
                                                     />
                                                     <div class= 'content' style={{fontSize:'14px'}}>
-                                                        {discount.name}{discount.name}
+                                                        {discount.name}{discount.name}{discount.name}
                                                     </div>
                                                 </div>
                                             </div>
