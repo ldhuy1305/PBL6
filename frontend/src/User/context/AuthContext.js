@@ -30,7 +30,8 @@ export const AuthContextProvider = ({ children }) => {
               uid: User._id,
               displayName: Store.name,
               email: User.email,
-              photoURL: User.photo,
+              photoURL: Store.image
+              ,
             });
             setDoc(doc(db, "userChats", User._id), {});
           }
