@@ -59,22 +59,6 @@ const Product = ({ setSelected }) => {
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`;
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(api, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const responseData = response.data.data;
-            console.log(responseData);
-            setData(responseData);
-            setIsLoading(false);
-        } catch (error) {
-            console.log(error);
-            setIsLoading(false);
-        }
-    };
     const Searchproduct = async (name) => {
         console.log(name);
         try {
@@ -125,6 +109,7 @@ const Product = ({ setSelected }) => {
             const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -147,7 +132,7 @@ const Product = ({ setSelected }) => {
     }
 
     useEffect(() => {
-        fetchData();
+        handleStatus(status)
     }, []);
 
     const handleDeleteClick = (row) => {

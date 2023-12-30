@@ -236,8 +236,16 @@
 
 .col {
     flex: 2;
-
 }
+
+.col3 {
+    flex: 2;
+}
+
+.col3 {
+    font-weight: 600;
+}
+
 
 .feedback {
     display: flex;
@@ -285,4 +293,9 @@
     padding-top: 10px;
     padding-bottom: 5px;
     gap: 5px;
+}
+
+.bill_stt1 {
+    display: flex;
+    flex-direction: column;
 }

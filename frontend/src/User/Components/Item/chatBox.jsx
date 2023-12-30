@@ -151,7 +151,6 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
     {/* code của thanh lich  */ }
     return (
         <div class="flex flex-col justify-end h-full is-widget-right" style={{ marginTop: '71px', paddingLeft: '20px' }}>
-            {/* <button onClick={() => createChat(store.ownerId)}> chat</button> */}
             <div data-v-b7bd3fac="" class="w-full h-full bg-slate-25 dark:bg-slate-800" >
                 <div data-v-b7bd3fac="" class="flex flex-col h-full relative">
                     <div
@@ -188,11 +187,13 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
                     >
                         <div class="flex flex-1 overflow-auto">
                             <div data-v-dd2501de="" class="conversation--container light-scheme">
-                                <div data-v-dd2501de="" class="conversation-wrap">
-                                    <div data-v-dd2501de class="messages-wrap">
-                                        <div data-v-0619d2c7="" data-v-dd2501de="" class="date--separator text-slate-700">
-                                            Hôm nay
-                                        </div>
+                                <div data-v-dd2501de="" class="conversation-wrap" >
+                                    <div data-v-dd2501de className="messages-wrap" style={{
+                                        height: "400px",
+                                        overflowY: "auto",
+                                        display: "flex",
+                                        flexDirection: "column-reverse",
+                                    }}>
                                         {/* code của thanh lich  */}
 
                                         {messages.map((m) => (

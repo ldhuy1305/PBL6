@@ -10,16 +10,16 @@ import Loading from '../../components/Loading/Loading'
 import Rating from '@mui/material/Rating';
 import Image from "../../components/Image/image"
 
-const Detailorder = ({ setSelected }) => {
+const DetailAcceptstore = ({ setSelected }) => {
     useEffect(() => {
         setSelected("Cấp phép cửa hàng");
     }, []);
     const location = useLocation();
-    const dataFromPreviousPage = location.state;
     const token = localStorage.getItem('token');
     const [data, setdata] = useState([]);
+
     const [image, setimage] = useState("")
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const handleCloseModal = () => setOpenModal(false);
     const handleOpenModal = (img) => {
@@ -27,22 +27,8 @@ const Detailorder = ({ setSelected }) => {
         setOpenModal(true)
     };
     const fetchData = async () => {
-        try {
-            const response = await axios.get(
-                `https://falth-api.vercel.app/api/admin/store/${dataFromPreviousPage}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            const responseData = response.data.data;
-            console.log(responseData);
-            setdata(responseData);
-            setIsLoading(false);
-        } catch (error) {
-            console.log(error);
-        }
+        setdata(location.state);
+        console.log(data.ownerId?.lastName);
     };
     useEffect(() => {
         fetchData();
@@ -158,13 +144,42 @@ const Detailorder = ({ setSelected }) => {
                             width: "100%",
                             padding: "20px",
                             border: "0.1px solid rgb(223, 223, 223)",
-                            borderRadius: "10px"
+                            borderRadius: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
                         }}>
-                            <h5>Thông tin người đăng kí</h5>
-                            {/* <Typography variant="h5">Tên người đăng ký</Typography>
-                            <span>{data.ownerId.firstName} {data.ownerId.lastName}</span>
-                            <Typography variant="h5">Số sao đánh giá</Typography>
-                            <span>{data.ownerId}</span> */}
+                            <h3 style={{ marginBottom: "10px" }}>Thông tin người đăng kí</h3>
+                            <div className={style.bill_time1} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col3} >Chủ cửa hàng: </span>
+                                    <span className={style.col} >{data.ownerId?.lastName} {data.ownerId?.firstName}</span>
+                                </div>
+                            </div>
+                            <div className={style.bill_time1} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col3} >Tên ngân hàng:</span>
+                                    <span className={style.col} >{data.ownerId?.bankName} </span>
+                                </div>
+                            </div>
+                            <div className={style.bill_time1} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col3} >Số TK:</span>
+                                    <span className={style.col} >{data.ownerId?.bankNumber}</span>
+                                </div>
+                            </div>
+                            <div className={style.bill_time1} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col3} >Email :</span>
+                                    <span className={style.col} >{data.ownerId?.email}</span>
+                                </div>
+                            </div>
+                            <div className={style.bill_time1} >
+                                <div className={style.bill_stt}>
+                                    <span className={style.col3} >Sđt:</span>
+                                    <span className={style.col} >{data.ownerId?.contact[0]?.phoneNumber}</span>
+                                </div>
+                            </div>
 
                         </div>
                     </Box>
@@ -175,4 +190,4 @@ const Detailorder = ({ setSelected }) => {
     );
 };
 
-export default Detailorder;
+export default DetailAcceptstore;
