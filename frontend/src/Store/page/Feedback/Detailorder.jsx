@@ -27,7 +27,7 @@ const Detailorder = () => {
                     },
                 }
             );
-            const responseData = response.data.data[0];
+            const responseData = response.data.data;
             console.log(responseData);
             setOrder(responseData);
             setIsLoading(false);
