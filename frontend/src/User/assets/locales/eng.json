@@ -11,6 +11,7 @@
   "error10": "Email address already exists",
   "error11": "Please enter full information!",
   "error12": "Failed to change information",
+  "error13": "The name only includes letters and the character '",
 
   "success": "Information received! Please confirm your email",
 
@@ -53,7 +54,8 @@
   "homeKey": "Key",
 
   "storeLike": "Like",
-  "storeActive": "Open: ",
+  "storeActive": "Open",
+  "storeClose": "Closed",
 
   "forgotTitle": "Forgot password",
   "forgotMess" : "Fill in your registration email, FALTH will send you a confirmation code to create a new password.",
@@ -146,13 +148,14 @@
   "order" : "Place order",
   "signinToOrder" : "Sign in to place an order",
 
-  "store" : "Restaurant",
+  "store" : "Store",
   "ratingInFALTH" : "rating on FALTH",
   "menu" : "Menu",
   "searchDish" : "Search dish in menu", 
-  
+
   "specialRequest" : "Special Request",
   "optional" : "Optional", 
-  "confirm" : "Confirm"
+  "confirm" : "Confirm", 
+  "dish" : "Dish"
 
 }
