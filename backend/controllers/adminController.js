@@ -8,6 +8,7 @@ const ApiFeatures = require("../utils/ApiFeatures");
 const appError = require("../utils/appError");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
+const ownerController = require("./ownerController");
 const moment = require("moment");
 const { Parser } = require("json2csv");
 process.env.TZ = "Asia/Ho_Chi_Minh";
@@ -425,6 +426,25 @@ class adminController {
       data,
     });
   });
+  getStoreByStoreId = catchAsync(async (req, res, next) => {
+    const store = await Store.findById(req.params.id)
+      .populate("ratings")
+      .populate("ownerId");
+    const last = moment()
+      .startOf("month")
+      .subtract(1, "months");
+    const data = await ownerController.getOrderOneMonth(
+      store._id,
+      last.toDate()
+    );
+    if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
+    res.status(200).json({
+      status: "success",
+      data: {
+        store,
+        revenue: data ? data.revenue : 0,
+      },
+    });
 
   //Exports
   exportShippers = catchAsync(async (req, res, next) => {

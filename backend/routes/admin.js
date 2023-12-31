@@ -32,7 +32,7 @@ router
 
 // Manage Store
 router.route("/store").get(storeController.getAllStore);
-router.route("/store/:id").get(storeController.getStoreByStoreId);
+router.route("/store/:id").get(adminController.getStoreByStoreId);
 
 //Manage Users
 router.route("/user").get(userController.getAllUser);
