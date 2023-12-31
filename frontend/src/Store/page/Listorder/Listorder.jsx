@@ -2,25 +2,27 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header2 from "../../components/Header/Header";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import style from './Listorder.module.css'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
+import { Button } from "@mui/material";
 
-const Product = () => {
+const Product = ({ setSelected }) => {
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const [data, setData] = useState([]);
     const [row, setRow] = useState([]);
     const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
     const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
-    const [isLoading, setisLoading] = useState(false)
-    const handleFormSubmit = (values) => {
-        console.log(values);
+    const [isLoading, setisLoading] = useState(true)
+    const history = useNavigate();
+    const redirectToDetailorderPage = (id) => {
+        history(`/store/detailorder/${id}`, { state: id });
     };
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth-api.vercel.app/api/order/owner/${_id}`;
+    const api = `https://falth-api.vercel.app/api/order/owner/${_id}/?limit=100`;
     const fetchData = async () => {
         try {
             const response = await axios.get(api, {
@@ -31,36 +33,54 @@ const Product = () => {
             const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
+            setisLoading(false);
 
         } catch (error) {
             console.log(error);
+            setisLoading(false);
+        }
+    };
+    function formatDate(inputDate) {
+        const dateObject = new Date(inputDate);
+
+        const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+        const formattedDate = dateObject.toLocaleDateString('vi-VN', options).replace(/\//g, '-');
+
+        return formattedDate;
+    }
+
+    const Search = async () => {
+        try {
+            const e = formatDate(endDate);
+            const s = formatDate(startDate);
+            const response = await axios.get(`https://falth-api.vercel.app/api/order/owner/${_id}?start=${s}&end=${e}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const responseData = response.data.data;
+            console.log(responseData);
+            setData(responseData);
+        } catch (error) {
+            console.log(error);
+            setisLoading(false);
         }
     };
     useEffect(() => {
         fetchData();
     }, []);
-
-    const [open, setOpen] = useState(false);
-    const formRef = useRef();
     useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (formRef.current && !formRef.current.contains(e.target)) {
-                setOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        setSelected("Danh sách Đơn hàng");
     }, []);
+    const setEndDateSr = (e) => {
+        if (e < startDate) { setStartDate(e) }
+        setEndDate(e)
+    }
+    const setStartDateSr = (e) => {
+        if (e > endDate) { setEndDate(e) }
+        setStartDate(e);
+    }
 
-
-    const handleAccessLevelClick = (row) => {
-        console.log(row)
-        setRow(row)
-    };
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -74,15 +94,85 @@ const Product = () => {
             align: "center",
 
         },
+
         {
-            field: "totalPrice",
-            headerName: "Giá tiền(VNĐ)",
+            field: "orderCost",
+            headerName: "Giá đơn hàng (VNĐ)",
             headerAlign: "center",
             align: "center",
             flex: 2,
 
         },
+        {
+            field: "depreciation",
+            headerName: "Chiết khấu (VNĐ)",
+            headerAlign: "center",
+            align: "center",
+            flex: 2,
 
+        },
+        {
+            field: "revenue",
+            headerName: "Tiền nhận được(VNĐ)",
+            headerAlign: "center",
+            align: "center",
+            flex: 2,
+
+        },
+        {
+            field: "status",
+            headerName: "Trạng thái",
+            headerAlign: "center",
+            align: "center",
+            flex: 2,
+            renderCell: (params) => {
+                let color;
+                switch (params.row.status) {
+                    case "Finished":
+                        color = "#4CAF50"; // Màu xanh lá cây cho trạng thái Finished
+                        break;
+                    case "Refused":
+                        color = "#FF5722"; // Màu cam cho trạng thái Refused
+                        break;
+                    case "Cancelled":
+                        color = "#F44336"; // Màu đỏ cho trạng thái Cancelled
+                        break;
+                    case "Preparing":
+                        color = "#FFC107"; // Màu vàng cho trạng thái Preparing
+                        break;
+                    case "Ready":
+                        color = "#FFC107"; // Màu vàng cho trạng thái Ready
+                        break;
+                    case "Pending":
+                        color = "#FFC107"; // Màu vàng cho trạng thái Ready
+                        break;
+                    case "Delivering":
+                        color = "#2196F3"; // Màu xanh dương cho trạng thái Delivering
+                        break;
+                    case "Waiting":
+                        color = "#9E9E9E"; // Màu xám cho trạng thái Waiting
+                        break;
+                    default:
+                        color = "#000000"; // Màu đen mặc định hoặc một màu khác tùy ý
+                        break;
+                }
+
+                return (
+                    <Box
+                        width="60%"
+                        m="0 auto"
+                        p="5px"
+                        display="flex"
+                        justifyContent="center"
+                    >
+                        <div style={{ padding: "2px 10px", background: color, borderRadius: "30px", }}>
+                            <i style={{ color: "#ffffff" }} className="fas fa-info-circle"></i>
+                            <span style={{ padding: "0 5px" }}>{params.row.status}</span>
+                        </div >
+                    </Box>
+                );
+            },
+        },
         {
             field: "accessLevel",
             headerName: "Xem",
@@ -98,53 +188,18 @@ const Product = () => {
                         display="flex"
                         justifyContent="center"
                         borderRadius="4px"
-                        onClick={() => handleAccessLevelClick(params.row)}
+                        onClick={() => redirectToDetailorderPage(params.row._id)}
                     >
                         <div>
-                            <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} ><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} ><i class="fas fa-info-circle"></i></button>
                         </div >
                     </Box>
                 );
+
+
+
             },
         },
-        {
-            field: "status",
-            headerName: "Trạng thái",
-            headerAlign: "center",
-            align: "center",
-            flex: 2,
-            renderCell: (params) => {
-                let color;
-                switch (params.row.status) {
-                    case "Finished":
-                        color = "#4caf4fb9"; // Màu xanh lá cây cho trạng thái Finished
-                        break;
-                    case "Refused":
-                        color = "#FF5722"; // Màu cam cho trạng thái Refused
-                        break;
-                    case "Cancelled":
-                        color = "#F44336"; // Màu đỏ cho trạng thái Cancelled
-                        break;
-                    default:
-                        color = "#000000"; // Màu mặc định nếu không phải các trạng thái trên
-                }
-
-                return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                    >
-                        <div style={{ padding: "2px 10px", background: color, borderRadius: "30px", }}>
-                            <i style={{ color: "#ffffff" }} className="fa-regular fa-circle"></i>
-                            <span style={{ padding: "0 5px" }}>{params.row.status}</span>
-                        </div >
-                    </Box>
-                );
-            },
-        }
 
     ];
     const rowsWithUniqueIds = data.map((item, index) => {
@@ -157,39 +212,39 @@ const Product = () => {
         <Box m="20px">
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Header2 title="Danh sách đơn hàng" />
-
-                <Box>
-                    <div className={style.searchBar}>
-                        <input
-                            type="text"
-                            className={style.searchInput}
-                            placeholder="Tìm kiếm đơn hàng..."
-                        />
-                    </div>
-
-
-                </Box>
-                <Box>
-                    <div className={style.searchBar}>
-                        <span>Từ:</span>
-                        <input
-                            type="date"
-                            className={style.searchInput1}
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                        />
-                    </div>
-                </Box>
-                <Box>
-                    <div className={style.searchBar}>
-                        <span>Đến:</span>
-                        <input
-                            type="date"
-                            className={style.searchInput1}
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                        />
-                    </div>
+                <Box display="flex" justifyContent="space-between" alignItems="center" gap={10}>
+                    <Box>
+                        <div className={style.searchBar}>
+                            <span>Từ:</span>
+                            <input
+                                type="date"
+                                className={style.searchInput1}
+                                value={startDate}
+                                onChange={(e) => setStartDateSr(e.target.value)}
+                            />
+                        </div>
+                    </Box>
+                    <Box>
+                        <div className={style.searchBar}>
+                            <span>Đến:</span>
+                            <input
+                                type="date"
+                                className={style.searchInput1}
+                                value={endDate}
+                                onChange={(e) => setEndDateSr(e.target.value)}
+                            />
+                        </div>
+                    </Box>
+                    <Box>
+                        <Button
+                            color="secondary"
+                            variant="contained"
+                            onClick={() => { Search() }}
+                            height="33px"
+                        >
+                            Tìm kiếm
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
             <Box display="flex">
@@ -206,10 +261,10 @@ const Product = () => {
                         },
                     }}
                 >
-                    <DataGrid rows={rowsWithUniqueIds} columns={columns} isLoading={isLoading}
+                    <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
                         initialState={{
                             pagination: {
-                                pageSize: 9,
+                                pageSize: 8,
                             },
                         }} />
                 </Box>

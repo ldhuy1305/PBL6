@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React    , {useState, useEffect, useRef } from 'react';
 import StoreItem from '../../Components/Item/storeItem';
 import { useCity } from '../../services/CityContext';
 import { useTranslation } from 'react-i18next';
@@ -49,7 +48,7 @@ const Home = () => {
     };
   }, [isOpen1, isOpen]);
 
-  const { selectedLocation, key, updateKey } = useCity();
+  const { selectedLocation, updateLocation, key, updateKey } = useCity();
   const [stores, setStores] = useState({ data: [] });
 
   const handleRemove = (name) => {
@@ -66,6 +65,7 @@ const Home = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedAreas, setSelectedAreas] = useState([]);
   useEffect(() => {
+    // updateLocation('')
     const api = `https://falth-api.vercel.app/api/category`
     fetch(api)
       .then((response) => response.json())
@@ -105,9 +105,45 @@ const Home = () => {
 
   useEffect(() => {
     setIsLoading(true)
-    const selectedCat = selectedCategories[0] || '';
-    console.log(selectedLocation, key, selectedCat)
-    const api = `https://falth-api.vercel.app/api/store?address=${selectedLocation}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
+    setStores({ data: [] })
+    setPage(1)
+    const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
+    const selectedDistrict = selectedAreas.length > 0
+  ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
+  : ''; 
+  const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=1&search=${key}`
+    console.log(api)
+    fetch(api)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data) 
+        setStores(data);
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API', error);
+        setIsLoading(false)
+      });
+  }, [selectedLocation, key, selectedCategories, selectedAreas]);
+
+  const [page, setPage] = useState(1);
+
+  const handlePageClick = (action) => {
+    if (action === 'prev' && page > 1) {
+      setPage(page - 1);
+    } else if (action === 'next' && page < 5) {
+      setPage(page + 1);
+    }
+  };
+
+  useEffect(() => {
+    setIsLoading(true)
+    setStores({ data: [] })
+    const selectedCat = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
+    const selectedDistrict = selectedAreas.length > 0
+  ? selectedAreas.map(area => area.replace(/(Quận|Huyện)\s+/g, '')).join(',')
+  : ''; 
+  const api = `https://falth-api.vercel.app/api/store?city=${selectedLocation}&district=${selectedDistrict}&catName=${selectedCat}&limit=12&isLocked=false&page=${page}&search=${key}`
     console.log(api)
     fetch(api)
       .then((response) => response.json())
@@ -119,9 +155,7 @@ const Home = () => {
         console.error('Lỗi khi gọi API', error);
         setIsLoading(false)
       });
-  }, [selectedLocation, key, selectedCategories]);
-
-
+  }, [page]);
 
   return (
     <div>
@@ -185,16 +219,12 @@ const Home = () => {
 
               </div>
             </div>
-            <div class="float-right">
-              {/* <div class="result">200 Kết quả</div> */}
+            {/* <div class="float-right">
               <select class="filter-sort">
-                {/* <option value="8">Đúng nhất</option> */}
                 <option value="3">{t("homeSort")}</option>
                 <option value="36">{t("homeSort2")}</option>
-                {/* <option value="35">Bán chạy</option> */}
-                {/* <option value="37">Giao nhanh</option> */}
               </select>
-            </div>
+            </div> */}
           </div>
           <div class="tag-filter">
             {key !== "" && (
@@ -229,20 +259,20 @@ const Home = () => {
             </div>
             {isLoading && Array(4).fill(0).map((item, index) => (
               <div class="item-restaurant" >
-              <div class="img-restaurant">
-                <Skeleton />
-              </div>
-              <div class="info-restaurant">
-                <div class="info-basic-res" style={{ height: '50px', width: '285px' }}>
+                <div class="img-restaurant">
                   <Skeleton />
                 </div>
-                <p class="content-promotion" style={{ height: '30px', width: '285px' }}>
-                  <Skeleton />
-                </p>
+                <div class="info-restaurant">
+                  <div class="info-basic-res" style={{ height: '50px', width: '285px' }}>
+                    <Skeleton />
+                  </div>
+                  <p class="content-promotion" style={{ height: '30px', width: '285px' }}>
+                    <Skeleton />
+                  </p>
+                </div>
               </div>
-            </div>
             ))}
-            
+
             {stores.data.map((store) => (
 
               <StoreItem
@@ -255,19 +285,21 @@ const Home = () => {
           </div>
         </div>
         <ul class="pagination">
-          <li class="disabled">
-            <a class="" href="./"><i class="fa-solid fa-circle-chevron-left" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></a>
+          <li class="" onClick={() => handlePageClick('prev')}>
+            <button class="no_hover"><i class="fa-solid fa-circle-chevron-left" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
           </li>
-          <li class="active"><a class="undefined" href="./">1</a></li>
-          <li class=""><a class="" href="./">2</a></li>
-          <li class=""><a class="" href="./">3</a></li>
-          <li class=""><a class="" href="./">4</a></li>
-          <li class=""><a class="" href="./">5</a></li>
-          <li class=""><a class="" href="./">6</a></li>
-          <li class=""><a class="" href="./">7</a></li>
-          <li class=""><a class="" href="./">8</a></li>
-          <li class="">
-            <a class="" href="./"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></a>
+          <li className={`${page === 1 ? 'active' : ''}`}
+            onClick={() => setPage(1)}><button class="" >1</button></li>
+          <li className={`${page === 2 ? 'active' : ''}`}
+            onClick={() => setPage(2)}><button class="" >2</button></li>
+          <li className={`${page === 3 ? 'active' : ''}`}
+            onClick={() => setPage(3)}><button class="" >3</button></li>
+          <li className={`${page === 4 ? 'active' : ''}`}
+            onClick={() => setPage(4)}><button class="" >4</button></li>
+          <li className={`${page === 5 ? 'active' : ''}`}
+            onClick={() => setPage(5)}><button class="" >5</button></li>
+          <li class="" onClick={() => handlePageClick('next')}>
+            <button class="no_hover"><i class="fa-solid fa-circle-chevron-right" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
           </li>
         </ul>
       </div>

@@ -2,12 +2,20 @@ import React, { useEffect, useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import { tokens } from "../../theme";
-import { Box, Typography, responsiveFontSizes, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import DetailShipper from './DetailShipper';
 import style from "./DetailShipper.module.css";
-import Notify from '../../../Components/Notify/Notify';
+import Header2 from "../../components/Header/Header";
+import { useNavigate } from 'react-router-dom';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Button } from "@mui/material";
+import HttpsIcon from '@mui/icons-material/Https';
+import Accept from '../../components/Accept/Acceptshiper';
 
-function ManageShipper() {
+function ManageShipper({ setSelected }) {
+    useEffect(() => {
+        setSelected("Danh sách Shipper");
+    }, []);
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -16,16 +24,14 @@ function ManageShipper() {
     const [error, setError] = useState(false)
     const [message, setMessage] = useState("")
     const formRef = useRef();
+    const [openAccept, SetOpenAccept] = useState(false);
 
-    const Showdetailshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
+    const history = useNavigate();
+    const redirectToEditProductPage = (id) => {
+        history('/admin/DetailShipper', { state: id });
+    };
 
-    const Acceptshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
+
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -40,10 +46,17 @@ function ManageShipper() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [selectActive]);
+    const handleopenAcceptClick = (row, status, mes) => {
+        setSelectedRow(row);
+        SetOpenAccept(true);
+    };
+    const LockShipper = async () => {
 
-    const token = localStorage.getItem('autoken');
+    }
+
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
-    const api = `https://falth-api.vercel.app/api/admin/shipper/approve`;
+    const api = `https://falth-api.vercel.app/api/admin/shipper/`;
 
 
     const fetchData = async () => {
@@ -61,24 +74,6 @@ function ManageShipper() {
             console.log(error);
         }
     };
-    const handleDeleteClick = (id) => {
-        const confirmed = window.confirm('Bạn có muốn cấp phép hoạt động cho shipper?');
-        console.log(id)
-
-        if (confirmed) {
-            try {
-                axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    fetchData();
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     useEffect(() => {
         fetchData();
@@ -126,55 +121,34 @@ function ManageShipper() {
         },
         {
             flex: 2,
-            field: "status",
+            field: "email",
             headerAlign: "center",
             align: "center",
-            headerName: "Trạng thái",
+            headerName: "Email",
         },
         {
             field: "Detail",
-            flex: 2,
+            flex: 1,
             headerName: "Xem Chi Tiết",
             headerAlign: "center",
             align: "center",
             renderCell: (params) => {
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-                        onClick={() => Showdetailshipper(params.row)}
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Xem chi tiết
-                        </Typography>
-                    </Box>
+                    <div>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
+                    </div >
                 );
             },
         },
         {
             headerName: "Khóa tài khoản",
-            flex: 2,
+            headerAlign: "center",
+            align: "center",
+            flex: 1,
             renderCell: (params) => {
+                // onClick={() => handleopenAcceptClick(params.row)}
                 return (
-                    <Box
-                        width="60%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={colors.greenAccent[600]}
-                        borderRadius="4px"
-
-                    >
-                        <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-                            Khóa tài khoản
-                        </Typography>
-                    </Box>
+                    <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row, false, "Khóa")}></Button>
                 );
             },
         },
@@ -182,49 +156,39 @@ function ManageShipper() {
 
     return (
         <Box m="20px" position='relative'>
-            <Box
-                m="40px 0 0 0"
-                height="75vh"
-                // sx={{
-                //     "& .MuiDataGrid-root": {
-                //         border: "none",
-                //     },
-                //     "& .MuiDataGrid-cell": {
-                //         borderBottom: "none",
-                //     },
-                //     "& .name-column--cell": {
-                //         color: colors.greenAccent[300],
-                //     },
-                //     "& .MuiDataGrid-columnHeaders": {
-                //         backgroundColor: colors.blueAccent[700],
-                //         borderBottom: "none",
-                //     },
-                //     "& .MuiDataGrid-virtualScroller": {
-                //         backgroundColor: colors.primary[400],
-                //     },
-                //     "& .MuiDataGrid-footerContainer": {
-                //         borderTop: "none",
-                //         backgroundColor: colors.blueAccent[700],
-                //     },
-                // }}
-            >
-                {openDetail && (
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Header2 title="Danh sách cửa người giao hàng" />
 
-                    <DetailShipper rows={selectedRow} show={true} handleClose={setOpenDetail} />
-                )}
-                <div className={style.dsdh} >
-                    <div className={style.dshd1} style={{ background: colors.primary[400], }} >
-                        <div className={style.titledsdh}>Danh sách Shipper</div>
-                        <div className={style.searchBar}>
-                            <input
-                                type="text"
-                                className={style.searchInput}
-                                placeholder="Tìm kiếm shipper..."
-                            />
-                        </div>
+                {/* <Box>
+                    <div className={style.searchBar}>
+                        <input
+                            type="text"
+                            className={style.searchInput}
+                            placeholder="Tìm kiếm cửa người giao hàng"
+                        // onChange={(e) => Searchproduct(e.target.value)}
+                        />
                     </div>
 
-                </div>
+
+                </Box> */}
+                <Box>
+                </Box>
+            </Box>
+            <Box
+                m="10px 0 0 0"
+                height="75vh"
+                sx={{
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        borderBottom: "none",
+                        fontSize: "14px"
+                        ,
+                        fontWeight: "bold",
+                    },
+                }}
+            >
+                {openAccept && (
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} LockShipper={LockShipper} Status={"Khóa"}/>
+                )}
                 <DataGrid
                     rows={rowsWithUniqueIds}
                     columns={columns}

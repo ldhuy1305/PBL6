@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { addContact, updateContact } from '../../services/userServices';
+import { addContact, updateContact, updateDefaultContact } from '../../services/userServices';
 import LoadingModal from '../../Components/Loading/Loading';
 import Notify from '../Notify.jsx/Notify';
 
-const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1, contactId, setContacts}) => {
+const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1, contactId, setContacts, setDefaultContact}) => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("");
     const [openNotify, setOpenNotify] = useState(false)
@@ -26,28 +26,51 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
         if (/^\d{10}$/.test(formData.phoneNumber)) {
             setIsLoading(true)
             if (action1 === 'add') {
-                const response = await addContact(e, formData);
-                localStorage.setItem("user", JSON.stringify(response));
-                setContacts(response.contact);
-                setMessage("Thêm địa chỉ thành công!");
-                setOpenNotify(true)
+                try {                  
+                    const response = await addContact(e, formData);
+                    localStorage.setItem("user", JSON.stringify(response));
+                    setContacts(response.contact);
+                    setDefaultContact(response.defaultContact)
+                    setMessage("Thêm địa chỉ thành công!");
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setMessage("Địa chỉ không hợp lệ! Thêm địa chỉ thất bại!");
+                    setOpenNotify(true)
+                    handleClose()
+                }
             } else {
-                const response = await updateContact(e, formData, contactId)
-                console.log(response.data)
-                localStorage.setItem("user", JSON.stringify(response.data));
-                setContacts(response.data.contact);
-                setMessage("Cập nhật địa chỉ thành công!");
-                setOpenNotify(true)
+                try { 
+                    if(isChecked) {
+                        try {
+                            await updateDefaultContact(e, contactId)
+                        } catch (error) {
+                        }
+                    }                  
+                    const response = await updateContact(e, formData, contactId, isChecked)
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                    setContacts(response.data.contact);
+                    setDefaultContact(response.data.defaultContact)
+                    setMessage("Cập nhật địa chỉ thành công!");
+                    setOpenNotify(true)
+                    handleClose()
+                } catch (error) {
+                    setMessage("Địa chỉ không hợp lệ! Cập nhật địa chỉ thất bại!");
+                    setOpenNotify(true)
+                    handleClose()
+                }
             }
+            setFormData({
+                phoneNumber: '',
+                address: '',
+            });
+            setIsChecked(false)
             setIsLoading(false)
         } else {
             setError("Số điện thoại không hợp lệ")
         }
 
-        setFormData({
-            phoneNumber: '',
-            address: '',
-        });
+        
     }
 
     const handleReset = () => {
@@ -57,6 +80,7 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
             address: '',
         });
         setError('')
+        setIsChecked(false)
     }
     useEffect(() => {
         setFormData({
@@ -65,6 +89,9 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
             address: address1,
         });
     }, [phoneNumber1, address1]);
+
+    const [isChecked, setIsChecked] = useState(false);
+
     return (
         <div>
 
@@ -107,6 +134,13 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                                             >Địa chỉ chi tiết<span class="txt-red font-weight-bold"
                                             >*</span></label>
                                         </div>
+                                    </div>
+
+                                    <div class="pqpMRq">
+                                        <label class="kbCWJr">
+                                            <div class={`ciVq4v ${isChecked ? 'wb33QF' : ''}`} onClick={() => {setIsChecked(!isChecked)}}></div>
+                                            Đặt làm địa chỉ mặc đinh
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="modal-footer content-right">

@@ -4,29 +4,31 @@ import { useCity } from "../../services/CityContext";
 import { useState } from "react";
 import { getProductByStoreId } from "../../services/userServices";
 import Skeleton from "../Skeleton/skeleton";
-const MenuGroup = ({ category, openModal, store }) => {
+const MenuGroup = ({ category, openModal, store, search, isWithinOperatingHours }) => {
     const { cart, setCart, setProductsCount } = useCity();
     const [isLoading, setIsLoading] = useState(false)
     const handleOpen = () => {
         openModal()
     }
     const [dishes, setDishes] = useState([])
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setIsLoading(true)
-                const products = await getProductByStoreId(store._id, category.catName)
+                const products = await getProductByStoreId(store._id, category.catName, search)
                 setDishes(products.data.data)
-                console.log(products.data.data)
             } catch (error) {
                 console.log("Lỗi khi lấy thông tin món ăn", error)
             }
             setIsLoading(false)
         }
         fetchData();
-    }, [])
+    }, [search, category])
 
-    const handleAddToCart = (dish) => {
+
+
+    const handleAddToCart = (dish, quantity) => {
         const addedDish = {
             _id: dish._id,
             images: dish.images,
@@ -36,7 +38,7 @@ const MenuGroup = ({ category, openModal, store }) => {
             ratingAverage: dish.ratingAverage,
             description: dish.description,
             storeId: dish.storeId,
-            amount: 1,
+            amount: quantity,
             specialRequest: "",
         };
         const existingProductIndex = cart.products.findIndex(product => product._id === addedDish._id);
@@ -44,7 +46,7 @@ const MenuGroup = ({ category, openModal, store }) => {
             // If the dish exists in the cart, update its amount
             const updatedProducts = cart.products.map((product, index) => {
                 if (index === existingProductIndex) {
-                    return { ...product, amount: product.amount + 1 };
+                    return { ...product, amount: Math.min(10, product.amount + quantity) };
                 }
                 return product;
             });
@@ -120,7 +122,7 @@ const MenuGroup = ({ category, openModal, store }) => {
             </div>
             )) }
             {dishes.map((dish) => (
-                <DishInMenuGroup dish={dish} handleOpen={handleOpen} handleAddToCart={handleAddToCart} />
+                <DishInMenuGroup dish={dish} handleOpen={handleOpen} handleAddToCart={handleAddToCart} isWithinOperatingHours={isWithinOperatingHours} />
             ))}
         </div>
 

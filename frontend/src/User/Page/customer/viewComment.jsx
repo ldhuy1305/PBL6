@@ -1,52 +1,48 @@
 import React, { useState, useEffect } from "react";
-import CartModal from "../../Components/Modal/cart";
 import { useLocation } from "react-router-dom";
-import { getAllCategoryByStoreId } from "../../services/userServices";
-import { useTranslation } from "react-i18next";
-import MenuGroup from "../../Components/Item/menuGroup";
-import { Link, Element } from "react-scroll";
-import Skeleton from "../../Components/Skeleton/skeleton";
+import { getRatingOfStore, getStoreById } from "../../services/userServices";
+import { useTranslation } from "react-i18next"
 import Comment from "../../Components/Modal/comment";
+import LoadingModal from "../../Components/Loading/Loading";
 const ViewComment = () => {
     const { t } = useTranslation()
-    const [showModal, setShowModal] = useState(false);
-    const [categories, setCategories] = useState([]);
     const location = useLocation()
     const [isLoading, setIsLoading] = useState(false)
-    const store = location.state.store.store;
-    const openModal = () => {
-        setShowModal(true);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-    };
-
+    const storeId = location.state.store.store._id;
+    const isWithinOperatingHours = location.state.isWithinOperatingHours;
+    const [ratings, setRatings] = useState([])
+    const [idUser, setIdUser] = useState('')
+    const [store, setStore] = useState({
+        name: '',
+        image:'',
+    });
+    const [ratingsAverage, setRatingsAverage] = useState(0)
     useEffect(() => {
+        const user = localStorage.getItem("user");
+        const userData = JSON.parse(user);
+        
+        if(userData) {
+            setIdUser(userData._id)
+        }
         const fetchData = async () => {
             try {
                 setIsLoading(true)
-                const data = await getAllCategoryByStoreId(store._id)
-                setCategories(data.data)
-
+                const data = await getRatingOfStore(storeId)
+                const storeData = await getStoreById(storeId)
+                setStore({...storeData.data})
+                setRatings({ ...data.data })
             } catch (error) {
-                console.error("Lỗi khi lấy thông tin quán ăn:", error);
+                console.error("Lỗi khi lấy thông tin đánh giá:", error);
             }
             setIsLoading(false)
         }
         fetchData();
     }, []);
-
-    const [activeCategory, setActiveCategory] = useState(null);
-
-    const handleCategoryClick = (categoryId) => {
-        setActiveCategory(categoryId);
-    };
-
+    
     return (
         <div>
             <div class="wrapper">
-                <div class="now-detail-restaurant clearfix" style={{width:'80%', marginLeft:'10%', height:'310px'}}>
+                <div class="now-detail-restaurant clearfix" style={{ width: '80%', marginLeft: '10%', height: '310px' }}>
                     <div class="container">
                         <div class="detail-restaurant-img">
                             <img
@@ -54,7 +50,7 @@ const ViewComment = () => {
                                 src={store.image}
                                 alt={store.name}
                                 class=""
-                                style={{height:'250px', width:'100%', marginLeft:'8%'}}
+                                style={{ height: '250px', width: '100%', marginLeft: '8%' }}
                             />
                         </div>
                         <div class="detail-restaurant-info">
@@ -67,14 +63,14 @@ const ViewComment = () => {
                                 {store.address}
                             </div>
                             <div class="rating">
+                                <span class="number-rating">{store.ratingsAverage}</span>
                                 <div class="stars">
                                     <span class=""><i class="fas fa-solid fa-star"></i></span>
                                 </div>
-                                <span class="number-rating">{store.ratingAverage}</span>{t("ratingInFALTH")}
+                                <span style={{ color: '#ee4d2d' }}>{t("ratingInFALTH")}</span>
                             </div>
                             <div class="view-more-rating">
                                 <span
-                                    // href="https://foody.vn/da-nang/sau-nuong-lau-nuong-tran-dai-nghia"
                                     rel="noopener noreferrer nofollow"
                                     target="_blank"
                                     class="number-review"
@@ -82,7 +78,10 @@ const ViewComment = () => {
                             </div>
                             <div class="status-restaurant">
                                 <div class="opentime-status">
-                                    <span class="stt online" title={t("storeActive")}></span>
+                                <span
+                            className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                            title={isWithinOperatingHours ? `${t("storeActive")}`: `${t("storeClose")}`}
+                        ></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>
@@ -107,21 +106,15 @@ const ViewComment = () => {
                 </div>
 
                 <div class="container relative clearfix">
-                    <div class="now-menu-restaurant" style={{width:'100%'}}>
+                    <div class="now-menu-restaurant" style={{ width: '100%' }}>
                         <div class="menu-restaurant-tab">
-                            <div class="item active" style={{fontSize:'20px'}}>Đánh giá cửa hàng</div>
+                            <div class="item active" style={{ fontSize: '20px' }}>Đánh giá cửa hàng</div>
                         </div>
                         <div class="menu-restaurant-content-tab">
                             <div class="menu-restaurant-container">
-                                {/* <div class="menu-restaurant-category">
-                                    <div class="list-category" id="scroll-spy">
-                                        <div class="scrollbar-container ps">
-                                        </div>
-                                    </div>
-                                </div> */}
-                                <div class="menu-restaurant-detail"  style={{width:'100%'}}>
+                                <div class="menu-restaurant-detail" style={{ width: '100%' }}>
 
-                                   <Comment/>
+                                    <Comment store={store} ratings={ratings} idUser={idUser} setRatings={setRatings}/>
 
                                 </div>
 
@@ -133,12 +126,8 @@ const ViewComment = () => {
                 </div>
 
             </div>
-            {
-                showModal && (
-                    <CartModal show={showModal} handleClose={closeModal} handleOpen={openModal} />
-                )
-            }
-        </div >
+            {isLoading && (<LoadingModal />)}
+        </div>
     )
 }
 

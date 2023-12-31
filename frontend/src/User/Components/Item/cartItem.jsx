@@ -3,13 +3,9 @@ import '../../assets/css/cart.css'
 import DeleteConfirmationModal from "../Modal/deleteDanger";
 import AddDish from "../Modal/addDish";
 const CartItem = ({updateTotalPrice, updateRequest, onDelete, product }) => {
-    // const [productCopy, setProductCopy] = useState(product)
-    // const [quantity, setQuantity] = useState(product.amount);
     const [totalPrice, setTotalPrice] = useState(product.amount * product.price);
-    // const [currentSpecialRequest, setCurrentSpecialRequest] = useState(product.specialRequest);
     const handleDecrease = () => {
         if (product.amount > 1) {
-            // setQuantity(quantity - 1);
             updateTotalPrice(product._id, product.amount - 1);
         }
     };
@@ -25,7 +21,6 @@ const CartItem = ({updateTotalPrice, updateRequest, onDelete, product }) => {
     }, [product.amount, product.price]);
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    // const [itemToDelete, setItemToDelete] = useState(null);
     const [action, setAction] = useState('');
 
     const handleShowDeleteModal = (action) => {
@@ -49,7 +44,6 @@ const CartItem = ({updateTotalPrice, updateRequest, onDelete, product }) => {
     };
     const handleAddDishConfirm = (specialRequest) => {
         updateRequest(product._id, specialRequest)       
-        console.log(specialRequest)
     };
 
     return (
@@ -99,7 +93,7 @@ const CartItem = ({updateTotalPrice, updateRequest, onDelete, product }) => {
                             </div>
                             <div class="CartItem-ColPrice___136ai">
                                 <div>
-                                    <div>{totalPrice}₫</div>
+                                    <div>{totalPrice.toLocaleString('vi-VN')}₫</div>
                                     <button onClick={() => handleShowDeleteModal('cart')}><i class="fa-solid fa-trash" style={{ color: 'red' }}></i></button>
                                 </div>
                             </div>

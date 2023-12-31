@@ -1,28 +1,48 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, Button } from "@mui/material";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
 import axios from 'axios';
+import Accept from '../../components/Accept/Accept';
 import Bill from '../ManageStore/Detailstore';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import style from '../ManageStore/Detailstore.module.css';
+import Header2 from "../../components/Header/Header";
+import { useNavigate } from 'react-router-dom';
+import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
-const Acceptstore = ({ Catname }) => {
+const Acceptstore = ({ setSelected }) => {
+    const history = useNavigate();
+    const redirectToEditProductPage = (data) => {
+        history('/admin/DetailAcceptstore', { state: data });
+    };
+    useEffect(() => {
+        setSelected("Cấp phép cửa hàng");
+    }, []);
+
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [openAccept, SetOpenAccept] = useState(false);
     const handleAcceptClick = (row) => {
-        const isConfirmed = window.confirm('Bạn có chắc chắn muốn thực hiện hành động này không?');
-
-        if (isConfirmed) {
-            Accept(row._id)
-            alert('Bạn đã chấp nhận!');
-        } else {
-        }
+        setSelectedRow(row);
+        SetOpenAccept(true);
     };
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
 
 
     const formRef = useRef();
@@ -33,7 +53,6 @@ const Acceptstore = ({ Catname }) => {
                 setOpenDetail(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {
@@ -41,7 +60,7 @@ const Acceptstore = ({ Catname }) => {
         };
     }, [selectActive]);
 
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/admin/owner/approve`;
 
@@ -55,10 +74,9 @@ const Acceptstore = ({ Catname }) => {
             const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
-        }
-        finally {
             setIsLoading(false);
         }
     };
@@ -74,23 +92,25 @@ const Acceptstore = ({ Catname }) => {
             const responseData = response.data.data.data;
             console.log(responseData);
             setData(responseData);
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
-        }
-        finally {
             setIsLoading(false);
         }
     };
-    const Accept = async (id) => {
+    const AcceptStore = async (id) => {
         try {
-            await axios.get(`https://falth-api.vercel.app/api/admin/owner/${id}`, {
+            await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`,  {
+                "isAccepted": true
+            }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
+            notify("success", "Thành công");
             fetchData();
         } catch (error) {
-            console.log(error);
+            notify("error", "Thất bại");
         }
     };
 
@@ -99,10 +119,6 @@ const Acceptstore = ({ Catname }) => {
         fetchData();
     }, []);
 
-    const handleDetailClick = (row) => {
-        setSelectedRow(row);
-        setOpenDetail(true);
-    };
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -140,7 +156,7 @@ const Acceptstore = ({ Catname }) => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} onClick={() => handleDetailClick(params.row)}><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row)}></Button>
                     </div >
                 );
             },
@@ -153,8 +169,9 @@ const Acceptstore = ({ Catname }) => {
             align: "center",
             renderCell: (params) => {
                 return (
+
                     <div>
-                        <button style={{ height: "40px", width: "40px", background: "#747af2", borderRadius: "20px" }} onClick={() => handleAcceptClick(params.row)}><i class="fa-solid fa-file"></i></button>
+                        <Button startIcon={<CheckCircleOutlineSharpIcon style={{ color: "rgb(0, 139, 69)" }} />} onClick={() => handleAcceptClick(params.row)}></Button>
                     </div >
                 );
             },
@@ -169,7 +186,7 @@ const Acceptstore = ({ Catname }) => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <button style={{ height: "40px", width: "40px", background: "#ef376e", borderRadius: "20px" }} onClick={() => handleAcceptClick()}><i className="fa-solid fa-trash-can"></i></button>
+                        <Button startIcon={<HighlightOffSharpIcon style={{ color: "rgb(253 92 99)" }} />} onClick={() => handleAcceptClick(params.row)}></Button>
                     </div >
                 );
             },
@@ -183,49 +200,26 @@ const Acceptstore = ({ Catname }) => {
 
     return (
         <Box m="20px" position='relative'>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Header2 title="Danh sách cửa hàng chờ xác nhận" />
+                <Box>
+                </Box>
+            </Box>
             <Box
-                m="40px 0 0 0"
+                m="10px 0 0 0"
                 height="75vh"
-            // sx={{
-            //     "& .MuiDataGrid-root": {
-            //         border: "none",
-            //     },
-            //     "& .MuiDataGrid-cell": {
-            //         borderBottom: "none",
-            //     },
-            //     "& .name-column--cell": {
-            //         color: colors.greenAccent[300],
-            //     },
-            //     "& .MuiDataGrid-columnHeaders": {
-            //         backgroundColor: colors.blueAccent[700],
-            //         borderBottom: "none",
-            //     },
-            //     "& .MuiDataGrid-virtualScroller": {
-            //         backgroundColor: colors.primary[400],
-            //     },
-            //     "& .MuiDataGrid-footerContainer": {
-            //         borderTop: "none",
-            //         backgroundColor: colors.blueAccent[700],
-            //     },
-            // }}
+                sx={{
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        borderBottom: "none",
+                        fontSize: "14px"
+                        ,
+                        fontWeight: "bold",
+                    },
+                }}
             >
-                {openDetail && (
-                    <Bill rows={selectedRow} show={true} handleClose={setOpenDetail} />
+                {openAccept && (
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptStore={AcceptStore} Status={"Cấp phép"} />
                 )}
-                <div className={style.dsdh} >
-                    <div className={style.dshd1} style={{ background: colors.primary[400], }} >
-                        <div className={style.titledsdh}>Danh sách cửa hàng chờ duyệt</div>
-                        <div className={style.searchBar}>
-                            <input
-                                type="text"
-                                className={style.searchInput}
-                                placeholder="Tìm kiếm cửa hàng..."
-                                onChange={(e) => Searchproduct(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                </div>
                 <DataGrid rows={rowsWithUniqueIds} columns={columns}
                     disableSelectionOnClick
                     loading={isLoading}

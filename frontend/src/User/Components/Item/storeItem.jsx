@@ -1,18 +1,22 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { checkStoreOpen } from "../../services/userServices";
 const StoreItem = ({ like, store }) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const handleStore = () => {
         navigate("/home/storeDetail", { state: { store: { store } } });
     };
+    const [isWithinOperatingHours, setIsWithinOperatingHours] = useState(false);
+    useEffect(() => {
+        setIsWithinOperatingHours(checkStoreOpen(store.openAt, store.closeAt))
+    }, [store.openAt, store.closeAt]);
     return (
         <div class="item-restaurant" onClick={handleStore}>
-            <a
+            <div
                 target="_blank"
                 class="item-content"
-            // href={link}
             ><div class="img-restaurant">
                     {like === "no" ? null : (
                         <div className="tag-preferred">
@@ -41,19 +45,16 @@ const StoreItem = ({ like, store }) => {
                         </div>
                     </div>
                     <p class="content-promotion">
-                        <i class="fas fa-solid fa-star"></i> {store.ratingAverage}
-                        <p class="opening-hours"><i class="fas fa-solid fa-clock" style={{ color: 'rgb(35, 152, 57)' }}></i>{t("storeActive")} {store.openAt}-{store.closeAt}</p>
+                        <i class="fas star fa-solid fa-star"></i> {store.ratingsAverage}
+                        <p class="opening-hours"><i class={`fas fa-solid fa-clock ${isWithinOperatingHours ? 'online' : 'offline'}`}              
+                        ></i>{isWithinOperatingHours ? `${t("storeActive")}: `: `${t("storeClose")}: `} {store.openAt}-{store.closeAt}</p>
                     </p>
                     <div class="opentime-status">
                         <span
-                            class="stt online"
-                            title="Mở cửa"
-                            style={{
-                                color: 'rgb(35, 152, 57',
-                                backgroundColor: 'rgb(35, 152, 57)'
-                            }}
+                            className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                            title={isWithinOperatingHours ? `${t("storeActive")}`: `${t("storeClose")}`}
                         ></span>
-                    </div></div></a>
+                    </div></div></div>
         </div>
     )
 }

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import DeleteConfirmationModal from '../../Components/Modal/deleteDanger';
 import ModalUpdateAddress from '../../Components/Modal/modalUpdateAddress';
 import { useNavigate } from "react-router-dom";
-import { getUserInfo } from '../../services/userServices';
 import { useLogout } from '../../services/authContext';
 import { useTranslation } from 'react-i18next';
-
+import Notify from '../../Components/Notify.jsx/Notify';
 const UpdateAddress = () => {
     const {t} = useTranslation()
     const logout = useLogout();
@@ -29,7 +28,6 @@ const UpdateAddress = () => {
         setPhoneNumber(phoneNumber1)
         setAction(action1)
         setIdContact(id)
-        console.log(phoneNumber, address)
         setShowModal(true);
     };
     const handleCloseModal = () => {
@@ -40,11 +38,20 @@ const UpdateAddress = () => {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState('');
-
+    const [message, setMessage] = useState("")
+    const [openNotify, setOpenNotify] = useState(false)
+    const handleCloseNotify = () => {
+        setOpenNotify(false)
+    }
     const handleShowDeleteModal = (id, action) => {
-        setActionDel(action)
-        setItemToDelete(id);
-        setShowDeleteModal(true);
+        if(id === defaultContact) {
+            setMessage("Không thể xóa đại chỉ mặc định. Hãy thử đổi địa chỉ mặc định sang địa chỉ khác!");
+            setOpenNotify(true)
+        } else {
+            setActionDel(action)
+            setItemToDelete(id);
+            setShowDeleteModal(true);
+        }
     };
 
     const handleCloseDeleteModal = () => {
@@ -60,7 +67,7 @@ const UpdateAddress = () => {
         navigate(`/${nav}`);
     };
 
-    
+    const [defaultContact, setDefaultContact] = useState("")
     const [userName, setUserName] = useState("");
     const [img, setImg] = useState("")
     useEffect(() => {;
@@ -70,10 +77,10 @@ const UpdateAddress = () => {
                 const token = localStorage.getItem("token");
                 const userData = JSON.parse(user);
                 if (token) {
-                    // const userData = await getUserInfo(token);
                     setUserName(userData.firstName + " " + userData.lastName)
                     setImg(userData.photo)
                     setContacts(userData.contact)
+                    setDefaultContact(userData.defaultContact)
                 } else {
                     console.error("Token không tồn tại trong local storage");
                 }
@@ -170,24 +177,23 @@ const UpdateAddress = () => {
                         <div class="table-account">
                             <div class="header">
                                 <div class="row">
-                                    <div class="col col-2">Name</div>
-                                    <div class="col col-5">{t("address1")}</div>
+                                    {/* <div class="col col-2">Name</div> */}
+                                    <div class="col col-7">{t("address1")}</div>
                                     <div class="col col-3">{t("phoneNumber")}</div>
                                     <div class="col col-2"></div>
                                 </div>
                             </div>
                             <div class="table-account-body">
-                                {contacts.map((contact) => (
+                                {contacts.map((contact) => (                                
                                     <div class="table-row">
                                         <div class="row">
-                                            <div class="col col-2">Home</div>
-                                            <div class="col col-5">{contact.address}</div>
-                                            <div class="col col-3">{contact.phoneNumber}</div>
+                                            <div class={`col col-7 ${defaultContact === contact._id ? 'default_contact' : ''}`}>{contact.address}</div>
+                                            <div class={`col col-3 ${defaultContact === contact._id ? 'default_contact' : ''}`}>{contact.phoneNumber}</div>
                                             <div class="col col-2 txt-center">
                                                 <span style={{ backgroundColor: 'white' }} className="margin-05 link-button" variant="primary" onClick={() => handleShowModal(contact.address, contact.phoneNumber, 'update', contact._id)}>
-                                                {t("change")}
+                                                <i class="fa-regular fa-pen-to-square" style={{fontSize:'20px', color:'#cf2127'}}></i>
                                                 </span>
-                                                <span class="margin-05 link-button" variant="danger" onClick={() => handleShowDeleteModal(contact._id, 'contact')}>{t("delete")}</span>
+                                                <span class="margin-05 link-button" variant="danger" onClick={() => handleShowDeleteModal(contact._id, 'contact')}><i class="fa-regular fa-trash-can" style={{fontSize:'20px', color:'#cf2127'}}></i></span>
                                             </div>
                                         </div>
                                     </div>
@@ -213,9 +219,9 @@ const UpdateAddress = () => {
                 </div>
             </div>
 
-            <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts}/>
-            <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={itemToDelete} action={actionDel} setContacts={setContacts}/>
-                           
+            <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts} setDefaultContact={setDefaultContact}/>
+            <DeleteConfirmationModal show={showDeleteModal} handleClose={handleCloseDeleteModal} id={itemToDelete} action={actionDel} setData={setContacts}/>
+            {openNotify && (<Notify setOpenNotify={setOpenNotify} handleClose={handleCloseNotify} message={message}/>)}          
         </div>
     )
 }

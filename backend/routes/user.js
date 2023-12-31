@@ -12,6 +12,7 @@ router
     userController.signUpUser,
     userController.sendEmail
   );
+
 router.use(authController.protect);
 router
   .route("/")
@@ -20,7 +21,7 @@ router
 router
   .route("/:id")
   .get(
-    authController.restrict("User"),
+    authController.restrict("User", "Owner", "Shipper"),
     contactController.getAllContact,
     userController.getUserById
   )
@@ -34,11 +35,7 @@ router
     contactController.delAllContact,
     userController.deleteUser
   );
-router.post(
-  "/change-pass/:id",
-  authController.restrict("User"),
-  userController.changePass
-);
+router.post("/change-pass/:id", userController.changePass);
 router.put(
   "/add-contact/:id",
   authController.restrict("User"),
@@ -71,4 +68,11 @@ router.get(
   authController.restrict("User"),
   userController.getInfoCart
 );
+router.patch(
+  "/:id/photo",
+  authController.restrict("User"),
+  userController.updatePhoto,
+  userController.updateUserPhoto
+);
+
 module.exports = router;

@@ -248,3 +248,14 @@
 .col1 {
     flex: 1;
 }
+
+.poster {
+    margin-top: 10px;
+    gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.body {
+    margin-top: 10px;
+}

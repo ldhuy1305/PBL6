@@ -32,7 +32,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   if (user.role == "Owner") {
     const owner = await Owner.findOne({ email }).select("+password");
-    if (owner.status === "Chờ phê duyệt")
+    if (owner.isAccepted === false)
       return next(new appError("Chủ cửa hàng chờ phê duyệt!", 401));
   }
   jwtToken.generateAndSendJWTToken(user, 200, res, req);
@@ -234,6 +234,7 @@ exports.googleLogin = passport.authenticate("google", {
 });
 exports.googleLoginCallback = passport.authenticate("google", {
   failureRedirect: "/login",
+  successRedirect: "/",
 });
 
 exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {

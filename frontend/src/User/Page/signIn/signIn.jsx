@@ -2,36 +2,85 @@ import React, { useState, useEffect } from "react";
 // import  styles from './signIn.module.css'
 import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
 // import '../../assets/fonts/fontawesome-free-6.2.0-web/css/fontawesome.min.css'
-import { useNavigate } from "react-router-dom";
-import { loginAPI } from "../../services/userServices";
+import { useNavigate, useLocation } from "react-router-dom";
+import { loginAPI, getFeeShip } from "../../services/userServices";
 import { useAuth } from "../../services/authContext";
 import { useTranslation } from "react-i18next";
+
+//Login Firebase
+import { Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../Store/firebase";
+// end login
+
+
+
+
 const Signin = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation()
+    const his = location.state?.his || false;
+    const total = location.state?.total || false;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(""); // Initialize navigate
-    const { setIsLoggedIn} = useAuth();
+    const { setIsLoggedIn } = useAuth();
     const [loadingAPI, setLoadingAPI] = useState(false);
     const { setUserName } = useAuth()
     const { setImg } = useAuth()
+    const emailRegex = /^[^.].{5,29}@gmail\.com$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+
+    //Login Firebase
+
+
+    // end login
+
+
+
     const handleLogin = async () => {
         if (email.trim() === "") {
             setError(t("error1"));
         } else if (password.trim() === "") {
             setError(t("error2"));
+        } else if (!emailRegex.test(email)) {
+            setError('Email không hợp lệ'); // Thông báo khi email không đúng định dạng
+        } else if (!passwordRegex.test(password)) {
+            setError(t("Mật khẩu không hợp lệ")); // Thông báo khi mật khẩu không đúng định dạng
         } else {
             try {
                 setLoadingAPI(true)
                 let res = await loginAPI(email, password);
-                localStorage.setItem("token", res.data.token);
-                localStorage.setItem('user', JSON.stringify(res.data.data.user));
-                setIsLoggedIn(true);
-                // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
-                setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
-                setImg(res.data.data.user.photo)
-                navigate("/");
+
+                    localStorage.setItem("token", res.data.token);
+                    localStorage.setItem('user', JSON.stringify(res.data.data.user));
+                    setIsLoggedIn(true);
+                    console.log(res)
+                    // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
+                    setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
+                    setImg(res.data.data.user.photo)
+                    if(res.data.data.user.role === 'User') {
+                        if(his) {
+                            const user = localStorage.getItem("user");
+                            const userData = JSON.parse(user);
+                            const cart = localStorage.getItem("cart");
+                            const cartData = JSON.parse(cart);
+                            const response = await getFeeShip(cartData.idStore)
+                            const calArray = response.data
+                            const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
+                            navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
+                        } else {
+                            navigate("/");
+                        }
+                    } else if (res.data.data.user.role === 'Owner') {
+                        navigate("/store");
+                    } else if (res.data.data.user.role === 'Admin') {
+                        navigate("/admin");
+                    } else if (res.data.data.user.role === 'Shipper') {
+                        setError(t("Chỉ có thể truy cập tài khoản shipper trên APP"));
+                    }
+                
                 // window.location.reload()
             } catch (error) {
                 setError(t("error3"));
@@ -87,9 +136,12 @@ const Signin = () => {
                         />
                         <div class="item plus">
 
-                        <a style={{color:'white'}} href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow">
-                            <i class="fab fa-brands fa-google-plus-g"></i>Google
-                        </a>
+                            <a style={{ color: 'white' }} 
+                                href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow"
+                                // href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow"
+                            >
+                                <i class="fab fa-brands fa-google-plus-g"></i>Google
+                            </a>
                         </div>
                     </form>
                 </div>
@@ -148,7 +200,7 @@ const Signin = () => {
                             textDecoration: 'none !important'
                         }}
                         target="_blank"
-                        href="https://shopeefood.vn/gioi-thieu#footer-bottom"
+                        href="/policy"
                     >{t("policyLink")}</a>
                 </div>
             </div>

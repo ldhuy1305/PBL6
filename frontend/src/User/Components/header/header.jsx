@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/header.css'
-
+import { getStoreById, checkStoreOpen } from '../../services/userServices';
 import logo from '../../assets/img/logo.png'
-import emptycart from '../../assets/img/no_cart.png'
-import dishincart from '../../assets/img/food.jpg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHistory, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
-import '../../assets/fonts/fontawesome-free-6.2.0-web/css/fontawesome.min.css'
 import { useNavigate } from "react-router-dom";
 import CartModal from '../Modal/cart';
 import { useAuth, useLogout } from '../../services/authContext';
@@ -15,16 +11,17 @@ import { useCity } from '../../services/CityContext';
 import { useLang } from '../../services/languageContext';
 import { useTranslation } from "react-i18next";
 
-
 const Header = () => {
     const { t } = useTranslation();
     const { isLoggedIn, setIsLoggedIn, userName, setUserName, img, setImg } = useAuth()
-    const { selectedLocation, updateLocation, key, updateKey, cart, setCart, productsCount, setProductsCount } = useCity();
+    const { selectedLocation, updateLocation, key, updateKey, cart, setCart, productsCount, setProductsCount, selectSearch, setSelectSearch } = useCity();
     const { selectedLang, updateLang } = useLang();
     const [isDropdownLocationOpen, setDropdownLocationOpen] = useState(false);
     const [isDropdownInfoOpen, setDropdownInfoOpen] = useState(false);
     const [isDropdownLangOpen, setDropdownLangOpen] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('icon icon-lag-vn');
+    const url = "https://falth-api.vercel.app";
+    const [searchResults, setSearchResults] = useState([])
 
     const toggleDropdownLocation = () => {
         setDropdownLocationOpen(!isDropdownLocationOpen);
@@ -65,7 +62,7 @@ const Header = () => {
         navigate("/")
     }
 
-    const cities = ['Hà Nội', 'Hồ Chí Minh', 'Hải Phòng', 'Cần Thơ', 'Đà Nẵng', 'Bắc Ninh', 'Bắc Giang', 'Hà Tĩnh', 'Thái Bình', 'Nam Định', 'Ninh Bình', 'Hòa Bình', 'Lào Cai', 'Sơn La', 'Lai Châu', 'Điện Biên', 'Lạng Sơn', 'Bắc Kạn', 'Lâm Đồng', 'Bình Dương', 'Đồng Nai', 'Bà Rịa - Vũng Tàu', 'An Giang', 'Bạc Liêu', 'Bến Tre', 'Bình Định', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Hà Nam', 'Hà Giang', 'Hà Tây', 'Hà Đông', 'Hà Nội', 'Hải Dương', 'Hải Phòng', 'Hà Tĩnh', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên-Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái']
+    const cities = ['Hà Nội', 'Hồ Chí Minh', 'Hải Phòng', 'Cần Thơ', 'Đà Nẵng', 'Bắc Ninh', 'Bắc Giang', 'Hà Tĩnh', 'Thái Bình', 'Nam Định', 'Ninh Bình', 'Lào Cai', 'Sơn La', 'Lai Châu', 'Điện Biên', 'Lạng Sơn', 'Bắc Kạn', 'Lâm Đồng', 'Bình Dương', 'Đồng Nai', 'Bà Rịa - Vũng Tàu', 'An Giang', 'Bạc Liêu', 'Bến Tre', 'Bình Định', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Hà Nam', 'Hà Giang', 'Hà Tây', 'Hà Đông', 'Hà Nội', 'Hải Dương', 'Hải Phòng', 'Hà Tĩnh', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên-Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái']
     const handleLocationSelect = (location) => {
         updateLocation(location);
         setDropdownLocationOpen(false)
@@ -81,7 +78,6 @@ const Header = () => {
     const handleSearch = () => {
         updateKey(tempKey)
         setTempKey('')
-        console.log('Search value:', key);
     };
 
     const handleInputChange = (event) => {
@@ -94,6 +90,38 @@ const Header = () => {
         }
     };
 
+    useEffect(() => {
+        if (tempKey === "") {
+            setSearchResults([])
+        } else {
+            let api
+            if (selectSearch === "store") {
+                api = `${url}/api/store?city=${selectedLocation}&isLocked=false&search=${tempKey}&limit=100`
+            } else if (selectSearch === "product") {
+                api = `${url}/api/product/search?city=${selectedLocation}&search=${tempKey}&limit=100`
+            }
+            fetch(api)
+                .then((response) => response.json())
+                .then((data) => {
+                    let uniqueResults
+                    if (selectSearch === "store") {
+                        uniqueResults = data.data
+                    } else if (selectSearch === "product") {
+                        uniqueResults = data.data
+                        //     .filter((item, index, self) =>
+                        //   index === self.findIndex((i) => i.store.name === item.store.name));
+                    }
+                    // Update the state with unique results
+                    console.log(api)
+                    console.log(uniqueResults)
+                    setSearchResults(uniqueResults);
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi gọi API', error);
+                });
+        }
+    }, [selectedLocation, tempKey, selectSearch]);
+
 
     useEffect(() => {
 
@@ -105,8 +133,7 @@ const Header = () => {
                     const savedUser = localStorage.getItem('user');
                     if (savedUser) {
                         const user = (JSON.parse(savedUser));
-                        // console.log(user.firstName + user.lastName);
-                        setUserName(user.firstName + " " + user.lastName)
+                        setUserName(`${user.lastName} ${user.firstName}`)
                         setImg(user.photo)
                     }
                 } else {
@@ -122,7 +149,6 @@ const Header = () => {
     useEffect(() => {
         const updateCartCount = () => {
             const cartdata = JSON.parse(localStorage.getItem('cart'));
-            console.log(cartdata)
             if (cartdata && cartdata.products) {
                 const count = cartdata.products.length;
                 setProductsCount(count);
@@ -143,9 +169,20 @@ const Header = () => {
         }
     }, []);
 
+    const handleStore = async (id) => {
+        const response = await getStoreById(id)
+        const store = response.data
+        navigate("/home/storeDetail", { state: { store: { store } } });
+
+    };
+
+    const handleSelectSearch = (e) => {
+        setSelectSearch(e.target.value)
+        console.log(selectSearch)
+    }
+
     return (
         <div>
-
             <header class="main-header">
                 <div class="container-header">
                     <div class="container">
@@ -191,6 +228,10 @@ const Header = () => {
                             </div>
                             <div class="main-nav col">
                                 <div class="header__search">
+                                    <select class="header__search-select" onChange={handleSelectSearch}>
+                                        <option value="store">{t("store")}</option>
+                                        <option value="product">{t("dish")}</option>
+                                    </select>
                                     <div class="header__search-input-wrap">
                                         <input
                                             type="text"
@@ -200,18 +241,70 @@ const Header = () => {
                                             onChange={handleInputChange}
                                             onKeyDown={handleKeyPress}
                                         ></input>
-                                        {/* Search history */}
-                                        {/* <div class="header__search-history">
-                                            <h3 class="header__search-history-heading">Lịch sử tìm kiếm</h3>
-                                            <ul class="header__search-history-list">
-                                                <li class="header__search-history-item">
-                                                    <a href="./">gà rán</a>
-                                                </li>
-                                                <li class="header__search-history-item">
-                                                    <a href="./">bánh canh cua</a>
-                                                </li>
-                                            </ul>
-                                        </div> */}
+                                        {searchResults.length > 0 && (
+                                            <div class="now-idea-searching">
+                                                <div class="now-list-restaurant-row">
+                                                    <h3 class="header__search-history-heading">Kết quả tìm kiếm ({searchResults.length})</h3>
+                                                    {searchResults.map((result) => ( 
+
+                                                    <div class="item-restaurant" onClick={() => handleStore(`${selectSearch === "store" ? result._id : result.store._id}`)}>
+                                                        <div class="item-content" >
+                                                        <div class="img-restaurant">
+                                                                <img
+                                                                    src={selectSearch === "store" ? result.image : (result.images && result.images[0])}
+                                                                    alt="Cơm Gà Nam Chợ Mới - Hoàng Diệu"
+                                                                    title="Cơm Gà Nam Chợ Mới - Hoàng Diệu"
+                                                                />
+                                                            </div>
+                                                            <div class="info-restaurant">
+                                                                <div class="name-res">{result.name}</div>
+                                                                {(selectSearch === "product" && result.store) && (
+                                                                    <div class="address-res" style={{color:'black'}}>
+                                                                    {result.store.name}
+                                                                </div>
+                                                                )}
+                                                                <div class="address-res">
+                                                                    {selectSearch === "store" ? result.address : (result.store && result.store.address)}
+                                                                </div>
+                                                            </div>
+                                                            {/* {(selectSearch === "store"  && result.openAt && result.closeAt) && (
+
+                                                                <div class="opentime-status">
+                                                                    <span
+                                                                        className={`stt ${checkStoreOpen(result.openAt, result.closeAt) ? 'online' : 'offline'}`}
+                                                                        title={checkStoreOpen(result.openAt, result.closeAt) ? `${t("storeActive")}`: `${t("storeClose")}`}
+                                                                    ></span>
+                                                                </div>
+                                                            )} */}
+                                                            {((selectSearch === "store" && result.openAt && result.closeAt) || (selectSearch === "product" && result && result.store && result.store.openAt && result.store.closeAt)) && (
+    <div class="opentime-status">
+        <span
+            className={`stt ${checkStoreOpen(
+                selectSearch === "store" ? result.openAt : result.store.openAt,
+                selectSearch === "store" ? result.closeAt : result.store.closeAt
+            ) ? 'online' : 'offline'}`}
+            title={checkStoreOpen(
+                selectSearch === "store" ? result.openAt : result.store.openAt,
+                selectSearch === "store" ? result.closeAt : result.store.closeAt
+            ) ? `${t("storeActive")}`: `${t("storeClose")}`}
+        ></span>
+    </div>
+)}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    
+                                                ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                                {/* <ul class="header__search-history-list">
+                                                    {searchResults.map((result) => (
+                                                        <li class="header__search-history-item" onClick={() => handleStore(`${selectSearch === "store" ? result._id : result.store._id}`)}>
+                                                            <button>{result.name}</button>
+                                                        </li>
+                                                    ))}
+                                                </ul> */}              
                                     </div>
                                     <button class="header__search-btn" onClick={handleSearch}>
                                         <i class="header__search-btn-icon fas fa-search"></i>
@@ -266,7 +359,7 @@ const Header = () => {
                                             aria-expanded={isDropdownInfoOpen}
                                             onClick={toggleDropdownInfo}
                                         >
-                                            <div class="img" style={{width:'auto'}}>
+                                            <div class="img" style={{ width: 'auto' }}>
                                                 <img src={img} alt={userName} />
                                             </div>
                                             <span class="name">{userName}</span>
@@ -305,7 +398,7 @@ const Header = () => {
                             <div class="header__cart">
                                 <div class="header__cart-wrap">
                                     <i class="header__cart-icon fas fa-shopping-cart" onClick={openModal}></i>
-                                    <span class="header__cart-notice" onClick={openModal}>{productsCount}</span>                                   
+                                    <span class="header__cart-notice" onClick={openModal}>{productsCount}</span>
                                 </div>
                             </div>
                         </div>
@@ -313,7 +406,7 @@ const Header = () => {
                 </div>
             </header>
             {showModal && (
-                <CartModal show={showModal} handleClose={closeModal} handleOpen={openModal}/>
+                <CartModal show={showModal} handleClose={closeModal} handleOpen={openModal} />
             )}
         </div>
     );

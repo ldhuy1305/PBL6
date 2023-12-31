@@ -1,26 +1,44 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import ava from '../../assets/img/images.jpg'
 import { useTranslation } from "react-i18next";
-const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
-    const {t} = useTranslation();
+import Notify from '../Notify.jsx/Notify'
+import LoadingModal from "../Loading/Loading";
+import axios from "axios";
+
+const RatingShipper = ({ show, handleClose, shipper, ratings, setRatings }) => {
+    const { t } = useTranslation();
+
     const [formData, setFormData] = useState({
-        rating: '',
-        reviewText: '',
-        selectedImages: null,
+        number: '',
+        content: '',
+        images: []
     });
 
+    const [openNotify, setOpenNotify] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [notify, setNotify] = useState('')
+
+    const handleCloseRating = () => {
+        handleClose()
+        setFormData({
+            number: '',
+            content: '',
+            images: []
+        });
+    }
+
+    const handleCloseNotify = () => {
+        setOpenNotify(false)
+    }
 
     const handleChangeImg = (e) => {
         const name = e.target.name;
         const files = e.target.files;
-
-        // Convert fileList to array
         const imagesArray = Array.from(files);
 
         setFormData({
             ...formData,
-            [name]: (formData.selectedImages || []).concat(imagesArray),
+            [name]: (formData.images || []).concat(imagesArray),
         });
     };
     const handleChange = (e) => {
@@ -31,22 +49,87 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
         });
     };
 
-    const handleSubmit = () => {
-        console.log(formData);
-        setFormData({
-            rating: '',
-            reviewText: '',
-            selectedImages: null,
-        })
-        handleShowRatingStore(item.store)
+    // const [dels, setDels] = useState([]);
+    const handleSubmit = async () => {
+        const res = new FormData();
+        res.append('number', formData.number);
+        res.append('content', formData.content);
+        if (formData.images && formData.images.length > 0) {
+            formData.images.forEach((image) => {
+                    res.append(`images`, image);
+            });
+        }
+        if (formData.number === '') {
+            setNotify("Mời bạn chọn số sao để đánh giá")
+            setOpenNotify(true)
+        } else {
+            const token = localStorage.getItem("token");
+            try {
+
+                setIsLoading(true);
+                const response = await axios.post(`https://falth-api.vercel.app/api/shipper/${shipper._id}/rating`, res, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        ContentType: 'multipart/form-data',
+                    }
+                }); 
+                setRatings((prevRatings) => [response.data, ...prevRatings]);            
+                setNotify("Đánh giá thành công!")
+                setOpenNotify(true)
+                handleClose()
+            } catch (error) {
+                setNotify("Đánh giá thất bại!")
+                setOpenNotify(true)
+                handleClose()
+                console.log('Error: ', error)
+            } finally {
+                setIsLoading(false);
+            }
+            setFormData({
+                number: '',
+                content: '',
+                images: [],
+            });
+        }
+
+
+    };
+
+    const renderStars = (rating) => {
+        return Array(5).fill(0).map((_, index) => {
+            const starValue = index + 1;
+            const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
+            const isHalfFilled = percentFilled > 0 && percentFilled < 100;
+
+            return (
+                <div className="shopee-rating-stars__star-wrapper" key={index}>
+                    <div className="shopee-rating-stars__lit" style={{ width: `${isHalfFilled ? percentFilled : percentFilled}%`, color: '#ffb500' }}>
+                        <svg
+                            enableBackground="new 0 0 15 15"
+                            viewBox="0 0 15 15"
+                            x="0"
+                            y="0"
+                            className="shopee-svg-icon shopee-rating-stars__primary-star icon-rating-solid"
+                        >
+                            <polygon
+                                points="7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeMiterlimit="10"
+                            ></polygon>
+                        </svg>
+                    </div>
+                </div>
+            );
+        });
     };
     return (
         <div>
             <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg">
                 <Modal.Header>
-                    <span class="close" style={{ fontSize: '24px' }} onClick={handleClose}
+                    <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
-                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá Tài xế</div>
+                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá Nhân viên giao hàng</div>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="modal-dialog modal-noti" role="document">
@@ -77,19 +160,17 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
                                                         <div class="review-section">
                                                             <img
                                                                 class="image"
-                                                                src={ava}
-                                                                alt=""
+                                                                src={shipper.photo}
+                                                                alt='avatar'
                                                             />
-                                                            <div class="shipper-name">Tôn Long Tiến</div>
-                                                            <div class="rating-star-container">
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="101"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="102"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="103"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="104"></i>
-                                                                <i class="fas fa-star icon-star active disabled" data-rate="105"></i>
+                                                            <div class="shipper-name" style={{ margin: '0' }}>{shipper.lastName + shipper.firstName}</div>
+                                                            <div class="shopee-rating-stars product-rating-overview__stars" style={{ margin: '0' }}>
+                                                                <div className="shopee-rating-stars__stars">
+                                                                    {renderStars(shipper.ratingsAverage)}
+                                                                </div>
                                                             </div>
                                                             <div >
-                                                                <select defaultValue="" className="custom-select" name='rating' value={formData.rating} onChange={handleChange}>
+                                                                <select defaultValue="" className="custom-select" name='number' value={formData.number} onChange={handleChange}>
                                                                     <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
                                                                     <option value={1}>1 sao</option>
                                                                     <option value={2}>2 sao</option>
@@ -101,31 +182,38 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
                                                         </div>
                                                         <div class="block-comment">
                                                             <textarea
-                                                                name="reviewText"
+                                                                name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn. Đánh giá và bình luận của bạn sẽ được giữ dưới chế độ ẩn danh."
+                                                                placeholder="Chia sẻ đánh giá của bạn."
                                                                 maxlength="300"
-                                                                value={formData.reviewText} onChange={handleChange}
+                                                                value={formData.content} onChange={handleChange}
                                                             ></textarea>
                                                             <div class="upload-image">
                                                                 <div style={{ display: 'flex' }}>
-                                                                    {/* Hiển thị các ảnh đã chọn */}
-                                                                    {formData.selectedImages && formData.selectedImages.map((image, index) => (
-                                                                        <img
-                                                                            key={index}
-                                                                            src={URL.createObjectURL(image)}
-                                                                            alt={`selected-${index}`}
-                                                                            style={{ width: '50px', height: '50px', margin: '10px' }}
-                                                                        />
+                                                                    {formData.images && formData.images.map((image, index) => (
+                                                                        <div key={index} style={{ position: 'relative' }}>
+                                                                                <img
+                                                                                    src={URL.createObjectURL(image)}
+                                                                                    alt={`selected-${index}`}
+                                                                                    style={{ width: '60px', height: '60px', margin: '10px' }}
+                                                                                />
+                                                                            <span class="btn-delete-tag" style={{ top: '5px', right: '5px' }}
+                                                                                onClick={() => {
+                                                                                    const newImages = [...formData.images];
+                                                                                    newImages.splice(index, 1);
+                                                                                    setFormData({ ...formData, images: newImages });
+                                                                                }}
+                                                                                >x</span>
+                                                                        </div>
                                                                     ))}
                                                                 </div>
                                                                 <div class="item-upload btn-up" style={{ marginTop: '10px' }}>
                                                                     <label
-                                                                    ><span class="fa-solid fa-upload" style={{ fontSize: '50px' }}></span>
+                                                                    ><span class="fa-solid fa-upload" style={{ fontSize: '60px', cursor: 'pointer', marginLeft: '10px' }}></span>
                                                                         <input
                                                                             type="file"
                                                                             multiple=""
-                                                                            name="selectedImages"
+                                                                            name="images"
                                                                             accept="image/*"
                                                                             style={{ visibility: 'hidden' }}
                                                                             onChange={handleChangeImg}
@@ -136,9 +224,7 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" class="btn btn-submit" variant="primary" onClick={handleSubmit}>
-                                                                {t('next')}
-                                                            </button>
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -152,6 +238,8 @@ const RatingShipper = ({ show, handleClose, handleShowRatingStore, item }) => {
                     <div class="modal-backdrop fade under-modal"></div>
                 </Modal.Body>
             </Modal>
+            {openNotify && (<Notify message={notify} setOpenNotify={setOpenNotify} handleClose={handleCloseNotify} />)}
+            {isLoading && (<LoadingModal />)}
         </div>
 
     )

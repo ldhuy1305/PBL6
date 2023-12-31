@@ -26,9 +26,9 @@ const OrderDishItem = ({ product }) => {
                     <div class="h3ONzh Le31ox">
                         <span class="dVLwMH">{product.specialRequest}</span>
                     </div>
-                    <div class="h3ONzh">{product.price}₫</div>
+                    <div class="h3ONzh">{product.price.toLocaleString('vi-VN')}₫</div>
                     <div class="h3ONzh">{product.amount}</div>
-                    <div class="h3ONzh fHRPUO">{totalPrice}₫</div>
+                    <div class="h3ONzh fHRPUO">{totalPrice.toLocaleString('vi-VN')}₫</div>
                 </div>
             </div>
         </div>

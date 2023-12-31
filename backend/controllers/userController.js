@@ -3,12 +3,16 @@ const Contact = require("../models/contact");
 const Store = require("../models/store");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const jwtToken = require("../utils/jwtToken");
 const handleController = require("./handleController");
 const authController = require("../controllers/authController");
 const mapUtils = require("../utils/mapUtils");
+require("dotenv").config();
 const ApiFeatures = require("../utils/ApiFeatures");
+const cloudinary = require("cloudinary").v2;
+const fileUploader = require("../utils/uploadImage");
+
 class userController {
+  updatePhoto = fileUploader.single("photo");
   sendEmail = authController.sendEmailVerify;
   signUpUser = authController.signUp(User, "User");
   verifiedUser = authController.verifiedSignUp(User);
@@ -122,14 +126,14 @@ class userController {
         contactCoordinates
       );
 
-      const prepareTime = 10; // time expected for preparing
-      distance = (distance / 1000).toFixed(1);
+      const prepareTime = +process.env.prepareTime; // time expected for preparing
+      distance = +(distance / 1000).toFixed(1);
       let deliveryTime = Math.round((distance / 40) * 60 + prepareTime); // 40 is deliverySpeed -- duration = distance / deliverySpeed
 
       //totalPrice
       let shipCost;
-      const baseFee = 16000;
-      const feePerKm = 5000;
+      const baseFee = +process.env.baseFee;
+      const feePerKm = +process.env.feePerKm;
       distance > 3
         ? (shipCost = baseFee + Math.ceil(distance - 3) * feePerKm)
         : (shipCost = baseFee);
@@ -144,6 +148,36 @@ class userController {
       status: "success",
       data,
     });
+  });
+
+  updateUserPhoto = catchAsync(async (req, res, next) => {
+    const user = await User.findById({ _id: req.params.id });
+    if (!user) {
+      return next(new appError("No document found with that ID", 404));
+    }
+    const body = {
+      photo: req.file ? req.file.path : user.photo,
+    };
+    try {
+      const doc = await User.findByIdAndUpdate({ _id: req.params.id }, body, {
+        new: true,
+        runValidators: true,
+      });
+      let parts = user.photo.split("/");
+      let id =
+        parts.slice(parts.length - 2, parts.length - 1).join("/") +
+        "/" +
+        parts[parts.length - 1].split(".")[0];
+      cloudinary.uploader.destroy(id);
+      res.status(200).json({
+        data: doc,
+      });
+    } catch (err) {
+      if (req.file) {
+        cloudinary.uploader.destroy(req.file.filename);
+      }
+      next(err);
+    }
   });
 }
 

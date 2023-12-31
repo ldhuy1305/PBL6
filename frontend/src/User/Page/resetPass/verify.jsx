@@ -10,17 +10,14 @@ const Verify = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [otp, setOTP] = useState("");
-    const [error, seterror] = useState("");
+    const [error, setError] = useState("");
     const location = useLocation();
     const action = location.state.action;
     const email = location.state.email;
     const isButtonDisabled = otp.length !== 6;
     const [loadingAPI, setLoadingAPI] = useState(false);
     const handleVerify = async () => {
-        // const verify = {
-        //     signUpToken: otp
-        // };
-        // console.log(verify)
+
         if (action === "verifyUser") {
             setLoadingAPI(true);
             try {
@@ -28,7 +25,7 @@ const Verify = () => {
                 const response = await axios.post(`https://falth-api.vercel.app/api/user/${email}`, {signUpToken: otp});
                 handleShow()
             } catch (error) {
-                seterror(t("error4"))
+                setError(t("error4"))
             }
             setLoadingAPI(false);
         } else if (action === 'verifyShipper') {
@@ -38,17 +35,18 @@ const Verify = () => {
                 const response = await axios.post(`https://falth-api.vercel.app/api/shipper/${email}`, {signUpToken: otp});
                 handleShow()
             } catch (error) {
-                seterror(t("error4"))
+                setError(t("error4"))
             }
             setLoadingAPI(false);
-        } else if (action === 'verifyStore') {
+        } else if (action === 'verifyOwner') {
             setLoadingAPI(true);
             try {
                 // Gọi API đăng ký người dùng
                 const response = await axios.post(`https://falth-api.vercel.app/api/owner/${email}`, {signUpToken: otp});
-                handleShow()
+                const id = response.data.doc._id
+                navigate('/signUpStore', {state: {id:id}})
             } catch (error) {
-                seterror(t("error4"))
+                setError(t("error4"))
             }
             setLoadingAPI(false);
         } else if (action === "verifyToken") {
@@ -58,7 +56,7 @@ const Verify = () => {
                 console.log('Đăng ký thành công', response.data);
                 navigate("/resetPass", {state: {email: email, token: otp}})
             } catch (error) {
-                seterror(t("error4"))
+                setError(t("error4"))
             }
             setLoadingAPI(false);
         }

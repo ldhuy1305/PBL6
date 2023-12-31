@@ -3,62 +3,105 @@ import { useTheme, Box } from "@mui/material";
 import { tokens } from "../../theme";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
-import { mockDataTeam } from "../../data/mockData";
+import Header2 from '../../components/Header/Header2';
+import Addcategory from './Addcategory';
 import style from './category.css';
+import { toast } from 'react-toastify';
 
-const Category = ({ listCat }) => {
+const Category = ({ setSelected }) => {
+    useEffect(() => {
+        setSelected("Danh mục");
+    }, []);
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
     const [isLoading, setIsLoading] = useState(true);
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [currentPage, setCurrentPage] = useState(1);
-    const [catName, setCatName] = useState('');
-    const token = localStorage.getItem('autoken');
+    const [listCat, setlistCat] = useState([]);
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/category/store/${_id}`;
     const [data, setData] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+
     const itemsPerPage = 4;
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const responseData = response.data.data;
-                setData(responseData);
-                setTotalPages(Math.ceil(responseData.length / itemsPerPage));
-            } catch (error) {
-                console.log(error);
-            }
-            finally {
-                setIsLoading(false)
-            }
-        };
-
-
-
         fetchData();
-    }, [api, token, catName]);
-    const fetchProductList = async (Name) => {
+        fetchCatList();
+    }, [api, token]);
+    const fetchData = async () => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product?catName=${Name}`, {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const responseData = response.data.data.data;
-            console.log(responseData);
+            const responseData = response.data.data;
             setData(responseData);
             setTotalPages(Math.ceil(responseData.length / itemsPerPage));
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
         }
     };
-
-
+    const fetchProductList = async (Name) => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?category.catName=${Name}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const responseData = response.data.data;
+            console.log(responseData);
+            setData(responseData);
+            setTotalPages(Math.ceil(responseData.length / itemsPerPage));
+            setCurrentPage(1);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const fetchCatList = async () => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/category/owner/${_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const responseData = response.data.data;
+            console.log(responseData);
+            setlistCat(responseData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const add = async (dataform) => {
+        try {
+            await axios.post(`https://falth-api.vercel.app/api/category`, dataform, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            notify("success", "Thêm thành công");
+            fetchData();
+            fetchCatList();
+        } catch (error) {
+            notify("error", "Thêm thất bại");
+            console.log(error);
+        }
+    };
     const handlePageChange = (page) => {
         const clampedPage = Math.max(1, Math.min(page, totalPages));
         setCurrentPage(clampedPage);
@@ -66,38 +109,17 @@ const Category = ({ listCat }) => {
 
 
     return (
-        <Box m="20px" position='relative'>
+        <Box m="10px" position='relative'>
+            <Header2 title="Danh mục" />
             <Box
-                m="40px 0 0 0"
                 height="75vh"
-                sx={{
-                    "& .MuiDataGrid-root": {
-                        border: "none",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        borderBottom: "none",
-                    },
-                    "& .name-column--cell": {
-                        color: colors.greenAccent[300],
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: colors.blueAccent[700],
-                        borderBottom: "none",
-                    },
-                    "& .MuiDataGrid-virtualScroller": {
-                        backgroundColor: colors.primary[400],
-                    },
-                    "& .MuiDataGrid-footerContainer": {
-                        borderTop: "none",
-                        backgroundColor: colors.blueAccent[700],
-                    },
-                }}
             >
                 <div className="product">
                     {isLoading ? (
-                        <Loading />
+                        <div className="isloading"><Loading /></div>
                     ) : (
                         <>
+
                             <div style={{ height: "145px", display: "flex", }}>
                                 {listCat.map((value, index) => (
                                     <div className='category' onClick={() => fetchProductList(value.catName)}>
@@ -105,12 +127,16 @@ const Category = ({ listCat }) => {
                                             <img style={{
                                                 height: "100px",
                                                 width: "100%"
-                                            }} src={value.photo} alt="dsdsdsd" />
+                                            }} src={value.photo} alt="" />
                                         </div>
 
-                                        <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px", justifyContent: "" }}>{value.catName}</span>
+                                        <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px" }}>{value.catName}</span>
                                     </div>
                                 ))}
+                                <div className='category' onClick={() => handleOpenModal()}>
+                                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", width: "100%" }}><i style={{ fontSize: "50px", color: "gray" }} class="fa-solid fa-plus"></i>
+                                        <span>Thêm danh mục</span></div>
+                                </div>
                             </div>
                             <div className="container">
                                 {data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item, index) => (
@@ -123,14 +149,8 @@ const Category = ({ listCat }) => {
                                             <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                                 <p style={{ display: "inline" }}>{item.description}</p>
                                             </div>
-
-                                            <div className="rating">
-                                                {[...Array(item.ratingAverage)].map((rating, index) => (
-                                                    <i key={index} className="fa-solid fa-star" style={{ fontSize: '14px', color: "gold" }}></i>
-                                                ))}
-
-                                            </div>
                                             <h4>{item.price}</h4>
+                                            <h4>Danh mục : {item.category.catName}</h4>
                                         </div>
                                     </div>
                                 ))}
@@ -160,6 +180,7 @@ const Category = ({ listCat }) => {
                     }
                 </div >
             </Box >
+            <Addcategory open={openModal} handleClose={handleCloseModal} add={add} />
         </Box >
     );
 };

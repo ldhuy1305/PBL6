@@ -8,14 +8,14 @@ import { tokens } from "../../theme";
 import "react-pro-sidebar/dist/css/styles.css";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CategoryIcon from '@mui/icons-material/Category';
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import CommentIcon from '@mui/icons-material/Comment';
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from 'react-router-dom';
-import axios from "axios";
-import { useTranslation } from "react-i18next";
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -25,7 +25,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       style={{
         color: colors.grey[100],
       }}
-      onClick={() => setSelected(title)}
+      onClick={() => { title !== "Đăng xuất" ? setSelected(title) : setSelected("FALTH's FoodDelivery") }}
       icon={icon}
     >
       <Typography>{title}</Typography>
@@ -34,12 +34,13 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-const Sidebar = () => {
+const Sidebar = ({ selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState("Dashboard");
-
+  const Logout = () => {
+    console.log("Logout")
+  }
   return (
     <Box
       sx={{
@@ -66,7 +67,7 @@ const Sidebar = () => {
           {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            icon={isCollapsed ? <ArrowForwardIcon /> : undefined}
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
@@ -83,7 +84,7 @@ const Sidebar = () => {
                   Cửa hàng
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                  <MenuOutlinedIcon />
+                  <ArrowBackIcon />
                 </IconButton>
               </Box>
             )}
@@ -99,9 +100,17 @@ const Sidebar = () => {
               Cửa hàng
             </Typography>
             <Item
-              title="Dashboard"
+              title="Thống kê"
               to="/store"
               icon={<HomeOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Thông tin cửa hàng"
+              to="/store/info"
+              icon={<PersonIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -115,21 +124,26 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Danh sách Sản phẩm"
-              to="store/product"
-              icon={<MenuOutlinedIcon />}
+              to="/store/product"
+              icon={<ListAltIcon />}
               selected={selected}
               setSelected={setSelected}
 
             />
-
             <Item
-              title="Category"
-              to="store/category"
+              title="Thêm sản phẩm"
+              to="/store/Formadd"
+              icon={< AddShoppingCartIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Danh mục"
+              to="/store/category"
               icon={<CategoryIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-
 
             <Typography
               variant="h6"
@@ -140,8 +154,15 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Danh sách Đơn hàng"
-              to="store/listorder"
-              icon={<PersonOutlinedIcon />}
+              to="/store/listorder"
+              icon={<ListAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Phiếu giảm giá"
+              to="/store/Voucher"
+              icon={<LocalOfferIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -150,14 +171,22 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Bán hàng
+              Phản hồi
             </Typography>
             <Item
-              title="Feecback"
+              title="Phản hồi"
               to="/store/feedback"
               icon={<CommentIcon />}
               selected={selected}
               setSelected={setSelected}
+            />
+            <Item
+              title="Đăng xuất"
+              icon={<LogoutIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              onClick={Logout()}
+              to="/store/logout"
             />
 
           </Box>

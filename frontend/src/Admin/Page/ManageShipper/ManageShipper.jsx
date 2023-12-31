@@ -1,42 +1,68 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
-import { tokens } from "../../theme";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import DetailShipper from './DetailShipper';
 import style from "./DetailShipper.module.css";
-import Notify from '../../../Components/Notify/Notify';
-import { createTheme } from '@mui/material/styles';
+import Header2 from "../../components/Header/Header";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Accept from '../../components/Accept/Acceptshiper';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Button } from "@mui/material";
+import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
+import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
-
-const theme = createTheme({
-    palette: {
-        type: 'dark'
-    },
-    typography: {
-        fontSize: 20
-    },
-});
-
-function ManageShipper() {
+function ManageShipper({ setSelected }) {
+    useEffect(() => {
+        setSelected("Cấp phép Shipper");
+    }, []);
     const [data, setData] = useState([]);
     const [selectActive, setSelectActive] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [error, setError] = useState(false)
-    const [message, setMessage] = useState("")
     const formRef = useRef();
+    const [openAccept, SetOpenAccept] = useState(false);
 
-    const Showdetailshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
 
-    const Acceptshipper = (rows) => {
-        setOpenDetail(true);
-        setSelectedRow(rows);
-    }
+    const history = useNavigate();
+    const redirectToEditProductPage = (id) => {
+        console.log(id);
+        history('/admin/DetailAcceptShipper', { state: id });
+    };
+    const AcceptShipper = async (id) => {
+        try {
+            await axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
+                "isAccepted": true
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            notify("success", "Thành công");
+            fetchData();
+        } catch (error) {
+            notify("error", "Thất bại");
+        }
+    };
+
+    const handleAcceptClick = (row) => {
+        setSelectedRow(row);
+        SetOpenAccept(true);
+    };
+
+
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -52,7 +78,7 @@ function ManageShipper() {
         };
     }, [selectActive]);
 
-    const token = localStorage.getItem('autoken');
+    const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/admin/shipper/approve`;
 
@@ -72,24 +98,6 @@ function ManageShipper() {
             console.log(error);
         }
     };
-    const handleDeleteClick = (id) => {
-        const confirmed = window.confirm('Bạn có muốn cấp phép hoạt động cho shipper?');
-        console.log(id)
-
-        if (confirmed) {
-            try {
-                axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then((res) => {
-                    fetchData();
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     useEffect(() => {
         fetchData();
@@ -99,9 +107,6 @@ function ManageShipper() {
         const uniqueId = index;
         return { ...item, id: uniqueId };
     });
-
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
 
     const columns = [
         { field: "id", headerName: "ID" },
@@ -138,17 +143,10 @@ function ManageShipper() {
         },
         {
             flex: 2,
-            field: "phoneNumber",
+            field: "email",
             headerAlign: "center",
             align: "center",
-            headerName: "Số điện thoại",
-        },
-        {
-            flex: 2,
-            field: "status",
-            headerAlign: "center",
-            align: "center",
-            headerName: "Trạng thái",
+            headerName: "Email",
         },
         {
             field: "Detdsil",
@@ -157,87 +155,78 @@ function ManageShipper() {
             headerAlign: "center",
             align: "center",
             renderCell: (params) => (
-                <div>
-                    <button style={{ height: "40px", width: "40px", background: "#51cc8a", borderRadius: "20px" }} onClick={() => Showdetailshipper(params.row)} >
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
+                <Button
+                    startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />}
+                    onClick={() => redirectToEditProductPage(params.row._id)}
+                ></Button>
             ),
+
         },
         {
             field: "Accept",
-            flex: 1,
             headerName: "Chấp nhận",
             headerAlign: "center",
             align: "center",
-            renderCell: (params) => (
-                <div>
-                    <button style={{ height: "40px", width: "40px", background: "#747af2", borderRadius: "20px" }} onClick={() => handleDeleteClick(params.row._id)}  >
-                        <i className="fa-solid fa-file"></i>
-                    </button>
-                </div>
-            ),
+            renderCell: (params) => {
+                return (
+
+                    <div>
+                        <Button startIcon={<CheckCircleOutlineSharpIcon style={{ color: "rgb(0, 139, 69)" }} />} onClick={() => handleAcceptClick(params.row)}></Button>
+                    </div >
+                );
+            },
         },
         {
             field: "Delete",
-            flex: 1,
             headerName: "Từ chối",
             headerAlign: "center",
             align: "center",
-            renderCell: (params) => (
-                <div>
-                    <button style={{ height: "40px", width: "40px", background: "#ef376e", borderRadius: "20px" }} >
-                        <i className="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            ),
+            renderCell: (params) => {
+                return (
+                    <div>
+                        <Button startIcon={<HighlightOffSharpIcon style={{ color: "rgb(253 92 99)" }} />} ></Button>
+                    </div >
+                );
+            },
         },
     ];
 
     return (
         <Box m="20px" position='relative'>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Header2 title="Danh sách người giao hàng chờ xác nhận" />
+
+                {/* <Box>
+                    <div className={style.searchBar}>
+                        <input
+                            type="text"
+                            className={style.searchInput}
+                            placeholder="Tìm kiếm của hàng..."
+                        // onChange={(e) => Searchproduct(e.target.value)}
+                        />
+                    </div>
+                </Box> */}
+                <Box>
+                </Box>
+            </Box>
             <Box
-                m="40px 0 0 0"
+                m="10px 0 0 0"
                 height="75vh"
-                // sx={{
-                //     "& .MuiDataGrid-root": {
-                //         border: "none",
-                //     },
-                //     "& .MuiDataGrid-cell": {
-                //         borderBottom: "none",
-                //     },
-                //     "& .name-column--cell": {
-                //         color: colors.greenAccent[300],
-                //     },
-                //     "& .MuiDataGrid-columnHeaders": {
-                //         backgroundColor: colors.blueAccent[700],
-                //         borderBottom: "none",
-                //     },
-                //     "& .MuiDataGrid-virtualScroller": {
-                //         backgroundColor: colors.primary[400],
-                //     },
-                //     "& .MuiDataGrid-footerContainer": {
-                //         borderTop: "none",
-                //         backgroundColor: colors.blueAccent[700],
-                //     },
-                // }}
+                sx={{
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        borderBottom: "none",
+                        fontSize: "14px"
+                        ,
+                        fontWeight: "bold",
+                    },
+                }}
             >
                 {openDetail && (
                     <DetailShipper rows={selectedRow} show={true} handleClose={setOpenDetail} />
                 )}
-                <div className={style.dsdh} >
-                    <div className={style.dshd1} style={{ background: colors.primary[400], }} >
-                        <div className={style.titledsdh}>Danh sách Shipper chờ duyệt</div>
-                        <div className={style.searchBar}>
-                            <input
-                                type="text"
-                                className={style.searchInput}
-                                placeholder="Tìm kiếm shipper..."
-                            />
-                        </div>
-                    </div>
-
-                </div>
+                {openAccept && (
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptShipper={AcceptShipper} Status={"Cấp phép"} />
+                )}
                 <DataGrid
 
                     rows={rowsWithUniqueIds}

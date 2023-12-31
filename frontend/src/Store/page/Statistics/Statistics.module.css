@@ -6,6 +6,16 @@
 
 }
 
+.isloading {
+    border: 0.1px solid rgb(230, 230, 230);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75vh;
+    width: 100%;
+    border-radius: 5px;
+}
+
 .box1 {
     margin: 10px 20px;
 }
@@ -14,13 +24,12 @@
     border-bottom: 0.1px solid rgb(230, 230, 230);
 }
 
-.InteractivePieChart {
-    padding-top: 50px;
-}
+.InteractivePieChart {}
 
 .top {
     display: flex;
-    
+    padding-bottom: 2px;
+
 }
 
 .icon {
@@ -48,9 +57,18 @@
     margin-left: auto;
     font-size: 14px;
     width: 100%;
+    padding-right: 20px;
+}
+
+.rightContent1 i {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
 }
 
 .rightContent1 {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -60,6 +78,44 @@
 
 
 .tittle span {}
+
+.select {
+    border-radius: 1px;
+    border: 0px solid rgb(230, 230, 230);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    font-weight: 600;
+    color: rgb(21, 20, 20);
+    font-size: 18px;
+}
+
+.select:focus {
+    outline: none;
+}
+
+
+.tranding section option span {
+    font-weight: 500;
+    color: rgb(159, 159, 159);
+    font-size: 16px;
+}
+
+.tranding {
+    position: relative;
+}
+
+.tranding select {
+    padding-right: 20px;
+}
+
+.tranding i {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+}
 
 .center {
     padding: 5px 0px;
@@ -164,6 +220,7 @@
     font-size: 16px;
 }
 
+
 .producttop {
     display: flex;
     padding: 6px 0px;
@@ -180,4 +237,9 @@
     align-items: center;
     margin-left: auto;
     font-size: 16px;
+}
+
+.Containertoppd {
+    height: 190px;
+    overflow-y: auto;
 }
