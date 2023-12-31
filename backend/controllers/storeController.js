@@ -9,6 +9,8 @@ const ApiFeatures = require("../utils/ApiFeatures");
 const fileUploader = require("../utils/uploadImage");
 const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
+const ownerController = require("./ownerController");
+const moment = require("moment-timezone");
 class storeController {
   uploadStoreImages = fileUploader.fields([
     { name: "image", maxCount: 1 },
@@ -71,10 +73,18 @@ class storeController {
   getStoreByStoreId = catchAsync(async (req, res, next) => {
     const id = req.params.id;
     const store = await Store.findById(req.params.id).populate("ratings");
+    const last = moment()
+      .startOf("month")
+      .subtract(1, "months");
+    const data = await ownerController.getOrderOneMonth(
+      store._id,
+      last.toDate()
+    );
     if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
     res.status(200).json({
       status: "success",
       data: store,
+      revenue: data ? data.revenue : 0,
     });
   });
   getAllStore = catchAsync(async (req, res, next) => {
