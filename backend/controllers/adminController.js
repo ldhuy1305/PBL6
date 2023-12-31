@@ -445,7 +445,7 @@ class adminController {
         revenue: data ? data.revenue : 0,
       },
     });
-
+  });
   //Exports
   exportShippers = catchAsync(async (req, res, next) => {
     let shippers = [];
