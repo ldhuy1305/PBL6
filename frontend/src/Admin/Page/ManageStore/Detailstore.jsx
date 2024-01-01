@@ -17,7 +17,7 @@ const Detailorder = ({ setSelected }) => {
     }, []);
     const location = useLocation();
     const dataFromPreviousPage = location.state;
-    const [images, setImages] = useState([]);
+    const [Revenue, setRevenue] = useState("");
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const [data, setdata] = useState([]);
@@ -42,6 +42,7 @@ const Detailorder = ({ setSelected }) => {
             const responseData = response.data.data;
             console.log(responseData);
             setdata(responseData);
+            setRevenue(response.data.revenue);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -164,7 +165,7 @@ const Detailorder = ({ setSelected }) => {
                             flexDirection: "column",
                             justifyContent: "space-between",
                         }}>
-                            <h5>Đánh giá từ khách hàng</h5>
+                            <h5>Thống kê</h5>
                             <div>
                                 <Typography variant="h5">Số sao đánh giá</Typography>
                                 <Rating
@@ -176,6 +177,9 @@ const Detailorder = ({ setSelected }) => {
                                 /></div>
 
                             <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>
+                            <Typography variant="h5">Ngân hàng : {data.ownerId?.bankName}</Typography>
+                            <Typography variant="h5">STK : {data.ownerId?.bankName}</Typography>
+                            <Typography variant="h5">Doanh thu tháng trước : {Revenue}</Typography>
                         </div>
                     </Box>
 

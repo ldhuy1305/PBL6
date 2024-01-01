@@ -64,6 +64,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
 .infocustumer12 {
     height: 30%;
     display: flex;
@@ -95,7 +96,7 @@
 
 .bottom {
     margin-top: auto;
-    height: 20%;
+    height: 25%;
     width: 100%;
     border-top: 0.1px solid rgb(223, 223, 223);
 }

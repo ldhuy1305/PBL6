@@ -29,6 +29,18 @@
     height: 23%;
 }
 
+.voucher:hover {
+    margin: 5px;
+    border: 0.1px solid #ffc7c7;
+    padding: 5px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    width: calc(33.333% - 10px);
+    height: 23%;
+    box-shadow: 1px 1px 1px 1px rgb(134, 134, 134);
+}
+
 
 .Image {
     height: 100px;
@@ -51,7 +63,7 @@
 
 
 .title {
-    width: auto;
+    width: 240px;
     padding: 2px;
     color: #ff9d9d;
     border-radius: 3px;

@@ -1,5 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Box } from "@mui/material";
+import React, { useState, useEffect } from 'react';
 import style from './Voucher.module.css';
 import Header2 from "../../components/Header/Header";
 import Loading from '../../components/Loading/Loading'
@@ -7,6 +6,7 @@ import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
+import HileVoucher from './HideVoucher'
 
 const notify = (er, message) => toast[er](message, {
   position: "top-right",
@@ -26,7 +26,8 @@ const Voucher = ({ setSelected }) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [openVoucher, setOpenVoucher] = useState(false);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [openHileVoucher, setOpenHileVoucher] = useState(false);
+  const [VoucherItem, setVoucherItem] = useState([]);
   const token = localStorage.getItem('token');
   const [data, setData] = useState([]);
   const fetchData = async () => {
@@ -52,7 +53,6 @@ const Voucher = ({ setSelected }) => {
     const day = dateObject.getDate();
     const month = dateObject.getMonth() + 1; // Tháng bắt đầu từ 0
     const year = dateObject.getFullYear();
-
     return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
   };
 
@@ -72,6 +72,21 @@ const Voucher = ({ setSelected }) => {
       console.log(error);
     }
   };
+  const HileVoucherByID = async (id) => {
+    try {
+      setOpenHileVoucher(false)
+      await axios.put(`https://falth-api.vercel.app/api/voucher/${id}`, { "": "" }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      notify("success", "Đã ẩn Voucher");
+      fetchData();
+    } catch (error) {
+      notify("error", "Ẩn thất bại");
+      console.log(error);
+    }
+  };
 
 
   return (
@@ -82,18 +97,25 @@ const Voucher = ({ setSelected }) => {
       ) : (
         <div className={style.container}>
           <div className={style.listvoucher}>
-            {data && data.map((item) => <div className={style.voucher}>
-              <div className={style.Image}>
-                <img src="https://falth.vercel.app/static/media/cutlery.ca1460e7a17e0ba85b81.png" alt="" />
+            {data && data.map((item) =>
+              <div className={style.voucher} onClick={() => { setOpenHileVoucher(true); setVoucherItem(item) }}>
+                <div className={style.Image}>
+                  <img src="https://falth.vercel.app/static/media/cutlery.ca1460e7a17e0ba85b81.png" alt="" />
+                </div>
+                <div className={style.infomation}>
+                  <span>Giảm {item.amount}đ cho đơn từ {item.conditions.minValues}đ</span>
+                  <span>Đá dùng : {item.numUsers} </span>
+                  <span className={style.title}>{item.name}</span>
+                  <span className={style.title}>Sử dụng đến : {formatDate(item.conditions.endDate)}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "flex-start" }}>
+                  <i className="fa-solid fa-circle" style={{
+                    color: item.isAvailable ? "#00a400" : "#f35369c2"
+                  }}></i>
+                </div>
+
               </div>
 
-              <div className={style.infomation}>
-                <span>Giảm : {item.amount} đ</span>
-                <span>Đơn Tối Thiểu : {item.conditions.minValues} đ</span>
-                <span className={style.title}>{item.name}</span>
-                <span className={style.title}>Sử dụng đến : {formatDate(item.conditions.endDate)}</span>
-              </div>
-            </div>
             )}
             <div className={style.voucher} onClick={() => setOpenVoucher(true)}>
               <div className={style.Image}>
@@ -104,10 +126,12 @@ const Voucher = ({ setSelected }) => {
               </div>
             </div>
             {openVoucher && <AddVoucher open={openVoucher} setOpenVoucher={setOpenVoucher} Addvocher={Addvocher} />}
+            {openHileVoucher && <HileVoucher open={openHileVoucher} setOpenHileVoucher={setOpenHileVoucher} VoucherItem={VoucherItem} HileVoucherByID={HileVoucherByID} />}
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 

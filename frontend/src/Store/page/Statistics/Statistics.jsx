@@ -8,7 +8,7 @@ import Header2 from "../../components/Header/Header";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
 
-const Product = ({ setSelected }) => {
+const Statistics = ({ setSelected }) => {
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -264,7 +264,7 @@ const Product = ({ setSelected }) => {
                                                     <span>{value.product}</span>
                                                 </div>
                                                 <div className={style.price}>
-                                                    <span>{value.price} đ</span>
+                                                    <span>{value.price.toLocaleString('vi-VN')} đ</span>
                                                 </div>
                                                 <div className={style.sold}>
                                                     <span>{value.count} sản phẩm</span>
@@ -284,4 +284,4 @@ const Product = ({ setSelected }) => {
     );
 };
 
-export default Product;
+export default Statistics;
