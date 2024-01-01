@@ -121,11 +121,27 @@ exports.findOrdersNearByShipper = catchAsync(async (req, res, next) => {
       },
     },
     {
+      $lookup: {
+        from: "contacts",
+        localField: "contact",
+        foreignField: "_id",
+        as: "userLocation",
+      },
+    },
+    {
+      $unwind: "$userLocation",
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
-        storeLocation: 1,
+        storeLocation: {
+          coordinates: { $reverseArray: "$storeLocation.coordinates" },
+        },
         dist: "$dist.calculated",
+        userLocation: {
+          coordinates: "$userLocation.location.coordinates",
+        },
       },
     },
     {
