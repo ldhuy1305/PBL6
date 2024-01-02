@@ -287,8 +287,9 @@ class orderController {
         let t = (Date.now() - order.createdAt) / 60000;
         if (order.status == "Waiting" && t > process.env.time_refused) {
           order.status = "Refused";
+          let dateOrdered = new Date(order.dateOrdered);
           order.dateRefused = new Date(
-            Date.now() + process.env.UTC * 60 * 60 * 1000
+            dateOrdered.getTime() + process.env.time_refused * 1000 * 60
           );
           await this.refundOrder(req, order._id, next);
           await voucherController.refundVoucher(order._id);
