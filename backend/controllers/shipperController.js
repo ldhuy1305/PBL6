@@ -51,7 +51,7 @@ exports.updateShipper = catchAsync(async (req, res, next) => {
     return next(new appError("No document found with that ID", 404));
   }
   const body = {
-    phoneNumber: req.body.phoneNumber,
+    ...req.body,
     photo: req.file ? req.file.path : shipper.photo,
   };
   try {
@@ -59,6 +59,7 @@ exports.updateShipper = catchAsync(async (req, res, next) => {
       new: true,
       runValidators: true,
     });
+    console.log(body);
     let parts = shipper.photo.split("/");
     let id =
       parts.slice(parts.length - 2, parts.length - 1).join("/") +
@@ -121,11 +122,27 @@ exports.findOrdersNearByShipper = catchAsync(async (req, res, next) => {
       },
     },
     {
+      $lookup: {
+        from: "contacts",
+        localField: "contact",
+        foreignField: "_id",
+        as: "userLocation",
+      },
+    },
+    {
+      $unwind: "$userLocation",
+    },
+    {
       $project: {
         _id: 1,
         status: 1,
-        storeLocation: 1,
+        storeLocation: {
+          coordinates: { $reverseArray: "$storeLocation.coordinates" },
+        },
         dist: "$dist.calculated",
+        userLocation: {
+          coordinates: "$userLocation.location.coordinates",
+        },
       },
     },
     {

@@ -162,7 +162,7 @@ const Input = () => {
   const { data } = useContext(ChatContext);
 
   const handleSend = async () => {
-    if (text.trim() === '') {
+    if (text.trim() === '' && !img) {
       console.warn("Lưu ý: Không thể gửi tin nhắn với nội dung trống.");
       return;
     }
@@ -219,6 +219,13 @@ const Input = () => {
 
     setText("");
     setImg(null);
+
+
+  };
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSend();
+    }
   };
   return (
     <div className={style.input}>
@@ -226,6 +233,7 @@ const Input = () => {
         type="text"
         placeholder="Gõ tin nhắn của bạn"
         onChange={(e) => setText(e.target.value)}
+        onKeyPress={handleKeyPress}
         value={text}
       />
       <div className={style.send}>

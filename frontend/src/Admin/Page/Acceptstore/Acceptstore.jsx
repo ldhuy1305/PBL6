@@ -81,23 +81,6 @@ const Acceptstore = ({ setSelected }) => {
         }
     };
 
-    const Searchproduct = async (name) => {
-        console.log(name);
-        try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/search?search=${name}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const responseData = response.data.data.data;
-            console.log(responseData);
-            setData(responseData);
-            setIsLoading(false);
-        } catch (error) {
-            console.log(error);
-            setIsLoading(false);
-        }
-    };
     const AcceptStore = async (id) => {
         try {
             await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`,  {
