@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import { useTranslation } from "react-i18next";
 import '../../assets/css/productDetail2.css'
@@ -25,11 +25,9 @@ const ProductDetailModal = ({ show, handleClose, product, handleAdd, isWithinOpe
     const [selectedImage, setSelectedImage] = useState(product.images[0])
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const productImages = [
-        'https://res.cloudinary.com/drk3oaeza/image/upload/v1700207292/pbl6/xl2opejo7m1kfzkhiysq.jpg',
-        'https://res.cloudinary.com/drk3oaeza/image/upload/v1700105136/pbl6/ppunitbwvsc7riobj91y.jpg',
-        'https://res.cloudinary.com/drk3oaeza/image/upload/v1700105149/pbl6/mplezrwjzi96cauzqjhb.jpg'
-    ];
+    useEffect(() => {
+        setSelectedImage(product.images[0])
+    }, [product])
 
     const handleSelectImage = (index) => {
         setSelectedImage(product.images[index]);

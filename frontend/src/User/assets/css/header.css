@@ -18606,7 +18606,7 @@ span.flatpickr-weekday {
 .history-table-status {
   display: block;
   width: 100%;
-  height: 26px;
+  min-height: 26px;
   line-height: 26px;
   padding: 0 10px;
   border-radius: 3px;

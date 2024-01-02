@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { checkStoreOpen } from "../../services/userServices";
-const StoreItem = ({ like, store }) => {
+const StoreItem = ({ store }) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const handleStore = () => {
@@ -18,11 +18,11 @@ const StoreItem = ({ like, store }) => {
                 target="_blank"
                 class="item-content"
             ><div class="img-restaurant">
-                    {like === "no" ? null : (
+                    {/* {like === "no" ? null : (
                         <div className="tag-preferred">
                             <i className="fa fa-thumbs-up" aria-hidden="true"></i>{t("storeLike")}
                         </div>
-                    )}
+                    )} */}
                     <img
                         src={store.image}
                     />
@@ -35,7 +35,7 @@ const StoreItem = ({ like, store }) => {
                         >
                             <span
                                 class="icon icon-quality-merchant"
-                                title="Đây là 1 trong những Merchants được đánh giá cao trong ShopeeFood"></span>{store.name}
+                                title="Đây là 1 trong những Merchants được đánh giá cao"></span>{store.name}
                         </h4>
                         <div
                             class="address-res"

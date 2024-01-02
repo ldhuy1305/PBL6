@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { ChatContext } from "../../context/ChatContext";
 import { db, storage } from "../../firebase";
 import { v4 as uuid } from "uuid";
+import { useTranslation } from 'react-i18next';
 import {
     Box,
     Typography,
@@ -68,7 +69,7 @@ const Message = ({ message }) => {
     );
 };
 const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data }) => {
-
+    const { t } = useTranslation();
     {/* code của thanh lich  */ }
     const [text, setText] = useState("");
     const [img, setImg] = useState(null);
@@ -176,7 +177,7 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
                                         <div class={`h-2 w-2 rounded-full ${isWithinOperatingHours ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                     </div>
                                     <div class="text-xs mt-1 leading-3 text-black-700">
-                                        Thường trả lời sau vài phút
+                                        {t("chatstatus")}
                                     </div>
                                 </div>
                             </div>
@@ -190,9 +191,9 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
                             <div data-v-dd2501de="" class="conversation--container light-scheme">
                                 <div data-v-dd2501de="" class="conversation-wrap">
                                     <div data-v-dd2501de class="messages-wrap">
-                                        <div data-v-0619d2c7="" data-v-dd2501de="" class="date--separator text-slate-700">
+                                        {/* <div data-v-0619d2c7="" data-v-dd2501de="" class="date--separator text-slate-700">
                                             Hôm nay
-                                        </div>
+                                        </div> */}
                                         {/* code của thanh lich  */}
 
                                         {messages.map((m) => (

@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import Notify from '../Notify.jsx/Notify'
 import LoadingModal from "../Loading/Loading";
 import axios from "axios";
-import { updateRatingForStore } from "../../services/userServices";
 const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRatings, product, shipper }) => {
     const { t } = useTranslation();
 
@@ -18,14 +17,14 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
     const [isLoading, setIsLoading] = useState(false)
     const [notify, setNotify] = useState('')
 
-    const handleCloseRating = () => {
-        handleClose()
-        setFormData({
-            number: rating && rating.number ? rating.number : '',
-            content: rating && rating.content ? rating.content : '',
-            images: rating && rating.images ? [...rating.images] : [],
-        });
-    }
+    // const handleCloseRating = () => {
+    //     handleClose()
+    //     setFormData({
+    //         number: rating && rating.number ? rating.number : '',
+    //         content: rating && rating.content ? rating.content : '',
+    //         images: rating && rating.images ? [...rating.images] : [],
+    //     });
+    // }
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
@@ -66,37 +65,37 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
             });
         }
         if (formData.number === '') {
-            setNotify("Mời bạn chọn số sao để đánh giá")
+            setNotify(`${t("ratingNotify1")}`)
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            if (!rating) {
-                try {
+            // if (!rating) {
+            //     try {
 
-                    setIsLoading(true);
-                    const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            ContentType: 'multipart/form-data',
-                        }
-                    });
+            //         setIsLoading(true);
+            //         const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
+            //             headers: {
+            //                 Authorization: `Bearer ${token}`,
+            //                 ContentType: 'multipart/form-data',
+            //             }
+            //         });
 
-                    setNotify("Đánh giá thành công!")
-                    setOpenNotify(true)
-                    handleClose()
-                } catch (error) {
-                    setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
-                    setOpenNotify(true)
-                    handleClose()
-                } finally {
-                    setIsLoading(false);
-                }
-                setFormData({
-                    number: '',
-                    content: '',
-                    images: [],
-                });
-            } else {
+            //         setNotify(`${t("ratingNotify2")}`)
+            //         setOpenNotify(true)
+            //         handleClose()
+            //     } catch (error) {
+            //         setNotify(`${t("ratingNotify3")}`)
+            //         setOpenNotify(true)
+            //         handleClose()
+            //     } finally {
+            //         setIsLoading(false);
+            //     }
+            //     setFormData({
+            //         number: '',
+            //         content: '',
+            //         images: [],
+            //     });
+            // } else {
                 try {
                     setIsLoading(true);
                     res.append('dels', dels);
@@ -115,12 +114,12 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                       oldRating._id === rating._id ? updated : oldRating
                     );
                     setRatings(updatedRatings);
-                    setNotify("Chỉnh sửa đánh giá thành công!")
+                    setNotify(`${t("ratingNotify4")}`)
                     setOpenNotify(true)
                     handleClose()
                 } catch (error) {
                     console.log(error)
-                    setNotify("Chỉnh sửa đánh giá thất bại!")
+                    setNotify(`${t("ratingNotify5")}`)
                     setOpenNotify(true)
                     handleClose()
                 } finally {
@@ -132,7 +131,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                     images: [],
                 });
                 setDels([]);
-            }
+            // }
         }
 
 
@@ -140,7 +139,6 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
 
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, index) => {
-            const starValue = index + 1;
             const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
             const isHalfFilled = percentFilled > 0 && percentFilled < 100;
 
@@ -170,17 +168,11 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
         <div>
             <Modal className="modal fade modal-customer-feeback" show={show} handleClose={handleClose} size="lg" >
             
-            <Modal.Title style={{ textAlign: 'center', margin: '10px 0 10px 0', color:'white', fontSize:'1.25rem', fontWeight:'700' }}>Cập nhật đánh giá
+            <Modal.Title style={{ textAlign: 'center', margin: '10px 0 10px 0', color:'white', fontSize:'1.25rem', fontWeight:'700' }}>{t("updateRating")}
                     <button onClick={handleClose} style={{ backgroundColor: '#cf2127', float: 'right', marginRight: '10px', padding: '3px 10px 5px 10px', borderRadius: '5px', color: 'white', fontWeight:'700' }}>
                         x
                     </button>
                 </Modal.Title>
-                {/* <Modal.Header>
-                    <div class="modal-header" style={{ color: 'white' }}>Cập nhật đánh giá</div>
-                    <button onClick={handleCloseRating} style={{ backgroundColor: '#cf2127', float: 'right', borderRadius: '5px', color: 'white' }}>
-                        x
-                    </button>
-                </Modal.Header> */}
                 <Modal.Body >
                     <div class="modal-dialog modal-noti" role="document" >
                         <div class="modal-content">
@@ -221,12 +213,12 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                             </div>
                                                             <div >
                                                                 <select defaultValue="" className="custom-select" name='number' value={formData.number} onChange={handleChange}>
-                                                                    <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
-                                                                    <option value={1}>1 sao</option>
-                                                                    <option value={2}>2 sao</option>
-                                                                    <option value={3}>3 sao</option>
-                                                                    <option value={4}>4 sao</option>
-                                                                    <option value={5}>5 sao</option>
+                                                                    <option value="" selected="selected" disabled>{t("ratingInput1")}</option>
+                                                                    <option value={1}>1 {t("star")}</option>
+                                                                    <option value={2}>2 {t("stars")}</option>
+                                                                    <option value={3}>3 {t("stars")}</option>
+                                                                    <option value={4}>4 {t("stars")}</option>
+                                                                    <option value={5}>5 {t("stars")}</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -234,7 +226,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn."
+                                                                placeholder={t("ratingInput2")}
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
@@ -288,7 +280,7 @@ const UpdateRatingModal = ({ show, handleClose , store, rating, ratings, setRati
                                                         </div>
                                                         <div class="submit-section">
                                                             
-                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Cập nhật đánh giá</button>
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>{t("updateRating")}</button>
                                                         </div>
                                                     </div>
                                                 </div>

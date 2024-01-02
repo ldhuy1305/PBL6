@@ -9,7 +9,9 @@ import LoadingModal from "../../Components/Loading/Loading";
 import { placeOrder, getFeeShip, getVoucherByStoreId, applyVoucher } from "../../services/userServices";
 import ModalVoucher from "../../Components/Modal/modalVoucher";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 const OrderPage = () => {
+  const {t} = useTranslation();
   const [showModalAddress, setShowModalAddress] = useState(false);
   const { cart, setCart, productsCount } = useCity();
   const location = useLocation()
@@ -149,7 +151,7 @@ const OrderPage = () => {
             <div class="jb8bh0">
               <a class="_4+lJqn" href="/">
                 <img src={logo} alt="" style={{ height: '80px', width: '100px' }} />
-                <h1 class="eSRYBr">Thanh toán</h1></a>
+                <h1 class="eSRYBr">{t("pay")}</h1></a>
             </div>
           </div>
         </div>
@@ -172,7 +174,7 @@ const OrderPage = () => {
                       ></path>
                     </svg>
                   </div>
-                  <h2>Địa chỉ nhận hàng</h2>
+                  <h2>{t("receiveAddress")}</h2>
                 </div>
               </div>
               <div class="Jw2Sc-">
@@ -183,22 +185,22 @@ const OrderPage = () => {
                       {selectedContact.address}
                     </div>
                     {(defaultContact && selectedContact._id === defaultContact) && (
-                      <div class="uk7Wpm">Mặc định</div>
+                      <div class="uk7Wpm">{t("default")}</div>
                     )}
                   </div>
                 </div>
-                <button onClick={openModalAddress} class="_3WkjWD div-style">Thay đổi</button>
+                <button onClick={openModalAddress} class="_3WkjWD div-style">{t("update")}</button>
               </div>
             </div>
           </div>
           <div class="sqxwIi">
             <div class="_3cPNXP">
               <div class="V-sVj2">
-                <div class="jNp+ZB ktatB-"><h2 class="_6HCfS6">Sản phẩm</h2></div>
-                <div class="jNp+ZB _04sLFc" style={{ textAlign: 'left', paddingLeft: '20px' }}>Yêu cầu đặc biệt</div>
-                <div class="jNp+ZB">Đơn giá</div>
-                <div class="jNp+ZB">Số lượng</div>
-                <div class="jNp+ZB LBqTli">Thành tiền</div>
+                <div class="jNp+ZB ktatB-"><h2 class="_6HCfS6">{t("product")}</h2></div>
+                <div class="jNp+ZB _04sLFc" style={{ textAlign: 'left', paddingLeft: '20px' }}>{t("specialRequest")}</div>
+                <div class="jNp+ZB">{t("price")}</div>
+                <div class="jNp+ZB">{t("amount")}</div>
+                <div class="jNp+ZB LBqTli">{t("bill")}</div>
               </div>
             </div>
             <div>
@@ -206,7 +208,7 @@ const OrderPage = () => {
                 <div>
                   <div class="Z7qspM">
                     <div class="vYrpLx">
-                      <h3 class="YSl9dN">{cart.nameStore}  <i class="fa-regular fa-clock"></i>   {deliveryTime} phút</h3>
+                      <h3 class="YSl9dN">{cart.nameStore}  <i class="fa-regular fa-clock"></i>   {deliveryTime} {t("minutes")}</h3>
                     </div>
                     {cart.products.map((product) => (
 
@@ -216,7 +218,7 @@ const OrderPage = () => {
                 </div>
                 <div class="Nivkv-">
                   <div class="ULZMSb">
-                    <div class="z10ZuQ">Tổng số tiền ({productsCount} sản phẩm):</div>
+                    <div class="z10ZuQ">{t("totalProduct")} ({productsCount} {t("product")}):</div>
                     <div class="_9F3E9v">{totalPrice.toLocaleString('vi-VN')}₫</div>
                   </div>
                 </div>
@@ -304,14 +306,14 @@ const OrderPage = () => {
                       <div>
                         <div class="vc_MainTitle_mainTitle">
                           <div class="vc_MainTitle_text vc_MainTitle_fsvLine">
-                            Giảm {selectedVoucher.amount.toLocaleString('vi-VN')}₫
+                            {t("saleOff")} {selectedVoucher.amount.toLocaleString('vi-VN')}₫
                             {/* Giảm {selectedVoucher.amount}₫ */}
                           </div>
                         </div>
                         <div
                           class="vc_Subtitle_subTitle vc_Subtitle_oneLine"
                         >
-                          Đơn Tối Thiểu {selectedVoucher.conditions.minValues.toLocaleString('vi-VN')}₫
+                          {t("minPrice")} {selectedVoucher.conditions.minValues.toLocaleString('vi-VN')}₫
                           {/* Đơn Tối Thiểu {selectedVoucher.conditions.minValues}₫ */}
                         </div>
                         {/* <div class="vc_Label_label">
@@ -335,7 +337,7 @@ const OrderPage = () => {
                             <span
                               class="vc_ProgressBarExpiry_isEndingSoon vc_ProgressBarExpiry_capitalize"
                             >
-                            Hết hạn: {moment.utc(selectedVoucher.conditions.endDate).format('HH:mm DD/MM/YYYY')}
+                            {t("expired")}: {moment.utc(selectedVoucher.conditions.endDate).format('HH:mm DD/MM/YYYY')}
                             </span>
                           </div>
                         </div>
@@ -345,7 +347,7 @@ const OrderPage = () => {
                   </div>
                   <div class="vc_VoucherStandardTemplate_right" style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }} role="presentation">
                     <div class="vc_VoucherStandardTemplate_center">
-                      <button class="FPhJqC" onClick={openModalVoucher}>Chọn Voucher</button>
+                      <button class="FPhJqC" onClick={openModalVoucher}>{t("chooseVoucher")}</button>
                     </div>
                   </div>
                 </div>
@@ -355,13 +357,13 @@ const OrderPage = () => {
 
           <div class="DS2ZYY">
             <div class="DQ7t9K">
-              <h2 class="a11y-visually-hidden">Phương thức thanh toán</h2>
+              <h2 class="a11y-visually-hidden">{t("paymentMethod")}</h2>
               <div>
                 <div
                   class="checkout-payment-method-view__current checkout-payment-setting"
                 >
                   <div class="checkout-payment-method-view__current-title">
-                    Phương thức thanh toán
+                  {t("paymentMethod")}
                   </div>
                   <div class="checkout-payment-setting__payment-methods-tab">
                     <div role="radiogroup">
@@ -374,7 +376,7 @@ const OrderPage = () => {
                           aria-disabled="false"
                           aria-checked="false"
                         >
-                          Thanh toán trực tuyến
+                          {t("onlinePay")}
                           <div class="product-variation__tick">
                             <svg enable-background="new 0 0 12 12" viewBox="0 0 12 12" x="0" y="0" class="shopee-svg-icon icon-tick-bold">
                               <g>
@@ -402,30 +404,30 @@ const OrderPage = () => {
             </div>
             <div class="KQyCj0" aria-live="polite">
               {/* <h2 class="a11y-visually-hidden">Tổng thanh toán:</h2> */}
-              <h3 class="Tc17Ac XIEGGF BcITa9">Tổng tiền hàng</h3>
+              <h3 class="Tc17Ac XIEGGF BcITa9">{t("totalProduct")}</h3>
               <div class="Tc17Ac mCEcIy BcITa9">{totalPrice.toLocaleString('vi-VN')}₫</div>
-              <h3 class="Tc17Ac XIEGGF RY9Grr">Phí vận chuyển ({distance}km)</h3>
+              <h3 class="Tc17Ac XIEGGF RY9Grr">{t("shipFee")} ({distance}km)</h3>
               <div class="Tc17Ac mCEcIy RY9Grr">{shipFee.toLocaleString('vi-VN')}₫</div>
-              <h3 class="Tc17Ac XIEGGF RY9Grr2">Giảm giá</h3>
+              <h3 class="Tc17Ac XIEGGF RY9Grr2">{t("saleOff")}</h3>
               <div class="Tc17Ac mCEcIy RY9Grr2">-{selectedVoucher ? (selectedVoucher.amount).toLocaleString('vi-VN') : 0}₫</div>
-              <h3 class="Tc17Ac XIEGGF n3vdfL">Tổng thanh toán:</h3>
+              <h3 class="Tc17Ac XIEGGF n3vdfL">{t("total")}</h3>
               <div class="Tc17Ac kC0GSn mCEcIy n3vdfL">{totalPayment.toLocaleString('vi-VN')}₫</div>
               <div class="uTFqRt">
                 <div class="k4VpYA">
                   <div class="C-NSr-">
-                    Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo
+                    {t("remindOrder1")}
                     <a
                       // href="https://help.shopee.vn/portal/article/77242"
                       target="_blank"
                       rel="noopener noreferrer"
-                    > Điều khoản FALTH</a>
+                    > {t("remindOrder2")}</a>
                   </div>
                 </div>
                 <button
                   class="stardust-button stardust-button--primary stardust-button--large apLZEG"
                   onClick={handleOrder}
                 >
-                  Đặt hàng
+                  {t("order")}
                 </button>
               </div>
             </div>

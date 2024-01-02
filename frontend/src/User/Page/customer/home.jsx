@@ -3,7 +3,6 @@ import StoreItem from '../../Components/Item/storeItem';
 import { useCity } from '../../services/CityContext';
 import { useTranslation } from 'react-i18next';
 import useLocationSelect from '../signUp/address';
-import LoadingModal from '../../Components/Loading/Loading';
 import Skeleton from '../../Components/Skeleton/skeleton';
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -276,7 +275,6 @@ const Home = () => {
             {stores.data.map((store) => (
 
               <StoreItem
-                like="yes"
                 store={store}
               />
             ))}
