@@ -230,7 +230,13 @@ class adminController {
     return data[0];
   };
   getNumbersUsersQuarterly = catchAsync(async (req, res, next) => {
+    const year = +req.query.year || 2023;
     const data = await User.aggregate([
+      {
+        $match: {
+          $expr: { $eq: [{ $year: "$createdAt" }, year] },
+        },
+      },
       {
         $project: {
           role: 1,
@@ -342,28 +348,48 @@ class adminController {
         },
       },
       {
-        $project: {
+        $group: {
+          _id: null,
           revenue: {
-            $add: [
-              {
-                $multiply: [
-                  { $subtract: ["$totalPrice", "$shipCost"] },
-                  process.env.percentStore / 100,
-                ],
-              },
-              { $multiply: ["$shipCost", process.env.percentShipper / 100] },
-            ],
+            $sum: {
+              $add: [
+                {
+                  $multiply: [
+                    { $subtract: ["$totalPrice", "$shipCost"] },
+                    process.env.percentStore / 100,
+                  ],
+                },
+                { $multiply: ["$shipCost", process.env.percentShipper / 100] },
+              ],
+            },
           },
         },
       },
+      // {
+      //   $project: {
+      //     revenue: {
+      //       $add: [
+      //         {
+      //           $multiply: [
+      //             { $subtract: ["$totalPrice", "$shipCost"] },
+      //             process.env.percentStore / 100,
+      //           ],
+      //         },
+      //         { $multiply: ["$shipCost", process.env.percentShipper / 100] },
+      //       ],
+      //     },
+      //   },
+      // },
     ]);
     return data[0];
   };
   getRevenueQuarterly = catchAsync(async (req, res, next) => {
+    const year = +req.query.year || 2023;
     const data = await Order.aggregate([
       {
         $match: {
           status: { $nin: ["Cancelled", "Refused"] },
+          $expr: { $eq: [{ $year: "$dateOrdered" }, year] },
         },
       },
       {
