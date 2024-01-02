@@ -194,6 +194,8 @@ class orderController {
           shipper: { $first: "$shipper" },
           dateDeliveried: { $first: "$dateDeliveried" },
           dateFinished: { $first: "$dateFinished" },
+          dateRefused: { $first: "$dateRefused" },
+          dateCancelled: { $first: "$dateCancelled" },
         },
       },
       {
