@@ -6,7 +6,7 @@ const Header = ({ title, subtitle }) => {
     const colors = tokens(theme.palette.mode);
     return (
         <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Box m="20px 0" display="flex" alignItems="center">
+            <Box m="10px 0" display="flex" alignItems="center">
                 <Typography
                     display="flex"
                     alignItems="center"

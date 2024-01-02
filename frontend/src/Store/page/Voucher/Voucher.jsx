@@ -104,7 +104,7 @@ const Voucher = ({ setSelected }) => {
                 </div>
                 <div className={style.infomation}>
                   <span>Giảm {item.amount}đ cho đơn từ {item.conditions.minValues}đ</span>
-                  <span>Đá dùng : {item.numUsers} </span>
+                  <span>Đã dùng : {item.numUsers} </span>
                   <span className={style.title}>{item.name}</span>
                   <span className={style.title}>Sử dụng đến : {formatDate(item.conditions.endDate)}</span>
                 </div>

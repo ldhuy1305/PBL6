@@ -39,7 +39,7 @@ const Detailorder = ({ setSelected }) => {
                     },
                 }
             );
-            const responseData = response.data.data;
+            const responseData = response.data.data.store;
             console.log(responseData);
             setdata(responseData);
             setRevenue(response.data.revenue);

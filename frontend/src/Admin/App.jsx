@@ -22,6 +22,7 @@ import Logout from './Page/Logout/logout';
 import DetailShipper from './Page/ManageShipper/DetailShipper'
 import DetailAcceptShipper from './Page/ManageShipper/DetailAcceptShipper'
 import { Helmet } from 'react-helmet';
+import Category from './Page/Category/Category';
 
 
 const App = () => {
@@ -56,6 +57,7 @@ const App = () => {
                             <Route path='/DetailAcceptstore' element={<DetailAcceptstore setSelected={setSelected} />} />
                             <Route path="/logout" element={<Logout />} />
                             <Route path='/detailuser' element={<DetailUser setSelected={setSelected} />} />
+                            <Route path='/category' element={<Category setSelected={setSelected} />} />
                         </Routes>
                     </main>
                     <ToastContainer />
