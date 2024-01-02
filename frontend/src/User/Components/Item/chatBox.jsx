@@ -197,7 +197,7 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
 
                                 <div data-v-dd2501de="" class="conversation-wrap" >
                                     <div data-v-dd2501de className="messages-wrap" style={{
-                                        height: "400px",
+                                        maxHeight: "400px",
                                         overflowY: "auto",
                                         display: "flex",
                                         flexDirection: "column-reverse",
