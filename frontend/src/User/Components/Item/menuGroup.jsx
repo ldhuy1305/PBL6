@@ -71,8 +71,6 @@ const MenuGroup = ({ category, openModal, store, search, isWithinOperatingHours 
             const newCart = {
                 idStore: dish.storeId,
                 nameStore: store.name, 
-                closeAt: store.closeAt,
-                openAt: store.openAt,
                 products: [addedDish],
             };
 
