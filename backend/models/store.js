@@ -86,7 +86,20 @@ const storeSchema = new Schema(
     toObject: { virtuals: true },
   }
 );
+storeSchema.pre("findOneAndUpdate", { query: true }, async function(next) {
+  const update = this.getUpdate();
+  if (update.address) {
+    // Thực hiện tương tự logic như trong middleware 'pre("save")'
 
+    const loc = await mapUtils.getGeoCode(update.address);
+    this._update.location = {
+      type: "Point",
+      coordinates: [loc[0].latitude, loc[0].longitude],
+    };
+    console.log(this.location);
+  }
+  next();
+});
 storeSchema.pre("save", async function(next) {
   if (this.isNew || this.isModified("address")) {
     const loc = await mapUtils.getGeoCode(this.address);
