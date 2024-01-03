@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import '../../assets/css/pcmall.css'
 import CommentItem from "../Item/commentItem";
-import { getRatingOfProduct, getRatingOfShipper, getRatingOfStore } from "../../services/userServices";
+import { useTranslation } from "react-i18next";
+
 const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
-    // const [data, setData] = useState(store !== null ? store : product);
+    const {t} = useTranslation();
     const [tempRatings, setTempRatings] = useState({});
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, index) => {
-            // const starValue = index + 1;
             const percentFilled = Math.min(100, Math.max(0, rating - index) * 100);
             const isHalfFilled = percentFilled > 0 && percentFilled < 100;
 
@@ -108,43 +108,43 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
                                 className={`product-rating-overview__filter ${activeFilter === 'Tất cả' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('Tất cả')}
                             >
-                                Tất cả
+                                {t("all")}
                             </div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === '5 Sao' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('5 Sao')}
-                            >5 Sao</div>
+                            >5 {t("stars")}</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === '4 Sao' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('4 Sao')}
-                            >4 Sao</div>
+                            >4 {t("stars")}</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === '3 Sao' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('3 Sao')}
-                            >3 Sao</div>
+                            >3 {t("stars")}</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === '2 Sao' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('2 Sao')}
-                            >2 Sao</div>
+                            >2 {t("stars")}</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === '1 Sao' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('1 Sao')}
-                            >1 Sao</div>
+                            >1 {t("star")}</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === 'Có bình luận' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('Có bình luận')}
-                            >Có Bình luận</div>
+                            >{t("comments")}</div>
                             <div
                                 className={`product-rating-overview__filter ${activeFilter === 'Có hình ảnh' ? 'product-rating-overview__filter--active' : ''}`}
                                 onClick={() => handleFilterClick('Có hình ảnh')}
-                            >Có hình ảnh</div>
+                            >{t("images")}</div>
                         </div>
                     </div>
                     <div class="product-ratings__list" style={{ opacity: '1' }}>
                         <div class="shopee-product-comment-list">
                             {Object.values(tempRatings).map((rating) => (
                                 <CommentItem
-                                    like={6}
+                                    // like={6}
                                     rating={rating}
                                     renderStars={renderStars}
                                     idUser={idUser}
@@ -156,7 +156,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
                                 />
                             ))}
                         </div>
-                        <ul class="pagination">
+                        {/* <ul class="pagination">
                             <li class="" onClick={() => handlePageClick('prev')}>
                                 <button class="no_hover"><i class="fa-solid fa-circle-chevron-left" style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
                             </li>
@@ -173,7 +173,7 @@ const Comment = ({ store, ratings, idUser, setRatings, product, shipper }) => {
                             <li class="" onClick={() => handlePageClick('next')}>
                                 <button class="no_hover"><i class="fa-solid fa-circle-chevron-right " style={{ color: 'red', fontSize: '18px', verticalAlign: 'middle' }}></i></button>
                             </li>
-                        </ul>
+                        </ul> */}
                     </div>
                 </div>
             </div>

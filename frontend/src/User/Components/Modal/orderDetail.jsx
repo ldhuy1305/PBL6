@@ -6,6 +6,7 @@ import Notify from "../Notify.jsx/Notify";
 import StepOrder from "../Item/stepOrder";
 import "../../assets/css/stepOrder.css"
 import moment from 'moment-timezone';
+
 const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false)
@@ -51,14 +52,14 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
 
             {visible && (
                 <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
-                    <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Chi tiết đơn hàng</Modal.Title>
+                    <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>{t("orderDetail")}</Modal.Title>
                     <Modal.Body>
                         <div class="modal-dialog modal-lg modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-body">
                                     <div class="row no-gutters">
                                         <div class="col">
-                                            Đơn của bạn tại&nbsp;<strong>{storeName}</strong>
+                                            {t("yourOrderAt")}&nbsp;<strong>{storeName}</strong>
                                         </div>
                                     </div>
 
@@ -67,8 +68,8 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                         <div class="z8GWA3">
                                             <div class="OlNNjU">
                                                 <div class="psdeAM">
-                                                    <div class="LrjR+B">Đã hủy đơn hàng</div>
-                                                    <div class="qS3A+k">vào {moment.utc(orderDetail.dateCancelled).format('HH:mm DD/MM/YYYY')}.</div>
+                                                    <div class="LrjR+B">{t("cancelled")}</div>
+                                                    <div class="qS3A+k">{t("at")} {moment.utc(orderDetail.dateCancelled).format('HH:mm DD/MM/YYYY')}.</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -76,8 +77,8 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                         <div class="z8GWA3">
                                             <div class="OlNNjU">
                                                 <div class="psdeAM">
-                                                    <div class="LrjR+B">Đơn hàng đã bị từ chối</div>
-                                                    <div class="qS3A+k">vào {moment.utc(orderDetail.dateRefused).format('HH:mm DD/MM/YYYY')}.</div>
+                                                    <div class="LrjR+B">{t("refused2")}</div>
+                                                    <div class="qS3A+k">{t("at")} {moment.utc(orderDetail.dateRefused).format('HH:mm DD/MM/YYYY')}.</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,12 +88,12 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
 
                                     <div class="history-table history-customer-order">
                                         <div class="history-table-row history-table-heading">
-                                            <div class="history-table-cell history-table-col2">món</div>
-                                            <div class="history-table-cell history-table-col3">Yêu cầu đặc biệt</div>
-                                            <div class="history-table-cell history-table-col4">Số lượng</div>
-                                            <div class="history-table-cell history-table-col5">Giá</div>
-                                            <div class="history-table-cell history-table-col7">Tổng cộng</div>
-                                            <div class="history-table-cell history-table-col7">Đánh giá</div>
+                                            <div class="history-table-cell history-table-col2">{t("dish")}</div>
+                                            <div class="history-table-cell history-table-col3">{t("specialRequest")}</div>
+                                            <div class="history-table-cell history-table-col4">{t("amount")}</div>
+                                            <div class="history-table-cell history-table-col5">{t("price")}</div>
+                                            <div class="history-table-cell history-table-col7">{t("bill")}</div>
+                                            <div class="history-table-cell history-table-col7">{t("rating")}</div>
                                         </div>
                                         <div class="history-table-scroll">
                                             {orderDetail.cart.map((dish) => (
@@ -137,14 +138,14 @@ const OrderDetail = ({ show, handleClose, orderDetail, storeName }) => {
                                             ))}
                                         </div>
                                         <div class="KQyCj0" aria-live="polite">
-                                            <h3 class="Tc17Ac XIEGGF BcITa9">Tổng tiền hàng</h3>
+                                            <h3 class="Tc17Ac XIEGGF BcITa9">{t("totalProduct")}</h3>
                                             <div class="Tc17Ac mCEcIy BcITa9">{(totalGood).toLocaleString('vi-VN')}₫</div>
                                             {/* <div class="Tc17Ac mCEcIy BcITa9">{(orderDetail.totalPrice - orderDetail.shipCost).toLocaleString('vi-VN')}₫</div> */}
-                                            <h3 class="Tc17Ac XIEGGF RY9Grr">Phí vận chuyển</h3>
+                                            <h3 class="Tc17Ac XIEGGF RY9Grr">{t("shipFee")}</h3>
                                             <div class="Tc17Ac mCEcIy RY9Grr">{(orderDetail.shipCost).toLocaleString('vi-VN')}₫</div>
-                                            <h3 class="Tc17Ac XIEGGF RY9Grr2">Giảm giá</h3>
+                                            <h3 class="Tc17Ac XIEGGF RY9Grr2">{t("saleOff")}</h3>
                                             <div class="Tc17Ac mCEcIy RY9Grr2">-{(totalGood + orderDetail.shipCost - orderDetail.totalPrice).toLocaleString('vi-VN')}₫</div>
-                                            <h3 class="Tc17Ac XIEGGF n3vdfL">Tổng thanh toán:</h3>
+                                            <h3 class="Tc17Ac XIEGGF n3vdfL">{t("total")}</h3>
                                             <div class="Tc17Ac kC0GSn mCEcIy n3vdfL">{orderDetail && orderDetail.totalPrice ? orderDetail.totalPrice.toLocaleString('vi-VN') : 'N/A'}₫</div>
                                         </div>
                                     </div>

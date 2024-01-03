@@ -67,21 +67,19 @@ const OrderHisItem = ({ item, index, handleShowDetail, handleShowRating, handleS
     const getStatus = (status) => {
         switch (status) {
             case 'Pending':
-                return 'Đang xử lý';
+                return `${t("pending")}`;
             case 'Cancelled':
-                return 'Đã hủy'; // Replace with your desired color for Cancelled
+                return `${t("cancelled")}`; // Replace with your desired color for Cancelled
             case 'Waiting':
-                return 'Đang chờ nhận đơn'; // Replace with your desired color for Waiting
+                return `${t("waiting")}`; // Replace with your desired color for Waiting
             case 'Preparing':
-                return 'Đang chuẩn bị'; // Replace with your desired color for Preparing
-            case 'Ready':
-                return 'Đã sẵn sàng'; // Replace with your desired color for Ready
+                return `${t("preparing")}`; // Replace with your desired color for Preparing
             case 'Delivering':
-                return 'Đang giao'; // Replace with your desired color for Delivering
+                return `${t("delivering")}`; // Replace with your desired color for Delivering
             case 'Finished':
-                return 'Đã hoàn thành';
+                return `${t("finished")}`;
             case 'Refused':
-                return 'Từ chối';
+                return `${t("refused")}`;
             default:
                 return '';
         }

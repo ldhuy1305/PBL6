@@ -78,10 +78,8 @@ const Signin = () => {
                     } else if (res.data.data.user.role === 'Admin') {
                         navigate("/admin");
                     } else if (res.data.data.user.role === 'Shipper') {
-                        setError(t("Chỉ có thể truy cập tài khoản shipper trên APP"));
+                        setError("Chỉ có thể truy cập tài khoản shipper trên APP");
                     }
-                
-                // window.location.reload()
             } catch (error) {
                 setError(t("error3"));
             }

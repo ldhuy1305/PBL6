@@ -223,14 +223,14 @@ const OrderHistory = () => {
                                     <span class="filter-table-label">{t("status")}</span>
                                     <select value={selectedStatus}
                                         onChange={handleStatusChange} name="" class="form-control filter-table-input">
-                                        <option value="All" selected="">Tất cả</option>
-                                        <option value="Pending">Đang xử lý</option>
-                                        <option value="Waiting">Đang chờ nhận đơn</option>
-                                        <option value="Preparing">Đang chuẩn bị</option>
-                                        <option value="Refused">Từ chối</option>
-                                        <option value="Delivering">Đang giao</option>
-                                        <option value="Cancelled">Đã hủy</option>
-                                        <option value="Finished">Đã hoàn thành</option>
+                                        <option value="All" selected="">{t("all")}</option>
+                                        <option value="Pending">{t("pending")}</option>
+                                        <option value="Waiting">{t("waiting")}</option>
+                                        <option value="Preparing">{t("preparing")}</option>
+                                        <option value="Refused">{t("refused")}</option>
+                                        <option value="Delivering">{t("delivering")}</option>
+                                        <option value="Cancelled">{t("cancelled")}</option>
+                                        <option value="Finished">{t("finished")}</option>
                                     </select>
                                 </div>
                             </div>

@@ -5,8 +5,9 @@ import LoadingModal from '../Loading/Loading';
 import { useState } from 'react';
 import Notify from '../Notify.jsx/Notify';
 import axios from 'axios';
-import { cancelOrder } from '../../services/userServices';
+import { useTranslation } from 'react-i18next';
 const CancelModal = ({ show, handleClose, orderItem, setOrderItem }) => {
+    const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false)
     const [openNotify, setOpenNotify] = useState(false)
     const [message, setMessage] = useState('')
@@ -25,11 +26,11 @@ const CancelModal = ({ show, handleClose, orderItem, setOrderItem }) => {
             );
             const updatedItem = { ...orderItem, status: 'Cancelled' };
             setOrderItem(updatedItem);
-            setMessage('Hủy đơn hàng thành công!')
+            setMessage(`${t("cancelSuccess")}`)
             setOpenNotify(true)
         } catch (error) {
             console.error("Error thất bại:", error);
-            setMessage('Hủy đơn hàng thất bại!')
+            setMessage(`${t("cancelFail")}`)
             setOpenNotify(true)
         }
         setIsLoading(false)
@@ -40,17 +41,17 @@ const CancelModal = ({ show, handleClose, orderItem, setOrderItem }) => {
 
             <Modal show={show} onHide={handleClose} style={{ zIndex: '100001' }}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Cảnh Báo Huỷ Đơn Hàng</Modal.Title>
+                    <Modal.Title>{t("cancelWarning")}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body >
-                    Bạn có chắc chắn muốn hủy đơn hàng này?
+                {t("cancelConfirm")}
                 </Modal.Body>
                 <Modal.Footer className="justify-content-end">
                     <Button variant="secondary" onClick={handleClose}>
-                        Không
+                    {t("no")}
                     </Button>
                     <Button variant="danger" onClick={handleCancel} default>
-                        Đồng ý
+                    {t("yes")}
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -29,7 +29,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
         <div>
         {visible && (
             <Modal className="modal fade bd-example-modal-lg " show={show} handleClose={handleClose} size="lg">
-                <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>Thông Tin Nhân  Viên Giao Hàng
+                <Modal.Title style={{ textAlign: 'center', margin: '10px 0 0 0' }}>{t("shipperInfo")}
                     <button onClick={handleClose} style={{ backgroundColor: '#cf2127', float: 'right', marginRight: '10px', padding: '3px 10px 5px 10px', borderRadius: '5px', color: 'white' }}>
                         x
                     </button>
@@ -77,7 +77,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                         </div>
                                         <div class="row form-group align-items-center">
                                             <div class="col-4 txt-bold">
-                                                Biển số xe
+                                            {t("vehicleNumber")}
                                             </div>
                                             <div class="col-4">
                                                 {shipper ? shipper.vehicleNumber : ''}
@@ -85,7 +85,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                         </div>
                                         <div class="row form-group align-items-center">
                                             <div class="col-4 txt-bold">
-                                                Loại xe
+                                            {t("vehicleType")}
 
                                             </div>
                                             <div class="col-4">
@@ -101,7 +101,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                                 onClick={handleShowRating}
 
                                             >
-                                                Đánh giá
+                                                {t("rating")}
                                             </button>
                                         )} 
                                         </div>
@@ -117,7 +117,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                     <div class="container relative clearfix" style={{ width: '100%' }}>
                         <div class="now-menu-restaurant" style={{ width: '100%' }}>
                             <div class="menu-restaurant-tab">
-                                <div class="item active" style={{ fontSize: '20px' }}>Đánh giá </div>
+                                <div class="item active" style={{ fontSize: '20px' }}>{t("rating")}</div>
                             </div>
                             <div className="history-table-scroll">
 
@@ -143,7 +143,7 @@ const ShipperInfoModal = ({ show, handleClose, shipper, idUser, ratings, setRati
                                 class="btn btn-danger btn-width-long"
                                 onClick={handleClose}
                             >
-                                Đóng
+                                {t("close")}
                             </button>
                         </div>
                     </div>

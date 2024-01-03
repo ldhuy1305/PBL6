@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import cutlery from '../../assets/img/cutlery.png'
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVoucher, totalPrice }) => {
+    const {t} = useTranslation();
     const [temp, setTemp] = useState({ ...selectedVoucher })
     const handleRadioChange = (discount) => {
         setTemp({ ...discount });
@@ -40,7 +42,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                         <div class="shopee-popup-form oS7fgU">
                                             <div class="shopee-popup-form__header">
                                                 <div class="shopee-popup-form__title">
-                                                    <span tabindex="0">Chọn Voucher</span>
+                                                    <span tabindex="0">{t("chooseVoucher")}</span>
                                                 </div>
                                                 <div
                                                     class="stardust-popover"
@@ -53,7 +55,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                 <div class="y5uClx shopee-popup-form__main-container">
                                                     <div class="u6HdhE d9WDAK">
                                                         <div class="iF8vqN BzObne A3W8C5">
-                                                            <span tabindex="0">Có thể chọn 1 Voucher</span>
+                                                            <span tabindex="0">{t("voucherNotify")}</span>
                                                         </div>
                                                         {discounts.map((discount) => (
                                                             <div
@@ -99,14 +101,14 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                                                 <div
                                                                                     class="vc_MainTitle_text vc_MainTitle_fsvLine"
                                                                                 >
-                                                                                    Giảm {discount.amount.toLocaleString('vi-VN')}₫
+                                                                                    {t("saleOff")} {discount.amount.toLocaleString('vi-VN')}₫
                                                                                 </div>
                                                                             </div>
                                                                             <div
                                                                                 data-testid="vcSubtitle"
                                                                                 class="vc_Subtitle_subTitle vc_Subtitle_oneLine"
                                                                             >
-                                                                                Đơn Tối Thiểu {discount.conditions.minValues.toLocaleString('vi-VN')}₫
+                                                                                {t("minPrice")} {discount.conditions.minValues.toLocaleString('vi-VN')}₫
                                                                             </div>
                                                                             {/* <div
                                                                                 data-testid="vcLabel"
@@ -135,7 +137,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                                                 >
                                                                                     <span
                                                                                         class="vc_ProgressBarExpiry_isEndingSoon vc_ProgressBarExpiry_capitalize"
-                                                                                    >Hết hạn: {moment.utc(discount.conditions.endDate).format('HH:mm DD/MM/YYYY')}</span>
+                                                                                    >{t("expired")}: {moment.utc(discount.conditions.endDate).format('HH:mm DD/MM/YYYY')}</span>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -182,7 +184,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                                                 class="lazyload vc_WarningBanner_info"
                                                                                 loading="lazy"
                                                                                 src="https://deo.shopeemobile.com/shopee/shopee-webfepromotion-live-sg/voucher-card@stable/images/4c43f638500f17b7.svg"
-                                                                            />Bạn không đủ điều kiện để nhận ưu đãi này.
+                                                                            />{t("voucherNotify1")}
                                                                         </div>
                                                                     </span>
                                                                 ) : ( checkUsedVoucher(discount.user) && (
@@ -197,7 +199,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                                                 class="lazyload vc_WarningBanner_info"
                                                                                 loading="lazy"
                                                                                 src="https://deo.shopeemobile.com/shopee/shopee-webfepromotion-live-sg/voucher-card@stable/images/4c43f638500f17b7.svg"
-                                                                            />Bạn đã sử dụng ưu đãi này.
+                                                                            />{t("voucherNotify2")}
                                                                         </div>
                                                                     </span>
                                                                 ))}
@@ -216,7 +218,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                 <div class="asfDVE"></div>
                                                 <button class="cancel-btn" onClick={handleclose}>
                                                     <span tabindex="-1" aria-label=" Trở Lại"
-                                                    >Trở Lại</span></button>
+                                                    >{t("back")}</span></button>
                                                 <button
                                                     type="button"
                                                     class="btn--voucher btn-solid-primary btn--s btn--inline e5P6KA"
