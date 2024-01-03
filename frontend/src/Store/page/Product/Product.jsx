@@ -159,6 +159,10 @@ const Product = ({ setSelected }) => {
             headerAlign: "center",
             align: "center",
             flex: 1,
+            valueFormatter: (params) => {
+                // Định dạng số tiền thành chuỗi với dấu phân tách hàng nghìn
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(params.value);
+            },
         },
         {
             field: "isOutofOrder",

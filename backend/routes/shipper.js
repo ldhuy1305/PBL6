@@ -29,6 +29,7 @@ router
     authController.protect,
     authController.restrict("Shipper"),
     shipperController.updatePhoto,
+    contactController.updateDefaultContact,
     shipperController.updateShipper
   )
   .delete(

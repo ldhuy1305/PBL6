@@ -75,7 +75,7 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
     const [img, setImg] = useState(null);
 
     const handleSend = async () => {
-        if (text.trim() === '') {
+        if (text.trim() === '' && !img) {
             console.warn("Lưu ý: Không thể gửi tin nhắn với nội dung trống.");
             return;
         }
@@ -132,6 +132,11 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
 
         setText("");
         setImg(null);
+    };
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSend();
+        }
     };
 
     console.log("store", store)
@@ -196,20 +201,33 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
                                         </div> */}
 
                                 <div data-v-dd2501de="" class="conversation-wrap" >
-                                    <div data-v-dd2501de className="messages-wrap" style={{
-                                        maxHeight: "400px",
-                                        overflowY: "auto",
-                                        display: "flex",
-                                        flexDirection: "column-reverse",
-                                    }}>
-
                                         {/* code của thanh lich  */}
+
+
+                                    <div
+                                        data-v-dd2501de
+                                        className="messages-wrap"
+                                        style={{
+                                            maxHeight: "400px",
+                                            overflowY: "auto",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            scrollBehavior: "smooth",
+                                        }}
+                                        ref={(el) => {
+                                            if (el) {
+                                                el.scrollTop = el.scrollHeight;
+                                            }
+                                        }}
+                                    >
+                                        {/* code của thanh lịch */}
 
                                         {messages.map((m) => (
                                             <Message message={m} key={m.id} />
                                         ))}
-                                        {/* code của thanh lich  */}
+                                        {/* code của thanh lịch */}
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -228,6 +246,7 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
                                     class="form-input user-message-input is-focused bg-white text-black-900"
                                     value={text}
                                     onChange={(e) => setText(e.target.value)}
+                                    onKeyPress={handleKeyPress}
 
                                 ></textarea>
                                 <div data-v-17dc3314="" class="button-wrap">

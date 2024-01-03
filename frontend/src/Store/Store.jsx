@@ -134,6 +134,7 @@ const Store = () => {
       };
     }
   }, [latestUserData, idsrote]);
+  console.log(latestUserData, idsrote);
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [selected, setSelected] = useState("Thống kê");

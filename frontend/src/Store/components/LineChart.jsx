@@ -16,7 +16,7 @@ class YourChartComponent extends Component {
           height: 250,
           stacked: true,
           toolbar: {
-            show: false,
+            show: true,
           },
         },
         xaxis: {
@@ -34,6 +34,7 @@ class YourChartComponent extends Component {
             },
           },
         },
+
         dataLabels: {
           enabled: true,
           offsetY: -20,

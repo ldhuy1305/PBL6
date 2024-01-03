@@ -8,6 +8,7 @@ const ApiFeatures = require("../utils/ApiFeatures");
 const appError = require("../utils/appError");
 const Email = require("../utils/email");
 const catchAsync = require("../utils/catchAsync");
+const ownerController = require("./ownerController");
 const moment = require("moment");
 const { Parser } = require("json2csv");
 process.env.TZ = "Asia/Ho_Chi_Minh";
@@ -229,7 +230,13 @@ class adminController {
     return data[0];
   };
   getNumbersUsersQuarterly = catchAsync(async (req, res, next) => {
+    const year = +req.query.year || 2023;
     const data = await User.aggregate([
+      {
+        $match: {
+          $expr: { $eq: [{ $year: "$createdAt" }, year] },
+        },
+      },
       {
         $project: {
           role: 1,
@@ -341,28 +348,48 @@ class adminController {
         },
       },
       {
-        $project: {
+        $group: {
+          _id: null,
           revenue: {
-            $add: [
-              {
-                $multiply: [
-                  { $subtract: ["$totalPrice", "$shipCost"] },
-                  process.env.percentStore / 100,
-                ],
-              },
-              { $multiply: ["$shipCost", process.env.percentShipper / 100] },
-            ],
+            $sum: {
+              $add: [
+                {
+                  $multiply: [
+                    { $subtract: ["$totalPrice", "$shipCost"] },
+                    process.env.percentStore / 100,
+                  ],
+                },
+                { $multiply: ["$shipCost", process.env.percentShipper / 100] },
+              ],
+            },
           },
         },
       },
+      // {
+      //   $project: {
+      //     revenue: {
+      //       $add: [
+      //         {
+      //           $multiply: [
+      //             { $subtract: ["$totalPrice", "$shipCost"] },
+      //             process.env.percentStore / 100,
+      //           ],
+      //         },
+      //         { $multiply: ["$shipCost", process.env.percentShipper / 100] },
+      //       ],
+      //     },
+      //   },
+      // },
     ]);
     return data[0];
   };
   getRevenueQuarterly = catchAsync(async (req, res, next) => {
+    const year = +req.query.year || 2023;
     const data = await Order.aggregate([
       {
         $match: {
           status: { $nin: ["Cancelled", "Refused"] },
+          $expr: { $eq: [{ $year: "$dateOrdered" }, year] },
         },
       },
       {
@@ -425,7 +452,26 @@ class adminController {
       data,
     });
   });
-
+  getStoreByStoreId = catchAsync(async (req, res, next) => {
+    const store = await Store.findById(req.params.id)
+      .populate("ratings")
+      .populate("ownerId");
+    const last = moment()
+      .startOf("month")
+      .subtract(1, "months");
+    const data = await ownerController.getOrderOneMonth(
+      store._id,
+      last.toDate()
+    );
+    if (!store) next(new appError("Không tìm thấy cửa hàng", 404));
+    res.status(200).json({
+      status: "success",
+      data: {
+        store,
+        revenue: data ? data.revenue : 0,
+      },
+    });
+  });
   //Exports
   exportShippers = catchAsync(async (req, res, next) => {
     let shippers = [];
