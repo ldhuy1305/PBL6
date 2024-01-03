@@ -70,7 +70,7 @@ const MenuGroup = ({ category, openModal, store, search, isWithinOperatingHours 
         else {
             const newCart = {
                 idStore: dish.storeId,
-                nameStore: store.name, // Make sure 'store' is defined in your scope
+                nameStore: store.name, 
                 products: [addedDish],
             };
 

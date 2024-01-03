@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../services/authContext';
 import { useTranslation } from 'react-i18next';
 import { useCity } from '../../services/CityContext';
-import { getStoreById, getFeeShip } from '../../services/userServices';
+import { getStoreById, getFeeShip, checkStoreOpen, checkValidCart } from '../../services/userServices';
 import LoadingModal from '../Loading/Loading';
-import axios from 'axios';
+import Notify from '../Notify.jsx/Notify';
+
 const CartModal = ({ show, handleClose, handleOpen }) => {
     const { cart, setCart, productsCount, setProductsCount } = useCity();
     const { t } = useTranslation();
@@ -17,23 +18,37 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false)
+    const [openNotify, setOpenNotify] = useState(false)
+    const [message, setMessage] = useState("")
 
     const handleOrder = async (activity) => {
         if (activity === "order") {
-            try {
+            const storeData = await getStoreById(cart.idStore);
+            const isOpen = await checkStoreOpen(storeData.data.openAt, storeData.data.closeAt)
+            if(!isOpen) {
+                setMessage("Cửa hàng hiện tại đã đóng cửa. Xin vui lòng quay lại cửa hàng sau!")
+                setOpenNotify(true)
+            } else {  
                 setIsLoading(true)
-                const user = localStorage.getItem("user");
-                const userData = JSON.parse(user);
-                const response = await getFeeShip(cart.idStore)
-                const calArray = response.data
-                const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
-                navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
-                handleClose()
-            } catch (error) {
-
+                const response = await checkValidCart(cart.products)  
+                if(response !== 'true') {
+                    setMessage(response + " hiện đang hết hàng vui lòng chọn món khác hoặc xóa món này khỏi giỏ hàng để tiếp tục đặt đơn!");
+                    setOpenNotify(true)
+                } else {
+                    try {
+                        const user = localStorage.getItem("user");
+                        const userData = JSON.parse(user);
+                        const response = await getFeeShip(cart.idStore)
+                        const calArray = response.data
+                        const feeShipElement = calArray.find(element => element.contact._id === userData.defaultContact);
+                        navigate("/user/order", { state: { total: total, feeDefault: feeShipElement, calArray: calArray } })
+                        handleClose()
+                    } catch (error) {
+                        console.log(error)
+                    }
+                } 
+                setIsLoading(false)                   
             }
-            setIsLoading(false)
-
         } else {
             handleClose()
             navigate("/signin", {state: { his: 'order', total:total}})
@@ -49,6 +64,8 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
                     ...cart,
                     idStore: cartdata.idStore,
                     nameStore: cartdata.nameStore,
+                    openAt: cartdata.openAt,
+                    closeAt: cartdata.closeAt,
                     products: cartdata.products
                 });
                 let temp = 0;
@@ -139,6 +156,8 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
             setCart({
                 idStore: '',
                 nameStore: '',
+                openAt: '',
+                closeAt: '',
                 products: []
             });
         }
@@ -276,6 +295,7 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
                 </div>
             </div>
             {isLoading && (<LoadingModal />)}
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify} />)}
         </div>
     );
 };

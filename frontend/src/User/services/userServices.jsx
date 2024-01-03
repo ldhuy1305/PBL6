@@ -13,6 +13,16 @@ const checkStoreOpen = (openAt, closeAt)  => {
   return (currentTime >= openTime && currentTime <= closeTime);
 }
 
+const checkValidCart = async (products) => {
+  for (const product of products) {
+    const data = await getProductByProductId(product._id);
+    if (data.isOutofOrder) {
+      return data.name; // Nếu có bất kỳ sản phẩm nào không hợp lệ, trả về false ngay lập tức
+    }
+  }
+  return 'true'; // Nếu tất cả sản phẩm đều hợp lệ, trả về true
+}
+
 //Auth
 const loginAPI = async (email, password) => {
   return axios.post(`${url}/api/auth/login`, { email, password });
@@ -150,7 +160,18 @@ const getAllCategoryByStoreId = async (id) => {
 //Product
 const getProductByStoreId = async (storeId, catName, search) => {
   const token = localStorage.getItem("token");
-  const api = `${url}/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=10`
+  const api = `${url}/api/product/store/${storeId}?search=${search}&category.catName=${catName}&limit=100`
+  const response = await axios.get(api, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+}
+
+const getProductByProductId = async (id) => {
+  const token = localStorage.getItem("token");
+  const api = `${url}/api/product/${id}`
   const response = await axios.get(api, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -455,6 +476,7 @@ const applyVoucher = async (idVoucher, idOrder) => {
 
 export {
   checkStoreOpen,
+  checkValidCart,
   loginAPI,
   getUserInfo,
   addContact,
@@ -467,6 +489,7 @@ export {
   updateDefaultContact,
   updateContact,
   getProductByStoreId,
+  getProductByProductId,
   getFeeShip,
   placeOrder,
   getAllOderByUserId,

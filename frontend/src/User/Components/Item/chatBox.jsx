@@ -291,7 +291,7 @@ const ChatBox = ({ store, isWithinOperatingHours, currentUser, createChat, data 
                     <div data-v-448a7326="" data-v-b7bd3fac="" style={{ padding: "0.75rem" }}></div>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 

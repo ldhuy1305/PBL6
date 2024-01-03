@@ -44,8 +44,8 @@ const App = () => {
 
     if (!existingCart) {
       const defaultCart = {
-        nameStore: '', // Tên cửa hàng
-        idStore: '',   // ID cửa hàng
+        nameStore: '', 
+        idStore: '',   
         products: []
       };
       localStorage.setItem('cart', JSON.stringify(defaultCart));
