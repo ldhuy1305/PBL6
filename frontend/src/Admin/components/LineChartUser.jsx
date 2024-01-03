@@ -85,6 +85,35 @@ class ApexChart extends React.Component {
 
     };
   }
+  componentDidUpdate(prevProps) {
+    if (this.props.data !== prevProps.data || this.props.status !== prevProps.status) {
+      const { data, status } = this.props;
+      this.setState({
+        series: [
+          {
+            name: "Khách hàng",
+            data: data.map((item) => item.numUsers),
+          },
+          {
+            name: "Chủ sở hữu cửa hàng",
+            data: data.map((item) => item.numOwners),
+          },
+          {
+            name: "Người vận chuyển",
+            data: data.map((item) => item.numShippers),
+          },
+        ],
+        options: {
+          ...this.state.options,
+          xaxis: {
+            ...this.state.options.xaxis,
+            categories: status ? data.map((item) => item.date) : data.map((item) => item._id),
+          },
+        },
+      });
+    }
+  }
+
 
 
 

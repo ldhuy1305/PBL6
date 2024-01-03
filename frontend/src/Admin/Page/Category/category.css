@@ -147,6 +147,13 @@
     height: "145px";
     display: flex;
     width: 990px;
+    justify-content: space-evenly;
+}
+
+.danhmuc {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
 }
 
 .show-more-button {

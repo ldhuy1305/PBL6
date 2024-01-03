@@ -13,6 +13,8 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import { MenuItem, FormControl, Select } from "@mui/material";
 
 const Product = ({ setSelected }) => {
@@ -99,7 +101,7 @@ const Product = ({ setSelected }) => {
     }
     const handleStatus = async (status) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100&isAvailable=${status}`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -137,6 +139,7 @@ const Product = ({ setSelected }) => {
 
     const handleDeleteClick = (row) => {
         setSelectedRow(row);
+        setStatus(row.isAvailable)
         setOpenDelete(true);
         setOpenAdd(false);
     };
@@ -160,7 +163,6 @@ const Product = ({ setSelected }) => {
             align: "center",
             flex: 1,
             valueFormatter: (params) => {
-                // Định dạng số tiền thành chuỗi với dấu phân tách hàng nghìn
                 return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(params.value);
             },
         },
@@ -212,9 +214,9 @@ const Product = ({ setSelected }) => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <Button startIcon={<DeleteIcon style={{ color: 'red' }} />} onClick={() => handleDeleteClick(params.row)}>
+                        <Button startIcon={getDeleteButtonIcon(params.row.isAvailable)} onClick={() => handleDeleteClick(params.row)}>
                         </Button>
-                    </div>
+                    </div >
                 );
 
             },
@@ -239,7 +241,16 @@ const Product = ({ setSelected }) => {
         const uniqueId = index;
         return { ...item, id: uniqueId };
     });
+    const getDeleteButtonIcon = (isAvailable) => {
+        return isAvailable ? <RemoveCircleOutlineIcon style={{ color: 'red' }} /> : <NotInterestedIcon style={{ color: 'red' }} />;
+    };
 
+    const getRowId = (row) => row.id;
+
+    const getRowClassName = (params) => {
+        return params.row.isAvailable
+            ? 'out-of-order-row' : 'normal-row';
+    };
 
     return (
         <Box m="20px" position='relative'>
@@ -257,19 +268,6 @@ const Product = ({ setSelected }) => {
                     </div>
                 </Box>
                 <Box>
-                    <FormControl sx={{ width: "150px" }}>
-                        <Select
-                            sx={{ alignItems: 'center', height: "36px" }}
-                            value={status}
-                            defaultChecked={true}
-                            onChange={(e) => handChangestatus(e.target.value)}
-                        >
-                            <MenuItem value={false}>Đã ẩn</MenuItem>
-                            <MenuItem value={true}>Còn mở bán</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Box>
-                <Box>
                     <Button
                         color="secondary"
                         variant="contained"
@@ -285,11 +283,17 @@ const Product = ({ setSelected }) => {
                 sx={{
                     "& .MuiDataGrid-columnHeaderTitle": {
                         borderBottom: "none",
-                        fontSize: "14px"
-                        ,
+                        fontSize: "14px",
                         fontWeight: "bold",
                     },
+                    "& .normal-row": {
+                        backgroundColor: "rgb(230, 230, 230)"
+                    },
+                    "& .normal-row:hover": {
+                        backgroundColor: "rgb(230, 230, 230)"
+                    }
                 }}
+
             >
                 {
                     openDelete && (
@@ -302,12 +306,18 @@ const Product = ({ setSelected }) => {
                     )
                 }
                 <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} fb={fb()} />
-                <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
+                <DataGrid
+                    rows={rowsWithUniqueIds}
+                    columns={columns}
+                    loading={isLoading}
+                    getRowId={getRowId}
+                    getRowClassName={getRowClassName}
                     initialState={{
                         pagination: {
                             pageSize: 8,
                         },
-                    }} />
+                    }}
+                />
             </Box >
         </Box >
     );

@@ -95,6 +95,19 @@ const Category = ({ setSelected }) => {
         setCurrentPage(clampedPage);
     };
 
+    const [startIndex, setStartIndex] = useState(0);
+
+    const handleNextImages = () => {
+        setStartIndex((prevIndex) => (prevIndex + 4) % listCat.length);
+    };
+
+    const handlePrevImages = () => {
+        setStartIndex((prevIndex) => (prevIndex - 4 + listCat.length) % listCat.length);
+    };
+
+    const visibleImages = listCat.slice(startIndex, startIndex + 4);
+    const repeatedImages = [...visibleImages, ...listCat.slice(0, Math.max(0, 4 - visibleImages.length))];
+
 
     return (
         <Box m="10px" position='relative'>
@@ -108,19 +121,25 @@ const Category = ({ setSelected }) => {
                     ) : (
                         <>
                             <div style={{ width: "100%", display: "flex" }}>
-                                <div className='list' >
-                                    {listCat.map((value, index) => (
-                                        <div className='category' onClick={() => fetchData(value.catName)}>
-                                            <div className='imagecat'>
-                                                <img style={{
-                                                    height: "100px",
-                                                    width: "100%"
-                                                }} src={value.photo} alt="" />
-                                            </div>
-
-                                            <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px" }}>{value.catName}</span>
+                                <div className='list'>
+                                    {listCat.length > 4 && (
+                                        <div className='danhmuc'>
+                                            <button onClick={handlePrevImages}><i class="fa-solid fa-circle-chevron-left"></i></button>
+                                            {repeatedImages.map((value, index) => (
+                                                <div key={index} className='category' onClick={() => fetchData(value.catName)}>
+                                                    <div className='imagecat'>
+                                                        <img
+                                                            style={{ height: "100px", width: "100%" }}
+                                                            src={value.photo}
+                                                            alt={`category-${index}`}
+                                                        />
+                                                    </div>
+                                                    <span style={{ fontSize: "15px", fontWeight: "500", padding: "3px" }}>{value.catName}</span>
+                                                </div>
+                                            ))}
+                                            <button onClick={handleNextImages}><i class="fa-solid fa-circle-chevron-right"></i></button>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                                 <div className='category' onClick={() => handleOpenModal()}>
                                     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", width: "100%" }}><i style={{ fontSize: "50px", color: "gray" }} class="fa-solid fa-plus"></i>

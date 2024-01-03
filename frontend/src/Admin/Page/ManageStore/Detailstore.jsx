@@ -178,7 +178,7 @@ const Detailorder = ({ setSelected }) => {
 
                             <Typography variant="h5">Số lượt đánh giá : {data.ratings.length}</Typography>
                             <Typography variant="h5">Ngân hàng : {data.ownerId?.bankName}</Typography>
-                            <Typography variant="h5">STK : {data.ownerId?.bankName}</Typography>
+                            <Typography variant="h5">STK : {data.ownerId?.bankNumber}</Typography>
                             <Typography variant="h5">Doanh thu tháng trước : {Revenue}</Typography>
                         </div>
                     </Box>
