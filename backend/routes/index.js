@@ -12,6 +12,8 @@ const mapRoute = require("./map");
 const ratingRoute = require("./rating");
 const orderRoute = require("./order");
 const adminRoute = require("./admin");
+const chatRoute = require("./chat");
+
 const globalErrorHandler = require("../controllers/errorController");
 const appError = require("../utils/appError");
 function route(app) {
@@ -28,6 +30,7 @@ function route(app) {
   app.use("/api/map", mapRoute);
   app.use("/api/rating", ratingRoute);
   app.use("/api/order", orderRoute);
+  app.use("/api/chat", chatRoute);
   // app.use("/", (req, res, next) => {
   //   res.status(200).json({ message: "Welcome to homepage" });
   // });
