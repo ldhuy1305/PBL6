@@ -4,7 +4,7 @@ const chatController = require("../controllers/chatController");
 const authController = require("../controllers/authController");
 router.use(authController.protect);
 router.post("/", chatController.createChat);
-router.get("/:userId", chatController.findUserChats);
-router.get("/find/:user/:reference", chatController.findChat);
+router.get("/user/:userId", chatController.findUserChats);
+router.get("/:chatId", chatController.findChat);
 
 module.exports = router;

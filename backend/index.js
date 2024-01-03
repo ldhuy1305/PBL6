@@ -17,13 +17,13 @@ const hsts = require("hsts");
 
 require("dotenv").config();
 
-const io = require("socket.io")(process.env.PORT, {
-  cors: {
-    origin: process.env.CLIENT_URL,
-  },
-});
+// const io = require("socket.io")(process.env.SOCKET_PORT, {
+//   cors: {
+//     origin: process.env.CLIENT_URL,
+//   },
+// });
 
-require("./utils/socket")(io);
+// require("./utils/socket")(io);
 
 mongoose
   .connect(process.env.DATABASE, {

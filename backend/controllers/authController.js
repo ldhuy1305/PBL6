@@ -65,7 +65,6 @@ exports.signUp = (Model, role) => async (req, res, next) => {
         };
       }
     }
-    console.log(body);
     const doc = await Model.create(body);
 
     const signUpToken = doc.createSignUpToken();
@@ -90,9 +89,7 @@ exports.signUp = (Model, role) => async (req, res, next) => {
 exports.sendEmailVerify = catchAsync(async (req, res, next) => {
   const doc = req.doc;
   const signUpToken = req.signUpToken;
-  const url = `${req.protocol}://${req.get("host")}/api/auth/verify-token/${
-    doc.email
-  }`;
+  const url = process.env.URL_VERIRY_EMAIL;
   try {
     await new Email(doc, signUpToken, url).sendWelcome();
     res.status(200).json({

@@ -20,7 +20,8 @@ class chatController {
   });
 
   findUserChats = catchAsync(async (req, res, next) => {
-    const chats = await Chat.find({ members: { $in: [req.user._id] } });
+    const chats = await Chat.find({ members: { $in: [req.params.userId] } });
+    console.log(chats);
     const chatUserData = Promise.all(
       chats.members.map(async (chat) => {
         const receiverId = chat.members.find(
@@ -37,6 +38,7 @@ class chatController {
         };
       })
     );
+    console.log(chatUserData);
     res.status(200).json({
       length: chatUserData.length,
       data: chatUserData,
