@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CategoryIcon from '@mui/icons-material/Category';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
     const theme = useTheme();
@@ -153,6 +154,13 @@ const Sidebara = ({ setSelected, selected }) => {
                         >
                             Admin
                         </Typography>
+                        <Item
+                            title="Danh mục"
+                            to="/admin/category"
+                            icon={<CategoryIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
 
                         <Item
                             title="Thống kê"
