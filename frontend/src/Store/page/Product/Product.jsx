@@ -151,7 +151,6 @@ const Product = ({ setSelected }) => {
         {
             field: "name",
             headerName: "Tên",
-            type: "number",
             headerAlign: "center",
             align: "center",
             flex: 1,

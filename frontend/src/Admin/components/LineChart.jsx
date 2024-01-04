@@ -90,10 +90,12 @@ class ApexChart extends React.Component {
             data: data.map((item) => item.revenue),
           },
         ],
-        ...this.state.options,
-        xaxis: {
-          ...this.state.options.xaxis,
-          categories: status ? data.map((item) => item.date) : data.map((item) => item._id),
+        options: {
+          ...this.state.options,
+          xaxis: {
+            ...this.state.options.xaxis,
+            categories: status ? data.map((item) => item.date) : data.map((item) => item._id),
+          },
         },
       });
     }
