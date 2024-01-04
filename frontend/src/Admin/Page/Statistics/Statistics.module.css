@@ -73,14 +73,12 @@
 
 }
 
-.selectTime select {
-
-
+.SelectTime select {
 
     display: flex;
     align-items: center;
     margin-left: auto;
-    width: 150px;
+    padding: 5px;
     border: 0.1px solid rgb(230, 230, 230);
 }
 

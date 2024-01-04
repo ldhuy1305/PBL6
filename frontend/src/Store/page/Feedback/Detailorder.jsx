@@ -143,7 +143,7 @@ const Detailorder = () => {
                                             <span></span>
                                         </div>
                                         <div className={style.sold1}>
-                                            <span>- {(Order.totalPrice - Order.shipCost - calculateTotalPrice(Order.cart)).toLocaleString('vi-VN')} VNĐ </span>
+                                            <span>{(Order.totalPrice - Order.shipCost - calculateTotalPrice(Order.cart)).toLocaleString('vi-VN')} VNĐ </span>
                                         </div>
                                     </div>
                                     <div className={style.producttop1} >
