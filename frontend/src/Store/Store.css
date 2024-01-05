@@ -22,12 +22,35 @@ body,
   right: 10px;
 }
 
+@keyframes zoomInOut {
+  0% {
+    transform: scale(1);
+    /* Kích thước ban đầu */
+  }
+
+  50% {
+    transform: scale(1.2);
+    /* Kích thước phóng to */
+  }
+
+  100% {
+    transform: scale(1);
+    /* Kích thước ban đầu */
+  }
+}
+
+
 .chat-icon {
-  padding: 10px;
-  font-size: 24px;
-  border: 0.2px solid #ffb67e;
-  border-radius: 5px;
-  background-color: aliceblue;
+  position: fixed;
+  bottom: 20px;
+  right: 50px;
+  display: flex;
+  margin: auto;
+  animation: zoomInOut 4s infinite;
+  /* Infinite để lặp lại liên tục */
+  height: 60px;
+  cursor: pointer;
+  transition: transform 2s ease;
 }
 
 ::-webkit-scrollbar {

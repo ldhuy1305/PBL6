@@ -26,7 +26,7 @@ function Delete({ selectedRow, setOpenDelete, setError, fetchData, setMessage, s
             });
             fetchData(!Status);
             setOpenDelete(false);
-            setOpenNotify("success", "Xóa thành công");
+            Status ? setOpenNotify("success", "Đã hiển thị sản phẩm") : setOpenNotify("success", "Đã ẩn sản phẩm");
         } catch (error) {
             console.log(error);
             setOpenNotify("error", error.message);

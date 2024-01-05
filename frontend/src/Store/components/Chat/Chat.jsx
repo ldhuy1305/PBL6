@@ -97,9 +97,23 @@ const Messages = () => {
 
   return (
     <div className={style.messages}>
-      {messages.map((m) => (
-        <Message message={m} key={m.id} />
-      ))}
+      {!(messages.length > 0) ? (
+        <div className={style.containerWc}>
+          <div className={style.welcome}>
+            <span className={style.name}>Chào bạn!</span>
+            <span className={style.desc}>Hãy bắt đầu cuộc trò chuyện nào!</span>
+          </div>
+          <img
+            className={style.robot}
+            src="https://i.pinimg.com/originals/b0/06/7a/b0067ade5e832d2aefec8ee9bda50fdc.gif"
+            alt=""
+          />
+        </div>
+      ) : (
+        messages.map((m) => <Message message={m} key={m.id} />)
+      )}
+
+
     </div>
   );
 };

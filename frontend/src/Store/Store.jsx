@@ -172,7 +172,7 @@ const Store = () => {
               <div className="chat-container">
                 {chat ? (
                   <div className='chat-icon'>
-                    <i className="fa-regular fa-message" onClick={() => SetChat(false)}></i>
+                    <img src="https://cdn-icons-png.flaticon.com/512/2950/2950568.png" alt="Chat" onClick={() => SetChat(false)} />
                   </div>
                 ) : (
                   <Chat SetChat={SetChat} />
