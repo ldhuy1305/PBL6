@@ -137,12 +137,11 @@ const Signin = () => {
                         />
                         <div class="item plus">
 
-                            <button style={{ color: 'white' }} 
+                            <a style={{ color: 'white' }} 
                                 href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow"
-                                // href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow"
                             >
                                 <i class="fab fa-brands fa-google-plus-g"></i>Google
-                            </button>
+                            </a>
                         </div>
                     </form>
                 </div>
