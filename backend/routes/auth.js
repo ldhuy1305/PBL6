@@ -5,11 +5,7 @@ const authController = require("../controllers/authController");
 
 router.get("/google", authController.googleLogin);
 
-router.get(
-  "/google/callback",
-  authController.googleLoginCallback,
-  authController.generateAndSendAuthJWTToken
-);
+router.get("/google/callback", authController.googleLoginCallback);
 router.get("/logout", authController.logout);
 
 router.post("/login", authController.login);
