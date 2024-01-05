@@ -100,7 +100,20 @@ exports.setCoordinates = catchAsync(async (req, res, next) => {
     data: shipper,
   });
 });
-
+exports.lockShipper = catchAsync(async (req, res, next) => {
+  const shipper = await Shipper.findByIdAndUpdate(
+    req.params.id,
+    {
+      status: "Tạm Ngừng",
+    },
+    { new: true }
+  );
+  if (!shipper) return next(new appError("Không tìm thấy shipper", 404));
+  res.status(200).json({
+    status: "success",
+    data: shipper,
+  });
+});
 // find Orders near by Shipper < maxDistance
 exports.findOrdersNearByShipper = catchAsync(async (req, res, next) => {
   const page = +req.query.page || 1;
