@@ -13,6 +13,8 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Detailfeedback from './fb_product';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import { MenuItem, FormControl, Select } from "@mui/material";
 
 const Product = ({ setSelected }) => {
@@ -59,22 +61,6 @@ const Product = ({ setSelected }) => {
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`;
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(api, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const responseData = response.data.data;
-            console.log(responseData);
-            setData(responseData);
-            setIsLoading(false);
-        } catch (error) {
-            console.log(error);
-            setIsLoading(false);
-        }
-    };
     const Searchproduct = async (name) => {
         console.log(name);
         try {
@@ -115,7 +101,7 @@ const Product = ({ setSelected }) => {
     }
     const handleStatus = async (status) => {
         try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100&isAvailable=${status}`
+            const response = await axios.get(`https://falth-api.vercel.app/api/product/owner/${_id}?limit=100`
                 , {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -125,6 +111,7 @@ const Product = ({ setSelected }) => {
             const responseData = response.data.data;
             console.log(responseData);
             setData(responseData);
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -147,11 +134,12 @@ const Product = ({ setSelected }) => {
     }
 
     useEffect(() => {
-        fetchData();
+        handleStatus(status)
     }, []);
 
     const handleDeleteClick = (row) => {
         setSelectedRow(row);
+        setStatus(row.isAvailable)
         setOpenDelete(true);
         setOpenAdd(false);
     };
@@ -163,7 +151,6 @@ const Product = ({ setSelected }) => {
         {
             field: "name",
             headerName: "Tên",
-            type: "number",
             headerAlign: "center",
             align: "center",
             flex: 1,
@@ -174,6 +161,9 @@ const Product = ({ setSelected }) => {
             headerAlign: "center",
             align: "center",
             flex: 1,
+            valueFormatter: (params) => {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(params.value);
+            },
         },
         {
             field: "isOutofOrder",
@@ -223,9 +213,9 @@ const Product = ({ setSelected }) => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <Button startIcon={<DeleteIcon style={{ color: 'red' }} />} onClick={() => handleDeleteClick(params.row)}>
+                        <Button startIcon={getDeleteButtonIcon(params.row.isAvailable)} onClick={() => handleDeleteClick(params.row)}>
                         </Button>
-                    </div>
+                    </div >
                 );
 
             },
@@ -250,7 +240,16 @@ const Product = ({ setSelected }) => {
         const uniqueId = index;
         return { ...item, id: uniqueId };
     });
+    const getDeleteButtonIcon = (isAvailable) => {
+        return isAvailable ? <RemoveCircleOutlineIcon style={{ color: 'red' }} /> : <NotInterestedIcon style={{ color: 'red' }} />;
+    };
 
+    const getRowId = (row) => row.id;
+
+    const getRowClassName = (params) => {
+        return params.row.isAvailable
+            ? 'out-of-order-row' : 'normal-row';
+    };
 
     return (
         <Box m="20px" position='relative'>
@@ -268,19 +267,6 @@ const Product = ({ setSelected }) => {
                     </div>
                 </Box>
                 <Box>
-                    <FormControl sx={{ width: "150px" }}>
-                        <Select
-                            sx={{ alignItems: 'center', height: "36px" }}
-                            value={status}
-                            defaultChecked={true}
-                            onChange={(e) => handChangestatus(e.target.value)}
-                        >
-                            <MenuItem value={false}>Đã ẩn</MenuItem>
-                            <MenuItem value={true}>Còn mở bán</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Box>
-                <Box>
                     <Button
                         color="secondary"
                         variant="contained"
@@ -296,11 +282,17 @@ const Product = ({ setSelected }) => {
                 sx={{
                     "& .MuiDataGrid-columnHeaderTitle": {
                         borderBottom: "none",
-                        fontSize: "14px"
-                        ,
+                        fontSize: "14px",
                         fontWeight: "bold",
                     },
+                    "& .normal-row": {
+                        backgroundColor: "rgb(230, 230, 230)"
+                    },
+                    "& .normal-row:hover": {
+                        backgroundColor: "rgb(230, 230, 230)"
+                    }
                 }}
+
             >
                 {
                     openDelete && (
@@ -313,12 +305,18 @@ const Product = ({ setSelected }) => {
                     )
                 }
                 <Detailfeedback open={openModal} handleClose={handleCloseModal} datafb={datafb} name={nameproduct} Fbnumber={Fbnumber} fb={fb()} />
-                <DataGrid rows={rowsWithUniqueIds} columns={columns} loading={isLoading}
+                <DataGrid
+                    rows={rowsWithUniqueIds}
+                    columns={columns}
+                    loading={isLoading}
+                    getRowId={getRowId}
+                    getRowClassName={getRowClassName}
                     initialState={{
                         pagination: {
                             pageSize: 8,
                         },
-                    }} />
+                    }}
+                />
             </Box >
         </Box >
     );

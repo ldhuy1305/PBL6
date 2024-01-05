@@ -31,7 +31,7 @@ class ProductController {
   getAllProductByStoreId = catchAsync(async (req, res, next) => {
     const store = await Store.findById(req.params.storeId);
     const features = new ApiFeatures(
-      Product.find({ storeId: store._id }),
+      Product.find({ storeId: store._id, isAvailable: true }),
       req.query
     )
       .filter()
@@ -145,6 +145,7 @@ class ProductController {
   viewProductsByCat = catchAsync(async (req, res, next) => {
     const obj = {
       "category.catName": req.query.catName,
+      isAvailable: true,
     };
     const features = new ApiFeatures(Product.find(obj), req.query)
       .sort()
@@ -242,7 +243,13 @@ class ProductController {
             _id: 1,
             name: 1,
             address: 1,
+            ratingsAverage: 1,
+            openAt: 1,
+            closeAt: 1,
+            image: 1,
+            description: 1,
           },
+          images: 1,
         },
       },
       {
@@ -265,7 +272,10 @@ class ProductController {
   recommendProduct = catchAsync(async (req, res, next) => {});
   getProductByCat = catchAsync(async (req, res, next) => {
     const storeId = req.params.storeId;
-    const products = await Product.find({ storeId: storeId }).aggregate([
+    const products = await Product.find({
+      storeId: storeId,
+      isAvailable: true,
+    }).aggregate([
       // { $unwind: "$category" },
       {
         $group: {

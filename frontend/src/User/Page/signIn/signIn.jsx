@@ -6,6 +6,16 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { loginAPI, getFeeShip } from "../../services/userServices";
 import { useAuth } from "../../services/authContext";
 import { useTranslation } from "react-i18next";
+
+//Login Firebase
+import { Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../Store/firebase";
+// end login
+
+
+
+
 const Signin = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -21,6 +31,14 @@ const Signin = () => {
     const { setImg } = useAuth()
     const emailRegex = /^[^.].{5,29}@gmail\.com$/;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+
+    //Login Firebase
+
+
+    // end login
+
+
+
     const handleLogin = async () => {
         if (email.trim() === "") {
             setError(t("error1"));
@@ -34,9 +52,7 @@ const Signin = () => {
             try {
                 setLoadingAPI(true)
                 let res = await loginAPI(email, password);
-                if (res.data.data.user.role === 'Shipper') {
-                    setError(t("Chỉ có thể truy cập tài khoản shipper trên APP"));
-                } else {
+
                     localStorage.setItem("token", res.data.token);
                     localStorage.setItem('user', JSON.stringify(res.data.data.user));
                     setIsLoggedIn(true);
@@ -44,8 +60,8 @@ const Signin = () => {
                     // console.log(res.data.data.user.firstName + res.data.data.user.lastName)
                     setUserName(res.data.data.user.firstName + res.data.data.user.lastName)
                     setImg(res.data.data.user.photo)
-                    if (res.data.data.user.role === 'User') {
-                        if (his) {
+                    if(res.data.data.user.role === 'User') {
+                        if(his) {
                             const user = localStorage.getItem("user");
                             const userData = JSON.parse(user);
                             const cart = localStorage.getItem("cart");
@@ -61,11 +77,9 @@ const Signin = () => {
                         navigate("/store");
                     } else if (res.data.data.user.role === 'Admin') {
                         navigate("/admin");
+                    } else if (res.data.data.user.role === 'Shipper') {
+                        setError("Chỉ có thể truy cập tài khoản shipper trên APP");
                     }
-                }
-
-
-                // window.location.reload()
             } catch (error) {
                 setError(t("error3"));
             }
@@ -83,6 +97,9 @@ const Signin = () => {
             handleLogin();
         }
     };
+    // const handleGoogle = ()  => {
+
+    // }
     return (
         <div class="now-login" onKeyDown={handleKeyDown}>
             <div class="content">
@@ -120,7 +137,9 @@ const Signin = () => {
                         />
                         <div class="item plus">
 
-                            <a style={{ color: 'white' }} href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow">
+                            <a style={{ color: 'white' }} 
+                                href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=https%3A%2F%2Ffalth.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=216774704205-s6etla6u8gvqt8ddjmlmqit4n5jrorhh.apps.googleusercontent.com&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow"
+                            >
                                 <i class="fab fa-brands fa-google-plus-g"></i>Google
                             </a>
                         </div>

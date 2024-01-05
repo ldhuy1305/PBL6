@@ -7,12 +7,50 @@ body,
 .content {
   height: 100%;
   width: 100%;
-  font-family:  Noto Sans, Arial, sans-serif;
+  font-family: Noto Sans, Arial, sans-serif;
 }
 
 .app {
   display: flex;
   position: relative;
+}
+
+.chat-container {
+  position: absolute;
+  display: flex;
+  bottom: 10px;
+  right: 10px;
+}
+
+@keyframes zoomInOut {
+  0% {
+    transform: scale(1);
+    /* Kích thước ban đầu */
+  }
+
+  50% {
+    transform: scale(1.2);
+    /* Kích thước phóng to */
+  }
+
+  100% {
+    transform: scale(1);
+    /* Kích thước ban đầu */
+  }
+}
+
+
+.chat-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 50px;
+  display: flex;
+  margin: auto;
+  animation: zoomInOut 4s infinite;
+  /* Infinite để lặp lại liên tục */
+  height: 60px;
+  cursor: pointer;
+  transition: transform 2s ease;
 }
 
 ::-webkit-scrollbar {

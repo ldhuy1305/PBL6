@@ -16,8 +16,8 @@ import HighlightOffSharpIcon from '@mui/icons-material/HighlightOffSharp';
 
 const Acceptstore = ({ setSelected }) => {
     const history = useNavigate();
-    const redirectToEditProductPage = (id) => {
-        history('/admin/DetailAcceptstore', { state: id });
+    const redirectToEditProductPage = (data) => {
+        history('/admin/DetailAcceptstore', { state: data });
     };
     useEffect(() => {
         setSelected("Cấp phép cửa hàng");
@@ -81,23 +81,6 @@ const Acceptstore = ({ setSelected }) => {
         }
     };
 
-    const Searchproduct = async (name) => {
-        console.log(name);
-        try {
-            const response = await axios.get(`https://falth-api.vercel.app/api/product/search?search=${name}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const responseData = response.data.data.data;
-            console.log(responseData);
-            setData(responseData);
-            setIsLoading(false);
-        } catch (error) {
-            console.log(error);
-            setIsLoading(false);
-        }
-    };
     const AcceptStore = async (id) => {
         try {
             await axios.patch(`https://falth-api.vercel.app/api/admin/owner/${id}`,  {
@@ -156,7 +139,7 @@ const Acceptstore = ({ setSelected }) => {
             renderCell: (params) => {
                 return (
                     <div>
-                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row._id)}></Button>
+                        <Button startIcon={<RemoveRedEyeIcon style={{ color: "rgb(33, 150, 243)" }} />} onClick={() => redirectToEditProductPage(params.row)}></Button>
                     </div >
                 );
             },

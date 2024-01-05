@@ -47,8 +47,8 @@
     "homeSort2": "Đánh giá",
     "homeKey": "Từ khóa",
     "storeLike": "Yêu thích",
-    "storeActive": "Mở cửa: ",
-    "storeClose": "Đóng cửa: ",
+    "storeActive": "Mở cửa",
+    "storeClose": "Đóng cửa",
     "forgotTitle": "Quên mật khẩu",
     "forgotMess": "Điền email đăng ký của bạn, FALTH sẽ gửi cho bạn mã xác nhận để tạo mật khẩu mới.",
     "next": "Tiếp theo",
@@ -130,12 +130,13 @@
     "cartMess1": "Phí giao hàng sẽ được hiển thị sau khi bạn xem xét đơn hàng",
     "order": "Đặt đơn",
     "signinToOrder": "Đăng nhập để đặt đơn",
-    "store": "Quán ăn",
+    "store": "Cửa hàng",
     "ratingInFALTH": "đánh giá trên FALTH",
     "menu": "Thực đơn",
     "searchDish": "Tìm món", 
 
     "specialRequest" : "Yêu cầu đặc biệt",
   "optional" : "không bắt buộc",
-  "confirm" : "Xác nhận"
+  "confirm" : "Xác nhận", 
+  "dish" : "Món ăn"
 }

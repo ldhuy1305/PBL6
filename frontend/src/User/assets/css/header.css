@@ -15637,7 +15637,7 @@ a.text-rebranding-primary:hover {
   position: absolute;
   right: 100%;
   cursor: pointer;
-  margin-right: 72px;
+  margin-right: 50px;
   padding-left: 0;
 }
 
@@ -18606,7 +18606,7 @@ span.flatpickr-weekday {
 .history-table-status {
   display: block;
   width: 100%;
-  height: 26px;
+  min-height: 26px;
   line-height: 26px;
   padding: 0 10px;
   border-radius: 3px;
@@ -19649,12 +19649,18 @@ button.history-table-status.gray {
 }
 
 .now-idea-searching {
-  padding-top: 1px;
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
+  left: -92px;
+  top: calc(100% + 2px);
+  width: calc(100% + 140px);
   z-index: 9;
+  display: none;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgb(188, 185, 185);
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 300px;
 }
 
 .now-idea-searching .opentime-status {
@@ -19747,7 +19753,7 @@ button.history-table-status.gray {
   position: relative;
   overflow: hidden;
   padding-left: 10px;
-  padding-right: 95px;
+  padding-right: 70px;
 }
 
 .now-idea-searching .now-list-restaurant-row .info-restaurant .name-res {
@@ -20839,7 +20845,8 @@ button.history-table-status.gray {
   color: #464646;
   font-weight: 700;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  /* white-space: nowrap */
   overflow: hidden;
   margin-bottom: 4px;
   line-height: 33px;
@@ -21192,7 +21199,7 @@ button.history-table-status.gray {
 }
 
 .now-menu-restaurant {
-  width: 845px;
+  width: 800px;
   margin-bottom: 20px;
   min-height: 226px;
   float: left;
@@ -21241,7 +21248,7 @@ button.history-table-status.gray {
 .menu-restaurant-category {
   border: 1px solid #ebebeb;
   padding: 15px 5px 15px 15px;
-  width: 235px;
+  width: 190px;
   margin-right: 10px;
   background: #fff;
   border-radius: 4px;
@@ -24018,7 +24025,7 @@ select.required-data {
   flex: 1;
   height: 40px;
   border-radius: 3px;
-  margin-left: 54px;
+  /* margin-left: 54px; */
   background-color: white;
   display: flex;
   align-items: center;
@@ -24042,15 +24049,18 @@ select.required-data {
 }
 
 .header__search-history {
+  max-height: 300px;
   position: absolute;
   top: calc(100% + 2px);
-  left: 0;
-  width: calc(100% - 2px);
+  left: -92px;
+  width: calc(100% + 140px);
+  /* width: calc(100% - 2px); */
   background-color: #fff;
   border-radius: 3px;
   box-shadow: 0 0 5px rgb(188, 185, 185);
   display: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 999;
 }
 
@@ -24076,7 +24086,7 @@ select.required-data {
   background-color: #fafafa;
 }
 
-.header__search-history-item a {
+.header__search-history-item button {
   text-decoration: none;
   font-size: 0.9rem;
   color: #333;
@@ -24089,7 +24099,7 @@ select.required-data {
   background-color: #fd5c63;
   border: none;
   height: 34px;
-  width: 60px;
+  width: 50px;
   border-radius: 3px;
   margin-right: 3px;
   outline: none;
@@ -24105,7 +24115,16 @@ select.required-data {
   color: #fff;
 }
 
-.header__search-input:focus~.header__search-history {
+/* .header__search-input:focus~.header__search-history {
+  display: block;
+} */
+.header__search-input:focus~.now-idea-searching,
+.now-idea-searching:hover {
+  display: block;
+}
+
+.header__search-input:focus~.header__search-history,
+.header__search-history:hover {
   display: block;
 }
 
@@ -24552,3 +24571,37 @@ input[type=checkbox], input[type=radio] {
   left: 3px;
   top: 3px;
 }
+
+.QRcode {
+  position: absolute;
+  top: 48px;
+  right: 10px;
+  width: 315px;
+  background-image: url(../img/qrcode_background.png);
+  color: #fff;
+  text-align: center;
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+}
+
+/* Tùy chỉnh giao diện của hộp chọn */
+.header__search-select {
+  padding: 5px; /* Độ dày của viền trong hộp chọn */
+  font-size: 14px; /* Kích thước chữ */
+  border: 1px solid #ccc; /* Màu viền */
+  border-radius: 5px; /* Độ cong viền */
+  background-color: #fff; /* Màu nền */
+  width: 90px; /* Độ rộng của hộp chọn */
+  outline: none; /* Loại bỏ đường viền khi hộp chọn được focus */
+  margin-left: 4px;
+}
+
+
+

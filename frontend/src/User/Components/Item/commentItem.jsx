@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import ZoomImage from "./zoomImage";
 import moment from "moment";
 import DeleteConfirmationModal from "../Modal/deleteDanger";
-import RatingStore from "../Modal/ratingStore";
-import RatingProduct from "../Modal/ratingProduct";
 import UpdateRatingModal from "../Modal/updateRating";
 const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, store, product, shipper }) => {
     const [visible, setVisible] = useState(false)
@@ -12,21 +10,20 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
     const handleZoom = (link) => {
         setLink(link);
         setVisible(true);
-        console.log(store, product)
     }
 
-    const [liked, setLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(like);
+    // const [liked, setLiked] = useState(false);
+    // const [likeCount, setLikeCount] = useState(like);
 
-    const handleLikeClick = () => {
-        if (liked) {
-            setLiked(false);
-            setLikeCount(likeCount - 1);
-        } else {
-            setLiked(true);
-            setLikeCount(likeCount + 1);
-        }
-    };
+    // const handleLikeClick = () => {
+    //     if (liked) {
+    //         setLiked(false);
+    //         setLikeCount(likeCount - 1);
+    //     } else {
+    //         setLiked(true);
+    //         setLikeCount(likeCount + 1);
+    //     }
+    // };
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -115,7 +112,7 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
                     </div>
                     <div className="shopee-product-rating__actions" style={{ justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex' }}>
-                            <div
+                            {/* <div
                                 className={`shopee-product-rating__like-button ${liked ? 'shopee-product-rating__like-button--liked' : ''}`}
                                 onClick={handleLikeClick}
                             >
@@ -133,9 +130,9 @@ const CommentItem = ({ like, rating, renderStars, idUser, ratings, setRatings, s
                             </div>
                             <div className="shopee-product-rating__like-count">
                                 {likeCount}
-                            </div>
+                            </div> */}
                             {((rating.user._id === null && idUser === rating.user) || (idUser === rating.user._id)) && (
-                                <div style={{ display: 'flex', marginLeft: '20px' }}>
+                                <div style={{ display: 'flex'}}>
                                     <button onClick={handleShowModal}><i class="fa-regular fa-pen-to-square" style={{ fontSize: '20px', color: '#cf2127', marginLeft: '20px' }}></i></button>
                                     <button onClick={handleShowDeleteModal}><i class="fa-regular fa-trash-can" style={{ fontSize: '20px', color: '#cf2127', marginLeft: '20px' }}></i></button>
                                 </div>

@@ -26,7 +26,6 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
                 // setIsLoading(true)
                 const data = await getRatingOfProduct(dish._id)
                 setRatings({ ...data.data })
-                console.log(dish); 
             } catch (error) {
                 console.error("Lỗi khi lấy thông tin đánh giá:", error);
             }
@@ -42,7 +41,7 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
             <div
                 class="item-restaurant-row"
                 style={{
-                    height: '84px',
+                    height: 'auto',
                     width: '100%',
                 }}
             >
@@ -61,11 +60,11 @@ const DishInMenuGroup = ({ dish, handleOpen, handleAddToCart, isWithinOperatingH
                         <h2 class="item-restaurant-name">
                             {dish.name}
                         </h2>
-                        <div class="item-restaurant-desc">Yêu thích</div>
-                        <div class="item-restaurant-total">
+                        <div class="item-restaurant-desc">{dish.description}</div>
+                        {/* <div class="item-restaurant-total">
                             Đã được đặt<span class="txt-bold"
                             >&nbsp;10+&nbsp;</span>lần
-                        </div>
+                        </div> */}
                     </div>
                     <div class="col-auto item-restaurant-more">
                         <div class="row">

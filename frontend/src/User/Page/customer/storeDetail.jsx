@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CartModal from "../../Components/Modal/cart";
 import { useLocation } from "react-router-dom";
-import { getAllCategoryByStoreId } from "../../services/userServices";
+import { getAllCategoryByStoreId, getVoucherByStoreId } from "../../services/userServices";
 import { useTranslation } from "react-i18next";
 import MenuGroup from "../../Components/Item/menuGroup";
 import { Link, Element } from "react-scroll";
 import Skeleton from "../../Components/Skeleton/skeleton";
 import { useNavigate } from "react-router-dom";
+import ChatBox from "../../Components/Item/chatBox";
+import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
 const StoreDetail = () => {
+    const { data, createChat, currentUser } = useContext(ChatContext);
     const navigate = useNavigate()
     const { t } = useTranslation()
     const [showModal, setShowModal] = useState(false);
@@ -24,22 +28,17 @@ const StoreDetail = () => {
     const closeModal = () => {
         setShowModal(false);
     };
-
-
     useEffect(() => {
         const currentTime = new Date();
         const openTime = new Date(currentTime);
         const closeTime = new Date(currentTime);
-
-        // Set the time portion of the date objects
         openTime.setHours(Number(store.openAt.split(':')[0]), Number(store.openAt.split(':')[1]), 0, 0);
         closeTime.setHours(Number(store.closeAt.split(':')[0]), Number(store.closeAt.split(':')[1]), 0, 0);
 
         setIsWithinOperatingHours(currentTime >= openTime && currentTime <= closeTime);
-        console.log(openTime, currentTime, closeTime)
     }, [store.openAt, store.closeAt]);
-
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 setIsLoading(true)
@@ -51,7 +50,27 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
+        const getVoucher = async () => {
+            try {
+                const response = await getVoucherByStoreId(store._id);
+                console.log(response.data)
+                setDiscounts(response.data)
+            } catch (error) {
+                console.log("Lỗi khi lấy thông tin voucher", error)
+            }
+        }
+        getVoucher();
+        createChat(store.ownerId)
         fetchData();
+    }, [store]);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [discounts, setDiscounts] = useState([])
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token) {
+            setIsLoggedIn(true)
+        }
     }, []);
 
     const [activeCategory, setActiveCategory] = useState('');
@@ -59,22 +78,25 @@ const StoreDetail = () => {
     const handleCategoryClick = (categoryId) => {
         setActiveCategory(categoryId);
     };
-
     const handleComment = () => {
-            navigate("/home/storeComment", { state: { store: { store },  isWithinOperatingHours: isWithinOperatingHours} });
+        navigate("/home/storeComment", { state: { store: { store }, isWithinOperatingHours: isWithinOperatingHours } });
     }
 
+    const [selectedDiscount, setSelectedDiscount] = useState("");
+    const handleSelectDiscount = (id) => {
+        setSelectedDiscount(id)
+    }
     return (
         <div>
             <div class="wrapper">
-                <div class="now-detail-restaurant clearfix" style={{width:'80%', marginLeft:'10%', height:'310px'}}>
+                <div class="now-detail-restaurant clearfix" style={{ width: '80%', marginLeft: '10%', height: '310px' }}>
                     <div class="container">
                         <div class="detail-restaurant-img">
                             <img
                                 src={store.image}
                                 alt={store.name}
                                 class=""
-                                style={{height:'250px', width:'100%', marginLeft:'8%'}}
+                                style={{ height: '250px', width: '100%', marginLeft: '8%' }}
                             />
                         </div>
                         <div class="detail-restaurant-info">
@@ -86,12 +108,12 @@ const StoreDetail = () => {
                             <div class="address-restaurant">
                                 {store.address}
                             </div>
-                            <div class="rating" style={{cursor:'pointer'}} onClick={handleComment}>
+                            <div class="rating" style={{ cursor: 'pointer' }} onClick={handleComment}>
                                 <span class="number-rating">{store.ratingsAverage}</span>
                                 <div class="stars">
                                     <span class=""><i class="fas fa-solid fa-star"></i></span>
                                 </div>
-                                <span style={{color:'#ee4d2d'}}>{t("ratingInFALTH")}</span>
+                                <span style={{ color: '#ee4d2d' }}>{t("ratingInFALTH")}</span>
                             </div>
                             <div class="view-more-rating">
                                 <span
@@ -102,9 +124,9 @@ const StoreDetail = () => {
                             </div>
                             <div class="status-restaurant">
                                 <div class="opentime-status">
-                                    <span 
-                                    className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
-                    title={isWithinOperatingHours ? `${t("storeActive")}`: `${t("storeClose")}`}></span>
+                                    <span
+                                        className={`stt ${isWithinOperatingHours ? 'online' : 'offline'}`}
+                                        title={isWithinOperatingHours ? `${t("storeActive")}` : `${t("storeClose")}`}></span>
                                 </div>
                                 <div class="time"><i class="far fa-clock"></i>{store.openAt} - {store.closeAt}</div>
                             </div>
@@ -163,11 +185,29 @@ const StoreDetail = () => {
                                     </div>
                                 </div>
                                 <div class="menu-restaurant-detail">
+                                {discounts.length > 0 && (
+                                    <div class="promotions-order">
+                                        {discounts.map((discount) => (
+                                            <div id="promotion-item" class="promotion-item">
+                                                <div>
+                                                    <img
+                                                        src="https://images.foody.vn/icon/discount/s/shopeefood_voucher_14.png"
+                                                        alt=""
+                                                        class="icon-promotion"
+                                                    />
+                                                    <div class= 'content' style={{fontSize:'14px'}}>
+                                                        {discount.name}
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            ))}
 
+                                        </div>
+                                    )}
                                     <div class="menu-restaurant-list">
                                         <div class="search-items">
                                             <p class="input-group">
-                                                <i class="fas fa-search" style={{cursor:'pointer'}} ></i>
+                                                <i class="fas fa-search" style={{ cursor: 'pointer' }} ></i>
                                                 <input
                                                     type="search"
                                                     name="searchKey"
@@ -232,6 +272,7 @@ const StoreDetail = () => {
                         </div>
 
                     </div>
+                    {isLoggedIn && (<ChatBox store={store} isWithinOperatingHours={isWithinOperatingHours} currentUser={currentUser} createChat={createChat} data={data} />)}
 
                 </div>
 

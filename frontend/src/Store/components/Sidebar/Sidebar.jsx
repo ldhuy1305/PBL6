@@ -15,6 +15,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -155,6 +156,13 @@ const Sidebar = ({ selected, setSelected }) => {
               title="Danh sách Đơn hàng"
               to="/store/listorder"
               icon={<ListAltIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Phiếu giảm giá"
+              to="/store/Voucher"
+              icon={<LocalOfferIcon />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -13,6 +13,7 @@ const moment = require("moment");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const firebase = require("../utils/firebase");
+const voucherController = require("./voucherController");
 require("dotenv").config();
 process.env.TZ = "Asia/Ho_Chi_Minh";
 class orderController {
@@ -193,6 +194,8 @@ class orderController {
           shipper: { $first: "$shipper" },
           dateDeliveried: { $first: "$dateDeliveried" },
           dateFinished: { $first: "$dateFinished" },
+          dateRefused: { $first: "$dateRefused" },
+          dateCancelled: { $first: "$dateCancelled" },
         },
       },
       {
@@ -284,10 +287,12 @@ class orderController {
         let t = (Date.now() - order.createdAt) / 60000;
         if (order.status == "Waiting" && t > process.env.time_refused) {
           order.status = "Refused";
+          let dateOrdered = new Date(order.dateOrdered);
           order.dateRefused = new Date(
-            Date.now() + process.env.UTC * 60 * 60 * 1000
+            dateOrdered.getTime() + process.env.time_refused * 1000 * 60
           );
           await this.refundOrder(req, order._id, next);
+          await voucherController.refundVoucher(order._id);
           await order.save();
         }
         if (order.status == "Pending" && t > process.env.time_refused)

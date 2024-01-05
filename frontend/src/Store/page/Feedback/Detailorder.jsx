@@ -32,6 +32,7 @@ const Detailorder = () => {
             setOrder(responseData);
             setIsLoading(false);
         } catch (error) {
+            console.error(error);
         }
     };
     const fetchData = async () => {
@@ -58,6 +59,14 @@ const Detailorder = () => {
         }).replace(/(\d+)\/(\d+)\/(\d+), (\d+:\d+:\d+)/, '$4 $2/$1/$3');
         return formattedDateTime
 
+    }
+    const calculateTotalPrice = (total) => {
+        console.log(total);
+        let totalPrice = 0; // Sử dụng let thay vì const
+        total.map((item) => {
+            totalPrice = totalPrice + (item.price * item.quantity);
+        });
+        return totalPrice;
     }
 
 
@@ -89,7 +98,7 @@ const Detailorder = () => {
                                                 <span>{value.product.name}</span>
                                             </div>
                                             <div className={style.price}>
-                                                <span>{value.price} VNĐ x {value.quantity}</span>
+                                                <span>{value.price.toLocaleString('vi-VN')} VNĐ x {value.quantity}</span>
                                             </div>
                                             <div className={style.sold}>
                                                 <span>{value.notes}</span>
@@ -107,10 +116,10 @@ const Detailorder = () => {
                                             <span>Tiền hàng</span>
                                         </div>
                                         <div className={style.tatol}>
-                                            <span>{Order.cart.length} sản phẩm</span>
+                                            <span>{Order.cart.length.toLocaleString('vi-VN')} sản phẩm</span>
                                         </div>
                                         <div className={style.sold1}>
-                                            <span>{Order.totalPrice - Order.shipCost} VNĐ</span>
+                                            <span>{calculateTotalPrice(Order.cart).toLocaleString('vi-VN')} VNĐ</span>
                                         </div>
                                     </div>
                                     <div className={style.producttop1} >
@@ -122,7 +131,19 @@ const Detailorder = () => {
                                             <span></span>
                                         </div>
                                         <div className={style.sold1}>
-                                            <span>{Order.shipCost} VNĐ</span>
+                                            <span>{Order.shipCost.toLocaleString('vi-VN')} VNĐ</span>
+                                        </div>
+                                    </div>
+                                    <div className={style.producttop1} >
+
+                                        <div className={style.title}>
+                                            <span>Giảm giá</span>
+                                        </div>
+                                        <div className={style.tatol}>
+                                            <span></span>
+                                        </div>
+                                        <div className={style.sold1}>
+                                            <span>{(Order.totalPrice - Order.shipCost - calculateTotalPrice(Order.cart)).toLocaleString('vi-VN')} VNĐ </span>
                                         </div>
                                     </div>
                                     <div className={style.producttop1} >
@@ -134,7 +155,7 @@ const Detailorder = () => {
                                             <span></span>
                                         </div>
                                         <div className={style.sold1}>
-                                            <span>{Order.totalPrice} VNĐ </span>
+                                            <span>{Order.totalPrice.toLocaleString('vi-VN')} VNĐ </span>
                                         </div>
                                     </div>
 

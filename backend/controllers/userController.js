@@ -126,14 +126,14 @@ class userController {
         contactCoordinates
       );
 
-      const prepareTime = process.env.prepareTime; // time expected for preparing
-      distance = (distance / 1000).toFixed(1);
+      const prepareTime = +process.env.prepareTime; // time expected for preparing
+      distance = +(distance / 1000).toFixed(1);
       let deliveryTime = Math.round((distance / 40) * 60 + prepareTime); // 40 is deliverySpeed -- duration = distance / deliverySpeed
 
       //totalPrice
       let shipCost;
-      const baseFee = process.env.baseFee;
-      const feePerKm = process.env.feePerKm;
+      const baseFee = +process.env.baseFee;
+      const feePerKm = +process.env.feePerKm;
       distance > 3
         ? (shipCost = baseFee + Math.ceil(distance - 3) * feePerKm)
         : (shipCost = baseFee);
