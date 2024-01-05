@@ -104,7 +104,7 @@ exports.lockShipper = catchAsync(async (req, res, next) => {
   const shipper = await Shipper.findByIdAndUpdate(
     req.params.id,
     {
-      status: "Tạm Ngừng",
+      status: req.query.status,
     },
     { new: true }
   );
