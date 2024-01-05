@@ -463,7 +463,7 @@ exports.exportProduct = catchAsync(async (req, res, next) => {
 exports.exportOrder = catchAsync(async (req, res, next) => {
   let orders = [];
 
-  let orderData = await Order.find({});
+  let orderData = await Order.find({ store: req.params.storeId });
   orderData.forEach((order) => {
     const {
       id,

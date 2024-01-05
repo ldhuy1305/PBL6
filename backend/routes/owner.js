@@ -16,7 +16,7 @@ router.route("/").post(
 );
 
 router.post("/:email", ownerController.verifiedSignUp);
-router.use(authController.protect, authController.restrict("Owner"));
+// router.use(authController.protect, authController.restrict("Owner"));
 router
   .route("/:id")
   .get(contactController.getAllContact, ownerController.getOwnerById)
