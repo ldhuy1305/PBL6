@@ -463,8 +463,7 @@ exports.exportProduct = catchAsync(async (req, res, next) => {
 exports.exportOrder = catchAsync(async (req, res, next) => {
   let orders = [];
 
-  let orderData = await Order.find({});
-  console.log(orderData);
+  let orderData = await Order.find({ store: req.params.storeId });
   orderData.forEach((order) => {
     const {
       id,
@@ -475,13 +474,11 @@ exports.exportOrder = catchAsync(async (req, res, next) => {
       user,
       store,
       cart,
-      userLocation,
+      contact,
       dateOrdered,
     } = order;
     const storeLocationString = JSON.stringify(storeLocation);
-    const userLocationString = userLocation
-      .map((c) => JSON.stringify(c))
-      .join("; ");
+    const contactString = JSON.stringify(contact);
     const cartString = cart.map((c) => JSON.stringify(c)).join("; ");
 
     orders.push({
@@ -493,7 +490,7 @@ exports.exportOrder = catchAsync(async (req, res, next) => {
       user,
       store,
       cart: cartString,
-      userLocation: userLocationString,
+      contact: contactString,
       dateOrdered,
     });
   });
