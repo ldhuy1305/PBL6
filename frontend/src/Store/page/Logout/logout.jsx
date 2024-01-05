@@ -8,6 +8,7 @@ function Logout({ setSelected }) {
         try {
             await axios.post('https://falth-api.vercel.app/api/auth/logout');
             localStorage.removeItem('token');
+            localStorage.removeItem('store');
             localStorage.removeItem('_id');
             localStorage.removeItem('user');
             localStorage.removeItem('_idstore');
@@ -17,7 +18,6 @@ function Logout({ setSelected }) {
             console.log('Lỗi Đăng xuất:', error);
         }
     };
-
     useEffect(() => {
         fetchData();
     }, []);

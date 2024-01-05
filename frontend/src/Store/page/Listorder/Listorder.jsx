@@ -22,6 +22,7 @@ const Product = ({ setSelected }) => {
     };
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
+    const _idstore = localStorage.getItem('_idstore');
     const api = `https://falth-api.vercel.app/api/order/owner/${_id}/?limit=100`;
     const fetchData = async () => {
         try {
@@ -218,6 +219,28 @@ const Product = ({ setSelected }) => {
         const uniqueId = index;
         return { ...item, id: uniqueId };
     });
+    const downloadCSVData = async () => {
+        try {
+            const response = await axios.get(`https://falth-api.vercel.app/api/owner/store/${_idstore}/export-order`, {
+                responseType: 'blob', // Đặt kiểu dữ liệu là blob để xử lý dữ liệu nhị phân
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'userData.csv');
+            document.body.appendChild(link);
+
+            link.click();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu CSV:', error);
+        }
+    };
 
     return (
 
@@ -247,14 +270,15 @@ const Product = ({ setSelected }) => {
                             />
                         </div>
                     </Box>
-                    <Box>
+                    <Box >
                         <Button
-                            color="secondary"
-                            variant="contained"
+                            variant="outlined"
                             onClick={() => { Search() }}
-                            height="33px"
                         >
                             Tìm kiếm
+                        </Button>
+                        <Button style={{ marginLeft: "10px" }} variant="outlined" onClick={() => downloadCSVData()}>
+                            Xuất file csv
                         </Button>
                     </Box>
                 </Box>

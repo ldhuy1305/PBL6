@@ -24,6 +24,7 @@ function ManageShipper({ setSelected }) {
     const [selectedRow, setSelectedRow] = useState(null);
     const formRef = useRef();
     const [openAccept, SetOpenAccept] = useState(false);
+    const [openLock, SetOpenLock] = useState(false);
 
     const notify = (er, message) => toast[er](message, {
         position: "top-right",
@@ -61,6 +62,10 @@ function ManageShipper({ setSelected }) {
         setSelectedRow(row);
         SetOpenAccept(true);
     };
+    const handleLockClick = (row) => {
+        setSelectedRow(row);
+        SetOpenLock(true);
+    };
 
 
 
@@ -81,6 +86,22 @@ function ManageShipper({ setSelected }) {
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
     const api = `https://falth-api.vercel.app/api/admin/shipper/approve`;
+
+    const LockShipper = async (id, status) => {
+        try {
+            await axios.patch(`https://falth-api.vercel.app/api/admin/shipper/${id}`, {
+                "isAccepted": false
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            notify("success", "Thành công");
+            fetchData(status);
+        } catch (error) {
+            notify("error", "Thất bại");
+        }
+    };
 
 
     const fetchData = async () => {
@@ -184,7 +205,7 @@ function ManageShipper({ setSelected }) {
             renderCell: (params) => {
                 return (
                     <div>
-                        <Button startIcon={<HighlightOffSharpIcon style={{ color: "rgb(253 92 99)" }} />} ></Button>
+                        <Button startIcon={<HighlightOffSharpIcon style={{ color: "rgb(253 92 99)" }} onClick={() => handleLockClick(params.row)} />} ></Button>
                     </div >
                 );
             },
@@ -207,6 +228,7 @@ function ManageShipper({ setSelected }) {
                     </div>
                 </Box> */}
                 <Box>
+
                 </Box>
             </Box>
             <Box
@@ -226,6 +248,10 @@ function ManageShipper({ setSelected }) {
                 )}
                 {openAccept && (
                     <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} AcceptShipper={AcceptShipper} Status={"Cấp phép"} />
+                )}
+
+                {openLock && (
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenLock} LockShipper={LockShipper} Status={"Khóa"} />
                 )}
                 <DataGrid
 
