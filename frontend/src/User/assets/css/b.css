@@ -16584,8 +16584,8 @@ img {
 }
 .vc_Label_label .vc_Label_shopeeWalletLabelContent {
   align-items: center;
-  font-size: var(--vc-card-label-font-size,.75rem);
-  line-height: var(--vc-card-label-line-height,.875rem);
+  font-size: var(--vc-card-label-font-size,1rem);
+  line-height: var(--vc-card-label-line-height,1rem);
   overflow: hidden;
   text-overflow: ellipsis;
 }

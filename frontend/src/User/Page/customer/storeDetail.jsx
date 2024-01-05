@@ -20,7 +20,6 @@ const StoreDetail = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const store = location.state.store.store;
-    console.log(store)
     const [isWithinOperatingHours, setIsWithinOperatingHours] = useState(false);
     const openModal = () => {
         setShowModal(true);
@@ -51,6 +50,16 @@ const StoreDetail = () => {
             }
             setIsLoading(false)
         }
+        const getVoucher = async () => {
+            try {
+                const response = await getVoucherByStoreId(store._id);
+                console.log(response.data)
+                setDiscounts(response.data)
+            } catch (error) {
+                console.log("Lỗi khi lấy thông tin voucher", error)
+            }
+        }
+        getVoucher();
         createChat(store.ownerId)
         fetchData();
     }, [store]);
@@ -62,16 +71,6 @@ const StoreDetail = () => {
         if (token) {
             setIsLoggedIn(true)
         }
-        const getVoucher = async () => {
-            try {
-                const response = await getVoucherByStoreId(store._id);
-                console.log(response.data)
-                setDiscounts(response.data)
-            } catch (error) {
-                console.log("Lỗi khi lấy thông tin voucher", error)
-            }
-        }
-        getVoucher();
     }, []);
 
     const [activeCategory, setActiveCategory] = useState('');

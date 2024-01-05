@@ -355,19 +355,16 @@ const updateRatingForStore = async (id, ratingData) => {
 }
 
 const getRatingOfProduct = async (productID, number) => {
+  const token = localStorage.getItem("token");
   try {
-    const token = localStorage.getItem("token");
     let api;
   if (number) {
     api = `${url}/api/product/${productID}/rating/?number=${number}`
   } else {
     api = `${url}/api/product/${productID}/rating`
   }
-    const response = await axios.get(api, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  console.log(api)
+    const response = await axios.get(api);
     return response.data
   } catch (error) {
     console.error("Error:", error);
