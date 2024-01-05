@@ -5,6 +5,7 @@ import { tokens } from "../../theme";
 import axios from 'axios';
 import Header2 from "../../components/Header/Header2";
 import { useNavigate } from 'react-router-dom';
+import { Button } from "@mui/material";
 const ManageUser = ({ setSelected }) => {
     useEffect(() => {
         setSelected("Danh sách người dùng");
@@ -117,11 +118,40 @@ const ManageUser = ({ setSelected }) => {
         const phoneNumber = item.contact.phoneNumber;
         return { ...item, phoneNumber: phoneNumber, id: uniqueId, name: fullName };
     });
+    const downloadCSVData = async () => {
+        try {
+            const response = await axios.get('https://falth-api.vercel.app/api/admin/user/export', {
+                responseType: 'blob', // Đặt kiểu dữ liệu là blob để xử lý dữ liệu nhị phân
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'userData.csv');
+            document.body.appendChild(link);
+
+            link.click();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu CSV:', error);
+        }
+    };
 
 
     return (
         <Box m="20px" >
-            <Header2 title="Danh sách người dùng" />
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box> <Header2 title="Danh sách người dùng" /></Box>
+                <Box>
+                    <Button variant="outlined" onClick={() => downloadCSVData()}>
+                        Xuất file csv
+                    </Button>
+                </Box>
+            </Box>
             <Box
                 display="flex"
                 height="75vh"

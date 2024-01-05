@@ -87,11 +87,13 @@ const Store = () => {
     history(`/store/detailorder/${id}`, { state: id });
   };
   const buttonClick = (notif, giaTriKhacNhau) => {
-    if (!notif.isSeen) {
+    if (!notif?.isSeen) {
       addNotification({
-        title: notif.title,
+
+        title: notif?.title,
         subtitle: 'thông báo từ falth',
-        message: notif.message,
+        icon: "https://falth.vercel.app/static/media/cutlery.ca1460e7a17e0ba85b81.png",
+        message: notif?.message,
         theme: 'darkblue',
         native: true,
         onClick: () => redirectToDetailorderPage(giaTriKhacNhau)

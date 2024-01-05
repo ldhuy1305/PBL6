@@ -11,7 +11,8 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { Button } from "@mui/material";
 import HttpsIcon from '@mui/icons-material/Https';
 import Accept from '../../components/Accept/Acceptshiper';
-
+import { toast } from 'react-toastify';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 function ManageShipper({ setSelected }) {
     useEffect(() => {
         setSelected("Danh sách Shipper");
@@ -21,14 +22,37 @@ function ManageShipper({ setSelected }) {
     const [isLoading, setIsLoading] = useState(true);
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [error, setError] = useState(false)
-    const [message, setMessage] = useState("")
+    const [status, setStatus] = useState("")
     const formRef = useRef();
     const [openAccept, SetOpenAccept] = useState(false);
-
+    const notify = (er, message) => toast[er](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
     const history = useNavigate();
     const redirectToEditProductPage = (id) => {
         history('/admin/DetailShipper', { state: id });
+    };
+    const LockShipper = async (id) => {
+        try {
+            await axios.patch(`https://falth-api.vercel.app/api/shipper/${id}/Lock`, {
+                "status": status
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            notify("success", "Thành công");
+            fetchData();
+        } catch (error) {
+            notify("error", "Thất bại");
+        }
     };
 
 
@@ -46,13 +70,19 @@ function ManageShipper({ setSelected }) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [selectActive]);
-    const handleopenAcceptClick = (row, status, mes) => {
+    const handleopenAcceptClick = (row) => {
+
+        setStatus("Hoạt Động");
         setSelectedRow(row);
         SetOpenAccept(true);
     };
-    const LockShipper = async () => {
 
-    }
+    const handleopenClick = (row) => {
+        setStatus("Tạm Ngừng");
+        setSelectedRow(row);
+        SetOpenAccept(true);
+
+    };
 
     const token = localStorage.getItem('token');
     const _id = localStorage.getItem('_id');
@@ -86,7 +116,28 @@ function ManageShipper({ setSelected }) {
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const downloadCSVData = async () => {
+        try {
+            const response = await axios.get('https://falth-api.vercel.app/api/admin/shipper/export', {
+                responseType: 'blob', // Đặt kiểu dữ liệu là blob để xử lý dữ liệu nhị phân
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'userData.csv');
+            document.body.appendChild(link);
+
+            link.click();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu CSV:', error);
+        }
+    };
     const columns = [
         { field: "id", headerName: "ID" },
         {
@@ -145,13 +196,22 @@ function ManageShipper({ setSelected }) {
             headerAlign: "center",
             align: "center",
             flex: 1,
-            renderCell: (params) => {
-                // onClick={() => handleopenAcceptClick(params.row)}
-                return (
-                    <Button startIcon={<HttpsIcon />} onClick={() => handleopenAcceptClick(params.row, false, "Khóa")}></Button>
-                );
-            },
+            renderCell: (params) => (
+                params.row.status === "Tạm Ngừng" ?
+                    <Button
+                        startIcon={<HttpsIcon />}
+                        onClick={() => handleopenAcceptClick(params.row)}
+                    ></Button>
+
+                    :
+                    <Button
+                        startIcon={<LockOpenIcon />}
+                        onClick={() => handleopenClick(params.row)}
+                    ></Button>
+
+            ),
         },
+
     ];
 
     return (
@@ -172,6 +232,9 @@ function ManageShipper({ setSelected }) {
 
                 </Box> */}
                 <Box>
+                    <Button variant="outlined" onClick={() => downloadCSVData()}>
+                        Xuất file csv
+                    </Button>
                 </Box>
             </Box>
             <Box
@@ -187,7 +250,7 @@ function ManageShipper({ setSelected }) {
                 }}
             >
                 {openAccept && (
-                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} LockShipper={LockShipper} Status={"Khóa"}/>
+                    <Accept rows={selectedRow} show={true} handleClose={SetOpenAccept} LockShipper={LockShipper} Status={status === "Tạm ngừng" ? "Mở Khóa" : "Khóa"} />
                 )}
                 <DataGrid
                     rows={rowsWithUniqueIds}
