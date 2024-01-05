@@ -230,8 +230,8 @@ exports.googleLogin = passport.authenticate("google", {
   scope: ["profile", "email"],
 });
 exports.googleLoginCallback = passport.authenticate("google", {
-  failureRedirect: "/login",
-  successRedirect: "/",
+  failureRedirect: "https://falth.vercel.app/signin",
+  successRedirect: "https://falth.vercel.app/",
 });
 
 exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {

@@ -10,6 +10,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
       passReqToCallback: true,
+      prompt: "select_account",
     },
     async function(request, accesstoken, refreshtoken, profile, done) {
       await User.findOne({ email: profile.emails[0].value }, function(
@@ -18,6 +19,7 @@ passport.use(
       ) {
         if (err) return done(err);
         if (user) {
+          console.log(user);
           return done(null, user);
         } else {
           return done(new appError("Your account does not exist"));
