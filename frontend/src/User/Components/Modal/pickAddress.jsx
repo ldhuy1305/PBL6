@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ModalUpdateAddress from "./modalUpdateAddress";
-const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedContact, contacts, setContacts }) => {
-    const [showModalUpdateAddress, setShowModalUpdateAddress] = useState(false);
+import { useTranslation } from "react-i18next";
+const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedContact, contacts, setContacts, defaultContact, setDefaultContact }) => {
+    const {t} = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
@@ -52,7 +53,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                     <div class="jRFwds" style={{ zIndex: '1' }}>
                         <div class="PRuV34">
                             <div class="UK8GQJ">
-                                <div class="N+ztzK"><div>Địa Chỉ Của Tôi</div></div>
+                                <div class="N+ztzK"><div>{t("myAddress")}</div></div>
                                 <div class="Dchm36 ECaRqO">
                                     <div class="stardust-spinner--hidden stardust-spinner">
                                         <div class="stardust-spinner__background">
@@ -101,7 +102,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                                 <label class="PcodYT" htmlFor={`address-radio-${cont._id}`}>
                                                     {/* <div class="PcodYT"> */}
 
-                                                    <div role="heading" class="_7efJXB hgGPm2">
+                                                    <div class="_7efJXB hgGPm2">
                                                         <div
                                                             id="address-card_32c92423-9fcd-4034-ba8f-cd538c93f96e_header"
                                                             class="RMBiE- JZWy3M"
@@ -114,12 +115,11 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                                             </div>
                                                         </div>
                                                         <div class="XEXjAd">
-                                                            <button onClick={() => handleShowModal(cont.address, cont.phoneNumber, 'update', cont._id)} class="Tuo6ZP">Cập nhật</button>
+                                                            <button onClick={() => handleShowModal(cont.address, cont.phoneNumber, 'update', cont._id)} class="Tuo6ZP">{t("update")}</button>
                                                         </div>
                                                     </div>
                                                     <div
                                                         id="address-card_32c92423-9fcd-4034-ba8f-cd538c93f96e_content"
-                                                        role="heading"
                                                         class="_7efJXB hgGPm2"
                                                     >
                                                         <div class="RMBiE- JZWy3M">
@@ -131,13 +131,13 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                                         </div>
                                                         <div class="ZsWMz8 XEXjAd"></div>
                                                     </div>
-                                                    {user.defaultContact === cont._id && (
+                                                    {defaultContact === cont._id && (
                                                         <div
                                                             id="address-card_32c92423-9fcd-4034-ba8f-cd538c93f96e_badge"
                                                             role="row"
                                                             className="hRRgNe ULZM9T"
                                                         >
-                                                            <span role="mark" className="UAGfcj hCWcbk NqLtr2">Mặc định</span>
+                                                            <span role="mark" className="UAGfcj hCWcbk NqLtr2">{t("default")}</span>
                                                         </div>
                                                     )}
                                                     {/* </div> */}
@@ -156,12 +156,12 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                                             <path
                                                 stroke="none"
                                                 d="m10 4.5h-4.5v-4.5h-1v4.5h-4.5v1h4.5v4.5h1v-4.5h4.5z"
-                                            ></path></svg>Thêm Địa Chỉ Mới
+                                            ></path></svg>{t("add")}
                                     </button>
                                 </div>
                                 <div class="u7Oswx">
-                                    <button onClick={handleClose} class="LtBE+Z LkGLx9 _4aRllO IkCOND">Huỷ</button>
-                                    <button onClick={handleConfirm} class="FKiInz _4aRllO h4w1PK">Xác nhận</button>
+                                    <button onClick={handleClose} class="LtBE+Z LkGLx9 _4aRllO IkCOND">{t("cancel")}</button>
+                                    <button onClick={handleConfirm} class="FKiInz _4aRllO h4w1PK">{t("confirm")}</button>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +169,7 @@ const PickAddress = ({ show, handleClose, user, selectedContact, setSelectedCont
                     <div class="_4BlFzb"></div>
                 </aside>
             </div>
-            <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts}/>
+            <ModalUpdateAddress show={showModal} handleClose={handleCloseModal} phoneNumber1={phoneNumber} address1={address} action1 = {action} contactId={idContact} setContacts={setContacts} setDefaultContact={setDefaultContact}/>
         </div>
     )
 }

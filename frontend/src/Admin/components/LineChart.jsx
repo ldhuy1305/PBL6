@@ -77,7 +77,29 @@ class ApexChart extends React.Component {
     };
   }
 
-
+  componentDidUpdate(prevProps) {
+    // Kiểm tra nếu prop 'data' thay đổi
+    if (this.props.data !== prevProps.data || this.props.status !== prevProps.status) {
+      const { data, status } = this.props;
+      console.log(data);
+      // Cập nhật trạng thái 'series' khi prop 'data' thay đổi
+      this.setState({
+        series: [
+          {
+            name: "Doanh thu",
+            data: data.map((item) => item.revenue),
+          },
+        ],
+        options: {
+          ...this.state.options,
+          xaxis: {
+            ...this.state.options.xaxis,
+            categories: status ? data.map((item) => item.date) : data.map((item) => item._id),
+          },
+        },
+      });
+    }
+  }
 
   render() {
     return (

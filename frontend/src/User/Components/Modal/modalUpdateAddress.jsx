@@ -3,8 +3,9 @@ import Modal from 'react-bootstrap/Modal';
 import { addContact, updateContact, updateDefaultContact } from '../../services/userServices';
 import LoadingModal from '../../Components/Loading/Loading';
 import Notify from '../Notify.jsx/Notify';
-
+import { useTranslation } from 'react-i18next';
 const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1, contactId, setContacts, setDefaultContact}) => {
+    const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("");
     const [openNotify, setOpenNotify] = useState(false)
@@ -31,14 +32,12 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                     localStorage.setItem("user", JSON.stringify(response));
                     setContacts(response.contact);
                     setDefaultContact(response.defaultContact)
-                    setMessage("Thêm địa chỉ thành công!");
+                    setMessage(`${t("updateAddressSuccess")}`)
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 } catch (error) {
-                    setMessage("Địa chỉ không hợp lệ! Thêm địa chỉ thất bại!");
+                    setMessage(`${t("updateAddressFail")}`)
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 }
             } else {
@@ -53,14 +52,12 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                     localStorage.setItem("user", JSON.stringify(response.data));
                     setContacts(response.data.contact);
                     setDefaultContact(response.data.defaultContact)
-                    setMessage("Cập nhật địa chỉ thành công!");
+                    setMessage(`${t("updateAddressSuccess")}`)
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 } catch (error) {
-                    setMessage("Địa chỉ không hợp lệ! Cập nhật địa chỉ thất bại!");
+                    setMessage(`${t("updateAddressFail")}`)
                     setOpenNotify(true)
-                    // setIsChecked(false)
                     handleClose()
                 }
             }
@@ -71,7 +68,7 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
             setIsChecked(false)
             setIsLoading(false)
         } else {
-            setError("Số điện thoại không hợp lệ")
+            setError(`${t("error9")}`)
         }
 
         
@@ -101,7 +98,7 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
 
             <Modal className="modal fade modal-change-address" show={show} onHide={handleReset} size="lg" > 
                 <Modal.Body style={{zIndex:'1000'}}>
-                    <Modal.Title>Cập nhật địa chỉ</Modal.Title>
+                    <Modal.Title>{t("infoNav3")}</Modal.Title>
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <span class="close" data-dismiss="modal">x</span>
@@ -113,14 +110,14 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                                             <input
                                                 type="text"
                                                 class="form-control"
-                                                placeholder="Số điện thoại"
+                                                placeholder={t("phoneNumber")}
                                                 name="phoneNumber"
                                                 maxLength={10}
                                                 value={formData.phoneNumber}
                                                 // value={phoneNumber}
                                                 onChange={handleChange}
                                             /><label for="phone"
-                                            >Số điện thoại<span class="txt-red font-weight-bold"
+                                            >{t("phoneNumber")}<span class="txt-red font-weight-bold"
                                             >*</span></label>
                                         </div>
                                     </div>
@@ -129,13 +126,13 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                                         <div class="col col-12 form-group input-field">
                                             <input
                                                 name="address"
-                                                placeholder="Số nhà tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                                                placeholder={t("addressDetailEx")}
                                                 class="form-control"
                                                 value={formData.address}
                                                 // value={address}
                                                 onChange={handleChange}
                                             /><label for="address"
-                                            >Địa chỉ chi tiết<span class="txt-red font-weight-bold"
+                                            >{t("addressDetail")}<span class="txt-red font-weight-bold"
                                             >*</span></label>
                                         </div>
                                     </div>
@@ -143,7 +140,7 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                                     <div class="pqpMRq">
                                         <label class="kbCWJr">
                                             <div class={`ciVq4v ${isChecked ? 'wb33QF' : ''}`} onClick={() => {setIsChecked(!isChecked)}}></div>
-                                            Đặt làm địa chỉ mặc đinh
+                                            {t("setDefault")}
                                         </label>
                                     </div>
                                 </div>
@@ -153,7 +150,7 @@ const ModalUpdateAddress = ({ show, handleClose, phoneNumber1, address1, action1
                                         class="btn btn-gray text-uppercase"
                                         onClick={handleReset}
                                     >
-                                        Đóng</button>
+                                        {t("close")}</button>
                                     <button type="button" class="btn btn-red text-uppercase" onClick={(e) => handleSubmit(e)}>
                                         OK
                                     </button>

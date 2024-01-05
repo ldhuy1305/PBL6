@@ -8,7 +8,7 @@ import Header2 from "../../components/Header/Header";
 import axios from 'axios';
 import Loading from '../../components/Loading/Loading'
 
-const Product = ({ setSelected }) => {
+const Statistics = ({ setSelected }) => {
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -187,6 +187,7 @@ const Product = ({ setSelected }) => {
                                                 <option value="count"><span>Thống kê đơn hàng</span></option>
                                                 <option value="revenue"><span>Thống kê doanh thu</span></option>
                                             </select>
+                                            <i class="fa-solid fa-chevron-down"></i>
                                         </div>
                                         <div className={style.rightContent1}>
                                             <select name="" id="" onChange={(event) => fetchDataLinechart(event.target.value)}>
@@ -195,6 +196,7 @@ const Product = ({ setSelected }) => {
                                                 <option value="weekly">Tuần</option>
                                                 <option value="monthly">Tháng</option>
                                             </select>
+                                            <i class="fa-solid fa-chevron-down"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -262,7 +264,7 @@ const Product = ({ setSelected }) => {
                                                     <span>{value.product}</span>
                                                 </div>
                                                 <div className={style.price}>
-                                                    <span>{value.price} đ</span>
+                                                    <span>{value.price.toLocaleString('vi-VN')} đ</span>
                                                 </div>
                                                 <div className={style.sold}>
                                                     <span>{value.count} sản phẩm</span>
@@ -282,4 +284,4 @@ const Product = ({ setSelected }) => {
     );
 };
 
-export default Product;
+export default Statistics;

@@ -5,7 +5,9 @@ import { deleteContact, deleteRating } from '../../services/userServices';
 import LoadingModal from '../Loading/Loading';
 import { useState } from 'react';
 import Notify from '../Notify.jsx/Notify';
+import { useTranslation } from 'react-i18next';
 const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, data, setData }) => {
+    const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false)
     const [openNotify, setOpenNotify] = useState(false)
     const [message, setMessage] = useState("")
@@ -24,7 +26,7 @@ const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, 
             const response = await deleteContact(id)
             setData(userData.contact)
             setIsLoading(false)
-            setMessage("Xóa địa chỉ thành công!")
+            setMessage(`${t("deleteAddress")}`)
             setOpenNotify(true)
         } else if (action === 'cart') {
             setIsLoading(true)
@@ -38,7 +40,7 @@ const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, 
             const updatedRatings =Object.values(data).filter((rating) => rating._id !== id);
             setData(updatedRatings);
             setIsLoading(false)
-            setMessage("Xóa đánh giá thành công!")
+            setMessage(`${t("deleteRating")}`)
             setOpenNotify(true)
         }
     };
@@ -47,17 +49,17 @@ const DeleteConfirmationModal = ({ show, handleClose, handleDelete, id, action, 
 
             <Modal show={show} onHide={handleClose} style={{ zIndex: '100001' }}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Cảnh Báo Xóa</Modal.Title>
+                    <Modal.Title>{t("deleteWarning")}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body >
-                    Bạn có chắc chắn muốn xóa mục này?
+                {t("deleteConfirm")}
                 </Modal.Body>
                 <Modal.Footer className="justify-content-end">
                     <Button variant="secondary" onClick={handleClose}>
-                        Hủy
+                    {t("no")}
                     </Button>
                     <Button variant="danger" onClick={handleDeleteItem} default>
-                        Xóa
+                    {t("yes")}
                     </Button>
                 </Modal.Footer>
             </Modal>

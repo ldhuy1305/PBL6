@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header2 from "../../components/Header/Header";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import style from './Listorder.module.css'
@@ -102,6 +101,10 @@ const Product = ({ setSelected }) => {
             headerAlign: "center",
             align: "center",
             flex: 2,
+            valueFormatter: (params) => {
+                // Định dạng số tiền thành chuỗi với dấu phân tách hàng nghìn
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(params.value);
+            },
 
         },
         {
@@ -110,6 +113,10 @@ const Product = ({ setSelected }) => {
             headerAlign: "center",
             align: "center",
             flex: 2,
+            valueFormatter: (params) => {
+                // Định dạng số tiền thành chuỗi với dấu phân tách hàng nghìn
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(params.value);
+            },
 
         },
         {
@@ -118,6 +125,10 @@ const Product = ({ setSelected }) => {
             headerAlign: "center",
             align: "center",
             flex: 2,
+            valueFormatter: (params) => {
+                // Định dạng số tiền thành chuỗi với dấu phân tách hàng nghìn
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(params.value);
+            },
 
         },
         {

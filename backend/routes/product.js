@@ -9,6 +9,7 @@ router.route("/search").get(productController.searchProduct);
 router.route("/recommend").get(productController.recommendProduct);
 router.route("/:id").get(productController.viewProduct);
 router.route("/store/:storeId").get(productController.getAllProductByStoreId);
+router.use("/:productId/rating", ratingRoute);
 router.use(authController.protect);
 router
   .route("/owner/:ownerId")
@@ -42,5 +43,4 @@ router.get(
   productController.getProductByCat
 );
 
-router.use("/:productId/rating", ratingRoute);
 module.exports = router;

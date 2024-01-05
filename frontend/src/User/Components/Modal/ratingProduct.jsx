@@ -18,7 +18,6 @@ const RatingProduct = ({ show, handleClose, product}) => {
     const [notify, setNotify] = useState('')
 
     const handleCloseRating = () => {
-        console.log(product)
         handleClose()
         setFormData({
             nnumber: '',
@@ -61,11 +60,10 @@ const RatingProduct = ({ show, handleClose, product}) => {
             });
         }
         if (formData.number === '') {
-            setNotify("Mời bạn chọn số sao để đánh giá")
+            setNotify(`${t("ratingNotify1")}`)
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
-            console.log(product)
             try {
                 setIsLoading(true);
                 const response = await axios.post(`https://falth-api.vercel.app/api/product/${product._id}/rating`, res, {
@@ -74,11 +72,11 @@ const RatingProduct = ({ show, handleClose, product}) => {
                         ContentType: 'multipart/form-data',
                     }
                 });
-                setNotify("Đánh giá thành công!")
+                setNotify(`${t("ratingNotify2")}`)
                 setOpenNotify(true)
                 handleClose()
             } catch (error) {
-                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho sản phẩm này rồi!")
+                setNotify(`${t("ratingNotify3")}`)
                 setOpenNotify(true)
                 handleClose()
             } finally {
@@ -127,7 +125,7 @@ const RatingProduct = ({ show, handleClose, product}) => {
                 <Modal.Header>
                     <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
-                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá sản phẩm</div>
+                    <div class="modal-header" style={{ color: 'white' }}>{t("rating")} {t("product")}</div>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="modal-dialog modal-noti" role="document">
@@ -169,12 +167,12 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                             </div>
                                                             <div >
                                                                 <select defaultValue="" className="custom-select" name='number' value={formData.number} onChange={handleChange}>
-                                                                    <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
-                                                                    <option value={1}>1 sao</option>
-                                                                    <option value={2}>2 sao</option>
-                                                                    <option value={3}>3 sao</option>
-                                                                    <option value={4}>4 sao</option>
-                                                                    <option value={5}>5 sao</option>
+                                                                    <option value="" selected="selected" disabled>{t("ratingInput1")}</option>
+                                                                    <option value={1}>1 {t("star")}</option>
+                                                                    <option value={2}>2 {t("stars")}</option>
+                                                                    <option value={3}>3 {t("stars")}</option>
+                                                                    <option value={4}>4 {t("stars")}</option>
+                                                                    <option value={5}>5 {t("stars")}</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -182,7 +180,7 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn."
+                                                                placeholder={t("ratingInput2")}
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
@@ -222,7 +220,7 @@ const RatingProduct = ({ show, handleClose, product}) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>{t("ratingInput3")}</button>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -1,14 +1,12 @@
-import { Box, IconButton, useTheme } from "@mui/material";
-import { useContext, useState } from "react";
+import { Box, useTheme } from "@mui/material";
 import { ColorModeContext, tokens } from '../../theme';
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import logo from '../img/logo.png';
 
 const Topbar = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
-        <Box display="flex" justifyContent="space-between" p={2} style={{ boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', }}>
+        <Box display="flex" justifyContent="space-between" style={{ boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', }}>
             <Box
                 display="flex"
                 backgroundColor={colors.primary[400]}
@@ -16,15 +14,10 @@ const Topbar = () => {
 
             >
             </Box>
-            <Box display="flex">
-                <IconButton>
-                    <NotificationsOutlinedIcon />
-                </IconButton>
-                <IconButton>
-                    <PersonOutlinedIcon />
-                </IconButton>
+            <Box display="flex" >
+                <img src={logo} alt="" style={{ height: "70px", paddingRight: "20px" }} />
             </Box>
-        </Box>
+        </Box >
     );
 };
 

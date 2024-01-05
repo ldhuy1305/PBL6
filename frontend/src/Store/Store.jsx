@@ -4,6 +4,7 @@ import Sidebara from './components/Sidebar/Sidebar';
 import Topbar from './components/Topbar/Topbar';
 import Product from './page/Product/Product';
 import Listorder from './page/Listorder/Listorder';
+import Voucher from './page/Voucher/Voucher';
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Category from './page/Category/Category';
@@ -18,15 +19,18 @@ import Statistics from './page/Statistics/Statistics';
 import './Store.css'
 import Feedback from './page/Feedback/Feedback';
 import { ref, onValue, child } from 'firebase/database';
-import { database } from './filebase';
-import { Notifications } from './components/react-push-notification';
-import addNotification from './components/react-push-notification';
+import { database } from './firebase';
+import { Notifications } from './components/react-push-notification/dist';
+import addNotification from './components/react-push-notification/dist';
 import { isEqual } from 'lodash';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import OwnerProfile from './page/Info/OwnerProfile'
+import Chat from './components/Chat/Chat';
+import { AuthContextProvider } from "./context/AuthContext";
+import { ChatContextProvider } from "./context/ChatContext";
 
 const Store = () => {
   const [latestUserData, setLatestUserData] = useState();
@@ -34,6 +38,7 @@ const Store = () => {
   const [idsrote, Setidstore] = useState("1");
   const token = localStorage.getItem('token');
   const tokenString = localStorage.getItem('user');
+  const [chat, SetChat] = useState(true);
   const tokenObject = JSON.parse(tokenString);
   localStorage.setItem('_id', tokenObject._id);
   localStorage.setItem('_img', tokenObject.photo);
@@ -49,6 +54,7 @@ const Store = () => {
         const responseData = response.data.data;
         Setidstore(responseData._id);
         localStorage.setItem('_idstore', responseData._id);
+        localStorage.setItem('store', JSON.stringify(responseData));
         console.log(responseData._id);
       } catch (error) {
         console.error('Lỗi khi gọi API:', error);
@@ -128,49 +134,55 @@ const Store = () => {
       };
     }
   }, [latestUserData, idsrote]);
-
-
-  const { id } = useParams();
-
-  useEffect(() => {
-    console.log(`Loading lại trang với ID: ${id}`);
-  }, [id]);
-
-
-
+  console.log(latestUserData, idsrote);
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [selected, setSelected] = useState("Thống kê");
-  return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Helmet>
-          <title>{selected}</title>
-        </Helmet>
-        <div className="app">
-          <Sidebara isSidebar={isSidebar} selected={selected} setSelected={setSelected} />
-          <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
-            <Routes>
-              <Route path="/" element={<Statistics setSelected={setSelected} />} />
-              <Route path="/Formadd" element={<Formadd setSelected={setSelected} />} />
-              <Route path="/Formedit/:id" element={<Formedit setSelected={setSelected} />} />
-              <Route path="/product" element={<Product setSelected={setSelected} />} />
-              <Route path='/listorder' element={<Listorder setSelected={setSelected} />} />
-              <Route path='/info' element={<Info setSelected={setSelected} />} />
-              <Route path='/category' element={<Category setSelected={setSelected} />} />
-              <Route path="/detailorder/:id" element={<Detailorder setSelected={setSelected} />} />
-              <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
-              <Route path="/logout" element={<Logout setSelected={setSelected} />} />
-              <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
-            </Routes>
-            <ToastContainer />
-          </main>
-        </div>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
 
+  return (
+    <AuthContextProvider>
+      <ChatContextProvider>
+        <ColorModeContext.Provider value={colorMode}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Helmet>
+              <title>{selected}</title>
+            </Helmet>
+            <div className="app">
+              <Sidebara isSidebar={isSidebar} selected={selected} setSelected={setSelected} />
+              <main className="content">
+                <Topbar setIsSidebar={setIsSidebar} latestUserData={noti} Setseen={Setseen} />
+                <Routes>
+                  <Route path="/" element={<Statistics setSelected={setSelected} />} />
+                  <Route path="/Formadd" element={<Formadd setSelected={setSelected} />} />
+                  <Route path="/Formedit/:id" element={<Formedit setSelected={setSelected} />} />
+                  <Route path="/product" element={<Product setSelected={setSelected} />} />
+                  <Route path='/listorder' element={<Listorder setSelected={setSelected} />} />
+                  <Route path='/info' element={<Info setSelected={setSelected} />} />
+                  <Route path='/category' element={<Category setSelected={setSelected} />} />
+                  <Route path="/detailorder/:id" element={<Detailorder setSelected={setSelected} />} />
+                  <Route path="/feedback" element={<Feedback setSelected={setSelected} />} />
+                  <Route path="/logout" element={<Logout setSelected={setSelected} />} />
+                  <Route path="/OwnerProfile" element={<OwnerProfile setSelected={setSelected} />} />
+                  <Route path="/Voucher" element={<Voucher setSelected={setSelected} />} />
+                  <Route path="/chat" element={<Chat setSelected={setSelected} />} />
+                </Routes>
+                <ToastContainer />
+              </main>
+              <div className="chat-container">
+                {chat ? (
+                  <div className='chat-icon'>
+                    <img src="https://cdn-icons-png.flaticon.com/512/2950/2950568.png" alt="Chat" onClick={() => SetChat(false)} />
+                  </div>
+                ) : (
+                  <Chat SetChat={SetChat} />
+                )}
+              </div>
+            </div>
+          </ThemeProvider>
+        </ColorModeContext.Provider>
+      </ChatContextProvider>
+    </AuthContextProvider>
   );
 };
 

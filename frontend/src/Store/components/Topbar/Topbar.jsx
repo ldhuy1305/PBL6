@@ -12,7 +12,7 @@ import style from "./Topbar.module.css";
 import axios from "axios"
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
-
+import logo from '../img/logo.png';
 const Topbar = ({ latestUserData, Setseen }) => {
     const history = useNavigate();
     const redirectToDetailorderPage = (id) => {
@@ -49,10 +49,9 @@ const Topbar = ({ latestUserData, Setseen }) => {
         <Box display="flex" justifyContent="space-between" p={1} borderBottom="0.1px solid rgb(230, 230, 230);"
             boxShadow="0px 1px 1px rgba(0, 0, 0, 0.1)">
             <Box
-                display="flex"
-                backgroundColor={colors.primary[400]}
-                borderRadius="3px"
+                display="flex" border="0.5px solid #ffcccc" borderRadius="5px" marginLeft="20px"
             >
+                <img src={logo} alt="" style={{ height: "45px", padding: "0px 10px" }} />
             </Box>
             <Box display="flex" gap="10px">
                 <Tooltip title="Thông báo">
@@ -103,10 +102,6 @@ const Topbar = ({ latestUserData, Setseen }) => {
                         </Grid>
                     </Grid>
                 </Popover>
-                {/* 
-                <IconButton>
-                    <SettingsOutlinedIcon sx={{ fontSize: 25 }} />
-                </IconButton> */}
                 <Tooltip title="Thông tin cá nhân">
                     <IconButton onClick={() => Ownerprofile()}>
                         <Avatar src={Imgowner} sx={{ width: 25, height: 25 }} />
@@ -114,7 +109,7 @@ const Topbar = ({ latestUserData, Setseen }) => {
                 </Tooltip>
 
             </Box>
-        </Box>
+        </Box >
     );
 };
 

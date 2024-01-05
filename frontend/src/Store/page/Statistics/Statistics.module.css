@@ -57,9 +57,18 @@
     margin-left: auto;
     font-size: 14px;
     width: 100%;
+    padding-right: 20px;
+}
+
+.rightContent1 i {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
 }
 
 .rightContent1 {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -91,6 +100,21 @@
     font-weight: 500;
     color: rgb(159, 159, 159);
     font-size: 16px;
+}
+
+.tranding {
+    position: relative;
+}
+
+.tranding select {
+    padding-right: 20px;
+}
+
+.tranding i {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
 }
 
 .center {

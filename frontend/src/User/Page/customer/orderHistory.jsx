@@ -33,7 +33,6 @@ const OrderHistory = () => {
             onChange: function (selectedDates) {
                 const selectedDate = selectedDates[0];
                 setFromDate(selectedDate);
-                console.log('From Date Selected:', selectedDate);
             },
         });
         flatpickr(toDateRef.current, {
@@ -42,27 +41,22 @@ const OrderHistory = () => {
             onChange: function (selectedDates) {
                 const selectedDate = selectedDates[0];
                 setToDate(selectedDate);
-                console.log('To Date Selected:', selectedDate);
             },
         });
         const transaction = async () => {
             const queryString = window.location.search;
             if (queryString) {
-                console.log('Trang có query parameters:', queryString);
                 try {
                     const response = await createPayment(queryString);
                 } catch (error) {
                     console.log(error)
                 }
-            } else {
-                console.log('Trang không có query parameters');
             }
         }
         const getOrder = async () => {
             try {
                 setIsLoading(true)
                 const response1 = await getAllOderByUserId()
-                console.log(response1.data)
                 setItems(response1.data)
             } catch (error) {
 
@@ -87,7 +81,6 @@ const OrderHistory = () => {
         try {
             setIsLoading(true)
             const response = await getOderByFilter(from, to, selectedStatus, page)
-            console.log(response.data)
             setItems(response.data)
         } catch (error) {
             console.log("Sai:", error)
@@ -114,7 +107,6 @@ const OrderHistory = () => {
         try {
             setIsLoadingModal(true)
             const response = await viewOrder(id);
-            console.log('Lấy thông tin thành công: ', response.data)
             setOrderDetail({
                 ...response.data
             })
@@ -163,7 +155,6 @@ const OrderHistory = () => {
             try {
                 setIsLoading(true)
                 const response = await getOderByFilter(from, to, selectedStatus, page)
-                console.log(response.data)
                 setItems(response.data)
             } catch (error) {
                 console.log("Sai:", error)
@@ -201,7 +192,6 @@ const OrderHistory = () => {
         try {
             setIsLoadingModal(true)
             const response = await getShipper(shipperID)
-            console.log('Lấy thông tin thành công: ', response.data)
             setShipper({
                 ...response
             })
@@ -233,14 +223,14 @@ const OrderHistory = () => {
                                     <span class="filter-table-label">{t("status")}</span>
                                     <select value={selectedStatus}
                                         onChange={handleStatusChange} name="" class="form-control filter-table-input">
-                                        <option value="All" selected="">Tất cả</option>
-                                        <option value="Pending">Đang xử lý</option>
-                                        <option value="Waiting">Đang chờ nhận đơn</option>
-                                        <option value="Preparing">Đang chuẩn bị</option>
-                                        <option value="Refused">Từ chối</option>
-                                        <option value="Delivering">Đang giao</option>
-                                        <option value="Cancelled">Đã hủy</option>
-                                        <option value="Finished">Đã hoàn thành</option>
+                                        <option value="All" selected="">{t("all")}</option>
+                                        <option value="Pending">{t("pending")}</option>
+                                        <option value="Waiting">{t("waiting")}</option>
+                                        <option value="Preparing">{t("preparing")}</option>
+                                        <option value="Refused">{t("refused")}</option>
+                                        <option value="Delivering">{t("delivering")}</option>
+                                        <option value="Cancelled">{t("cancelled")}</option>
+                                        <option value="Finished">{t("finished")}</option>
                                     </select>
                                 </div>
                             </div>

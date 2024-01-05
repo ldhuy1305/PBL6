@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import style from './Info.css'
 import axios from 'axios';
 import * as yup from "yup";
-import {  Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Loading from '../../components/Loading/Loading'
 import Header2 from '../../components/Header/Header2'
 import { toast } from 'react-toastify';
@@ -70,9 +70,10 @@ const OwnerProfile = ({ setSelected }) => {
                 formData.append("address", address);
                 formData.append("phoneNumber", phoneNumber);
                 formData.append("bankNumber", bankNumber);
+                console.log("yyty", img);
                 if (img) {
                     formData.append("image", img);
-                    formData.append("Del", data.image);
+                    formData.append("Dels", data.image);
                 }
                 const dataToSend = {
                     firstName: name,
@@ -94,7 +95,7 @@ const OwnerProfile = ({ setSelected }) => {
     const getdatainfostore = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`https://falth-api.vercel.app/api/user/${_id}`,
+            const response = await axios.get(`https://falth-api.vercel.app/api/owner/${_id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -102,6 +103,7 @@ const OwnerProfile = ({ setSelected }) => {
                 }
             );
             const responseData = response.data;
+            console.log(responseData);
             setData(responseData);
             setInfostore();
             setIsLoading(false);
@@ -344,10 +346,11 @@ const OwnerProfile = ({ setSelected }) => {
                                         <div className="form-group1" style={{ justifyContent: "center", display: "flex", flexDirection: "column" }}>
                                             <span style={{ display: "inline" }}>Tải lên từ</span>
                                             <div className="custom-file-image1">
-                                                <input type="file" id="validatedCustomFile1" className="input-custom11" required="" hidden accept="image/*"
+                                                <input type="file" id="validatedCustomFile1" accept="image/*" className="input-custom11" required="" hidden
                                                     onChange={({ target: { files } }) => {
                                                         if (files) {
-                                                            setimg((files[0]))
+                                                            setimg(files[0])
+                                                            console.log(files[0])
                                                             setimgLink(URL.createObjectURL(files[0]))
                                                         }
                                                     }} />

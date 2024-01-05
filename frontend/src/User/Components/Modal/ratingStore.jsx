@@ -29,7 +29,6 @@ const RatingStore = ({ show, handleClose, store }) => {
 
     const handleCloseNotify = () => {
         setOpenNotify(false)
-        console.log("đóng modal")
     }
 
     const handleChangeImg = (e) => {
@@ -48,7 +47,6 @@ const RatingStore = ({ show, handleClose, store }) => {
             ...formData,
             [name]: value,
         });
-        console.log(store)
     };
 
     const [dels, setDels] = useState([]);
@@ -66,14 +64,13 @@ const RatingStore = ({ show, handleClose, store }) => {
             });
         }
         if (formData.number === '') {
-            setNotify("Mời bạn chọn số sao để đánh giá")
+            setNotify(`${t("ratingNotify1")}`)
             setOpenNotify(true)
         } else {
             const token = localStorage.getItem("token");
             try {
 
                 setIsLoading(true);
-                console.log(store)
                 const response = await axios.post(`https://falth-api.vercel.app/api/store/${store._id}/rating`, res, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -81,11 +78,11 @@ const RatingStore = ({ show, handleClose, store }) => {
                     }
                 });
 
-                setNotify("Đánh giá thành công!")
+                setNotify(`${t("ratingNotify2")}`)
                 setOpenNotify(true)
                 handleClose()
             } catch (error) {
-                setNotify("Đánh giá thất bại! Bạn đã đánh giá cho cửa hàng này rồi!")
+                setNotify(`${t("ratingNotify3")}`)
                 setOpenNotify(true)
                 handleClose()
             } finally {
@@ -135,7 +132,7 @@ const RatingStore = ({ show, handleClose, store }) => {
                 <Modal.Header>
                     <span class="close" style={{ fontSize: '24px' }} onClick={handleCloseRating}
                     >x</span>
-                    <div class="modal-header" style={{ color: 'white' }}>Đánh giá cửa hàng</div>
+                    <div class="modal-header" style={{ color: 'white' }}>{t("rating")} {t("store")}</div>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="modal-dialog modal-noti" role="document">
@@ -177,12 +174,12 @@ const RatingStore = ({ show, handleClose, store }) => {
                                                             </div>
                                                             <div >
                                                                 <select defaultValue="" className="custom-select" name='number' value={formData.number} onChange={handleChange}>
-                                                                    <option value="" selected="selected" disabled>Đánh giá theo số sao</option>
-                                                                    <option value={1}>1 sao</option>
-                                                                    <option value={2}>2 sao</option>
-                                                                    <option value={3}>3 sao</option>
-                                                                    <option value={4}>4 sao</option>
-                                                                    <option value={5}>5 sao</option>
+                                                                    <option value="" selected="selected" disabled>{t("ratingInput1")}</option>
+                                                                    <option value={1}>1 {t("star")}</option>
+                                                                    <option value={2}>2 {t("stars")}</option>
+                                                                    <option value={3}>3 {t("stars")}</option>
+                                                                    <option value={4}>4 {t("stars")}</option>
+                                                                    <option value={5}>5 {t("stars")}</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -190,7 +187,7 @@ const RatingStore = ({ show, handleClose, store }) => {
                                                             <textarea
                                                                 name="content"
                                                                 id=""
-                                                                placeholder="Chia sẻ đánh giá của bạn."
+                                                                placeholder={t("ratingInput2")}
                                                                 maxlength="300"
                                                                 value={formData.content} onChange={handleChange}
                                                             ></textarea>
@@ -216,7 +213,6 @@ const RatingStore = ({ show, handleClose, store }) => {
                                                                                 onClick={() => {
                                                                                     const newImages = [...formData.images];
                                                                                     const [deletedImage] = newImages.splice(index, 1);
-                                                                                    console.log(deletedImage)
                                                                                     if (!(deletedImage instanceof File)) {
 
                                                                                         setDels(prevDels => [...(prevDels || []), deletedImage.toString()]);
@@ -244,7 +240,7 @@ const RatingStore = ({ show, handleClose, store }) => {
                                                             <div></div>
                                                         </div>
                                                         <div class="submit-section">
-                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>Gửi đánh giá</button>
+                                                            <button type="button" disabled="" class="btn btn-submit" onClick={handleSubmit}>{t("ratingInput3")}</button>
                                                         </div>
                                                     </div>
                                                 </div>

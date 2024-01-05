@@ -1,10 +1,11 @@
 import React from "react";
 import "../../assets/css/stepOrder.css"
 import moment from 'moment-timezone';
+import { useTranslation } from "react-i18next";
 const StepOrder = ({orderDetail}) => {
+    const {t} = useTranslation();
     const countStep = () => {
         const count = ['dateOrdered', 'dateCheckout', 'datePrepared', 'dateDeliveried', 'dateFinished'].filter(field => orderDetail[field]).length;
-        console.log(count)
         return count;
     }
     return (
@@ -63,7 +64,7 @@ const StepOrder = ({orderDetail}) => {
                                 </g>
                             </svg>
                         </div>
-                        <div class="stepper__step-text">Đơn hàng đã đặt</div>
+                        <div class="stepper__step-text">{t("ordered")}</div>
                         <div class="stepper__step-date">{moment.utc(orderDetail.dateOrdered).format('HH:mm DD/MM/YYYY')}</div>
                     </div>
                     <div
@@ -103,7 +104,7 @@ const StepOrder = ({orderDetail}) => {
                                 </g>
                             </svg>
                         </div>
-                        <div class="stepper__step-text">Đã xác nhận thông tin thanh toán</div>
+                        <div class="stepper__step-text">{t("checkedOut")}</div>
                         <div class="stepper__step-date">{moment.utc(orderDetail.dateCheckout).format('HH:mm DD/MM/YYYY')}</div>
                     </div>
                     <div
@@ -161,7 +162,7 @@ const StepOrder = ({orderDetail}) => {
                                 </g>
                             </svg>
                         </div>
-                        <div class="stepper__step-text">Đang chuẩn  bị đơn hàng</div>
+                        <div class="stepper__step-text">{t("preparing")}</div>
                         <div class="stepper__step-date">{orderDetail.datePrepared ? moment.utc(orderDetail.datePrepared).format('HH:mm DD/MM/YYYY') : ""}</div>
                     </div>
                     <div
@@ -233,7 +234,7 @@ const StepOrder = ({orderDetail}) => {
                             </svg>
 
                         </div>
-                        <div class="stepper__step-text">Đang giao</div>
+                        <div class="stepper__step-text">{t("delivering")}</div>
                         <div class="stepper__step-date">{orderDetail.dateDeliveried ? moment.utc(orderDetail.datePrepared).format('HH:mm DD/MM/YYYY') : ""}</div>
                     </div>
                     <div
@@ -259,7 +260,7 @@ const StepOrder = ({orderDetail}) => {
                                 ></polygon>
                             </svg>
                         </div>
-                        <div class="stepper__step-text">Đơn hàng đã hoàn thành</div>
+                        <div class="stepper__step-text">{t("finished")}</div>
                         <div class="stepper__step-date">{orderDetail.dateFinished ? moment.utc(orderDetail.dateFinished).format('HH:mm DD/MM/YYYY') : ""}</div>
                     </div>
                     <div class="stepper__line">
