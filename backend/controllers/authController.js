@@ -229,14 +229,18 @@ exports.verifiedToken = catchAsync(async (req, res, next) => {
 exports.googleLogin = passport.authenticate("google", {
   scope: ["profile", "email"],
 });
-exports.googleLoginCallback = passport.authenticate("google", {
-  failureRedirect: "https://falth.vercel.app/signin",
-  successRedirect: "https://falth.vercel.app/",
-});
-
-exports.generateAndSendAuthJWTToken = catchAsync((req, res, next) => {
-  generateAndSendJWTToken(req.user, 200, res);
-});
+exports.googleLoginCallback = (req, res, next) => {
+  passport.authenticate(
+    "google",
+    { failureRedirect: "/login" },
+    (err, user) => {
+      if (err) {
+        return next(err);
+      }
+      jwtToken.generateAndSendJWTToken(user, 200, res, req);
+    }
+  )(req, res, next);
+};
 
 exports.logout = catchAsync((req, res, next) => {
   res.cookie("jwt", "", { expires: new Date(Date.now() - 10 * 1000) });

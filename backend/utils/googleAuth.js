@@ -3,9 +3,6 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userModel");
 const appError = require("./appError");
 
-async function revokeAccess(token) {
-  await oauth2Client.revokeToken(token);
-}
 passport.use(
   new GoogleStrategy(
     {
@@ -15,17 +12,16 @@ passport.use(
       passReqToCallback: true,
       prompt: "select_account",
     },
-    async function(request, accessToken, refreshToken, profile, done) {
-      await User.findOne({ email: profile.emails[0].value }, async function(
+    async function(request, accesstoken, refreshtoken, profile, done) {
+      await User.findOne({ email: profile.emails[0].value }, function(
         err,
         user
       ) {
         if (err) return done(err);
         if (user) {
+          request.user = user;
           return done(null, user);
         } else {
-          // Nếu xác thực không thành công, hủy quyền truy cập
-          await revokeAccess(accessToken);
           return done(new appError("Your account does not exist"));
         }
       });
@@ -34,7 +30,7 @@ passport.use(
 );
 
 passport.serializeUser(function(profile, done) {
-  done(null, profile.id);
+  done(null, profile);
 });
 
 passport.deserializeUser(function(id, done) {
