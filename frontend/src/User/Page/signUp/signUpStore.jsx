@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import useLocationSelect from "./address";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import './signUp.css'
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import LoadingModal from "../../Components/Loading/Loading";
 import axios from "axios";
-
+import Notify from "../../Components/Notify.jsx/Notify";
 const SignUpStore = () => {
     const [isLoading, setIsLoading] = useState(false)
     const { t } = useTranslation();
     const location = useLocation()
     const id = location.state.id
     const navigate = useNavigate();
+    const [openNotify, setOpenNotify] = useState(false)
+    const [message, setMessage] = useState("")
     const {
         cities,
         districts,
@@ -88,6 +88,8 @@ const SignUpStore = () => {
 
         if (!/^\d{10}$/.test(formData.phoneNumber)) {
             setError(t("error9"))
+            setMessage(`${t("signupShipperSuccess")}`);
+                setOpenNotify(true)
         } else {
             try {
                 console.log(formData.phoneNumber)
@@ -97,25 +99,17 @@ const SignUpStore = () => {
                         ContentType: 'multipart/form-data',
                     }
                 });
-                console.log('Đăng ký thành công', response.data);
+                // console.log('Đăng ký thành công', response.data);
                 setError('')
-                setSuccess(t("success"))
-                handleShow()
+                setMessage(`${t("signupShipperSuccess")}`);
+                setOpenNotify(true)
             } catch (error) {
-                setError(t("error10"));
+                // setError(t("error10"));
             }
             setIsLoading(false)
         }
     };
 
-    const [show, setShow] = useState(false)
-    const handleClose = () => {
-        setShow(false)
-        navigate("/")
-    }
-    const handleShow = () => {
-        setShow(true)
-    }
     const handleNavHome = () => {
         navigate("/")
     }
@@ -231,7 +225,7 @@ const SignUpStore = () => {
                                 </div>
 
                                 {error && <div className="alert-danger">{error}</div>}
-                                {success && <div className="alert-success">{success}</div>}
+                                {/* {success && <div className="alert-success">{success}</div>} */}
                                 <div class="p-t-30">
                                     <button class="btn_su btn--radius btn--red" type="submit">{t("signup")}</button>
                                 </div>
@@ -241,22 +235,7 @@ const SignUpStore = () => {
                 </div>
             </div>
             {isLoading && (<LoadingModal/>)}
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>FALTH thông báo</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Đăng kí cửa hàng thành công! Vui lòng đợi phê duyệt để có thể đăng nhập.
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Hủy
-                    </Button>
-                    <Button variant="danger" onClick={handleNavHome}>
-                        Ok
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify} handleClose={handleNavHome}/>)}
         </div>
     )
 }

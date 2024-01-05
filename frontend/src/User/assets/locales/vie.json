@@ -78,6 +78,7 @@
   "vehicleNumber": "Biển số xe",
   "vehicleType": "Loại xe",
   "licenseImage": "Mặt trước GPLX: ",
+  "vehicleLicense" : "Mặt trước giấy đăng kí xe",
   "storeName": "Tên quán",
   "openTime": "Giờ mở cửa",
   "closeTime": "Giờ đóng cửa",
@@ -201,5 +202,10 @@
   "myAddress" : "Địa Chỉ Của Tôi",
   "voucherNotify" : "Có thể chọn 1 Voucher",
   "voucherNotify1" : "Bạn không đủ điều kiện để nhận ưu đãi này.",
-  "voucherNotify2" : "Bạn đã sử dụng ưu đãi này."
+  "voucherNotify2" : "Bạn đã sử dụng ưu đãi này.",
+
+  "signupCusSuccess" : "Đăng kí tài khoản thành công! Mời bạn đăng nhập lại tài khoản.",
+  "signupShipperSuccess" : "Đăng kí tài khoản thành công! Vui lòng đợi phê duyệt để có thể đăng nhập.",
+  "cartNotify1" : "Cửa hàng hiện tại đã đóng cửa. Xin vui lòng quay lại cửa hàng sau!",
+  "cartNotify2" : " hiện đang hết hàng vui lòng chọn món khác hoặc xóa món này khỏi giỏ hàng để tiếp tục đặt đơn!"
 }
