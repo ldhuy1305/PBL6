@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import '../../assets/fonts/fontawesome-free-6.2.0-web/css/all.min.css'
 import { useNavigate, useLocation } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { Troubleshoot } from '@mui/icons-material';
+import Notify from '../../Components/Notify.jsx/Notify';
 const Verify = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
@@ -16,6 +14,8 @@ const Verify = () => {
     const email = location.state.email;
     const isButtonDisabled = otp.length !== 6;
     const [loadingAPI, setLoadingAPI] = useState(false);
+    const [openNotify, setOpenNotify] = useState(false)
+    const [message, setMessage] = useState("")
     const handleVerify = async () => {
 
         if (action === "verifyUser") {
@@ -23,7 +23,8 @@ const Verify = () => {
             try {
                 // Gọi API đăng ký người dùng
                 const response = await axios.post(`https://falth-api.vercel.app/api/user/${email}`, {signUpToken: otp});
-                handleShow()
+                setMessage(`${t("signupCusSuccess")}`);
+                setOpenNotify(true)
             } catch (error) {
                 setError(t("error4"))
             }
@@ -33,7 +34,8 @@ const Verify = () => {
             try {
                 // Gọi API đăng ký người dùng
                 const response = await axios.post(`https://falth-api.vercel.app/api/shipper/${email}`, {signUpToken: otp});
-                handleShow()
+                setMessage(`${t("signupShipperSuccess")}`);
+                setOpenNotify(true)
             } catch (error) {
                 setError(t("error4"))
             }
@@ -41,7 +43,6 @@ const Verify = () => {
         } else if (action === 'verifyOwner') {
             setLoadingAPI(true);
             try {
-                // Gọi API đăng ký người dùng
                 const response = await axios.post(`https://falth-api.vercel.app/api/owner/${email}`, {signUpToken: otp});
                 const id = response.data.doc._id
                 navigate('/signUpStore', {state: {id:id}})
@@ -53,7 +54,6 @@ const Verify = () => {
             setLoadingAPI(true);
             try {
                 const response = await axios.post(`https://falth-api.vercel.app/api/auth/verify-token/${email}`, {token: otp});    
-                console.log('Đăng ký thành công', response.data);
                 navigate("/resetPass", {state: {email: email, token: otp}})
             } catch (error) {
                 setError(t("error4"))
@@ -62,14 +62,6 @@ const Verify = () => {
         }
         
     };
-    const [show, setShow] = useState(false)
-    const handleClose = () => {
-        setShow(false)
-        navigate("/")
-    }
-    const handleShow = () => {
-        setShow(true)
-    }
     const handleNavSignin = () => {
         navigate("/signin")
     }
@@ -94,22 +86,8 @@ const Verify = () => {
                     </div>
                 </div>
             </div>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>FALTH thông báo</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Đăng kí tài khoản thành công! Mời bạn đăng nhập lại tài khoản.
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Hủy
-                    </Button>
-                    <Button variant="danger" onClick={handleNavSignin}>                       
-                        Ok
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {openNotify && (<Notify message={message} setOpenNotify={setOpenNotify} handleClose={handleNavSignin}/>)}
+            
         </div>
     )
 }

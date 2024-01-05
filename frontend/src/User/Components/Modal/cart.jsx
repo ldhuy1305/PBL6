@@ -26,13 +26,13 @@ const CartModal = ({ show, handleClose, handleOpen }) => {
             const storeData = await getStoreById(cart.idStore);
             const isOpen = await checkStoreOpen(storeData.data.openAt, storeData.data.closeAt)
             if(!isOpen) {
-                setMessage("Cửa hàng hiện tại đã đóng cửa. Xin vui lòng quay lại cửa hàng sau!")
+                setMessage(`${t("cartNotify1")}`)
                 setOpenNotify(true)
             } else {  
                 setIsLoading(true)
                 const response = await checkValidCart(cart.products)  
                 if(response !== 'true') {
-                    setMessage(response + " hiện đang hết hàng vui lòng chọn món khác hoặc xóa món này khỏi giỏ hàng để tiếp tục đặt đơn!");
+                    setMessage(response + `${t("cartNotify2")}`);
                     setOpenNotify(true)
                 } else {
                     try {

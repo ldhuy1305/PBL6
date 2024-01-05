@@ -124,6 +124,7 @@ const SignUpShipper = () => {
             setIsLoading(false)
         }
     };
+
     return (
         <div>
             <div class="page-wrapper bg-color p-t-180 p-b-100 font-robo">
