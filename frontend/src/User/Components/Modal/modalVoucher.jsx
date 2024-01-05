@@ -90,10 +90,24 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                                             role="presentation"
                                                                             tabindex="0"
                                                                         >
-                                                                            {/* <div class="vc_A11yAriaText_A11yContent">
-                                                                                <span aria-label="voucher #"></span><span
-                                                                                    aria-label=" Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi."></span>
-                                                                            </div> */}
+                                                                            <div
+                                                                                data-testid="vcLabel"
+                                                                                class="vc_Label_label"
+                                                                            >
+                                                                                <div
+                                                                                    class="vc_Label_shopeeWalletLabel"
+                                                                                    data-cy="voucher_card_label"
+                                                                                >
+                                                                                    <div
+                                                                                        class="vc_Label_shopeeWalletLabelContent"
+                                                                                        data-cy="voucher_card_label_content"
+                                                                                        aria-label="Dành riêng cho bạn"
+                                                                                        style={{ color: 'red' }}
+                                                                                    >
+                                                                                        {discount.name}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div
                                                                                 data-testid="vcMainTitle"
                                                                                 class="vc_MainTitle_mainTitle"
@@ -110,24 +124,7 @@ const ModalVoucher = ({ handleclose, discounts, selectedVoucher, setSelectedVouc
                                                                             >
                                                                                 {t("minPrice")} {discount.conditions.minValues.toLocaleString('vi-VN')}₫
                                                                             </div>
-                                                                            {/* <div
-                                                                                data-testid="vcLabel"
-                                                                                class="vc_Label_label"
-                                                                            >
-                                                                                <div
-                                                                                    class="vc_Label_shopeeWalletLabel"
-                                                                                    data-cy="voucher_card_label"
-                                                                                >
-                                                                                    <div
-                                                                                        class="vc_Label_shopeeWalletLabelContent"
-                                                                                        data-cy="voucher_card_label_content"
-                                                                                        aria-label="Dành riêng cho bạn"
-                                                                                        style={{ color: 'red' }}
-                                                                                    >
-                                                                                        {discount.content3}
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> */}
+                                                                            
                                                                             <div
                                                                                 data-testid="vcProgressBarExpiry"
                                                                                 class="vc_ProgressBarExpiry_progressBarExpiry"
