@@ -34,7 +34,7 @@ function Accept({ rows, show, handleClose, AcceptStore, Status, LockStore, isLoc
                     <Button variant="secondary" onClick={() => handleClose(false)}>
                         Đóng
                     </Button>
-                    <Button variant="success" onClick={() => Acceptw(rows.ownerId)} >
+                    <Button variant="success" onClick={() => Acceptw(rows.ownerId._id)} >
                         {Status}
                     </Button>
                 </Modal.Footer>
