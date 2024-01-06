@@ -28,7 +28,7 @@ const loginAPI = async (email, password) => {
   return axios.post(`${url}/api/auth/login`, { email, password });
 }
 
-//Info user
+// Info user
 
 const getUserInfo = async (token) => {
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
