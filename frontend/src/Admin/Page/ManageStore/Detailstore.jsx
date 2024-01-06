@@ -42,7 +42,7 @@ const Detailorder = ({ setSelected }) => {
             const responseData = response.data.data.store;
             console.log(responseData);
             setdata(responseData);
-            setRevenue(response.data.revenue);
+            setRevenue(response.data.data.revenue);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
