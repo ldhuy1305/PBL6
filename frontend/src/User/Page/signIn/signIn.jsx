@@ -104,32 +104,7 @@ const Signin = () => {
         <div class="now-login" onKeyDown={handleKeyDown}>
             <div class="content">
                 <div class="title">{t("title_SI")}</div>
-                <div class="login-via">
-                        {/* <input
-                            type="hidden"
-                            name="client_id"
-                            value="229327170580-69v69v4s94p2tvf4qi3g0qb901b2pg99.apps.googleusercontent.com"
-                        /><input
-                            type="hidden"
-                            name="redirect_uri"
-                            value="https://shopeefood.vn/account/login"
-                        /><input
-                            type="hidden"
-                            name="scope"
-                            value="email profile openid"
-                        /><input type="hidden" name="state" value="/" /><input
-                            type="hidden"
-                            name="response_type"
-                            value="permission id_token"
-                        /><input
-                            type="hidden"
-                            name="fetch_basic_profile"
-                            value="true"
-                        /><input
-                            type="hidden"
-                            name="nonce"
-                            value="0N98K3CIH5RrCIJU4vmoBiSqmi9ptirz"
-                        /> */}
+                {/* <div class="login-via">                       
                     <form
                         id="google-login-form"
                         action="https://accounts.google.com/o/oauth2/v2/auth"
@@ -144,7 +119,7 @@ const Signin = () => {
                             </a>
                         </div>
                     </form>
-                </div>
+                </div> */}
                 <div class="login-mess-policy">
                     {t("loginMess_SI")}
                     <button
